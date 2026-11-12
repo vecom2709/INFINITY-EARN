@@ -1,0 +1,178 @@
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#F7FAF9"><meta name="robots" content="noindex"><title>Übersicht · INFINITY EARN</title><style>
+:root{--canvas:#F7FAF9;--surface:#FFFFFF;--surface-soft:#FBFDFD;--ink:#0E1D25;--ink-soft:#24363F;--muted:#53656E;--accent:#087F82;--accent-strong:#06676A;--accent-soft:#DCEBEA;--border:#E1ECEB;--border-strong:#C9DCDB;--warning:#8A5400;--warning-soft:#FFF5E3;--danger:#A63A3A;--danger-soft:#FBECEC;--neutral-soft:#EAF2F1;--focus:#0A8F8D;--brand:#18C8C1;--ocean:#0E1D25;
+--r-card:18px;--r-control:11px;--r-pill:999px;--s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:24px;--s6:32px;
+--shadow-1:0 1px 2px rgba(14,29,37,.04);--shadow-2:0 12px 28px rgba(14,29,37,.05),0 2px 6px rgba(14,29,37,.025);
+--font:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color-scheme:light}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{margin:0;background:var(--canvas);color:var(--ink);font:400 15px/1.55 var(--font);-webkit-font-smoothing:antialiased}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline;text-underline-offset:3px}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px;border-radius:6px}
+.sr-only{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+.skip{position:absolute;left:12px;top:-60px;background:var(--ink);color:#fff;padding:10px 14px;border-radius:var(--r-control);z-index:10}.skip:focus{top:12px}
+.ico{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex:none}.ico.sm{width:16px;height:16px}
+.num,.amount,td.amount,.tabular{font-variant-numeric:tabular-nums}
+/* Shell */
+.app{display:grid;grid-template-columns:248px minmax(0,1fr);min-height:100vh;max-width:1680px;margin:0 auto}
+.sidebar{position:sticky;top:0;height:100vh;padding:32px 18px 22px;border-right:1px solid var(--border);background:var(--surface-soft);display:flex;flex-direction:column;gap:28px}
+.brand{display:flex;align-items:center;gap:12px;padding:0 10px;color:var(--ink)}.brand:hover{text-decoration:none}
+.mark{width:36px;height:36px;border-radius:11px;background:var(--ink);color:#fff;display:grid;place-items:center}.mark .ico{width:22px;height:22px;stroke-width:2}
+.brandname{font-size:18px;font-weight:700;letter-spacing:-.5px;line-height:1.1}.brandname b{color:var(--accent);font-weight:700}.brandname small{display:block;margin-top:4px;font-size:11px;letter-spacing:1.6px;text-transform:uppercase;color:var(--muted);font-weight:600}
+.nav{display:flex;flex-direction:column;gap:4px}.nav-label{font-size:12px;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);font-weight:600;margin:0 12px 8px}
+.nav a{display:flex;align-items:center;gap:12px;min-height:44px;padding:10px 12px;border-radius:var(--r-control);color:var(--ink-soft);font-weight:550}
+.nav a:hover{background:#EEF5F4;text-decoration:none}.nav a[aria-current=page]{background:var(--accent-soft);color:var(--accent-strong);font-weight:650}
+.sidefoot{margin-top:auto;padding:16px 12px 0;border-top:1px solid var(--border);display:flex;gap:10px;color:var(--muted);font-size:13px}.sidefoot .ico{color:var(--accent);width:18px;height:18px;margin-top:2px}
+main{min-width:0;padding:28px clamp(18px,4vw,56px) 64px}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:32px}
+.eyebrow{font-size:12px;letter-spacing:1.6px;text-transform:uppercase;font-weight:650;color:var(--muted)}
+.topright{display:flex;align-items:center;gap:10px}
+.mode{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:var(--r-pill);font-size:13px;font-weight:650;white-space:nowrap;border:1px solid}
+.mode .dot{width:8px;height:8px;border-radius:50%;background:currentColor}
+.mode.test{color:var(--warning);background:var(--warning-soft);border-color:#F1DFBE}.mode.live{color:var(--accent-strong);background:var(--accent-soft);border-color:#BFDCDA}
+.profile{position:relative}.profile summary{list-style:none;cursor:pointer;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:#DCEBEA;color:var(--accent-strong);font-weight:700;font-size:14px}.profile summary::-webkit-details-marker{display:none}
+.menu{position:absolute;right:0;top:52px;z-index:5;min-width:240px;background:var(--surface);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow-2);padding:8px}
+.menu a,.menu button{display:flex;align-items:center;gap:10px;width:100%;min-height:44px;padding:10px 12px;border-radius:10px;color:var(--ink-soft);font:inherit;font-weight:550;background:none;border:0;text-align:left;cursor:pointer}
+.menu a:hover,.menu button:hover{background:#EFF5F5;text-decoration:none}.menu hr{border:0;border-top:1px solid var(--border);margin:6px 4px}
+/* Seitenkopf */
+.hero{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;margin-bottom:24px}
+.hero h1{margin:8px 0 8px;font-size:clamp(28px,3.1vw,40px);line-height:1.12;letter-spacing:-1.2px;font-weight:720}
+.lead{margin:0;max-width:680px;color:var(--muted);font-size:16px}
+.notice{display:flex;gap:12px;align-items:flex-start;padding:12px 16px;border-radius:14px;border:1px solid;margin-bottom:22px;font-size:14px}
+.notice .ico{margin-top:1px}.notice.test{background:var(--warning-soft);border-color:#F1DFBE;color:#5E4206}.notice.test strong{color:var(--warning)}
+.notice.info{background:#EDF6F5;border-color:#D3E6E4;color:#1E4A4C}.notice.info strong{color:var(--accent-strong)}
+.notice.flash{background:var(--surface);border-color:var(--border);color:var(--ink-soft)}
+.notice.danger{background:var(--danger-soft);border-color:#F0D2D2;color:#5B2121}
+.segmented{display:inline-flex;padding:4px;border-radius:12px;background:var(--neutral-soft);gap:4px}
+.segmented a{min-height:40px;display:inline-flex;align-items:center;padding:8px 14px;border-radius:9px;color:var(--ink-soft);font-weight:600;font-size:14px}
+.segmented a[aria-current=true]{background:var(--surface);color:var(--ink);box-shadow:var(--shadow-1)}.segmented a:hover{text-decoration:none}
+/* Kennzahlen */
+.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:24px}
+.metrics.five{grid-template-columns:repeat(5,minmax(0,1fr))}
+.metric{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-card);box-shadow:var(--shadow-2);padding:20px 20px 18px;min-width:0;display:flex;flex-direction:column}
+.metric-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.metric-label{font-size:14px;font-weight:600;color:var(--ink-soft)}
+.metric-icon{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;background:#EAF4F3;color:var(--accent)}
+.metric-value{margin-top:14px;font-size:clamp(24px,2.3vw,32px);font-weight:720;letter-spacing:-1px;line-height:1.1;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.metric-value.accent{color:var(--accent-strong)}.metric-value.text{font-size:17px;letter-spacing:-.2px;font-weight:650;line-height:1.35;color:var(--ink-soft)}
+.metric-sub{margin-top:auto;padding-top:12px;font-size:13px;color:var(--muted)}
+/* Panels */
+.grid2{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(280px,1fr);gap:20px;margin-bottom:20px}.grid2.even{grid-template-columns:repeat(2,minmax(0,1fr))}
+.stack{display:flex;flex-direction:column;gap:20px}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-card);box-shadow:var(--shadow-2);min-width:0;margin-bottom:20px}.grid2 .panel,.stack .panel{margin-bottom:0}
+.panel-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:22px 24px 8px}.panel-head h2{margin:0;font-size:18px;letter-spacing:-.3px;font-weight:680}
+.panel-head p{margin:4px 0 0;font-size:14px;color:var(--muted)}.panel-body{padding:8px 24px 22px}.panel-body.flush{padding:4px 0 6px}
+.linkbtn{display:inline-flex;align-items:center;gap:6px;min-height:44px;font-weight:650;font-size:14px;white-space:nowrap}
+/* Liste / Aktivität */
+.feed{list-style:none;margin:0;padding:0}.feed li{display:flex;gap:12px;padding:14px 0;align-items:flex-start}.feed li+li{border-top:1px solid #E9F0EF}
+.badge{width:34px;height:34px;flex:none;border-radius:11px;display:grid;place-items:center;background:#E6F2F1;color:var(--accent)}.badge.warn{background:var(--warning-soft);color:var(--warning)}.badge.bad{background:var(--danger-soft);color:var(--danger)}
+.feed h3{margin:0;font-size:15px;font-weight:650}.feed p{margin:3px 0 0;font-size:14px;color:var(--muted)}.feed .when{margin-left:auto;font-size:13px;color:var(--muted);white-space:nowrap;padding-top:2px}
+/* Tabellen → Karten auf Mobil */
+.table-wrap{width:100%;overflow-x:auto}table{width:100%;border-collapse:collapse;text-align:left}
+th{padding:12px 24px;font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);font-weight:650;background:#F6FAFA;white-space:nowrap}
+td{padding:15px 24px;border-top:1px solid #E9F0EF;font-size:14px;color:var(--ink-soft);vertical-align:top}td strong{color:var(--ink);font-weight:650}
+th.amount,td.amount{text-align:right;white-space:nowrap}td.amount{font-weight:650;color:var(--ink)}td .sub{display:block;font-size:13px;color:var(--muted);margin-top:2px}
+.tag{display:inline-flex;align-items:center;gap:7px;padding:5px 10px;border-radius:var(--r-pill);font-size:13px;font-weight:600;white-space:nowrap;background:var(--neutral-soft);color:var(--ink-soft)}
+.tag .dot{width:7px;height:7px;border-radius:50%;background:currentColor;flex:none}.tag.ok{background:var(--accent-soft);color:var(--accent-strong)}.tag.pending{background:var(--warning-soft);color:var(--warning)}.tag.bad{background:var(--danger-soft);color:var(--danger)}
+/* Leerer Zustand */
+.empty{display:flex;gap:16px;align-items:flex-start;padding:22px 24px}.empty .badge{width:44px;height:44px}.empty h3{margin:2px 0 4px;font-size:16px}.empty p{margin:0;color:var(--muted);max-width:620px}
+/* Erklärung */
+details.explain{margin-top:10px}details.explain summary{cursor:pointer;color:var(--accent);font-weight:600;font-size:14px;min-height:32px;display:inline-flex;align-items:center;gap:6px}
+details.explain p{margin:6px 0 0;color:var(--muted);font-size:14px;max-width:680px}
+/* Fortschritt */
+.steps{list-style:none;display:flex;flex-wrap:wrap;gap:8px;margin:0;padding:0}.steps li{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:var(--r-pill);background:var(--neutral-soft);color:var(--ink-soft);font-size:13px;font-weight:600}
+.steps li.done{background:var(--accent-soft);color:var(--accent-strong)}.steps li.now{background:var(--ink);color:#fff}.steps li.wait{background:var(--warning-soft);color:var(--warning)}
+/* Formulare und Aktionen */
+.actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:10px 16px;border-radius:var(--r-control);font:inherit;font-weight:650;font-size:14px;cursor:pointer;border:1px solid var(--accent);background:var(--accent);color:#fff;text-decoration:none}
+.btn:hover{background:var(--accent-strong);text-decoration:none}.btn.ghost{background:var(--surface);color:var(--ink-soft);border-color:var(--border-strong)}.btn.ghost:hover{border-color:#9CC7C5;background:#F8FCFC}
+.btn.danger{background:var(--surface);color:var(--danger);border-color:#E7C4C4}.btn.danger:hover{background:var(--danger-soft)}
+.action{display:flex;flex-direction:column;gap:6px}.action .what{font-size:13px;color:var(--muted);max-width:520px}
+label{display:block;font-weight:600;font-size:14px;margin:12px 0 6px}
+input[type=text],input[type=password],input[type=email],select,textarea{width:100%;min-height:44px;padding:10px 12px;border:1px solid var(--border-strong);border-radius:var(--r-control);background:var(--surface);color:var(--ink);font:inherit}
+.inline-form{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr) auto;gap:8px;align-items:center}
+.kv{display:grid;grid-template-columns:minmax(140px,240px) minmax(0,1fr);gap:0}.kv dt,.kv dd{margin:0;padding:12px 0;border-top:1px solid #E9F0EF;font-size:14px}.kv dt{color:var(--muted);font-weight:600}.kv dd{color:var(--ink-soft);overflow-wrap:anywhere}
+.mono{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:13px;overflow-wrap:anywhere}
+.muted{color:var(--muted)}.foot{margin-top:28px;font-size:13px;color:var(--muted)}
+.bars{height:150px;display:flex;align-items:flex-end;gap:10px;border-bottom:1px solid var(--border);padding:0 4px;background:repeating-linear-gradient(to top,transparent 0 36px,#EEF4F3 36px 37px)}
+.bar{flex:1;min-width:0;border-radius:5px 5px 0 0;background:#BFDCDA}.bar.now{background:var(--accent)}.bar.zero{height:2px!important;background:var(--border-strong)}
+.months{display:flex;gap:10px;margin-top:10px;padding:0 4px;font-size:12px;color:var(--muted)}.months span{flex:1;text-align:center;min-width:0}
+.progress{height:10px;border-radius:99px;background:var(--neutral-soft);overflow:hidden}.progress span{display:block;height:100%;background:var(--accent)}
+/* Mobile Tab-Leiste */
+.tabbar{display:none}
+@media (max-width:1180px){.metrics,.metrics.five{grid-template-columns:repeat(2,minmax(0,1fr))}.grid2,.grid2.even{grid-template-columns:minmax(0,1fr)}}
+.panel-body,.panel-head,.empty,.feed{overflow-wrap:break-word;min-width:0}
+.action{align-items:flex-start}
+@media (max-width:900px){
+.app{display:block}.sidebar{display:none}main{padding:16px 16px 104px}
+.topbar{margin-bottom:22px}.topbar .brand{display:flex;padding:0}.topbar .eyebrow{display:none}
+.tabbar{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;left:0;right:0;bottom:0;z-index:4;background:rgba(255,255,255,.97);border-top:1px solid var(--border);padding:6px 6px calc(6px + env(safe-area-inset-bottom))}
+.tabbar a,.tabbar summary{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:52px;border-radius:12px;color:var(--ink-soft);font-size:12px;font-weight:600;list-style:none;cursor:pointer}
+.tabbar summary::-webkit-details-marker{display:none}.tabbar a[aria-current=page]{color:var(--accent-strong);background:var(--accent-soft)}.tabbar a:hover{text-decoration:none}
+.tabbar details{position:relative}.tabbar .menu{top:auto;bottom:64px;right:0}
+.hero{flex-direction:column;align-items:flex-start}.lead{font-size:15px}
+.panel-head{padding:18px 16px 8px}.panel-body{padding:6px 16px 18px}.empty{padding:18px 16px}
+th{display:none}table,tbody,tr,td{display:block}tbody{display:grid;gap:10px;padding:4px 12px 12px}
+tbody tr{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:10px 12px;border:1px solid var(--border);border-radius:14px;padding:14px}
+tbody td{border:0;padding:0;min-width:0;overflow-wrap:anywhere}tbody td::before{content:attr(data-label);display:block;font-size:12px;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:3px}
+tbody td.amount{text-align:left}tbody td.full{grid-column:1/-1}tbody tr.empty-row{display:block;border:0;padding:0}tbody tr.empty-row td::before{content:none}
+.inline-form{grid-template-columns:1fr}.kv{grid-template-columns:1fr}.kv dt{padding-bottom:0}.kv dd{border-top:0;padding-top:4px}
+}
+@media (min-width:901px){.topbar .brand{display:none}}
+@media (max-width:380px){.metrics,.metrics.five{grid-template-columns:1fr}.mode{font-size:12px;padding:7px 10px;gap:6px}.hero h1{font-size:27px}
+.topbar{gap:8px}.topright{gap:6px}.topbar .brand{gap:8px}.topbar .brandname small{display:none}.topbar .mark{width:32px;height:32px}.profile summary{width:44px;height:44px;font-size:13px}}
+/* Klickziele mindestens 24 px (WCAG 2.2, 2.5.8) auch für Links in Tabellen, Listen und Hinweisen */
+td a,.feed h3 a,td .sub a{display:inline-block;min-height:24px;padding:3px 0}
+.metric-head{min-height:44px}
+@media (max-width:900px){.tag{white-space:normal;text-align:left;line-height:1.35}}
+/* LUXURY TURQUOISE – Markenlicht nur dekorativ, sehr zurückhaltend */
+.mark{background:linear-gradient(150deg,#16323F 0%,var(--ocean) 70%);color:var(--brand);box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 6px 14px rgba(14,29,37,.18)}
+.sidebar{background:linear-gradient(180deg,#FBFDFD 0%,#F3F9F8 100%)}
+.nav a[aria-current=page]{box-shadow:inset 3px 0 0 var(--brand)}
+.metric{position:relative;overflow:hidden}.metric::before{content:"";position:absolute;inset:0 0 auto;height:2px;background:linear-gradient(90deg,var(--brand),rgba(24,200,193,0))}
+.metric,.panel{transition:box-shadow .25s ease,transform .25s ease}.metric:hover{box-shadow:0 18px 36px rgba(14,29,37,.08),0 3px 8px rgba(14,29,37,.04)}
+.btn{box-shadow:0 1px 0 rgba(255,255,255,.12) inset,0 6px 14px rgba(8,127,130,.18)}.btn.ghost,.btn.danger{box-shadow:none}
+.bar.now,.progress span{background:linear-gradient(180deg,#0B9C9C,var(--accent))}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+</style></head>
+<body><a class="skip" href="#inhalt">Zum Inhalt springen</a><div class="app">
+<aside class="sidebar" aria-label="Seitenleiste"><a class="brand" href="/dashboard" aria-label="INFINITY EARN – zur Übersicht"><span class="mark"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7.5 8.5c-2 0-3.5 1.5-3.5 3.5s1.5 3.5 3.5 3.5c3 0 6-7 9-7 2 0 3.5 1.5 3.5 3.5s-1.5 3.5-3.5 3.5c-3 0-6-7-9-7Z"/></svg></span><span class="brandname">infinity<b>earn</b><small>Business Console</small></span></a>
+<nav class="nav" aria-label="Hauptnavigation"><span class="nav-label">Dein Unternehmen</span><a href="/dashboard" aria-current="page"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg>Übersicht</a><a href="/dashboard/kunden"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="9" cy="8" r="3.2"/><path d="M3 20v-1.5C3 15.5 5.5 13.5 9 13.5s6 2 6 5V20M16 4.8a3.2 3.2 0 0 1 0 6.2M18 14c2.3.6 3 2.3 3 4.2V20"/></svg>Kunden</a><a href="/dashboard/auftraege"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 7.5A2.5 2.5 0 0 1 5.5 5H10l2 2h6.5A2.5 2.5 0 0 1 21 9.5v8a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5Z"/></svg>Aufträge</a><a href="/dashboard/produkte"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m12 2.8 8.5 4.7v9L12 21.2l-8.5-4.7v-9Z"/><path d="m3.6 7.6 8.4 4.7 8.4-4.7M12 12.3v8.9"/></svg>Produkte</a><a href="/dashboard/finanzen"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4.5 6h14A2.5 2.5 0 0 1 21 8.5v9a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5V7.5A1.5 1.5 0 0 1 4.5 6Zm0 0 11-2.7a1.5 1.5 0 0 1 1.9 1.4V6"/><path d="M16 13h2.5"/></svg>Finanzen</a><a href="/dashboard/berichte"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3.5 3.5v17h17"/><path d="M8 16v-5M12.5 16V7M17 16v-8"/></svg>Berichte</a></nav>
+<div class="sidefoot"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="5" y="10.5" width="14" height="10" rx="2.2"/><path d="M8.5 10.5V7.5a3.5 3.5 0 0 1 7 0v3"/></svg><span>Deine Daten. Deine Kontrolle.<br>Zusatzkosten: 0 € freigegeben.</span></div></aside>
+<main id="inhalt"><header class="topbar"><a class="brand" href="/dashboard" aria-label="INFINITY EARN – zur Übersicht"><span class="mark"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7.5 8.5c-2 0-3.5 1.5-3.5 3.5s1.5 3.5 3.5 3.5c3 0 6-7 9-7 2 0 3.5 1.5 3.5 3.5s-1.5 3.5-3.5 3.5c-3 0-6-7-9-7Z"/></svg></span><span class="brandname">infinity<b>earn</b><small>Business Console</small></span></a><span class="eyebrow">Unternehmensübersicht</span><div class="topright"><span class="mode test" role="status"><span class="dot" aria-hidden="true"></span>Testbetrieb<span class="sr-only"> – Echtbetrieb gesperrt, kein echtes Geld</span></span><details class="profile"><summary aria-label="Profil und Einstellungen öffnen">IE</summary><div class="menu">
+<a href="/dashboard/einstellungen"><svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>Einstellungen &amp; Freigaben</a>
+<a href="/dashboard/aktivitaeten"><svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8.5 6.5h12M8.5 12h12M8.5 17.5h12M4 6.5h.01M4 12h.01M4 17.5h.01"/></svg>Aktivitäten (Protokoll)</a>
+<a href="/dashboard/experte"><svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 3h8l4.5 4.5V21H6Z"/><path d="M14 3v4.5h4.5M9 12.5h6M9 16h5"/></svg>Detailansicht für Fachleute</a>
+<hr><form method="post" action="/auth/logout"><input type="hidden" name="_csrf" value="vorschau-ohne-funktion"><button type="submit"><svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M14 4h4.5A1.5 1.5 0 0 1 20 5.5v13a1.5 1.5 0 0 1-1.5 1.5H14M10 16.5 5.5 12 10 7.5M5.5 12H16"/></svg>Abmelden</button></form>
+</div></details></div></header>
+<section class="hero"><div><h1>Dein Geschäft. Klar im Blick.</h1><p class="lead">Guten Abend. Heute ist Freitag, 13. November 2026. Hier siehst du, was passiert ist, was wirklich bezahlt wurde und was auf deinem Konto angekommen ist.</p></div><nav class="segmented" aria-label="Datenansicht wählen"><a href="/dashboard" aria-current="true">Echte Daten</a><a href="/dashboard?modus=test">Testdaten</a></nav></section>
+
+<div class="notice info" role="note"><svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5"/><path d="M12 11v5M12 8h.01"/></svg><span><strong>Noch keine Verkäufe im Echtbetrieb.</strong> Echte Verkäufe sind gesperrt, bis alle Live-Freigaben erteilt sind (0 von 12). <a href="/dashboard/einstellungen#freigaben">Freigaben ansehen</a> · Im Testbetrieb gibt es 4 Testaufträge: <a href="/dashboard?modus=test">Testdaten ansehen</a></span></div><div class="notice flash" role="note"><svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 3h8l4.5 4.5V21H6Z"/><path d="M14 3v4.5h4.5M9 12.5h6M9 16h5"/></svg><span><strong>Tagesbericht (letzte 24 Std.):</strong> Echtbetrieb gesperrt (0 von 12 Freigaben). Keine neuen Vorgänge in den letzten 24 Stunden. Nichts braucht deine Entscheidung.</span></div><section class="metrics" aria-label="Wichtigste Zahlen">
+<article class="metric" data-metric="paid"><div class="metric-head"><h2 class="metric-label">Kunden haben bezahlt</h2><span class="metric-icon"><svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4.5 6h14A2.5 2.5 0 0 1 21 8.5v9a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5V7.5A1.5 1.5 0 0 1 4.5 6Zm0 0 11-2.7a1.5 1.5 0 0 1 1.9 1.4V6"/><path d="M16 13h2.5"/></svg></span></div>
+<div class="metric-value">0,00 €</div><div class="metric-sub">Noch keine bestätigten Verkäufe</div></article>
+<article class="metric" data-metric="bank"><div class="metric-head"><h2 class="metric-label">Auf Bank eingegangen</h2><span class="metric-icon"><svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m3 9.5 9-5.5 9 5.5M4 10h16M6 10v8M10 10v8M14 10v8M18 10v8M3 20.5h18"/></svg></span></div>
+<div class="metric-value text">Noch nicht verbunden</div><div class="metric-sub">Kein Bankeingang verifizierbar</div></article>
+<article class="metric" data-metric="transit"><div class="metric-head"><h2 class="metric-label">Auszahlung unterwegs</h2><span class="metric-icon"><svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></span></div>
+<div class="metric-value">0,00 €</div><div class="metric-sub">Vom Anbieter gemeldet, nicht auf Bank bestätigt</div></article>
+<article class="metric" data-metric="decisions"><div class="metric-head"><h2 class="metric-label">Benötigt deine Entscheidung</h2><span class="metric-icon"><svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m5 12.5 4.2 4.2L19 7"/></svg></span></div>
+<div class="metric-value">0</div><div class="metric-sub">Aktuell keine wichtigen Ausnahmen</div></article>
+</section>
+<div class="grid2">
+<section class="panel" aria-labelledby="wie-dein-unternehmen-la-uft-h"><div class="panel-head"><div><h2 id="wie-dein-unternehmen-la-uft-h">Wie dein Unternehmen läuft</h2><p>Bezahlte Bestellungen der letzten 12 Monate</p></div>
+<a class="linkbtn" href="/dashboard/berichte">Berichte <svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4.5 12h15m-6-6 6 6-6 6"/></svg></a></div><div class="panel-body"><div class="empty"><span class="badge"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3.5 3.5v17h17"/><path d="M8 16v-5M12.5 16V7M17 16v-8"/></svg></span><div><h3>Noch keine bezahlten Bestellungen</h3><p>Hier erscheint der Verlauf, sobald echte Zahlungen vom Zahlungsanbieter bestätigt wurden.</p></div></div><p class="muted" style="font-size:13px;margin:14px 0 0">Zahlungen zählen erst nach signierter Bestätigung des Zahlungsanbieters.</p></div></section>
+<section class="panel" aria-labelledby="was-gerade-passiert-h"><div class="panel-head"><div><h2 id="was-gerade-passiert-h">Was gerade passiert</h2><p>Im Hintergrund, automatisch organisiert</p></div>
+<a class="linkbtn" href="/dashboard/aktivitaeten">Alle <svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4.5 12h15m-6-6 6 6-6 6"/></svg></a></div><div class="panel-body"><div class="empty"><span class="badge"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3.5 13 6 5.5h12l2.5 7.5v5A1.5 1.5 0 0 1 19 19.5H5A1.5 1.5 0 0 1 3.5 18Z"/><path d="M3.5 13H8l1.5 2.5h5L16 13h4.5"/></svg></span><div><h3>Noch keine Aktivitäten</h3><p>Hier erscheint, was dein Unternehmen im Hintergrund erledigt – sobald echte Vorgänge stattfinden.</p></div></div></div></section>
+</div>
+<div class="grid2">
+<section class="panel" aria-labelledby="braucht-deinen-blick-h"><div class="panel-head"><div><h2 id="braucht-deinen-blick-h">Braucht deinen Blick</h2><p>Nur echte Ausnahmen – alles andere läuft automatisch</p></div>
+</div><div class="panel-body"><div class="empty"><span class="badge"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5"/><path d="m8.3 12.3 2.6 2.6 4.8-5.2"/></svg></span><div><h3>Keine offenen Punkte</h3><p>Es gibt nichts, das deine Entscheidung braucht.</p></div></div></div></section>
+<section class="panel" aria-labelledby="dein-unternehmen-arbeitet-h"><div class="panel-head"><div><h2 id="dein-unternehmen-arbeitet-h">Dein Unternehmen arbeitet</h2><p>Status des Autopiloten</p></div>
+</div><div class="panel-body"><p style="margin:4px 0 8px"><span class="tag"><span class="dot" aria-hidden="true"></span>Testbetrieb</span></p><p class="muted" style="margin:0">Alle Abläufe laufen automatisch – aber nur mit Testzahlungen. Echte Verkäufe sind gesperrt, bis alle Live-Freigaben erteilt sind.</p>
+<p style="margin:14px 0 6px;font-weight:600">Live-Freigaben: 0 von 12</p><div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="12" aria-valuenow="0" aria-label="Erteilte Live-Freigaben"><span style="width:0%"></span></div>
+<p class="muted" style="font-size:13px;margin:10px 0 0">Zusätzliche Software-Fixkosten: <strong>0 €</strong> freigegeben. Kostenpflichtige Dienste sind technisch gesperrt.</p>
+<details class="explain"><summary><svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5"/><path d="M12 11v5M12 8h.01"/></svg>Was bedeutet das?</summary><p>Der Echtbetrieb wird erst möglich, wenn du alle zwölf Live-Freigaben (Unternehmen, Steuer, Zahlungsanbieter, Rechtstexte, Datenschutz) mit Nachweis erteilt hast. Bis dahin laufen alle Abläufe nur mit Testzahlungen.</p></details></div></section>
+</div>
+<section class="panel" aria-labelledby="letzte-auftra-ge-h"><div class="panel-head"><div><h2 id="letzte-auftra-ge-h">Letzte Aufträge</h2><p>Von der Bestellung bis zur Auszahlung – jederzeit nachvollziehbar</p></div>
+<a class="linkbtn" href="/dashboard/auftraege">Alle Aufträge <svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4.5 12h15m-6-6 6 6-6 6"/></svg></a></div><div class="panel-body flush"><div class="table-wrap"><table><caption class="sr-only">Letzte Aufträge</caption><thead><tr><th scope="col">Auftrag</th><th scope="col">Kunde</th><th scope="col">Status</th><th scope="col" class="amount">Betrag</th></tr></thead><tbody><tr class="empty-row"><td colspan="4"><div class="empty"><span class="badge"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3.5 13 6 5.5h12l2.5 7.5v5A1.5 1.5 0 0 1 19 19.5H5A1.5 1.5 0 0 1 3.5 18Z"/><path d="M3.5 13H8l1.5 2.5h5L16 13h4.5"/></svg></span><div><h3>Noch keine Verkäufe</h3><p>Sobald echte Vorgänge stattfinden, erscheinen sie hier automatisch.</p></div></div></td></tr></tbody></table></div></div></section>
+<p class="foot">INFINITY EARN 15.0 · Alle Beträge stammen aus provider-bestätigten Buchungen. Bankeingänge zählen erst nach unabhängiger Bankbestätigung.</p>
+</main></div><nav class="tabbar" aria-label="Hauptnavigation (mobil)"><a href="/dashboard" aria-current="page"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg><span>Übersicht</span></a><a href="/dashboard/kunden"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="9" cy="8" r="3.2"/><path d="M3 20v-1.5C3 15.5 5.5 13.5 9 13.5s6 2 6 5V20M16 4.8a3.2 3.2 0 0 1 0 6.2M18 14c2.3.6 3 2.3 3 4.2V20"/></svg><span>Kunden</span></a><a href="/dashboard/auftraege"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 7.5A2.5 2.5 0 0 1 5.5 5H10l2 2h6.5A2.5 2.5 0 0 1 21 9.5v8a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5Z"/></svg><span>Aufträge</span></a><a href="/dashboard/produkte"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m12 2.8 8.5 4.7v9L12 21.2l-8.5-4.7v-9Z"/><path d="m3.6 7.6 8.4 4.7 8.4-4.7M12 12.3v8.9"/></svg><span>Produkte</span></a><details><summary aria-label="Weitere Bereiche"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="5.5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="18.5" cy="12" r="1.3"/></svg><span>Mehr</span></summary><div class="menu">
+<a href="/dashboard/finanzen"><svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4.5 6h14A2.5 2.5 0 0 1 21 8.5v9a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5V7.5A1.5 1.5 0 0 1 4.5 6Zm0 0 11-2.7a1.5 1.5 0 0 1 1.9 1.4V6"/><path d="M16 13h2.5"/></svg>Finanzen</a><a href="/dashboard/berichte"><svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3.5 3.5v17h17"/><path d="M8 16v-5M12.5 16V7M17 16v-8"/></svg>Berichte</a>
+<hr><a href="/dashboard/einstellungen"><svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>Einstellungen</a><a href="/dashboard/aktivitaeten"><svg class="ico sm" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8.5 6.5h12M8.5 12h12M8.5 17.5h12M4 6.5h.01M4 12h.01M4 17.5h.01"/></svg>Aktivitäten</a></div></details></nav></body></html>

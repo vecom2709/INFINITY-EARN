@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Order",
+  "type": "object",
+  "required": [
+    "order_id",
+    "quote_id",
+    "payment_state",
+    "fulfillment_state",
+    "test_mode"
+  ],
+  "properties": {
+    "order_id": {
+      "type": "string"
+    },
+    "quote_id": {
+      "type": "string"
+    },
+    "payment_state": {
+      "enum": [
+        "UNPAID",
+        "PENDING",
+        "CONFIRMED",
+        "FAILED",
+        "REFUNDED",
+        "DISPUTED"
+      ]
+    },
+    "fulfillment_state": {
+      "enum": [
+        "NOT_STARTED",
+        "QUEUED",
+        "IN_PRODUCTION",
+        "QA_FAILED",
+        "QA_PASSED",
+        "DELIVERED",
+        "CANCELLED"
+      ]
+    },
+    "provider_event_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "test_mode": {
+      "type": "boolean"
+    }
+  }
+}

@@ -1,0 +1,43 @@
+// INFINITY EARN – STAGING auf Cloudflare Workers (Free-Tarif). Kein Live-Modus.
+// Geheimnisse NICHT hier eintragen: `npx wrangler secret put NAME` bzw. lokal in .dev.vars (git-ignoriert).
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "infinity-earn-staging",
+  "main": "apps/worker/src/index.ts",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "durable_objects": {
+    "bindings": [{ "name": "CORE", "class_name": "InfinityCore" }]
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["InfinityCore"] }],
+  // Tägliche verschlüsselte Sicherung (Workers KV, Free-Tarif; kein R2, da dort eine Zahlungsart nötig wäre).
+  "kv_namespaces": [{ "binding": "BACKUPS", "id": "7dc1c6f0c4ac440db0d5ff0636937758" }],
+  "vars": {
+    "ENVIRONMENT": "staging",
+    // Fest gesetzt: der DO-Alarm kann den Kern vor der ersten Anfrage starten (dann gäbe es keine Request-Origin → keine Secure-Cookies).
+    "APP_PUBLIC_ORIGIN": "https://infinity-earn-staging.bikerman01.workers.dev",
+    "PAYMENT_PROVIDER": "stripe",
+    // Eigentümer-Entscheidungen (Anweisung im Chat, 2026-11-12) – werden beim Start einmalig und protokolliert angewendet.
+    // Erteilen KEINE Live-Freigaben und schalten keinen Echtbetrieb ein.
+    "OWNER_DECISION_REF": "Owner-Anweisung im Chat 2026-11-12: Sitz Italien, alle Produkte, Kundensuche automatisch",
+    "OWNER_SEAT_COUNTRY": "IT",
+    "OWNER_ALLOWED_CAPABILITIES": "b2b-calc-csv,b2b-calc-pdf,b2b-calc-bundle",
+    "ALLOWED_CAPABILITIES": "b2b-calc-csv,b2b-calc-pdf,b2b-calc-bundle",
+    "OWNER_APPROVE_TED_TERMS": "TED Legal Notice (Wiederverwendung erlaubt, Beschluss 2011/833/EU) geprüft 2026-11-12",
+    "MAX_NEW_MONTHLY_FIXED_COST_EUR": "0",
+    "ALLOW_PAID_APIS": "false",
+    "ALLOW_AUTO_UPGRADE": "false",
+    "ALLOW_PAID_ADS": "false",
+    "ALLOW_NEW_FINANCIAL_COMMITMENTS": "false",
+    "LIVE_SALES_ENABLED": "false",
+    "AUTO_MARKETING_OUTREACH": "false",
+    "ALLOW_UNREVIEWED_DEPLOY": "false",
+    "QUOTE_CURRENCY": "EUR",
+    "LEGAL_JURISDICTION": "NOT_CONFIGURED",
+    "OWNER_BUSINESS_STATUS": "NOT_VERIFIED",
+    "AI_DAILY_TASK_LIMIT": "0",
+    "FREE_TIER_DAILY_REQUEST_LIMIT": "80000",
+    "FREE_TIER_THROTTLE_AT_BPS": "8000"
+  },
+  "observability": { "enabled": true }
+}

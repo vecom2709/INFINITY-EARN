@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Invoice",
+  "type": "object",
+  "required": [
+    "invoice_id",
+    "order_id",
+    "issued_by_registered_business",
+    "invoice_number",
+    "currency",
+    "tax_context",
+    "status",
+    "test_mode"
+  ],
+  "properties": {
+    "invoice_id": {
+      "type": "string"
+    },
+    "order_id": {
+      "type": "string"
+    },
+    "issued_by_registered_business": {
+      "type": "boolean"
+    },
+    "invoice_number": {
+      "type": "string"
+    },
+    "currency": {
+      "type": "string"
+    },
+    "tax_context": {
+      "type": "string"
+    },
+    "sdi_reference": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "status": {
+      "enum": [
+        "DRAFT",
+        "TAX_REVIEW",
+        "ISSUED",
+        "SUBMITTED",
+        "ACCEPTED",
+        "REJECTED",
+        "CREDITED"
+      ]
+    },
+    "test_mode": {
+      "type": "boolean"
+    }
+  }
+}

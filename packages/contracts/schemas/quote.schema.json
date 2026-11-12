@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Quote",
+  "type": "object",
+  "required": [
+    "quote_id",
+    "lead_id",
+    "description",
+    "gross_total_minor",
+    "currency",
+    "scope",
+    "accepted"
+  ],
+  "properties": {
+    "quote_id": {
+      "type": "string"
+    },
+    "lead_id": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "gross_total_minor": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "currency": {
+      "type": "string",
+      "pattern": "^[A-Z]{3}$"
+    },
+    "scope": {
+      "type": "string"
+    },
+    "accepted": {
+      "type": "boolean"
+    },
+    "customer_acceptance_ref": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  }
+}

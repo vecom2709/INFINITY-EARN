@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      # IE-089: kritische Schwachstellen in Abhängigkeiten blockieren den Release.
+      - run: npm audit --audit-level=critical
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm test
+      - run: npm run test:e2e
+      - run: npm run test:matrix
+      - run: npm run build
+      - run: npm run dryrun
+      - name: Env-/Schema-Check (Testmodus, keine Secrets)
+        run: npm run check:env
+        env:
+          ENVIRONMENT: test

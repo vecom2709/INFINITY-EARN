@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Lead",
+  "type": "object",
+  "required": [
+    "lead_id",
+    "source_url",
+    "source_terms_checked",
+    "contact_legal_basis",
+    "status"
+  ],
+  "properties": {
+    "lead_id": {
+      "type": "string"
+    },
+    "source_url": {
+      "type": "string",
+      "format": "uri"
+    },
+    "source_terms_checked": {
+      "type": "boolean"
+    },
+    "contact_legal_basis": {
+      "enum": [
+        "consent",
+        "permitted_inbound",
+        "other_reviewed",
+        "none"
+      ]
+    },
+    "consent_proof_ref": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "buyer_signal": {
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "DISCOVERED",
+        "SOURCE_COMPLIANT",
+        "QUALIFIED",
+        "BLOCKED",
+        "CLOSED"
+      ]
+    }
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "project": "INFINITY EARN 5.0",
+  "status": "SPECIFICATION_ONLY",
+  "independent_of": [
+    "Trendo OS",
+    "Vecom Design",
+    "Studio Breve"
+  ],
+  "milestones": [
+    {
+      "id": "M0",
+      "title": "Grundlage",
+      "completed": false
+    },
+    {
+      "id": "M1",
+      "title": "Demand to Offer",
+      "completed": false
+    },
+    {
+      "id": "M2",
+      "title": "Payment to Fulfillment",
+      "completed": false
+    },
+    {
+      "id": "M3",
+      "title": "Business Readiness",
+      "completed": false
+    },
+    {
+      "id": "M4",
+      "title": "Erster echter Verkauf",
+      "completed": false
+    },
+    {
+      "id": "M5",
+      "title": "Legal Acquisition Automation",
+      "completed": false
+    },
+    {
+      "id": "M6",
+      "title": "Scale and Controlled Self-Improvement",
+      "completed": false
+    }
+  ],
+  "hard_gates": {
+    "live_sales_enabled": false,
+    "paid_apis_allowed": false,
+    "new_monthly_fixed_cost_eur": 0,
+    "unreviewed_deploy_allowed": false,
+    "marketing_outreach_allowed": false
+  },
+  "acceptance_test_count": 100,
+  "note": "No production software is included. Claude Code must implement and test it."
+}

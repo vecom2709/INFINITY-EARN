@@ -1,0 +1,4 @@
+{
+  "IE-089": "Teilweise: CI-Schritt `npm audit --audit-level=critical` in .github/workflows/ci.yml blockiert kritische Releases. Kein lokaler Test, da Netzwerkzugriff nötig; Nachweis erst mit erstem GitHub-Actions-Lauf (kein Git/GitHub-Repo in dieser Umgebung).",
+  "IE-097": "Offen (M6): Sandbox-Codeverbesserung -> PR benötigt Git + GitHub-Repository. Policy-Gates für Deploy (IE-098/IE-099) sind bereits automatisiert."
+}

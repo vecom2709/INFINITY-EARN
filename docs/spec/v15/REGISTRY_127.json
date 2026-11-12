@@ -1,0 +1,915 @@
+{
+  "project": "INFINITY EARN",
+  "version": "15.0",
+  "status": "approved requirements, NOT implemented",
+  "independent_of": [
+    "Trendo OS",
+    "Vecom Design",
+    "Studio Breve"
+  ],
+  "approved_ids": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39,
+    40,
+    41,
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    50,
+    51,
+    52,
+    53,
+    54,
+    55,
+    56,
+    57,
+    58,
+    59,
+    60,
+    61,
+    62,
+    63,
+    64,
+    65,
+    66,
+    67,
+    68,
+    69,
+    70,
+    71,
+    72,
+    73,
+    74,
+    75,
+    76,
+    77,
+    78,
+    79,
+    80,
+    81,
+    82,
+    83,
+    84,
+    85,
+    86,
+    87,
+    88,
+    89,
+    90,
+    91,
+    92,
+    93,
+    94,
+    95,
+    96,
+    97,
+    98,
+    99,
+    100,
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    111,
+    112,
+    113,
+    114,
+    115,
+    116,
+    117,
+    118,
+    119,
+    120,
+    121,
+    122,
+    123,
+    124,
+    125,
+    126,
+    127,
+    128,
+    129,
+    130
+  ],
+  "rejected_ids": [
+    48,
+    49,
+    110
+  ],
+  "policy": {
+    "monthly_additional_software_budget_eur": 0,
+    "default_paid_external_services": false,
+    "live_enabled": false,
+    "demo_and_live_separated": true,
+    "owner_rules_required": true
+  },
+  "modules": [
+    {
+      "n": 1,
+      "title": "AI CEO – Autonomous Business Director",
+      "goal": "Priorisiert Gelegenheiten, plant zulässige Aufgaben, steuert Umsatz-, Kosten- und Qualitätsziele und erstellt tägliche Eigentümerberichte.",
+      "gate": "Kann keine unveränderlichen Policies, Zahlungsempfänger oder rechtliche Freigaben überschreiben."
+    },
+    {
+      "n": 2,
+      "title": "Global Market Intelligence",
+      "goal": "Erfasst zulässige öffentliche Nachfrage, Ausschreibungen und Quellenbelege für konkrete Geschäftsoptionen.",
+      "gate": "Quellenrechte, Aktualität und Plattformbedingungen müssen geprüft sein."
+    },
+    {
+      "n": 3,
+      "title": "Opportunity Scoring",
+      "goal": "Bewertet Kaufabsicht, Kosten, Marge, Wettbewerb, Machbarkeit und Risiken mit nachvollziehbaren Kriterien.",
+      "gate": "Scores sind Hypothesen; keine garantierte Nachfrage oder Gewinnwahrscheinlichkeit behaupten."
+    },
+    {
+      "n": 4,
+      "title": "Autonomous Customer Acquisition",
+      "goal": "Bearbeitet eingehende Anfragen und zulässige Marketing- und Ausschreibungskanäle.",
+      "gate": "Keine unverlangte Direktwerbung ohne erforderliche Rechtsgrundlage oder verbotene Bots."
+    },
+    {
+      "n": 5,
+      "title": "AI Sales & Negotiation",
+      "goal": "Erstellt Briefings, Angebote und Verhandlungsantworten mit fixierten Leistungsumfängen.",
+      "gate": "Nur genehmigte Preisgrenzen und rechtsgültige Annahmewege verwenden."
+    },
+    {
+      "n": 6,
+      "title": "Universal Product Factory",
+      "goal": "Fertigt verschiedene digitale Produkte über versionierte, geprüfte Produktionsadapter.",
+      "gate": "Keine ungetestete oder lizenzrechtlich unsichere Ware als fertig kennzeichnen."
+    },
+    {
+      "n": 7,
+      "title": "Software, Web & API Builder",
+      "goal": "Erstellt geprüfte Webanwendungen, Software-Werkzeuge, APIs, Plugins und technische Dokumentation.",
+      "gate": "Nur deployen, wenn Tests, Betrieb und Wartung nachweislich abgesichert sind."
+    },
+    {
+      "n": 8,
+      "title": "Creative & Media Factory",
+      "goal": "Erstellt Designs, Dokumente, Audio, Video, 3D und andere kreative Leistungen bei vorhandener technischer Kapazität.",
+      "gate": "Rechte, kommerzielle Nutzbarkeit und Ressourcenlimits vor der Zusage prüfen."
+    },
+    {
+      "n": 9,
+      "title": "AI Quality Director",
+      "goal": "Prüft technische Funktionen, Inhalte, Dateiformate und vereinbarte Abnahmekriterien.",
+      "gate": "Kein Produkt ohne bestandene Qualitätsschranke ausliefern."
+    },
+    {
+      "n": 10,
+      "title": "Autonomous Order Management",
+      "goal": "Verknüpft Bestellungen, verifizierte Zahlungen, Produktionsjobs und Liefernachweise.",
+      "gate": "Kein Produktionsstart aus einem unbestätigten Browser-Redirect."
+    },
+    {
+      "n": 11,
+      "title": "Subscription Management",
+      "goal": "Verwaltet transparente Abos, Verlängerungen, Zugänge und Kündigungen.",
+      "gate": "Abos und Kündigungen müssen gesetzlichen und vertraglichen Regeln entsprechen."
+    },
+    {
+      "n": 12,
+      "title": "AI Customer Support & Returns",
+      "goal": "Bearbeitet Supportanfragen, Reklamationen und Rückerstattungsprozesse.",
+      "gate": "Kundenrechte, Fristen und definierte Erstattungsgrenzen einhalten."
+    },
+    {
+      "n": 13,
+      "title": "Marketing Intelligence",
+      "goal": "Prüft SEO-, Verkaufs- und Marketingmaßnahmen anhand echter Kunden- und Verkaufsdaten.",
+      "gate": "Keine erfundenen Referenzen, Fakebewertungen oder unzulässige Kontaktaufnahme."
+    },
+    {
+      "n": 14,
+      "title": "Revenue Optimizer",
+      "goal": "Verbessert Preisgestaltung und Verkaufswege durch begrenzte, dokumentierte Experimente.",
+      "gate": "Keine Kauftricks, irreführende Preisangaben oder riskante Budgetüberschreitungen."
+    },
+    {
+      "n": 15,
+      "title": "Financial Controller",
+      "goal": "Bucht tatsächliche Einnahmen, Gebühren, Kosten, offene Forderungen und Auszahlungen nachvollziehbar.",
+      "gate": "Umsatz, Gewinn, Guthaben beim Zahlungsanbieter und Bankgutschrift strikt trennen."
+    },
+    {
+      "n": 16,
+      "title": "Tax & Invoice Engine",
+      "goal": "Erstellt erforderliche Rechnungsdatensätze und steuerliche Auswertungen nach geprüften Regeln.",
+      "gate": "Bei unbekanntem Steuerkontext oder fehlenden Pflichtdaten stoppen und Fachprüfung anfordern."
+    },
+    {
+      "n": 17,
+      "title": "Legal Compliance Guard",
+      "goal": "Prüft Datenschutz, Werbung, Lizenzen, Verbraucherrechte und Plattformbedingungen.",
+      "gate": "Unklare oder erlaubnispflichtige Geschäfte nicht automatisch freigeben."
+    },
+    {
+      "n": 18,
+      "title": "Business Expansion AI",
+      "goal": "Startet nachfragegeprüfte neue Geschäftslinien in kleinen, budgetbegrenzten Schritten.",
+      "gate": "Skalierung nur bei nachgewiesener Wirtschaftlichkeit."
+    },
+    {
+      "n": 19,
+      "title": "Operational Reliability Director",
+      "goal": "Überwacht Gesundheit, Fehler, Wiederholungen und sichere Wiederaufnahme kritischer Kernprozesse.",
+      "gate": "Keine selbstständige Abschwächung von Zugangskontrollen oder Kostenregeln."
+    },
+    {
+      "n": 20,
+      "title": "Controlled Self-Improvement",
+      "goal": "Schlägt Code- und Prozessverbesserungen vor, testet sie isoliert und dokumentiert Releases.",
+      "gate": "Produktionssystem und Live-Finanzprozesse nicht ungeprüft verändern."
+    },
+    {
+      "n": 21,
+      "title": "Autonomous Demand Hunter",
+      "goal": "Kaufbereite Nachfrage entdecken statt wahllos Produkte produzieren.",
+      "gate": "Kein Scraping gegen Nutzungsbedingungen; keine Kontaktdaten als Versandgenehmigung interpretieren."
+    },
+    {
+      "n": 22,
+      "title": "Customer-First Production",
+      "goal": "Erst Auftrag und Zahlung sichern, dann individuell produzieren.",
+      "gate": "Ohne signierte Zahlungserkennung kein Produktionsstart; Zahlungsredirect reicht nicht."
+    },
+    {
+      "n": 23,
+      "title": "AI Business Opportunity Predictor",
+      "goal": "Neue Geschäftsfelder nach belegbarer Nachfrage und kleinen Tests priorisieren.",
+      "gate": "Kein Geld für ungeprüfte Experimente; Score ist keine Erfolgsgarantie."
+    },
+    {
+      "n": 24,
+      "title": "Autonomous Acquisition Network",
+      "goal": "Rechtssichere, mehrkanalige Kundengewinnung ohne tägliche Handarbeit.",
+      "gate": "Elektronische Direktwerbung nur bei geprüfter Rechtsgrundlage; unterdrückte Empfänger niemals anschreiben."
+    },
+    {
+      "n": 25,
+      "title": "AI-to-AI Commerce",
+      "goal": "Produkte über dokumentierte APIs an andere zulässige KI-Systeme verkaufen.",
+      "gate": "Keine Dienstleistung ohne nachgewiesenen Zahlungsschutz, keine inoffiziellen Wallet-Zugriffe."
+    },
+    {
+      "n": 26,
+      "title": "Self-Building Microbusinesses",
+      "goal": "Aus validierten Nischen eigenständige Produktlinien ohne neue Rechtspersonen eröffnen.",
+      "gate": "Keine automatische Gründung juristischer Gesellschaften, keine neue kostenpflichtige Domain."
+    },
+    {
+      "n": 27,
+      "title": "Intelligent Marketplace Integration",
+      "goal": "Verkaufs- und Auftragsplattformen über offizielle zulässige Schnittstellen anbinden.",
+      "gate": "Keine Bot-Umgehung, keine Plattformaccounts unter falscher Identität."
+    },
+    {
+      "n": 28,
+      "title": "Autonomous Negotiation Pro",
+      "goal": "Standardangebote und Verhandlungen nach genehmigten Rahmenbedingungen führen.",
+      "gate": "Keine falschen Versprechen, keine Vertragsklauseln außerhalb Owner-Policy."
+    },
+    {
+      "n": 29,
+      "title": "Universal Product Fusion",
+      "goal": "Mehrere Produktverfahren zu einem vollständigen, testbaren Paket kombinieren.",
+      "gate": "Keine fremden Assets ohne Rechte, keine ungetesteten Gesamtprodukte ausliefern."
+    },
+    {
+      "n": 30,
+      "title": "Global Sales & Localization",
+      "goal": "Angebote und Dienstleistungen verständlich und regelkonform in mehreren Märkten anbieten.",
+      "gate": "Keine pauschale Steuerbehandlung oder ungeprüfte rechtliche Übersetzung."
+    },
+    {
+      "n": 31,
+      "title": "Product Recycling & Licensing",
+      "goal": "Aus eigenen rechtlich wiederverwendbaren Ergebnissen standardisierte Produkte ableiten.",
+      "gate": "Kunden-IP oder vertrauliche Daten niemals ungeprüft weiterverkaufen."
+    },
+    {
+      "n": 32,
+      "title": "Autonomous Subscription Builder",
+      "goal": "Wiederkehrende digitale Dienste mit rechtlich sauberer Anmeldung und Kündigung betreiben.",
+      "gate": "Keine versteckten Abos, unklare Verlängerung oder automatische Kosten ohne Kundenakzeptanz."
+    },
+    {
+      "n": 33,
+      "title": "Self-Optimizing Sales Funnel",
+      "goal": "Verkaufsprozesse anhand echter Käufe statt manipulativer Metriken verbessern.",
+      "gate": "Kein Gewinner allein aufgrund zufälliger Kleinstichprobe oder erfundener Käufe."
+    },
+    {
+      "n": 34,
+      "title": "Customer Trust & Reputation Engine",
+      "goal": "Echte Qualität und authentisches Kundenfeedback sichtbar machen.",
+      "gate": "Keine erfundenen Testimonials, keine bezahlten Scheinbewertungen."
+    },
+    {
+      "n": 35,
+      "title": "Autonomous Fraud & Risk Shield",
+      "goal": "Betrug, Disputes und schädliche Aufträge früh erkennen.",
+      "gate": "Keine unzulässigen sensiblen Profile; keine selbständigen Strafanzeigen."
+    },
+    {
+      "n": 36,
+      "title": "Revenue Protection & Recovery",
+      "goal": "Offene Zahlungsfälle, abgebrochene Bestellungen und Abos rechtmäßig bearbeiten.",
+      "gate": "Keine eigenmächtigen Inkassodrohungen, keine Doppelabbuchungen."
+    },
+    {
+      "n": 37,
+      "title": "Zero-Cost Resource Intelligence",
+      "goal": "Jede Aufgabe innerhalb Null-Zusatzkostenpolicy und Claude-Limits ausführen.",
+      "gate": "Zero-Fixkosten bedeutet nicht Null-Transaktionskosten oder keine Betriebspflichten."
+    },
+    {
+      "n": 38,
+      "title": "Autonomous Business Recovery",
+      "goal": "Ausfälle sicher beheben, ohne unzulässige Wiederholungen oder Doppelbuchungen.",
+      "gate": "Reparatur darf keine doppelten Zahlungen oder unsicheren Deploys verursachen."
+    },
+    {
+      "n": 39,
+      "title": "Financial & Tax Evidence Vault",
+      "goal": "Steuerlich und betriebswirtschaftlich relevante Belege nachvollziehbar archivieren.",
+      "gate": "Technische Speicherung ersetzt keine gesetzeskonforme elektronische Aufbewahrung; Fachprüfung nötig."
+    },
+    {
+      "n": 40,
+      "title": "Verified Profit Autopilot",
+      "goal": "Nur anhand nachgewiesener Deckungsbeiträge skalieren.",
+      "gate": "Keine Erfolgsversprechen; nicht eingegangene Gelder sind kein Bankguthaben."
+    },
+    {
+      "n": 41,
+      "title": "Autonomous Buyer Network",
+      "goal": "Betreibt einen eigenen freiwilligen Anfragekanal, der Kundenwünsche erfasst, bewertet und zu bezahlbaren Angeboten führt.",
+      "gate": "Kein Kundeninteresse ohne ausdrückliche Bestätigung als verbindliche Bestellung verbuchen."
+    },
+    {
+      "n": 42,
+      "title": "AI Contract & Deal Closer",
+      "goal": "Erstellt Leistungsbeschreibungen, geprüfte Vertragsvorlagen, Annahme- und Zahlungsprozesse.",
+      "gate": "Unklare Vertragsklauseln, fehlende Rechtsgrundlage und Zahlungsrisiken blockieren Abschluss."
+    },
+    {
+      "n": 43,
+      "title": "Instant Product Preview Engine",
+      "goal": "Erstellt eine kleine, kostenlimitierte Vorschau vor dem Verkauf und trennt Demo- von Vollprodukt.",
+      "gate": "Keine aufwendige kostenlose Individualproduktion oder fremde Daten in Vorschauen."
+    },
+    {
+      "n": 44,
+      "title": "Autonomous Production Intelligence",
+      "goal": "Wählt nach Produktkategorie, Kapazität, Kosten und Qualität passende Herstellungswerkzeuge und Arbeitsabläufe.",
+      "gate": "Kein Angebot ohne belegte Herstellbarkeit und Ressourcenprüfung."
+    },
+    {
+      "n": 45,
+      "title": "Multi-Agent Decision Council",
+      "goal": "Lässt bei kritischen Fragen unabhängige Prüfer Entscheidungen und Belege vergleichen.",
+      "gate": "Uneinigkeit bei kritischen Vorgängen führt zur Prüfung statt blindem Mehrheitsentscheid."
+    },
+    {
+      "n": 46,
+      "title": "Universal Intellectual Property Guardian",
+      "goal": "Überprüft Herkunft, Lizenzen und kommerzielle Wiederverwendungsrechte von Produktbestandteilen.",
+      "gate": "Kundenexklusive Werke und fremde Schutzrechte nicht in neue Angebote übernehmen."
+    },
+    {
+      "n": 47,
+      "title": "Autonomous Customer Success Engine",
+      "goal": "Prüft, ob Lieferungen funktionieren, organisiert vereinbarte Nachbesserungen und sammelt verifizierbare Ergebnisse.",
+      "gate": "Keine erfundenen Kundenerfolge oder unberechtigten Zusatzverkäufe."
+    },
+    {
+      "n": 50,
+      "title": "Autonomous Portfolio Director",
+      "goal": "Vergleicht alle Geschäftsbereiche nach realem Deckungsbeitrag und Ressourcenbedarf und priorisiert rentable Aktivitäten.",
+      "gate": "Kostengrenzen und getrennte Bestellungen niemals überschreiben."
+    },
+    {
+      "n": 51,
+      "title": "Verified Buyer Intelligence",
+      "goal": "Bewertet nachweisbare Zahlungssignale und trennt unverbindliche Interessenten von konkret zahlungsbereiten Käufern.",
+      "gate": "Keine Kaufzusage aus einem Klick oder einer Suchanfrage ableiten."
+    },
+    {
+      "n": 52,
+      "title": "Autonomous Customer Interview AI",
+      "goal": "Führt über freigegebene Kanäle Bedarfsgespräche und erstellt freizugebende strukturierte Anforderungsprofile.",
+      "gate": "Keine verdeckte Identitätsvortäuschung; relevante KI-Kommunikation transparent machen."
+    },
+    {
+      "n": 53,
+      "title": "Instant Business Execution Compiler",
+      "goal": "Übersetzt vereinbarte Anforderungen in Aufgabengraphen, Werkzeugzuordnung, Tests und Auslieferungsartefakte.",
+      "gate": "Keine stillschweigende Scope-Erweiterung oder nicht bestätigte Deadlines."
+    },
+    {
+      "n": 54,
+      "title": "Verified Money Flow Ledger",
+      "goal": "Verknüpft Bestellung, Zahlungsanbieter-Transaktion, Gebühren, Rechnung, Auszahlung und belegten Bankeingang.",
+      "gate": "Bankgutschrift erst nach vertrauenswürdiger Bankabstimmung als bestätigt ausweisen."
+    },
+    {
+      "n": 55,
+      "title": "Universal Capability Discovery",
+      "goal": "Findet kostenlose Werkzeuge, prüft Lizenzen, Eignung und installierte Versionen, und schlägt validierte Produktionsadapter vor.",
+      "gate": "Keine ungeprüften Downloads oder automatisch kostenpflichtigen Lizenzen aktivieren."
+    },
+    {
+      "n": 56,
+      "title": "Smart Monetization Architect",
+      "goal": "Wählt aus Einzelverkauf, Abo, Lizenz oder nutzungsbezogener Abrechnung das plausible Einnahmemodell.",
+      "gate": "Keine rechtlich ungeprüften Zahlungs- oder Abonnementkonstruktionen."
+    },
+    {
+      "n": 57,
+      "title": "Autonomous Delivery Warranty",
+      "goal": "Überwacht vereinbarte Gewährleistungsfälle und technische Beschwerden und organisiert regelkonforme Abhilfe.",
+      "gate": "Gesetzliche Kundenrechte nicht per Automatisierung verkürzen."
+    },
+    {
+      "n": 58,
+      "title": "Intelligent Customer Expansion",
+      "goal": "Erkennt passende Zusatzbedürfnisse bestehender Kunden und erstellt zulässige, relevante Zusatzangebote.",
+      "gate": "Kein Werbeversand ohne gültige Rechtsgrundlage; Widerspruch beachten."
+    },
+    {
+      "n": 59,
+      "title": "Profit-Aware Capacity Shield",
+      "goal": "Prüft vor Auftragszusage Tokens, Compute, Warteschlange, Fristen und Mindestmarge.",
+      "gate": "Fehlende Kapazität führt zu Warteschlange oder Absage, nicht zur Kostenüberschreitung."
+    },
+    {
+      "n": 60,
+      "title": "Independent AI Business Auditor",
+      "goal": "Vergleicht Aussagen des AI CEO mit Belegen aus Zahlungen, Lieferprotokollen und Kontrollregeln.",
+      "gate": "Audit darf nicht vom geprüften KI-Agenten selbst überschrieben werden."
+    },
+    {
+      "n": 61,
+      "title": "Global Paid Opportunity Hunter",
+      "goal": "Sucht zulässige öffentliche Bounties, Ausschreibungen und konkrete vergütete Aufgaben mit Belegen für die tatsächliche Vergütung.",
+      "gate": "Teilnahmeberechtigung, Automationsregeln und Auszahlungsvoraussetzungen nachweisen."
+    },
+    {
+      "n": 62,
+      "title": "Autonomous Tender & Proposal Engine",
+      "goal": "Erstellt technische Angebote, Preise und Antragsunterlagen für passende Vergabeverfahren.",
+      "gate": "Kein fingierter Nachweis; automatische Einreichung nur bei erlaubtem Prozess."
+    },
+    {
+      "n": 63,
+      "title": "Collective Buyer Demand Engine",
+      "goal": "Bündelt identische Bedarfe mehrerer Käufer und initiiert gemeinsam finanzierte Produktentwicklungen.",
+      "gate": "Vorbestellungen und Rückerstattungsrechte müssen transparent und rechtlich zulässig sein."
+    },
+    {
+      "n": 64,
+      "title": "Custom-to-SaaS Transformation",
+      "goal": "Wandelt erfolgreiche eigenentwickelte Individualwerkzeuge in allgemeine SaaS-Produkte um.",
+      "gate": "Kundendaten, Kundengeheimnisse und Exklusivrechte konsequent ausschließen."
+    },
+    {
+      "n": 65,
+      "title": "White-Label Revenue Network",
+      "goal": "Bietet eigene Produkte für lizenzierte Weiterverkäufe unter Partnerbranding an.",
+      "gate": "Reseller-Vereinbarungen, Nutzungslimits und Umsatzbeteiligung nachvollziehbar regeln."
+    },
+    {
+      "n": 66,
+      "title": "Autonomous Integration Factory",
+      "goal": "Installiert geprüfte Adapter und verbindet Produkte mit freigegebenen Kundensystemen.",
+      "gate": "Nur mit konkreten Berechtigungen und abgestimmten Zugriffsumfängen arbeiten."
+    },
+    {
+      "n": 67,
+      "title": "Precision Usage Billing Engine",
+      "goal": "Misst abrechenbare Nutzungen und erstellt verlässliche Abrechnungen mit Limits und transparenten Belegen.",
+      "gate": "Doppelte Messereignisse, Fehlmessungen oder strittige Positionen nicht berechnen."
+    },
+    {
+      "n": 68,
+      "title": "Autonomous Delivery Scheduler",
+      "goal": "Verteilt Produktionen auf Termin-, Prioritäts- und Ressourcenwarteschlangen.",
+      "gate": "Keine Lieferfrist versprechen, wenn Kapazität fehlt."
+    },
+    {
+      "n": 69,
+      "title": "International Tax & Sales Eligibility Router",
+      "goal": "Prüft Länder-, Produkt- und Käuferregeln vor internationalem Verkauf und routet Rechnungsprozesse.",
+      "gate": "Unbekannte Steuer- oder Verkaufsberechtigung führt zu TAX_REVIEW."
+    },
+    {
+      "n": 70,
+      "title": "Autonomous Growth Experiment Director",
+      "goal": "Testet begrenzte Geschäftschancen mit realen, messbaren Kaufereignissen und Stop-Regeln.",
+      "gate": "Keine Ausgabe ohne Budgetfreigabe; statistisch schwache Ergebnisse nicht als Beweis darstellen."
+    },
+    {
+      "n": 71,
+      "title": "Universal Agent Commerce Gateway",
+      "goal": "Publiziert maschinenlesbare Angebote, Dokumentation und sichere Testzugänge für KI-Einkaufsagenten.",
+      "gate": "Zahlung und Leistungsberechtigung nur nach verifizierter Bestellung aktivieren."
+    },
+    {
+      "n": 72,
+      "title": "Atomic Order-to-Cash Engine",
+      "goal": "Führt Auftrag, Zahlung, Fertigung, Lieferung, Rechnung und Bankabgleich durch eine idempotente Zustandsmaschine.",
+      "gate": "Doppelte Webhooks dürfen niemals doppelte Produktion oder Rechnungen auslösen."
+    },
+    {
+      "n": 73,
+      "title": "Verified Prepayment & Milestone Controller",
+      "goal": "Steuert vertraglich geregelte Anzahlungen und Meilensteinzahlungen für komplexe Produktionen.",
+      "gate": "Kein Start der nächsten bezahlten Phase ohne bestätigte Zahlungs-/Vertragsbedingungen."
+    },
+    {
+      "n": 74,
+      "title": "Autonomous Customer Workspace Provisioner",
+      "goal": "Richtet nach Zahlung Benutzerbereiche, Lizenzen, Konfigurationen und Produktdokumentation automatisch ein.",
+      "gate": "Kein Zugang vor Zahlung; Zugriff auf Kundendaten strikt begrenzen."
+    },
+    {
+      "n": 75,
+      "title": "Universal License & Entitlement Director",
+      "goal": "Verwaltet Lizenzen, Nutzungsplätze, Tokenrechte, Verlängerungen und berechtigte Deaktivierungen.",
+      "gate": "Gültige Kundenansprüche und rechtsgültige Kündigungen berücksichtigen."
+    },
+    {
+      "n": 76,
+      "title": "Autonomous Referral Revenue Alliance",
+      "goal": "Betreibt ein freiwilliges Partnerprogramm mit Tracking, Provisionsabrechnung und Anti-Betrugsregeln.",
+      "gate": "Provisionen nur aus nachweislich berechtigten, tatsächlich bezahlten Transaktionen."
+    },
+    {
+      "n": 77,
+      "title": "AI Dispute Resolution Desk",
+      "goal": "Bearbeitet Kundenstreitigkeiten anhand echter Bestell-, Liefer-, Rechnungs- und Zahlungsbelege.",
+      "gate": "Gesetzliche Widerspruchs- und Erstattungsrechte respektieren."
+    },
+    {
+      "n": 78,
+      "title": "Autonomous Exception Recovery Director",
+      "goal": "Findet bei technischen Störungen zulässige Ersatzwege und setzt nicht lösbare Vorgänge auf sichere Pause.",
+      "gate": "Keine stillen unbegrenzten Wiederholungen, versteckten Gebühren oder falschen Erfolgsstatus."
+    },
+    {
+      "n": 79,
+      "title": "Real-Time True Profit Shield",
+      "goal": "Verknüpft reale Transaktionsgebühren, Ressourcenverbrauch und Rückstellungen mit dem Deckungsbeitrag.",
+      "gate": "Ungeklärte Kosten oder negative Mindestmargen müssen einen sicheren Stopp auslösen."
+    },
+    {
+      "n": 80,
+      "title": "First-Euro-to-Bank Verification Lab",
+      "goal": "Testet getrennt die Kette vom Checkout bis zum unabhängigen Beleg einer echten Bankgutschrift.",
+      "gate": "Testtransaktionen und reale Verkäufe strikt unterscheiden; keine Fake-Gutschriften."
+    },
+    {
+      "n": 81,
+      "title": "Autonomous Demand Knowledge Graph",
+      "goal": "Verknüpft Wünsche, Produktkategorien, Umsätze und Quellen zu belegten Bedarfsclustern.",
+      "gate": "Personenbezogene Daten nur zweckgebunden, sparsam und rechtmäßig verwenden."
+    },
+    {
+      "n": 82,
+      "title": "Self-Reusing Product Component Factory",
+      "goal": "Pflegt getestete eigene Code-, Layout- und Dokumentbausteine zur erneuten Nutzung.",
+      "gate": "Keine unberechtigte Übernahme kundenexklusiver Inhalte oder fremder Komponenten."
+    },
+    {
+      "n": 83,
+      "title": "Autonomous Product Usability Laboratory",
+      "goal": "Prüft Barrieren, Fehler, Fachjargon und unnötige Schritte durch reproduzierbare Nutzungstests.",
+      "gate": "Simulationen nicht als reale Kundentests ausgeben."
+    },
+    {
+      "n": 84,
+      "title": "Contract-to-Acceptance Compiler",
+      "goal": "Übersetzt vereinbarte Vertragsleistungen in testbare Lieferbedingungen und vollständige Nachweisketten.",
+      "gate": "Ohne klaren Scope kein automatisches PASS."
+    },
+    {
+      "n": 85,
+      "title": "Autonomous Sales Claims & Transparency Guard",
+      "goal": "Prüft Verkaufsaussagen, Referenzen, Preise und Angaben zur KI-Beteiligung auf Wahrheit und Belegbarkeit.",
+      "gate": "Unbelegte Erfolgsgarantien, Fake-Testimonials oder irreführende Versprechen blockieren."
+    },
+    {
+      "n": 86,
+      "title": "Self-Service Customer Command Portal",
+      "goal": "Stellt Status, Rechnungen, Lizenzen, Support und Änderungen in einem leicht bedienbaren Kundenbereich bereit.",
+      "gate": "Nur autorisierte Kundendaten anzeigen; Datenschutzanfragen beachten."
+    },
+    {
+      "n": 87,
+      "title": "Autonomous Product Lifecycle Director",
+      "goal": "Plant Aktualisierungen, Versionspflege und Ablösung eigener verkaufter Produkte.",
+      "gate": "Kompatibilitäts- und Migrationsprüfung vor Änderungen von Kundensystemen."
+    },
+    {
+      "n": 88,
+      "title": "Zero-Sales Diagnostic Intelligence",
+      "goal": "Untersucht ausbleibende Verkäufe mit echten Funnel- und technischen Daten und schlägt begrenzte Korrekturen vor.",
+      "gate": "Keine Schuldzuweisung ohne Daten; Null-Umsatz ehrlich darstellen."
+    },
+    {
+      "n": 89,
+      "title": "Official Regulation Change Watcher",
+      "goal": "Beobachtet offizielle Quellen für einschlägige Gesetzesänderungen und meldet Regelprüfbedarf.",
+      "gate": "Keine autonome verbindliche Rechtsberatung ohne zuständigen Fachmenschen."
+    },
+    {
+      "n": 90,
+      "title": "Zero-Touch Owner Governance",
+      "goal": "Reduziert den Eigentümerbedarf auf einmalige Regeln, Ausnahmen und klare Ergebnisberichte.",
+      "gate": "KYC, Steuerpflichten, Vollmachten und gesetzliche Verantwortung bleiben beim Berechtigten."
+    },
+    {
+      "n": 91,
+      "title": "Autonomous Enterprise Procurement Desk",
+      "goal": "Organisiert Unternehmensregistrierung bei Einkäufern, Bestellnummern, Anbieterunterlagen und Liefernachweise.",
+      "gate": "Keine erfundenen Zertifizierungen oder unautorisierte rechtsverbindliche Erklärungen."
+    },
+    {
+      "n": 92,
+      "title": "Smart Scope Change & Paid Upgrade Engine",
+      "goal": "Wandelt zusätzliche Kundenwünsche in transparente Nachtragsangebote um.",
+      "gate": "Unbezahlte Erweiterungen nicht stillschweigend als beauftragt behandeln."
+    },
+    {
+      "n": 93,
+      "title": "Autonomous Product Bundling Intelligence",
+      "goal": "Bündelt eigene Produkte zu sinnvollen Paketen und berechnet verständliche Preise.",
+      "gate": "Keine irreführenden vermeintlichen Rabatte."
+    },
+    {
+      "n": 94,
+      "title": "Evidence-Based Delivery Certification",
+      "goal": "Erstellt pro Auslieferung Prüflogs, Versionen, Prüfsummen und erfüllte Abnahmekriterien.",
+      "gate": "Zertifikat darf keinen ungeprüften Qualitätsnachweis behaupten."
+    },
+    {
+      "n": 95,
+      "title": "AI Revenue Attribution Intelligence",
+      "goal": "Verknüpft zulässige Marketingkanäle mit real bezahlten Verkäufen und Kosten.",
+      "gate": "Einwilligung, Datenminimierung und Messunsicherheit beachten."
+    },
+    {
+      "n": 96,
+      "title": "Universal Accessibility & Localization QA",
+      "goal": "Prüft Sprache, Bedienbarkeit, Kontraste, Tastaturnavigation und regionale Formate.",
+      "gate": "Barrierefreiheit nicht allein durch automatisierte Tests als vollständig zertifiziert darstellen."
+    },
+    {
+      "n": 97,
+      "title": "Autonomous Customer Consent Director",
+      "goal": "Protokolliert Einwilligungen, Abmeldungen und erlaubte Kontaktwege für Kundenkommunikation.",
+      "gate": "Abmeldungen müssen sofort wirksam werden; fehlender Consent blockiert Kontakt."
+    },
+    {
+      "n": 98,
+      "title": "Cash Flow & Payout Forecast Intelligence",
+      "goal": "Prognostiziert verfügbare Mittel aus bestätigten Zahlungen, Fristen, Gebühren und Rücklagen.",
+      "gate": "Ausstehende Provider-Auszahlung nicht als Bankguthaben ausweisen."
+    },
+    {
+      "n": 99,
+      "title": "Autonomous Customer Concentration Risk Monitor",
+      "goal": "Bewertet Abhängigkeiten von einzelnen Kunden, Marktplätzen und Produkten.",
+      "gate": "Keine automatischen Vertragsbrüche bei Diversifikationsversuchen."
+    },
+    {
+      "n": 100,
+      "title": "Autonomous Business Milestone Director",
+      "goal": "Steuert Ausbau über echte Meilensteine: erster Kauf, Auszahlung, Kostendeckung, wiederholbare Verkäufe.",
+      "gate": "Kein Upgrade aufgrund erfundener Demo-Umsätze."
+    },
+    {
+      "n": 101,
+      "title": "Autonomous Buyer Journey Intelligence",
+      "goal": "Erkennt mit zulässigen Daten Hindernisse zwischen Erstkontakt und Kauf und priorisiert Verbesserungen.",
+      "gate": "Kein übergriffiges Tracking oder irreführende Conversion-Optimierung."
+    },
+    {
+      "n": 102,
+      "title": "Multimodal Customer Understanding Engine",
+      "goal": "Verarbeitet vom Kunden bewusst gelieferte Texte, Sprachbeiträge, Bilder, PDFs und Videos zu einem klaren Briefing.",
+      "gate": "Private Kundeninhalte und sensible Daten nur mit rechtmäßigem Zweck verarbeiten."
+    },
+    {
+      "n": 103,
+      "title": "Pre-Sale Feasibility Proof Lab",
+      "goal": "Testet vor verbindlicher Zusage die technischen Kernanforderungen eines schwierigen Auftrags.",
+      "gate": "Ohne bestandenen Machbarkeitsnachweis keine unbedingte Lieferzusage."
+    },
+    {
+      "n": 104,
+      "title": "Competitive Product Benchmark Arena",
+      "goal": "Vergleicht Produktmerkmale, Preis, Leistung und Bedienbarkeit anhand rechtmäßig verfügbarer Wettbewerbsdaten.",
+      "gate": "Keine Urheberrechtsverstöße, Umgehung von Zugangssperren oder irreführende Vergleichswerbung."
+    },
+    {
+      "n": 105,
+      "title": "Autonomous Product Configuration Marketplace",
+      "goal": "Lässt Kunden geprüfte Funktionsbausteine kombinieren und erstellt automatisch Preis und Scope.",
+      "gate": "Nicht unterstützte Kombinationen und falsche Sofortlieferzusagen blockieren."
+    },
+    {
+      "n": 106,
+      "title": "Pre-Contract Risk & Liability Simulator",
+      "goal": "Analysiert mögliche Verspätungen, Erstattungen und Haftungsszenarien vor Vertragsannahme.",
+      "gate": "Simulierte Zahlen nicht als Gewissheit oder fachliche Rechtsbewertung ausgeben."
+    },
+    {
+      "n": 107,
+      "title": "Autonomous Data Freshness & Reliability Engine",
+      "goal": "Validiert Aktualität, Herkunft, Nutzungsrechte und Beleglage datenbasierter Produkte.",
+      "gate": "Abgelaufene oder unbestätigte Daten nicht als aktuell verkaufen."
+    },
+    {
+      "n": 108,
+      "title": "Digital Product Provenance Passport",
+      "goal": "Dokumentiert für jedes Produkt Teile, Lizenzen, Versionen, Tests und KI-Werkzeuge.",
+      "gate": "Nicht geprüfte Herkunft oder Lizenzen klar kennzeichnen und Verkauf blockieren, wo nötig."
+    },
+    {
+      "n": 109,
+      "title": "Causal Growth Intelligence Lab",
+      "goal": "Testet Hypothesen zu Verkaufsverbesserungen mit kontrollierten, sinnvoll dimensionierten Experimenten.",
+      "gate": "Korrelation oder schwache Stichproben nicht als Kausalbeweis verkaufen."
+    },
+    {
+      "n": 111,
+      "title": "Business Demand Event Radar",
+      "goal": "Überwacht öffentliche Ereignisse als Hinweise auf konkrete neue Nachfrage und passende legitime Angebotsgelegenheiten.",
+      "gate": "Ein öffentliches Ereignis allein ist keine Einwilligung zur Werbung."
+    },
+    {
+      "n": 112,
+      "title": "Verified Paid Pilot Negotiator",
+      "goal": "Bietet bei größeren Projekten einen klar begrenzten, bezahlten Testauftrag als ersten Schritt an.",
+      "gate": "Kein angeblich gratis Pilot mit versteckter Zahlungspflicht."
+    },
+    {
+      "n": 113,
+      "title": "Automatic Customer Deployment Engine",
+      "goal": "Installiert Software mit Kundenfreigabe in tatsächlich unterstützte Zielumgebungen und führt Funktionstests aus.",
+      "gate": "Keine unautorisierte Ferninstallation oder Änderung produktiver Kundensysteme."
+    },
+    {
+      "n": 114,
+      "title": "Dynamic Refund Reserve Manager",
+      "goal": "Berechnet transparente Rücklagen auf Grundlage tatsächlicher Rückerstattungen und Verpflichtungen.",
+      "gate": "Rücklagen nicht als auszahlbaren Gewinn darstellen."
+    },
+    {
+      "n": 115,
+      "title": "Professional Editable Deliverables Factory",
+      "goal": "Erstellt prüfbar bearbeitbare Originalartefakte wie SVG, DOCX, XLSX, Blender-Quelldateien oder Sourcecode.",
+      "gate": "Keine statischen Vorschaubilder als editierbare Dateien ausgeben."
+    },
+    {
+      "n": 116,
+      "title": "Autonomous Industry Edition Generator",
+      "goal": "Erzeugt aus rechtlich wiederverwendbaren Erfolgsprodukten branchenspezifische Varianten.",
+      "gate": "Keine Branchen- oder Compliance-Eignung ohne relevante Tests behaupten."
+    },
+    {
+      "n": 117,
+      "title": "Intelligent Legacy Migration Concierge",
+      "goal": "Überführt mit Kundeneinwilligung kompatible Daten aus älteren Systemen in neue Produkte.",
+      "gate": "Keine heimliche Datenentnahme oder Migration ohne Wiederherstellungsplan."
+    },
+    {
+      "n": 118,
+      "title": "Autonomous Buyer Trust Room",
+      "goal": "Stellt überprüfbare Referenzen, Produktdokumentation, Geschäftsangaben und rechtliche Informationen bereit.",
+      "gate": "Keine erfundenen Bewertungen, Partner oder Zertifikate."
+    },
+    {
+      "n": 119,
+      "title": "Consent-Based Checkout Recovery",
+      "goal": "Identifiziert technisch abgebrochene Checkout-Vorgänge und ermöglicht rechtlich zulässige Wiederaufnahme.",
+      "gate": "Keine Werbeerinnerungen ohne gültige Rechtsgrundlage."
+    },
+    {
+      "n": 120,
+      "title": "Customer Outcome Evidence Engine",
+      "goal": "Misst mit Einwilligung überprüfbare Ergebnisse gelieferter Produkte und leitet Qualitätsmaßnahmen ab.",
+      "gate": "Kundenerfolge nur mit belegter Messmethode kommunizieren."
+    },
+    {
+      "n": 121,
+      "title": "Verified Outcome Contracting",
+      "goal": "Erlaubt vertraglich definierte, messbare Leistungskriterien statt unbestimmter Erfolgsaussagen.",
+      "gate": "Keine Garantie für nicht kontrollierbare Kundenumsätze oder künftige Ergebnisse."
+    },
+    {
+      "n": 122,
+      "title": "Autonomous Free-Tier Capacity Orchestrator",
+      "goal": "Verteilt Arbeit über verfügbare kostenlose Kontingente, pausiert bei Quoten und verhindert ungeplante Zusatzgebühren.",
+      "gate": "Kostenpflichtige Upgrades und API-Aufrufe sind standardmäßig gesperrt."
+    },
+    {
+      "n": 123,
+      "title": "Regulated Work & Expert Boundary Director",
+      "goal": "Erkennt erlaubnispflichtige Rechts-, Medizin-, Finanz- und Fachberatungsaufträge und steuert erforderliche Fachfreigaben.",
+      "gate": "Keine autonom erbrachte regulierte Leistung ohne erforderliche Zulassung."
+    },
+    {
+      "n": 124,
+      "title": "Autonomous Customer Onboarding Tutor",
+      "goal": "Erzeugt verständliche, produktbezogene Hilfen und führt Käufer durch die tatsächliche Nutzung.",
+      "gate": "Keine Funktionen in Hilfe erklären, die das Produkt nicht bietet."
+    },
+    {
+      "n": 125,
+      "title": "Machine-Readable Business Trust Passport",
+      "goal": "Stellt verifizierte Anbieterangaben, Verträge und Leistungsinformationen für B2B- und KI-Einkaufssysteme bereit.",
+      "gate": "Keine erfundenen Anbieterdaten und keine freizugebenden Geheimnisse offenlegen."
+    },
+    {
+      "n": 126,
+      "title": "Autonomous Marketplace Reputation Portability",
+      "goal": "Verwaltet erlaubte Weiterverwendung authentischer Bewertungen und Referenzen zwischen Plattformen.",
+      "gate": "Plattformregeln, Einwilligungen und Urheberrechte strikt einhalten."
+    },
+    {
+      "n": 127,
+      "title": "Evidence-Based Dynamic Pricing Laboratory",
+      "goal": "Erprobt transparente Preisvarianten nach Nachfrage, Marge und Kaufdaten.",
+      "gate": "Keine irreführenden Ankerpreise oder diskriminierende Personalisierung."
+    },
+    {
+      "n": 128,
+      "title": "Autonomous Technical Debt Director",
+      "goal": "Priorisiert Wartung und technische Vereinfachung anhand Defekten, Risiken und Änderungskosten.",
+      "gate": "Releases nur nach Tests und ohne Umgehung von Sicherheitsschranken."
+    },
+    {
+      "n": 129,
+      "title": "Subscription Value & Churn Intelligence",
+      "goal": "Erkennt mit erlaubten Daten Nutzungsprobleme und verbessert Aboprodukte und Hilfsangebote.",
+      "gate": "Kein Dark Pattern und keine erschwerte Kündigung."
+    },
+    {
+      "n": 130,
+      "title": "Autonomous Dormant Asset Revival",
+      "goal": "Bewertet ältere eigene Produkte erneut auf Nachfrage und passt sie bei wirtschaftlicher Gelegenheit an.",
+      "gate": "Nur Produkte mit gültigen Rechten und erneuter Qualitätskontrolle anbieten."
+    }
+  ]
+}

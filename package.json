@@ -1,0 +1,43 @@
+{
+  "name": "infinity-earn",
+  "version": "0.1.0",
+  "private": true,
+  "description": "INFINITY EARN â€“ deterministischer Transaktionskern. M0: nur Test-/Offline-Modus, keine Live-VerkÃ¤ufe.",
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "dev": "node --disable-warning=ExperimentalWarning --env-file-if-exists=.env services/core-api/src/main.ts",
+    "db:migrate": "node --disable-warning=ExperimentalWarning --env-file-if-exists=.env scripts/migrate.ts",
+    "owner:password": "node scripts/set-owner-password.ts",
+    "check:env": "node --disable-warning=ExperimentalWarning --env-file-if-exists=.env scripts/check-env.ts",
+    "setup": "node --disable-warning=ExperimentalWarning scripts/setup.ts",
+    "stripe:check": "node --disable-warning=ExperimentalWarning --env-file-if-exists=.env scripts/stripe-check.ts",
+    "checkout:url": "node --disable-warning=ExperimentalWarning --env-file-if-exists=.env scripts/checkout-url.ts",
+    "acquire": "node --disable-warning=ExperimentalWarning --env-file-if-exists=.env scripts/acquire.ts",
+    "staging:secrets": "node scripts/staging-secrets.ts",
+    "staging:dev": "wrangler dev --port 8788",
+    "staging:deploy": "node scripts/staging-deploy.ts",
+    "staging:smoke": "node --disable-warning=ExperimentalWarning scripts/smoke-http.ts",
+    "backup:restore-test": "node --disable-warning=ExperimentalWarning scripts/restore-backup.ts",
+    "backup:pull": "node --disable-warning=ExperimentalWarning scripts/staging-backup-pull.ts",
+    "dryrun":"node --disable-warning=ExperimentalWarning scripts/dry-run.ts",
+    "test": "node --disable-warning=ExperimentalWarning --test --test-reporter=spec \"tests/unit/**/*.test.ts\" \"tests/integration/**/*.test.ts\" \"tests/security/**/*.test.ts\"",
+    "test:e2e": "node --disable-warning=ExperimentalWarning --test --test-reporter=spec \"tests/e2e/**/*.test.ts\"",
+    "tech-debt": "node --disable-warning=ExperimentalWarning scripts/tech-debt.ts",
+    "test:matrix": "node scripts/test-matrix.ts",
+    "typecheck": "tsc -p tsconfig.json",
+    "lint": "eslint .",
+    "build": "tsc -p tsconfig.build.json",
+    "verify": "npm run typecheck && npm run lint && npm test && npm run test:e2e && npm run test:matrix && npm run build"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^24.19.2",
+    "eslint": "^10.14.0",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.72.2",
+    "wrangler": "^4.160.1"
+  }
+}
