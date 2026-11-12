@@ -14,6 +14,25 @@ Grundlage: das 15.0-Paket (`docs/spec/v15/`, Prüfsummen laut Manifest geprüft)
 
 ---
 
+## Admin-Zugang, drei Sprachen, Produktberater (2026-11-13)
+
+- **`/admin`:** Angemeldet geht es direkt zur Konsole, sonst zur Passwort-Anmeldung. Die Prüfung erfolgt auf dem Server; ein Kunden-Cookie öffnet nichts.
+  - **Keine Zwei-Faktor-Anmeldung** – auf ausdrücklichen Wunsch des Eigentümers. Es gelten das Passwort (scrypt), die Sperre nach 5 Fehlversuchen, Sitzungen auf dem Server und der CSRF-Schutz.
+- **Startseite auf Deutsch, Italienisch und Englisch** (`/`, `/it`, `/en`):
+  - übersetzter Seitenrahmen, Sprachumschalter, `hreflang` mit `x-default`, Canonical
+  - gleiche, nachgerechnete Beispielzahlen in allen Sprachen
+- **Suchmaschinen:** `robots.txt` sperrt Konsole, Admin, Portal, Angebote und API. `sitemap.xml` enthält nur öffentliche Seiten.
+- **Produktberater `/berater`:**
+  - **Versteht** Wünsche in eigenen Worten (DE/IT/EN), zum Beispiel „Fliesen 24 m² à 38 €“, „2 x Montaggio a 45 €“, „travel lump sum 35“ oder Zeilen aus Excel. Er erkennt Aufschlag und Format.
+  - **Fragt nur nach, was fehlt,** und füllt die Anfrage vor. Gesendet wird erst, wenn der Kunde abschickt; danach läuft alles über dieselbe Angebotskette wie das Formular.
+  - **Ehrlich:** Nicht lieferbare Wünsche (Website, Logo, Video …) und nicht freigegebene Formate lehnt er ab.
+  - **Kostenlos:** Er arbeitet regelbasiert, ohne kostenpflichtige KI-API.
+- **GitHub Pages:** Startseite in allen drei Sprachen (`/`, `/it/`, `/en/`); der Sprachwechsel bleibt innerhalb von Pages.
+- **Tests:** 4 neue Tests in `advisor.test.ts`, 2 in `landing.test.ts`, 1 in `security.test.ts`. `npm run verify` → **258/258**.
+- **Noch nicht übersetzt:** Anfrage, Angebot, Kundenportal und Beraterseite sind deutsch. Der Berater versteht italienische und englische Eingaben trotzdem.
+
+---
+
 ## LUXURY TURQUOISE – gemeinsames Designsystem und Startseite mit Storyscrolling (2026-11-13)
 
 - **Farben (Eigentümer-Vorgabe):** Ivory #F7FAF9 als Seitengrund, Dark Ocean #0E1D25 für Text und dunkle Kapitel, Petrol #087F82 für Schaltflächen und Links, Soft Mist #DCEBEA für Status und aktive Navigation.

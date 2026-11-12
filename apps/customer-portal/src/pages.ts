@@ -7,6 +7,7 @@ import { customerInvoices } from '../../../services/finance/src/invoice-pdf.ts';
 import { getAcceptance, getFeedback } from '../../../services/core-api/src/aftercare.ts';
 import { asCalcInput, computeTotals, type CalcInput } from '../../../services/product-factory/src/capabilities/b2b-calc-csv.ts';
 import type { ProvenancePassport } from '../../../services/product-factory/src/provenance.ts';
+import { HOME, LANG_PATH, LANGS, type Lang } from './home-i18n.ts';
 import { acceptanceChecks, listStandards } from '../../../services/product-factory/src/quality-standard.ts';
 import type { TrustFacts } from '../../../services/core-api/src/trust.ts';
 import { getDeliveryByOrder, issueDownloadToken } from '../../../services/product-factory/src/delivery.ts';
@@ -83,8 +84,16 @@ const HOME_CSS = `
 const HOME_ICON: Record<string, Parameters<typeof icon>[0]> = { 'b2b-calc-csv': 'grid', 'b2b-calc-pdf': 'doc', 'b2b-calc-bundle': 'package' };
 const HOME_FORMAT: Record<string, string> = { 'b2b-calc-csv': 'CSV', 'b2b-calc-pdf': 'PDF', 'b2b-calc-bundle': 'ZIP · CSV · PDF' };
 
-export function renderHome(offered: readonly string[] = ['b2b-calc-csv']): string {
-  const sample = asCalcInput({ title: 'Montage Büro Nord', currency: 'EUR', margin_bps: 2000, language: 'de', items: [{ name: 'Montage', quantity: 2, unit_cost_minor: 4500 }, { name: 'Material', quantity: 1, unit_cost_minor: 2000 }, { name: 'Anfahrt', quantity: 1, unit_cost_minor: 3500 }] });
+const SAMPLE: Record<Lang, { title: string; items: [string, string, string] }> = {
+  de: { title: 'Montage Büro Nord', items: ['Montage', 'Material', 'Anfahrt'] },
+  it: { title: 'Montaggio Ufficio Nord', items: ['Montaggio', 'Materiale', 'Trasferta'] },
+  en: { title: 'Office North installation', items: ['Installation', 'Material', 'Travel'] },
+};
+
+export function renderHome(offered: readonly string[] = ['b2b-calc-csv'], lang: Lang = 'de', origin = ''): string {
+  const T = HOME[lang];
+  const S = SAMPLE[lang];
+  const sample = asCalcInput({ title: S.title, currency: 'EUR', margin_bps: 2000, language: lang, items: [{ name: S.items[0], quantity: 2, unit_cost_minor: 4500 }, { name: S.items[1], quantity: 1, unit_cost_minor: 2000 }, { name: S.items[2], quantity: 1, unit_cost_minor: 3500 }] });
   const t = computeTotals(sample);
   const products = FORMATS.filter((f) => offered.includes(f.id));
   const standards = listStandards().filter((s) => offered.includes(s.capabilityId));
@@ -93,44 +102,42 @@ export function renderHome(offered: readonly string[] = ['b2b-calc-csv']): strin
   const body = `<div class="story-progress" aria-hidden="true"></div>
 <section class="hero" aria-labelledby="k1"><div class="hero-in">
 <div class="reveal"><span class="kicker">INFINITY EARN</span>
-<h1 id="k1">Digitale Arbeit,<br>sauber geliefert. <em>Prüfbar</em> bis zur letzten Zeile.</h1>
-<p class="lead">Sie beschreiben, was Sie brauchen. Sie erhalten ein festes Angebot und nach der Zahlung eine automatisch geprüfte Datei mit Herkunftsnachweis.</p>
-<p class="row"><a class="btn" href="/anfrage">Angebot anfragen ${icon('arrow', 'sm')}</a><a class="btn secondary" href="#k4">Produkte ansehen</a></p></div>
-<figure class="glass parallax" style="margin:0" aria-label="Beispiel einer gelieferten Kalkulation">
-<div class="sheet"><div class="sheet-h"><div><b>${e(sample.title)}</b><small>Beispiel · EUR · Aufschlag 20 %</small></div><span class="tag ok">${icon('check', 'sm')} Geprüft</span></div>
-<table><thead><tr><th>Position</th><th class="r">Menge</th><th class="r">Summe</th></tr></thead><tbody>
+<h1 id="k1">${T.heroH1[0]}<br>${T.heroH1[1]} ${T.heroH1[2]}</h1>
+<p class="lead">${T.heroLead}</p>
+<p class="row"><a class="btn" href="/anfrage">${T.ctaPrimary} ${icon('arrow', 'sm')}</a><a class="btn secondary" href="#k4">${T.ctaProducts}</a></p></div>
+<figure class="glass parallax" style="margin:0" aria-label="${e(T.sample.aria)}">
+<div class="sheet"><div class="sheet-h"><div><b>${e(sample.title)}</b><small>${T.sample.meta}</small></div><span class="tag ok">${icon('check', 'sm')} ${T.sample.checked}</span></div>
+<table><thead><tr><th>${T.sample.pos}</th><th class="r">${T.sample.qty}</th><th class="r">${T.sample.sum}</th></tr></thead><tbody>
 ${sample.items.map((it, i) => `<tr><td>${e(it.name)}</td><td class="r">${it.quantity}</td><td class="r">${money(t.lines[i] as number, 'EUR')}</td></tr>`).join('')}
-<tr><td>Aufschlag 20 %</td><td></td><td class="r">${money(t.markup, 'EUR')}</td></tr></tbody>
-<tfoot><tr><td>Gesamt</td><td></td><td class="r">${money(t.total, 'EUR')}</td></tr></tfoot></table></div>
-<figcaption class="glass-note">${icon('shield', 'sm')} Mit echtem Generator erzeugt und nachgerechnet – so sieht Ihre Lieferung aus.</figcaption></figure>
+<tr><td>${T.sample.markup}</td><td></td><td class="r">${money(t.markup, 'EUR')}</td></tr></tbody>
+<tfoot><tr><td>${T.sample.total}</td><td></td><td class="r">${money(t.total, 'EUR')}</td></tr></tfoot></table></div>
+<figcaption class="glass-note">${icon('shield', 'sm')} ${T.sample.note}</figcaption></figure>
 </div></section>
-${chapter(2, 'Ihr Bedarf', `<div class="reveal"><h2 id="k2">Angebote und Kalkulationen kosten Zeit. Ein Rechenfehler kostet Vertrauen.</h2>
-<p class="sub">Positionen zusammentragen, Aufschläge rechnen, alles sauber für Kunden oder Buchhaltung aufbereiten: Das ist Routinearbeit, die trotzdem fehlerfrei sein muss.</p></div>`)}
-${chapter(3, 'Beratung', `<div class="reveal"><h2 id="k3">Einfach beschreiben. Den Rest erledigen wir.</h2>
-<p class="sub">Schreiben Sie Ihre Positionen untereinander oder kopieren Sie sie direkt aus Excel. Fehlt etwas, sagt Ihnen das System genau was – ohne Fachbegriffe.</p>
-<figure class="compose" style="margin:0"><div class="compose-h"><span class="dot"></span>So sieht eine Anfrage aus</div><pre>Montage;2;45,00
-Material;1;20
-Anfahrt;1;35
-Aufschlag: 20 %</pre></figure>
-<p class="links"><a href="/anfrage">${icon('send', 'sm')} Jetzt eigene Anfrage stellen</a></p></div>`, 'band')}
-${chapter(4, 'Produkte', `<div class="reveal"><h2 id="k4">Was wir heute liefern.</h2>
-<p class="sub">Bestellbar ist nur, was wir nachweislich herstellen und automatisch prüfen können. Weitere Produktarten wie Software, Websites, Grafik oder Medien folgen erst, wenn sie unseren Qualitätsstandard bestehen.</p></div>
-<div class="tiles">${products.map((f) => `<article class="tile reveal"><span class="ic">${icon(HOME_ICON[f.id] ?? 'doc')}</span><h3>${e(f.label)}</h3><p>${e(f.text)}</p><div class="meta"><span class="tag neutral">${e(HOME_FORMAT[f.id] ?? '')}</span><a href="/hilfe/${e(f.id)}">Anleitung</a></div></article>`).join('')}</div>`, 'band mist')}
-${chapter(5, 'Qualität', `<div class="reveal"><h2 id="k5">Geliefert wird nur, was jede Prüfung besteht.</h2>
-<p class="sub">Jede Zusage ist mit einer automatischen Prüfung belegt. Fällt eine durch, liefern wir nicht – und Sie erhalten Ihr Geld zurück.</p></div>
-<div class="checks">${standards.map((s) => `<article class="tile reveal"><span class="muted" style="font-size:14px">${e(FORMATS.find((f) => f.id === s.capabilityId)?.label ?? s.capabilityId)}</span><b class="num">${acceptanceChecks(s).length}</b><p>automatische Prüfungen je Lieferung</p><div class="meta">${s.references.map((r) => `<span class="tag neutral">${e(r.name)}</span>`).join('')}</div></article>`).join('')}</div>
-<p class="links"><a href="/vertrauen">${icon('shield', 'sm')} Vertrauen &amp; Fakten</a><a href="/pruefen">${icon('check', 'sm')} Echtheit einer Datei prüfen</a></p>`)}
-${chapter(6, 'Bezahlung', `<div class="reveal"><h2 id="k6">Klarer Preis. Sichere Zahlung über Stripe.</h2>
-<p class="sub">Sie sehen Preis, Lieferumfang und Bedingungen, bevor Sie etwas bezahlen. Kartendaten erreichen unsere Server nie.</p></div>
-<ol class="flow">${[['Festes Angebot', 'Preis und Umfang schwarz auf weiß.'], ['Annahme', 'Bedingungen und Widerrufshinweis vollständig.'], ['Stripe Checkout', 'Bezahlen auf der offiziellen Stripe-Seite.'], ['Bestätigung', 'Start erst nach signierter Zahlungsbestätigung.'], ['Erstellung', 'Automatisch, mit Prüfprotokoll.']].map(([b, s], i) => `<li class="reveal"><i>${i + 1}</i><b>${b}</b><span>${s}</span></li>`).join('')}</ol>`, 'band')}
-${chapter(7, 'Lieferung', `<div class="reveal"><h2 id="k7">Alles an einem Ort: Ihr Kundenportal.</h2>
-<p class="sub">Datei, Rechnung, Vertragsbestätigung und Herkunftsnachweis – jederzeit abrufbar. Dort nehmen Sie die Lieferung ab, beantragen Änderungen oder melden sich beim Support.</p></div>
-<div class="tiles">${[['download', 'Dateien', 'Geprüfte Dateien zum Herunterladen.'], ['receipt', 'Rechnungen', 'Rechnung und Vertragsbestätigung als PDF.'], ['inbox', 'Support', 'Fragen, Änderungen und Mängel direkt im Portal.']].map(([ic, h, p]) => `<article class="tile reveal"><span class="ic">${icon(ic as Parameters<typeof icon>[0])}</span><h3>${h}</h3><p>${p}</p></article>`).join('')}</div>
-<p class="links"><a href="/portal">${icon('lock', 'sm')} Zum Kundenportal</a></p>`, 'band mist')}
-<section class="cta-final" aria-labelledby="k8"><div class="chapter reveal"><h2 id="k8">Bereit für Ihr Angebot?</h2><p class="sub">Unverbindlich, bis Sie annehmen und bezahlen.</p><a class="btn" href="/anfrage">Angebot anfragen ${icon('arrow', 'sm')}</a></div></section>`;
-  return page('INFINITY EARN – Geprüfte digitale Kalkulationen für Unternehmen', body, {
-    testMode: true, active: 'start', wide: true, extraCss: HOME_CSS,
-    description: 'Kalkulationen als Tabelle, PDF oder Paket: festes Angebot, sichere Zahlung über Stripe, automatisch geprüfte Lieferung mit Herkunftsnachweis.',
+${chapter(2, T.c2[0], `<div class="reveal"><h2 id="k2">${T.c2[1]}</h2><p class="sub">${T.c2[2]}</p></div>`)}
+${chapter(3, T.c3[0], `<div class="reveal"><h2 id="k3">${T.c3[1]}</h2><p class="sub">${T.c3[2]}</p>
+<figure class="compose" style="margin:0"><div class="compose-h"><span class="dot"></span>${T.c3[3]}</div><pre>${e(S.items[0])};2;45,00
+${e(S.items[1])};1;20
+${e(S.items[2])};1;35
+${e(T.sample.markup)}</pre></figure>
+<p class="links"><a href="/berater">${icon('send', 'sm')} ${T.c3[4]}</a></p></div>`, 'band')}
+${chapter(4, T.c4[0], `<div class="reveal"><h2 id="k4">${T.c4[1]}</h2><p class="sub">${T.c4[2]}</p></div>
+<div class="tiles">${products.map((f) => `<article class="tile reveal"><span class="ic">${icon(HOME_ICON[f.id] ?? 'doc')}</span><h3>${e(T.products[f.id]?.label ?? f.label)}</h3><p>${e(T.products[f.id]?.text ?? f.text)}</p><div class="meta"><span class="tag neutral">${e(HOME_FORMAT[f.id] ?? '')}</span><a href="/hilfe/${e(f.id)}">${T.guide}</a></div></article>`).join('')}</div>`, 'band mist')}
+${chapter(5, T.c5[0], `<div class="reveal"><h2 id="k5">${T.c5[1]}</h2><p class="sub">${T.c5[2]}</p></div>
+<div class="checks">${standards.map((s) => `<article class="tile reveal"><span class="muted" style="font-size:14px">${e(T.products[s.capabilityId]?.label ?? s.capabilityId)}</span><b class="num">${acceptanceChecks(s).length}</b><p>${T.c5[3]}</p><div class="meta">${s.references.map((r) => `<span class="tag neutral">${e(r.name)}</span>`).join('')}</div></article>`).join('')}</div>
+<p class="links"><a href="/vertrauen">${icon('shield', 'sm')} ${T.trust}</a><a href="/pruefen">${icon('check', 'sm')} ${T.c5[4]}</a></p>`)}
+${chapter(6, T.c6[0], `<div class="reveal"><h2 id="k6">${T.c6[1]}</h2><p class="sub">${T.c6[2]}</p></div>
+<ol class="flow">${T.flow.map(([b, s], i) => `<li class="reveal"><i>${i + 1}</i><b>${b}</b><span>${s}</span></li>`).join('')}</ol>`, 'band')}
+${chapter(7, T.c7[0], `<div class="reveal"><h2 id="k7">${T.c7[1]}</h2><p class="sub">${T.c7[2]}</p></div>
+<div class="tiles">${(['download', 'receipt', 'inbox'] as const).map((ic, i) => `<article class="tile reveal"><span class="ic">${icon(ic)}</span><h3>${T.portalTiles[i]?.[0] ?? ''}</h3><p>${T.portalTiles[i]?.[1] ?? ''}</p></article>`).join('')}</div>
+<p class="links"><a href="/portal">${icon('lock', 'sm')} ${T.c7[3]}</a></p>`, 'band mist')}
+<section class="cta-final" aria-labelledby="k8"><div class="chapter reveal"><h2 id="k8">${T.c8[0]}</h2><p class="sub">${T.c8[1]}</p><a class="btn" href="/anfrage">${T.ctaPrimary} ${icon('arrow', 'sm')}</a></div></section>`;
+  const abs = (p: string): string => `${origin}${p}`;
+  return page(T.title, body, {
+    testMode: true, active: 'start', wide: true, extraCss: HOME_CSS, description: T.description, lang,
+    canonical: origin ? abs(LANG_PATH[lang]) : undefined,
+    alternates: origin ? [...LANGS.map((l) => ({ lang: l, href: abs(LANG_PATH[l]) })), { lang: 'x-default', href: abs('/') }] : undefined,
+    langSwitch: LANGS.map((l) => ({ lang: l, href: LANG_PATH[l], label: l.toUpperCase(), current: l === lang })),
+    ui: { nav: T.nav, banner: T.banner, footer: T.footer, trust: T.trust, verify: T.verify, admin: T.admin, skip: lang === 'de' ? 'Zum Inhalt springen' : lang === 'it' ? 'Vai al contenuto' : 'Skip to content', home: LANG_PATH[lang] },
   });
 }
 
@@ -144,7 +151,21 @@ export const FORMATS: { id: string; label: string; text: string }[] = [
 ];
 
 /** Anfrageformular. Bei Fehlern bleiben alle Eingaben erhalten; Fehler stehen oben und am Positionsfeld. */
-export function renderInquiryForm(errors: string[] = [], v: InquiryValues = {}, allowed: readonly string[] = ['b2b-calc-csv']): string {
+/** Produktberater: Wunsch in eigenen Worten beschreiben (DE/IT/EN). Ohne Skripte, ohne kostenpflichtige KI. */
+export function renderAdvisor(text = '', error?: string): string {
+  return page('Produktberater – INFINITY EARN', `<h1>Beschreiben Sie Ihren Wunsch</h1>
+<p class="lead">In eigenen Worten, auf Deutsch, Italienisch oder Englisch. Der Berater erkennt Positionen, Aufschlag und Format, füllt die Anfrage für Sie vor und fragt nur nach, was noch fehlt.</p>
+${error ? `<div class="card err" role="alert">${e(error)}</div>` : ''}
+<form class="card" method="post" action="/berater">
+<label for="wunsch">Ihr Wunsch</label>
+<textarea id="wunsch" name="wunsch" required maxlength="5000" placeholder="Kalkulation Badsanierung als PDF: Fliesen 24 m² à 38 €, Arbeit 16 h à 52 €, Entsorgung pauschal 180 €, Aufschlag 15 %">${e(text)}</textarea>
+<p class="muted">Beispiele: <span class="mono">2 x Montage à 45 €</span> · <span class="mono">Arbeit 16 h à 52 €</span> · <span class="mono">Entsorgung pauschal 180 €</span> · oder Zeilen direkt aus Excel.</p>
+<p><button>Weiter</button></p>
+<p class="muted">Es wird noch nichts gesendet. Im nächsten Schritt sehen und ändern Sie alles, bevor Sie die Anfrage abschicken.</p></form>
+<p class="muted">Lieber direkt ausfüllen? <a href="/anfrage">Zum Anfrageformular</a></p>`, { testMode: true, active: 'anfrage' });
+}
+
+export function renderInquiryForm(errors: string[] = [], v: InquiryValues = {}, allowed: readonly string[] = ['b2b-calc-csv'], advisor?: { understood: string[]; questions: string[] }): string {
   const formats = FORMATS.filter((f) => allowed.includes(f.id));
   const chosen = formats.some((f) => f.id === v.format) ? v.format : formats[0]?.id;
   const val = (k: keyof InquiryValues, def = ''): string => e(v[k] ?? def);
@@ -153,6 +174,7 @@ export function renderInquiryForm(errors: string[] = [], v: InquiryValues = {}, 
     'Anfrage – INFINITY EARN',
     `<h1>Angebot anfordern</h1><p class="lead">Kalkulation aus Ihren Positionen – ${formats.length > 1 ? 'als Excel-Tabelle oder druckfertiges PDF' : 'als Tabelle (CSV, in Excel bearbeitbar)'}. Sie erhalten sofort ein unverbindliches Angebot.</p>
 ${errors.length ? `<div class="card err" role="alert"><strong>Bitte korrigieren – Ihre Eingaben sind erhalten geblieben:</strong><ul>${errors.map((x) => `<li>${e(x)}</li>`).join('')}</ul></div>` : ''}
+${advisor ? `<div class="card" role="status"><h2>Das habe ich verstanden</h2>${advisor.understood.length ? `<ul>${advisor.understood.map((x) => `<li>${e(x)}</li>`).join('')}</ul>` : '<p class="muted">Noch keine konkreten Angaben erkannt.</p>'}${advisor.questions.length ? `<h3>Bitte noch ergänzen</h3><ul>${advisor.questions.map((x) => `<li>${e(x)}</li>`).join('')}</ul>` : ''}<p class="muted">Alles ist vorausgefüllt und änderbar. Gesendet wird erst mit „Anfrage senden“. <a href="/berater">Wunsch neu beschreiben</a></p></div>` : ''}
 <form class="card" method="post" action="/anfrage">
 <h2>Ihre Angaben</h2>
 <label for="name">Name</label><input id="name" type="text" name="name" required maxlength="200" autocomplete="name" value="${val('name')}">

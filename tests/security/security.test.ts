@@ -61,6 +61,19 @@ test('IE-081 gültige Owner-Session: Dashboard autorisiert, CSRF erzwungen', asy
   await c.post('/admin/stops', { stop: 'PAUSE_PRODUCTION', active: '0', _csrf: csrfFrom(dash.text) });
 });
 
+test('/admin: ohne Anmeldung zur Passwort-Anmeldung, angemeldet zur Konsole; Kunden-Cookie öffnet nichts', async () => {
+  const anon = new Client(base);
+  const r = await anon.get('/admin');
+  assert.deepEqual([r.status, r.location], [303, '/login']);
+  const customer = new Client(base);
+  customer.cookies.set('ie_customer', 'irgendein-kundenschluessel');
+  assert.equal((await customer.get('/admin')).location, '/login', 'Kundenzugang ist kein Adminzugang');
+  const c = new Client(base);
+  assert.equal((await c.post('/auth/login', { password: PASSWORD })).status, 303);
+  const ok = await c.get('/admin');
+  assert.deepEqual([ok.status, ok.location], [303, '/dashboard']);
+});
+
 test('Login-Ratenlimit: nach 5 Fehlversuchen 429, auch mit richtigem Passwort', async () => {
   const c = new Client(base);
   for (let i = 0; i < 5; i++) assert.equal((await c.post('/auth/login', { password: 'falsch' })).status, 401);

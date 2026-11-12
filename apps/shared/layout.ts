@@ -23,6 +23,7 @@ header.site{position:sticky;top:0;z-index:20;background:rgba(247,250,249,.82);-w
 .mark{width:34px;height:34px;border-radius:10px;background:linear-gradient(150deg,#16323F 0%,var(--ocean) 70%);color:var(--brand);box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 6px 14px rgba(14,29,37,.18);display:grid;place-items:center}.mark .ico{width:21px;height:21px;stroke-width:2}
 .brandname{font-size:17px;letter-spacing:-.4px}.brandname b{color:var(--accent);font-weight:700}
 .site nav{display:flex;gap:4px;align-items:center;flex-wrap:wrap}.site nav a{color:var(--ink-soft);font-weight:600;font-size:15px;padding:10px 12px;border-radius:10px;min-height:44px;display:inline-flex;align-items:center}
+.langs{display:inline-flex;gap:2px;padding:3px;border:1px solid var(--border-strong);border-radius:999px;margin:0 4px}.site nav .langs a{min-height:36px;padding:6px 10px;border-radius:999px;font-size:13px;font-weight:650;color:var(--muted)}.site nav .langs a[aria-current=true]{background:var(--ink);color:#fff}
 .site nav a:hover{background:#EEF5F4;text-decoration:none}.site nav a[aria-current=page]{background:var(--accent-soft);color:var(--accent-strong)}
 .mode{display:inline-flex;align-items:center;gap:8px;padding:7px 12px;border-radius:999px;font-size:13px;font-weight:650;color:var(--warning);background:var(--warning-soft);border:1px solid #F1DFBE;white-space:nowrap}.mode .dot{width:8px;height:8px;border-radius:50%;background:currentColor}
 .banner{max-width:1080px;margin:16px auto 0;padding:12px 16px;border-radius:14px;background:var(--warning-soft);border:1px solid #F1DFBE;color:#5E4206;font-size:14px;display:flex;gap:10px;align-items:flex-start}
@@ -75,19 +76,35 @@ export interface PageOptions {
   extraCss?: string;
   description?: string;
   canonical?: string;
+  /** Sprache der Seite (Standard: de) und übersetzte Rahmen-Texte. */
+  lang?: 'de' | 'it' | 'en';
+  ui?: { nav: { start: string; inquiry: string; portal: string; test: string }; banner: string; footer: string; trust: string; verify: string; admin: string; skip: string; home: string };
+  /** hreflang-Alternativen (Pfad je Sprache). */
+  alternates?: { lang: string; href: string }[];
+  langSwitch?: { lang: string; href: string; label: string; current: boolean }[];
 }
 
+const UI_DE: NonNullable<PageOptions['ui']> = {
+  nav: { start: 'Start', inquiry: 'Anfrage stellen', portal: 'Kundenportal', test: 'Testbetrieb' },
+  banner: '<strong>TESTMODUS – Testbetrieb:</strong> keine Live-Verkäufe, keine echten Zahlungen, keine gültigen Rechnungen.',
+  footer: 'Geprüfte digitale Kalkulationen für Unternehmen · Zahlungen nur über einen geprüften Zahlungsanbieter',
+  trust: 'Vertrauen &amp; Fakten', verify: 'Echtheit prüfen', admin: 'Admin', skip: 'Zum Inhalt springen', home: '/',
+};
+
 export function page(title: string, body: string, opts: PageOptions = { testMode: true }): string {
-  const nav = [['start', '/', 'Start'], ['anfrage', '/anfrage', 'Anfrage stellen'], ['portal', '/portal', 'Kundenportal']] as const;
-  const banner = opts.testMode
-    ? `<div class="banner" role="status">${icon('info', 'sm')}<span><strong>TESTMODUS – Testbetrieb:</strong> keine Live-Verkäufe, keine echten Zahlungen, keine gültigen Rechnungen.</span></div>`
+  const ui = opts.ui ?? UI_DE;
+  const nav = [['start', ui.home, ui.nav.start], ['anfrage', '/anfrage', ui.nav.inquiry], ['portal', '/portal', ui.nav.portal]] as const;
+  const banner = opts.testMode ? `<div class="banner" role="status">${icon('info', 'sm')}<span>${ui.banner}</span></div>` : '';
+  const alt = (opts.alternates ?? []).map((a) => `<link rel="alternate" hreflang="${escapeHtml(a.lang)}" href="${escapeHtml(a.href)}">`).join('');
+  const sw = opts.langSwitch?.length
+    ? `<span class="langs" role="group" aria-label="Sprache / Lingua / Language">${opts.langSwitch.map((l) => `<a href="${escapeHtml(l.href)}" hreflang="${escapeHtml(l.lang)}" lang="${escapeHtml(l.lang)}"${l.current ? ' aria-current="true"' : ''}>${escapeHtml(l.label)}</a>`).join('')}</span>`
     : '';
-  return `<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#F7FAF9"><title>${escapeHtml(title)}</title>${opts.description ? `<meta name="description" content="${escapeHtml(opts.description)}">` : ''}${opts.canonical ? `<link rel="canonical" href="${escapeHtml(opts.canonical)}">` : ''}<style>${CSS}${opts.extraCss ?? ''}</style></head><body><a class="skip" href="#inhalt">Zum Inhalt springen</a>
-<header class="site"><div class="site-in"><a class="brand" href="/"><span class="mark">${icon('infinity')}</span><span class="brandname">infinity<b>earn</b></span></a>
-<nav aria-label="Hauptnavigation">${nav.map(([k, href, label]) => `<a href="${href}"${opts.active === k ? ' aria-current="page"' : ''}>${label}</a>`).join('')}${opts.testMode ? '<span class="mode"><span class="dot" aria-hidden="true"></span>Testbetrieb</span>' : ''}</nav></div></header>
+  return `<!doctype html><html lang="${opts.lang ?? 'de'}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#F7FAF9"><title>${escapeHtml(title)}</title>${opts.description ? `<meta name="description" content="${escapeHtml(opts.description)}">` : ''}${opts.canonical ? `<link rel="canonical" href="${escapeHtml(opts.canonical)}">` : ''}${alt}<style>${CSS}${opts.extraCss ?? ''}</style></head><body><a class="skip" href="#inhalt">${ui.skip}</a>
+<header class="site"><div class="site-in"><a class="brand" href="${ui.home}"><span class="mark">${icon('infinity')}</span><span class="brandname">infinity<b>earn</b></span></a>
+<nav aria-label="Hauptnavigation">${nav.map(([k, href, label]) => `<a href="${href}"${opts.active === k ? ' aria-current="page"' : ''}>${label}</a>`).join('')}${sw}${opts.testMode ? `<span class="mode"><span class="dot" aria-hidden="true"></span>${ui.nav.test}</span>` : ''}</nav></div></header>
 ${banner}<main id="inhalt"${opts.wide ? ' class="wide"' : ''}>${body}</main>
-<footer class="site"><div>INFINITY EARN · Geprüfte digitale Kalkulationen für Unternehmen · Zahlungen nur über einen geprüften Zahlungsanbieter · <a href="/vertrauen">Vertrauen &amp; Fakten</a> · <a href="/pruefen">Echtheit prüfen</a> · <a href="/login">Eigentümer-Anmeldung</a></div></footer></body></html>`;
+<footer class="site"><div>INFINITY EARN · ${ui.footer} · <a href="/vertrauen">${ui.trust}</a> · <a href="/pruefen">${ui.verify}</a> · <a href="/admin">${ui.admin}</a></div></footer></body></html>`;
 }
 
 export const e = escapeHtml;

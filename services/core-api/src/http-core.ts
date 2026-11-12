@@ -5,7 +5,7 @@ import { sha256Hex } from '../../../packages/shared/src/crypto.ts';
 import { renderDashboard, renderLogin } from '../../../apps/dashboard/src/render.ts';
 import { renderConsole, safeBack, statusReport, withFlash } from '../../../apps/console/src/index.ts';
 import {
-  renderCheckoutReturn, renderHome, renderInquiryForm, renderInquiryResult, renderMockCheckout, renderHelp, renderPortal, renderProvenance, renderQuote, renderTrust,
+  renderAdvisor, renderCheckoutReturn, renderHome, renderInquiryForm, renderInquiryResult, renderMockCheckout, renderHelp, renderPortal, renderProvenance, renderQuote, renderTrust,
 } from '../../../apps/customer-portal/src/pages.ts';
 import { acquireFromTed } from '../../acquisition/src/connectors/ted.ts';
 import { submitInboundLead, validateInboundLead } from '../../acquisition/src/leads.ts';
@@ -22,6 +22,7 @@ import { requestChange } from './change-requests.ts';
 import { assertCanResume, offerCatalog, trustFacts } from './trust.ts';
 import { dailyReport } from './daily-report.ts';
 import { queueQuoteReady, unsubscribe } from './outbox.ts';
+import { understand } from './advisor.ts';
 import { decisions as consoleDecisions } from '../../../apps/console/src/model.ts';
 import { verifyProvenance } from '../../product-factory/src/provenance.ts';
 import { downloadInvoice } from '../../finance/src/invoice-pdf.ts';
@@ -160,10 +161,28 @@ export function createHandler(ctx: AppContext): (r: HttpRequest) => Promise<Res>
   const ipHash = (req: Req): string => sha256Hex(`ip:${req.ip}`).slice(0, 16);
 
   // --- Öffentlich ---------------------------------------------------------
-  route('GET', '/', () => html(renderHome(offeredFormats())));
+  const origin = (): string => ctx.config.publicOrigin.replace(/\/$/, '');
+  route('GET', '/', () => html(renderHome(offeredFormats(), 'de', origin())));
+  route('GET', '/it', () => html(renderHome(offeredFormats(), 'it', origin())));
+  route('GET', '/en', () => html(renderHome(offeredFormats(), 'en', origin())));
+  // Technische Suchmaschinen-Grundlagen: interne Bereiche werden nicht indexiert.
+  route('GET', '/robots.txt', () => ({ status: 200, headers: { 'content-type': 'text/plain; charset=utf-8' }, body: `User-agent: *\nAllow: /\nDisallow: /dashboard\nDisallow: /admin\nDisallow: /portal\nDisallow: /angebot/\nDisallow: /api/\nSitemap: ${origin()}/sitemap.xml\n` }));
+  route('GET', '/sitemap.xml', () => {
+    const paths = ['/', '/it', '/en', '/berater', '/anfrage', '/vertrauen', ...offeredFormats().map((id) => `/hilfe/${id}`)];
+    return { status: 200, headers: { 'content-type': 'application/xml; charset=utf-8' }, body: `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${paths.map((p) => `<url><loc>${origin()}${p}</loc></url>`).join('')}</urlset>\n` };
+  });
   route('GET', '/health', () => json({ status: 'ok', mode: ctx.config.testMode ? 'TEST' : 'LIVE', live_sales_enabled: false, environment: ctx.config.environment, payment_provider: ctx.config.payment.provider }));
   const offeredFormats = (): string[] => effectivePolicy(ctx)?.allowedCapabilities.filter((id) => routeCapability(id).ok) ?? [];
   route('GET', '/anfrage', () => html(renderInquiryForm([], {}, offeredFormats())));
+  // Produktberater: Wunsch in eigenen Worten → vorausgefüllte Anfrage (nichts wird gesendet, bevor der Kunde abschickt).
+  route('GET', '/berater', () => html(renderAdvisor()));
+  route('POST', '/berater', (req) => {
+    const text = (form(req).get('wunsch') ?? '').slice(0, 5000);
+    if (!text.trim()) return html(renderAdvisor('', 'Bitte beschreiben Sie kurz, was Sie brauchen.'), 400);
+    const a = understand(text, offeredFormats());
+    if (a.outOfScope) return html(renderInquiryResult('Derzeit nicht lieferbar', a.outOfScope, { href: '/berater', label: 'Anderen Wunsch beschreiben' }));
+    return html(renderInquiryForm([], { title: a.title, items: a.items.join('\n'), margin: a.marginPct === null ? '' : String(a.marginPct).replace('.', ','), format: a.format ?? undefined, message: text.slice(0, 2000) }, offeredFormats(), { understood: a.understood, questions: a.questions }));
+  });
 
   const handleInquiry = (raw: Record<string, unknown>, req: Req): { status: number; result: Record<string, unknown> } => {
     const v = validateInboundLead(raw);
@@ -449,6 +468,8 @@ export function createHandler(ctx: AppContext): (r: HttpRequest) => Promise<Res>
     const page = renderConsole(ctx, req.path, req.query, s.csrf_token, req.query.get('msg') ?? undefined);
     return page ? html(page) : json({ error: 'NOT_FOUND' }, 404);
   });
+  // Admin-Zugang über /admin: angemeldet → Konsole, sonst Passwort-Anmeldung (Prüfung serverseitig in ownerGuard).
+  route('GET', '/admin', ownerGuard(() => redirect('/dashboard')));
   route('GET', '/dashboard', consolePage);
   route('GET', '/dashboard/:area', consolePage);
   route('GET', '/dashboard/:area/:id', consolePage);
