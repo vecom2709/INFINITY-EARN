@@ -1,4 +1,4 @@
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, isAbsolute, join, resolve } from 'node:path';
 import type { BlobStore } from './types.ts';
 
@@ -24,5 +24,9 @@ export class FsBlobStore implements BlobStore {
   }
   overwrite(locator: string, bytes: Uint8Array): void {
     writeFileSync(locator, bytes);
+  }
+  delete(locator: string): void {
+    if (!resolve(locator).startsWith(this.#base)) throw new Error('INVALID_BLOB_LOCATOR');
+    rmSync(locator, { force: true });
   }
 }

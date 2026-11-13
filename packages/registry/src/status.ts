@@ -68,6 +68,7 @@ const T = {
   gp: 'tests/integration/gesamtprompt.test.ts',
   mwui: 'tests/products/mini-ww/ui.test.ts',
   asg: 'tests/integration/assignment.test.ts',
+  ast: 'tests/integration/client-assets.test.ts',
 } as const;
 
 type Row = [n: number, area: Area, status: ImplStatus, milestone: Milestone, umgesetzt: string, offen: string, evidence: string[]];
@@ -227,7 +228,7 @@ const ROWS: Row[] = [
   [158, 'produkte', 'GEPLANT', 'M6', '', 'Testlabor mit echtem Installations-/Start-/Deinstallationstest je Zielsystem; Windows auf diesem Rechner und Linux in kostenloser CI möglich, macOS nicht ohne Hardware.', []],
   [159, 'produkte', 'TEILWEISE', 'M6', 'Kalkulationen als Tabelle (CSV) und PDF mit automatischer Prüfung von Summen, Rundung, Sonderzeichen und Layout gegen die echte Datei; PDF zusätzlich zur bearbeitbaren Tabelle.', 'Bearbeitbare .xlsx/.docx/.pptx mit Formeln, Diagrammen und Metadaten-Bereinigung.', [T.qs, T.pdf]],
   [160, 'produkte', 'GESPERRT', 'M6', '', 'Grafik, 3D, Audio und Video sind auf kostenloser Infrastruktur nicht zuverlässig herstellbar und prüfbar; gesperrt bis zum echten Fähigkeitsnachweis (keine kostenpflichtigen Render-Dienste ohne Freigabe).', []],
-  [161, 'kunden', 'GEPLANT', 'M6', '', 'Sicherer Upload im Kundenportal (Größe, Dateityp, Magic Bytes), Rechteklärung, Zugriffsfristen mit Widerruf, Mandantentrennung, Audit (P1, nächste Stufe).', []],
+  [161, 'kunden', 'TEILWEISE', 'M6', 'Datei-/Zugangsanfrage nur beim Kunden des Auftrags (Admin → Auftrag → Dateien); sicherer Upload im Portal ohne JavaScript (Größe, erlaubte Endung, Magic Bytes, keine ausführbaren Dateien, Makros, PDF-Skripte, EICAR, Zugangsdaten); abgelehnte Dateien werden nicht gespeichert; Nutzungsrechte-Pflicht; befristete, widerrufbare, auftragsbezogene Freigabe an die Produktion mit Protokoll; Mandantentrennung; Dubletten versioniert; Zugänge nur per Einladung (keine Passwörter); Produktion pausiert bei fehlender Datei; Löschantrag löscht Dateien.', 'Vollständiger Virenscanner (kostenlos im Worker nicht verfügbar); E-Mail-Benachrichtigung erst mit verbundenem Versandkanal; Verwendung der Dateien in den Generatoren (z. B. Logo im Programm).', [T.ast]],
   [162, 'kunden', 'GEPLANT', 'M6', '', 'Freelancer-Angebote nur auf Plattformen mit Konto des Eigentümers und erlaubter Schnittstelle; baut auf 134 (Angebote) und 137 (Kontaktregeln) auf; kein automatischer Versand, wo Bots untersagt sind.', []],
   [163, 'produkte', 'GESPERRT', 'M6', '', 'Autonome KI-Fachrollen brauchen eine KI-API (kostenpflichtig, Eigentümer-Entscheidung L11); ohne Freigabe arbeitet nur der deterministische Kern mit Warteschlange.', []],
   [164, 'auftraege', 'TEILWEISE', 'M6', 'Admin-Vorschau des echten Produkts (Warenwirtschaft interaktiv), Kundenportal mit Besitzprüfung, Änderungswünsche nach Lieferung als eigener Zusatzauftrag mit Preis und Zahlung.', 'Abnahmesitzung vor der Übergabe mit Feedback je Version und dokumentierter Abnahme.', [T.p4, T.bch, T.docs]],

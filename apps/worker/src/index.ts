@@ -7,7 +7,7 @@ import { autopilotTick } from '../../../services/core-api/src/autopilot.ts';
 import { newBackupState, runDailyBackup, type BackupSink } from '../../../services/core-api/src/backup-offsite.ts';
 import { ConfigError, loadConfig } from '../../../services/core-api/src/config.ts';
 import { buildContext, type AppContext } from '../../../services/core-api/src/context.ts';
-import { createHandler, MAX_BODY, SECURITY_HEADERS, type HttpRequest, type Res } from '../../../services/core-api/src/http-core.ts';
+import { createHandler, isUploadRequest, MAX_BODY, MAX_UPLOAD_BODY, SECURITY_HEADERS, type HttpRequest, type Res } from '../../../services/core-api/src/http-core.ts';
 import { runFeeSync } from '../../../services/finance/src/fee-sync.ts';
 import { providerFor } from '../../../services/finance/src/providers/index.ts';
 
@@ -97,8 +97,10 @@ export class InfinityCore {
     }
     await this.#ensureAlarm();
     const length = Number(request.headers.get('content-length') ?? '0');
-    if (length > MAX_BODY) return new Response('{"error":"PAYLOAD_TOO_LARGE"}', { status: 413, headers: SECURITY_HEADERS });
-    const body = request.method === 'GET' || request.method === 'HEAD' ? '' : await request.text();
+    const upload = isUploadRequest(request.method, url.pathname, request.headers.get('content-type') ?? undefined);
+    if (length > (upload ? MAX_UPLOAD_BODY : MAX_BODY)) return new Response('{"error":"PAYLOAD_TOO_LARGE"}', { status: 413, headers: SECURITY_HEADERS });
+    const bodyBytes = upload ? new Uint8Array(await request.arrayBuffer()) : undefined;
+    const body = upload || request.method === 'GET' || request.method === 'HEAD' ? '' : await request.text();
     const headers: Record<string, string> = {};
     request.headers.forEach((v, k) => (headers[k] = v));
     const handle = this.#handle;
@@ -108,6 +110,7 @@ export class InfinityCore {
       url: url.pathname + url.search,
       headers,
       body,
+      ...(bodyBytes ? { bodyBytes } : {}),
       ip: request.headers.get('cf-connecting-ip') ?? 'unknown',
     });
     return toResponse(res);

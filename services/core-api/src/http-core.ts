@@ -17,6 +17,8 @@ import { addPartner, cleanToken, decideCommission, proposeExperiment, recordAcqu
 import { contentStatus, landingStatus, planDistribution, publishedArticle, publishedLanding, ARTICLE_SLUG } from '../../growth/src/visibility.ts';
 import { activeRelease, isSellable, RELEASE_REQUIRED, releaseProduct, revokeProduct } from './releases.ts';
 import { confirmAssignment, createAssignment, reviseAssignment } from './assignments.ts';
+import { cancelAssetRequest, confirmAccess, confirmRights, customerAsset, requestAsset, revokeAsset, uploadAsset, UPLOAD_MAX_BYTES, type AssetKind } from './client-assets.ts';
+import { parseMultipart } from '../../../packages/shared/src/multipart.ts';
 import { acquireFromTed } from '../../acquisition/src/connectors/ted.ts';
 import { submitInboundLead, validateInboundLead } from '../../acquisition/src/leads.ts';
 import { rankOpportunities } from '../../acquisition/src/ranking.ts';
@@ -69,6 +71,8 @@ export interface HttpRequest {
   url: string;
   headers: Record<string, string | undefined>;
   body: string;
+  /** Nur für Datei-Uploads (multipart/form-data) auf erlaubten Pfaden, siehe isUploadRequest. */
+  bodyBytes?: Uint8Array;
   ip: string;
 }
 
@@ -78,6 +82,7 @@ interface Req {
   query: URLSearchParams;
   headers: Record<string, string | undefined>;
   body: string;
+  bodyBytes?: Uint8Array;
   cookies: Record<string, string>;
   ip: string;
   params: Record<string, string>;
@@ -92,6 +97,14 @@ export interface Res {
 type Handler = (req: Req) => Res | Promise<Res>;
 
 export const MAX_BODY = 64 * 1024;
+/** Upload-Grenze inkl. Formular-Overhead (Funktion 161). */
+export const MAX_UPLOAD_BODY = UPLOAD_MAX_BYTES + 64 * 1024;
+const noticeCode = (v: string | null): string | undefined => (v && /^[A-Za-z_]{2,24}$/.test(v) ? v : undefined);
+const UPLOAD_PATH = /^\/portal\/dateien\/arq_[a-f0-9]{32}$/;
+/** Nur POST multipart auf den Upload-Pfad darf größer sein und wird als Bytes gelesen. */
+export function isUploadRequest(method: string, url: string, contentType: string | undefined): boolean {
+  return method === 'POST' && UPLOAD_PATH.test(url.split('?')[0] ?? '') && /^multipart\/form-data/i.test(contentType ?? '');
+}
 const OWNER_COOKIE = 'ie_owner';
 const CUSTOMER_COOKIE = 'ie_customer';
 /** Nur die gewählte Sprache (de/it/en) – kein Tracking, keine personenbezogenen Daten. */
@@ -452,7 +465,7 @@ export function createHandler(ctx: AppContext): (r: HttpRequest) => Promise<Res>
   };
   // Kundenportal: /portal und /konto (Gesamtprompt §6) zeigen dasselbe persönliche Portal.
   route('GET', '/konto', (req) => html(renderPortal(ctx, customerByKey(ctx, req.cookies[CUSTOMER_COOKIE]), undefined, L(req))));
-  route('GET', '/portal', (req) => html(renderPortal(ctx, customerByKey(ctx, req.cookies[CUSTOMER_COOKIE]), PORTAL_MSG[req.query.get('ok') ?? ''] ?? (req.query.get('fehler') ? `${tr(L(req), 'Nicht gespeichert:')} ${tr(L(req), PORTAL_ERR[req.query.get('fehler') ?? ''] ?? 'Bitte Eingaben prüfen.')}` : undefined), L(req))));
+  route('GET', '/portal', (req) => html(renderPortal(ctx, customerByKey(ctx, req.cookies[CUSTOMER_COOKIE]), PORTAL_MSG[req.query.get('ok') ?? ''] ?? (req.query.get('fehler') ? `${tr(L(req), 'Nicht gespeichert:')} ${tr(L(req), PORTAL_ERR[req.query.get('fehler') ?? ''] ?? 'Bitte Eingaben prüfen.')}` : undefined), L(req), { ok: noticeCode(req.query.get('datei')), err: noticeCode(req.query.get('dateifehler')), reason: (req.query.get('grund') ?? '').slice(0, 200) || undefined })));
   const PORTAL_ERR: Record<string, string> = {
     DEFECT_NEEDS_DESCRIPTION: 'Bitte beschreiben Sie den Mangel kurz.', ALREADY_DECIDED: 'Für diesen Auftrag wurde bereits entschieden.', ALREADY_RATED: 'Sie haben diesen Auftrag bereits bewertet.',
     INVALID_RATING: 'Bitte 1 bis 5 Sterne wählen.', NOT_DELIVERED: 'Erst nach der Lieferung möglich.', FORBIDDEN: 'Kein Zugriff auf diesen Auftrag.',
@@ -695,6 +708,75 @@ export function createHandler(ctx: AppContext): (r: HttpRequest) => Promise<Res>
     stopExperiment(ctx, req.params.id ?? '');
     return back(req, 'Experiment gestoppt');
   }, { csrf: true }));
+  // --- Funktion 161: Kundendateien und Zugänge -------------------------------------------------------------
+  const assetBack = (q: string): Res => redirect(`/portal?${q}#dateien`);
+  const assetErr = (e: unknown): Res => {
+    if (e instanceof WorkflowError) return assetBack('dateifehler=' + encodeURIComponent(e.code));
+    throw e;
+  };
+  const crossSite = (req: Req): boolean => req.headers['sec-fetch-site'] === 'cross-site';
+  route('POST', '/portal/dateien/:id', (req) => {
+    if (crossSite(req)) return json({ error: 'FORBIDDEN' }, 403);
+    const mp = req.bodyBytes ? parseMultipart(req.bodyBytes, req.headers['content-type']) : null;
+    if (!mp) return assetBack('dateifehler=BAD_UPLOAD');
+    const file = mp.files.find((f) => f.field === 'datei');
+    if (!file || !file.data.length) return assetBack('dateifehler=NO_FILE');
+    if (file.data.length > UPLOAD_MAX_BYTES) return assetBack('dateifehler=TOO_LARGE');
+    try {
+      const r = uploadAsset(ctx, req.cookies[CUSTOMER_COOKIE], req.params.id ?? '', { filename: file.filename, bytes: file.data }, mp.fields.get('rechte') === '1');
+      return assetBack('datei=' + r.status + (r.status === 'REJECTED' ? '&grund=' + encodeURIComponent(r.reason) : ''));
+    } catch (e) {
+      return assetErr(e);
+    }
+  });
+  route('POST', '/portal/dateien/:id/zugang', (req) => {
+    if (crossSite(req)) return json({ error: 'FORBIDDEN' }, 403);
+    try {
+      confirmAccess(ctx, req.cookies[CUSTOMER_COOKIE], req.params.id ?? '', form(req).get('note') ?? '');
+      return assetBack('datei=access');
+    } catch (e) {
+      return assetErr(e);
+    }
+  });
+  route('POST', '/portal/datei/:id/rechte', (req) => {
+    if (crossSite(req)) return json({ error: 'FORBIDDEN' }, 403);
+    try {
+      confirmRights(ctx, req.cookies[CUSTOMER_COOKIE], req.params.id ?? '');
+      return assetBack('datei=rights');
+    } catch (e) {
+      return assetErr(e);
+    }
+  });
+  route('POST', '/portal/datei/:id/widerrufen', (req) => {
+    if (crossSite(req)) return json({ error: 'FORBIDDEN' }, 403);
+    try {
+      revokeAsset(ctx, req.params.id ?? '', { customerKey: req.cookies[CUSTOMER_COOKIE] }, 'vom Kunden widerrufen');
+      return assetBack('datei=revoked');
+    } catch (e) {
+      return assetErr(e);
+    }
+  });
+  route('GET', '/portal/datei/:id', (req) => {
+    try {
+      const a = customerAsset(ctx, req.cookies[CUSTOMER_COOKIE], req.params.id ?? '');
+      return { status: 200, headers: { 'content-type': 'application/octet-stream', 'content-disposition': 'attachment; filename="' + a.filename.replace(/[^\w .()-]/g, '_') + '"' }, body: a.bytes };
+    } catch (e) {
+      if (e instanceof WorkflowError) return json({ error: e.code }, e.code === 'NOT_FOUND' ? 404 : 403);
+      throw e;
+    }
+  });
+  route('POST', '/admin/dateien/anfordern', ownerGuard((req) => {
+    const f = form(req);
+    return back(req, String(guarded(() => {
+      requestAsset(ctx, { orderId: f.get('order_id') ?? '', kind: (f.get('kind') ?? '') as AssetKind, label: f.get('label') ?? '', purpose: f.get('purpose') ?? '', rightsRequired: f.get('rights') === '1', blocksProduction: f.get('blocks') === '1' });
+      return 'Anfrage an den Kunden gestellt – sie erscheint in seinem Portal';
+    })));
+  }, { csrf: true }));
+  route('POST', '/admin/dateien/:id/widerrufen', ownerGuard((req) => {
+    const reason = form(req).get('reason') ?? 'vom Eigentümer widerrufen';
+    return back(req, String(guarded(() => 'Freigabe widerrufen (' + revokeAsset(ctx, req.params.id ?? '', { owner: true }, reason) + ')')));
+  }, { csrf: true }));
+  route('POST', '/admin/dateianfragen/:id/abbrechen', ownerGuard((req) => back(req, String(guarded(() => { cancelAssetRequest(ctx, req.params.id ?? ''); return 'Anfrage zurückgezogen'; }))), { csrf: true }));
   // --- Funktion 156: Auftragsanforderungen (nur Eigentümer, mit CSRF) ---------------------------------------
   route('POST', '/admin/anforderungen', ownerGuard((req) => {
     const f = form(req);
@@ -903,6 +985,7 @@ export function createHandler(ctx: AppContext): (r: HttpRequest) => Promise<Res>
       query: url.searchParams,
       headers: r.headers,
       body: r.body,
+      bodyBytes: r.bodyBytes,
       cookies: parseCookies(r.headers.cookie),
       ip: r.ip,
       params: {},
@@ -910,6 +993,7 @@ export function createHandler(ctx: AppContext): (r: HttpRequest) => Promise<Res>
     let res: Res;
     try {
       if (r.body.length > MAX_BODY) res = json({ error: 'PAYLOAD_TOO_LARGE' }, 413);
+      else if (r.bodyBytes && (!isUploadRequest(r.method, r.url, r.headers['content-type']) || r.bodyBytes.length > MAX_UPLOAD_BODY)) res = json({ error: 'PAYLOAD_TOO_LARGE' }, 413);
       else {
         incrementUsage(ctx, 'platform_requests');
         const match = routes.find((x) => x.method === req.method && x.pattern.test(req.path));

@@ -17,6 +17,7 @@ import { icon } from '../../console/src/icons.ts';
 import { paymentLabel, pipelineLabel } from '../../console/src/labels.ts';
 import { friendlyTitle } from '../../console/src/model.ts';
 import { e, page } from '../../shared/layout.ts';
+import { renderAssetSection, type AssetNotice } from './assets-portal.ts';
 
 /** Kundenseiten im 15.0-Design: verständlich, ruhig, alle Dokumente ohne Chat auffindbar (UI-09). */
 const money = (minor: number, currency: string): string => `${formatMinor(minor, currency).replace('.', ',')} ${currency === 'EUR' ? '€' : currency}`;
@@ -456,7 +457,7 @@ ${sha ? '<div class="card err" role="alert">Zu dieser Prüfsumme ist keine von I
 ${p.warnings.length ? `<ul class="err">${p.warnings.map((w) => `<li>${e(w)}</li>`).join('')}</ul>` : ''}</div>${form}`, { testMode: true });
 }
 
-export function renderPortal(ctx: AppContext, customer: CustomerRow | undefined, flash?: string, lang: Lang = 'de'): string {
+export function renderPortal(ctx: AppContext, customer: CustomerRow | undefined, flash?: string, lang: Lang = 'de', assetNotice: AssetNotice = {}): string {
   const t = (s: string): string => tr(lang, s);
   const title = (d: string): string => (lang === 'de' ? friendlyTitle(d) : productTitle(d, lang));
   if (!customer) {
@@ -496,6 +497,7 @@ ${progress(phase, lang)}<p><span class="tag ${tone(pay.tone)}">${e(t(pay.text))}
     t('Kundenportal – INFINITY EARN'),
     `<h1>${t('Kundenportal')}</h1><p class="lead">${t('Alle Ihre Aufträge mit Vertragsbestätigung, Beleg und Datei – ohne Anmeldung in diesem Browser.')}</p>
 ${flash ? `<div class="card" role="status">${e(t(flash))}</div>` : ''}
+${renderAssetSection(ctx, customer.customer_id, lang, assetNotice)}
 ${cards.join('') || `<div class="card"><p class="muted">${t('Noch keine Aufträge.')}</p></div>`}
 <div class="card"><h2>${t('Ihre Daten')}</h2><p class="muted">${t('Sie können jederzeit eine Kopie aller gespeicherten Daten abrufen.')}</p><div class="docs"><a href="/portal/datenexport">${icon('download', 'sm')}${t('Meine Daten exportieren (JSON)')}</a></div></div>
 ${orders[0] ? `<form class="card" method="post" action="/portal/support"><h2>${t('Frage, Reklamation oder Widerruf')}</h2>

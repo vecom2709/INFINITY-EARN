@@ -85,8 +85,8 @@
   },
   "summary": {
     "TESTED_full": 26,
-    "TESTED_partial": 83,
-    "SPECIFIED": 45,
+    "TESTED_partial": 84,
+    "SPECIFIED": 44,
     "BLOCKED": 3,
     "LIVE_VERIFIED": 0
   },
@@ -2664,14 +2664,16 @@
       "approved": true,
       "title": "Secure Client Asset & Access Concierge",
       "title_de": "Kundendateien und Zugänge",
-      "status": "SPECIFIED",
-      "scope": "none",
-      "internal_status": "GEPLANT",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
       "milestone": "M6",
-      "implemented": null,
-      "open": "Sicherer Upload im Kundenportal (Größe, Dateityp, Magic Bytes), Rechteklärung, Zugriffsfristen mit Widerruf, Mandantentrennung, Audit (P1, nächste Stufe).",
-      "evidence": [],
-      "test_command": null,
+      "implemented": "Datei-/Zugangsanfrage nur beim Kunden des Auftrags (Admin → Auftrag → Dateien); sicherer Upload im Portal ohne JavaScript (Größe, erlaubte Endung, Magic Bytes, keine ausführbaren Dateien, Makros, PDF-Skripte, EICAR, Zugangsdaten); abgelehnte Dateien werden nicht gespeichert; Nutzungsrechte-Pflicht; befristete, widerrufbare, auftragsbezogene Freigabe an die Produktion mit Protokoll; Mandantentrennung; Dubletten versioniert; Zugänge nur per Einladung (keine Passwörter); Produktion pausiert bei fehlender Datei; Löschantrag löscht Dateien.",
+      "open": "Vollständiger Virenscanner (kostenlos im Worker nicht verfügbar); E-Mail-Benachrichtigung erst mit verbundenem Versandkanal; Verwendung der Dateien in den Generatoren (z. B. Logo im Programm).",
+      "evidence": [
+        "tests/integration/client-assets.test.ts"
+      ],
+      "test_command": "node --test tests/integration/client-assets.test.ts",
       "live_verified": false
     },
     {

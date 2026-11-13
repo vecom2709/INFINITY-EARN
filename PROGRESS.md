@@ -14,6 +14,28 @@ Grundlage: das 15.0-Paket (`docs/spec/v15/`, Prüfsummen laut Manifest geprüft)
 
 ---
 
+## Funktion 161: Kundendateien und Zugänge (2026-11-13)
+
+- **Admin → Auftrag → „Dateien und Zugänge vom Kunden“:** Logo, Dokument, Daten oder Zugang anfordern. Die Anfrage erscheint nur im Portal dieses Kunden.
+- **Kundenportal:**
+  - Upload per normalem Formular, ohne JavaScript, bis 3 MB.
+  - Geprüft werden: erlaubte Endung je Art, Magic Bytes, keine ausführbaren Dateien, keine Office-Makros, keine PDF-Skripte, die EICAR-Signatur und Zugangsdaten in Textdateien.
+  - Abgelehnte Dateien werden nicht gespeichert.
+  - Nutzungsrechte müssen bestätigt werden, sonst bleibt die Datei gesperrt.
+  - Gleiche Datei → keine neue Version; andere Datei → neue Version, die alte bleibt erhalten.
+  - Die Freigabe kann jederzeit widerrufen werden.
+- **Zugänge:** Passwörter und Schlüssel werden nie angenommen und erscheinen nirgends gespeichert oder protokolliert. Es zählt nur „Einladung erteilt“.
+- **Produktion:**
+  - Zugriff nur über eine befristete, widerrufbare Freigabe für genau diesen Auftrag und nur beim gleichen Kunden; jeder Zugriff wird protokolliert.
+  - Fehlt eine benötigte Datei, pausiert die Produktion; es wird nichts mit Ersatzdaten erzeugt.
+- **Löschantrag:** löscht die Dateien endgültig.
+- **Ehrlich offen:**
+  - Kein vollständiger Virenscanner: Das ist eine Format- und Signaturprüfung.
+  - Keine E-Mail-Benachrichtigung, solange kein Versandkanal verbunden ist.
+  - Die Generatoren verwenden die Dateien noch nicht, z. B. das Logo im Programm.
+
+---
+
 ## Gesamtprompt mit 157 Funktionen übernommen, Funktion 156 gebaut (2026-11-13)
 
 - **Quelle:**

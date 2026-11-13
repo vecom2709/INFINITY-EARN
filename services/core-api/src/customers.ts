@@ -2,6 +2,7 @@ import { newId, sha256Hex } from '../../../packages/shared/src/crypto.ts';
 import { hasControlChars } from '../../../packages/shared/src/text.ts';
 import type { AppContext } from './context.ts';
 import { WorkflowError } from './errors.ts';
+import { eraseClientAssets } from './client-assets.ts';
 
 export interface CustomerRow {
   customer_id: string;
@@ -71,6 +72,7 @@ export function erasePersonalData(ctx: AppContext, leadId: string, actor: 'owner
       ctx.db.run(`UPDATE customers SET processing_restricted = 1 WHERE lead_id = ?`, leadId);
     }
     // Freitext auch in Auftragsanforderungen (156) entfernen; Prüfsumme und Versionen bleiben als Nachweis.
+    for (const c of ctx.db.all<{ customer_id: string }>('SELECT customer_id FROM customers WHERE lead_id = ?', leadId)) eraseClientAssets(ctx, c.customer_id);
     ctx.db.run(`UPDATE assignment_specs SET source_text = '[gelöscht]', spec_json = '{"erased":true}', attachments_json = '[]' WHERE lead_id = ?`, leadId);
   });
   ctx.audit.record({ type: 'gdpr.erasure_processed', actor, subjectType: 'lead', subjectId: leadId, data: { mode }, testMode: ctx.config.testMode });

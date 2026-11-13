@@ -6,6 +6,7 @@ import { getOpportunity, tryTransition } from '../../core-api/src/opportunities.
 import { getOrder, setFulfillmentState } from '../../core-api/src/orders.ts';
 import { WorkflowError } from '../../core-api/src/errors.ts';
 import { decide } from '../../core-api/src/policy-store.ts';
+import { assetGate } from '../../core-api/src/client-assets.ts';
 import { readVerifiedArtifact, storeArtifact } from './artifacts.ts';
 import { releaseDelivery } from './delivery.ts';
 import { routeCapability } from './registry.ts';
@@ -70,6 +71,12 @@ function processJob(ctx: AppContext, job: JobRow, hooks: ProductionHooks): Produ
     const terminal = order.payment_state === 'REFUNDED' || order.payment_state === 'FAILED' || order.payment_state === 'DISPUTED';
     setJobState(ctx, job.job_id, terminal ? 'REJECTED' : 'QUEUED', d.rule, terminal ? 0 : 60_000);
     return { ...base, outcome: 'BLOCKED', detail: d.rule };
+  }
+  // 161: Fehlt eine benötigte Kundendatei oder ein Zugang, pausiert die Produktion – keine Ersatz- oder Fantasiedaten.
+  const assets = assetGate(ctx, order.order_id);
+  if (!assets.ready) {
+    setJobState(ctx, job.job_id, 'QUEUED', 'ASSET_MISSING', 15 * 60_000);
+    return { ...base, outcome: 'BLOCKED', detail: `ASSET_MISSING: ${assets.missing.join(', ').slice(0, 200)}` };
   }
   const route = routeCapability(opp.capability_id ?? '');
   if (!route.ok) {

@@ -84,4 +84,7 @@ export class DoBlobStore implements BlobStore {
     if (!row) return null;
     return row.bytes instanceof Uint8Array ? row.bytes : new Uint8Array(row.bytes);
   }
+  delete(locator: string): void {
+    if (locator.startsWith('blob:')) this.#db.run('DELETE FROM blob_store WHERE key = ?', locator.slice(5));
+  }
 }

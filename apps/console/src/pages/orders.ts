@@ -4,6 +4,7 @@ import { PHASES, paymentLabel, phaseOf, pipelineLabel } from '../labels.ts';
 import { fmtDate, friendlyTitle, money, orderRows, plainReason, shortRef } from '../model.ts';
 import { action, e, empty, explain, kv, modeSwitch, panel, shell, steps, table, tag, withMode } from '../ui.ts';
 import type { PageCtx } from './types.ts';
+import { renderOrderAssets } from './order-assets.ts';
 
 const GROUPS: { key: string; label: string; states: string[] }[] = [
   { key: 'offen', label: 'Angeboten', states: ['QUOTED', 'CUSTOMER_ACCEPTED'] },
@@ -98,6 +99,7 @@ export function renderOrderDetail(pc: PageCtx, orderId: string): string | null {
   const body = `<div style="margin-bottom:20px">${steps(stepList)}</div>
 <div class="grid2">${panel({ title: 'Auftragsdetails', body: `${summary}${explain(l.explain, `Was bedeutet „${l.text}“?`)}` })}
 <div class="stack">${panel({ title: 'Aktueller Stand', body: `<p style="margin:4px 0 8px">${tag(l.text, l.tone)}</p><p class="muted" style="margin:0">${e(o.state_reason ? plainReason(o.state_reason) : l.explain)}</p>` })}${refund}</div></div>
+${renderOrderAssets(pc, orderId, `/dashboard/auftraege/${orderId}${mode === 'test' ? '?modus=test' : ''}`)}
 ${panel({ title: 'Verlauf', sub: 'Jeder Schritt mit Zeitpunkt – unveränderlich protokolliert', body: timeline, flush: true })}`;
   return shell({ title: `Auftrag ${shortRef(orderId)}`, eyebrow: `Aufträge · ${mode === 'test' ? 'Testauftrag' : 'Echtauftrag'}`, heading: `Auftrag ${shortRef(orderId)}`, lead: friendlyTitle(o.description), active: 'auftraege', mode, csrf: pc.csrf, path: pc.path, flash: pc.flash, heroAside: `<a class="btn ghost" href="${e(withMode('/dashboard/auftraege', mode))}">Alle Aufträge</a>`, body, systemTestMode: pc.ctx.config.testMode });
 }

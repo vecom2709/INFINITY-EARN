@@ -21,6 +21,8 @@ export interface BlobStore {
   get(locator: string): Uint8Array | null;
   /** Nur für Tests/Integrität: Inhalt überschreiben. */
   overwrite?(locator: string, bytes: Uint8Array): void;
+  /** Endgültig löschen (z. B. Löschantrag, Kundendateien). */
+  delete?(locator: string): void;
 }
 
 export interface Migration {

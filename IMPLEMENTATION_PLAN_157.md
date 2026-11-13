@@ -19,7 +19,7 @@ Stand: 2026-11-13 · Quelle: `docs/spec/v15-157/` (SHA-256 laut Manifest des Eig
 | 158 | Plattform-Testlabor | GEPLANT | Windows ist auf diesem Rechner testbar, Linux in kostenloser CI; macOS nicht ohne Mac. |
 | 159 | Office- und Dokumentproduktion | **TEILWEISE** | Kalkulation als CSV und PDF mit automatischer Prüfung. **Offen:** bearbeitbare .xlsx/.docx/.pptx. |
 | 160 | Grafik, 3D, Audio, Video | GESPERRT | Auf kostenloser Infrastruktur nicht zuverlässig herstellbar und prüfbar. |
-| 161 | Kundendateien und Zugänge | GEPLANT | Nächste Stufe (P1b): sicherer Upload im Portal. |
+| 161 | Kundendateien und Zugänge | **TEILWEISE** | Anfrage nur beim Kunden des Auftrags, sicherer Upload im Portal (Format, Magic Bytes, keine ausführbaren Dateien/Makros/Skripte/Zugangsdaten), Rechte-Pflicht, befristete widerrufbare Freigabe, Mandantentrennung, Versionen, Produktion pausiert bei fehlender Datei. Pflichttests PR-161-01…08 in `tests/integration/client-assets.test.ts`. **Offen:** vollständiger Virenscanner, E-Mail-Hinweis an den Kunden, Nutzung der Dateien in den Generatoren. |
 | 162 | Angebote für Freelancer-Aufträge | GEPLANT | Nur mit Plattformkonto des Eigentümers und erlaubter Schnittstelle. |
 | 163 | Abgestimmte Fachteams | GESPERRT | Autonome KI-Rollen brauchen eine kostenpflichtige KI-API (Eigentümer-Entscheidung L11). |
 | 164 | Abnahme durch den Kunden | **TEILWEISE** | Admin-Vorschau, Kundenportal mit Besitzprüfung, Änderungswunsch als Zusatzauftrag. **Offen:** Abnahmesitzung vor der Übergabe. |
@@ -52,7 +52,7 @@ Entschieden wird beim Start von P3, nach Installation der kostenlosen Werkzeuge.
 |---|---|---|
 | P0 | Repo-Audit, Registry 157, Spezifikation mit Prüfsummen, ehrliche Status | **erledigt** |
 | P1a | 156 Auftragsanforderung (Schema, Rückfragen, Konflikte, Versionen, Bestätigung, Admin, Website-Anbindung) | **erledigt** (Teil: ohne KI-Sprach-/Dokumentanalyse) |
-| P1b | 161 sicherer Upload und Zugriffsrechte im Kundenportal | als Nächstes |
+| P1b | 161 sicherer Upload und Zugriffsrechte im Kundenportal | **erledigt** (Teil: ohne vollständigen Virenscanner) |
 | P2 | 162 Freelancer-Angebote mit Plattform-Gate (Plattformkonten des Eigentümers nötig) | wartet auf Konten |
 | P3 | 157/158/159: ein installierbares Windows-Kleinprogramm mit Fachlogik und eine geprüfte .xlsx | wartet auf Installation kostenloser Werkzeuge |
 | P4 | 160/163 nur mit verfügbaren Ressourcen bzw. Kostenfreigabe | gesperrt |
