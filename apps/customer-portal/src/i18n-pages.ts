@@ -9,6 +9,9 @@ import { HOME, type Lang } from './home-i18n.ts';
 export const DICT: Record<string, { it: string; en: string }> = {
   // Rahmen
   'Zum Inhalt springen': { it: 'Vai al contenuto', en: 'Skip to content' },
+  'Warenwirtschaft als Programm im Design von': { it: 'Gestionale come programma con il design di', en: 'Inventory program in the design of' },
+  'Diese Seite gibt es nicht.': { it: 'Questa pagina non esiste.', en: 'This page does not exist.' },
+  'Bebilderte Bedienungsanleitung (PDF)': { it: 'Manuale d’uso illustrato (PDF)', en: 'Illustrated user manual (PDF)' },
   // Berater
   'Produktberater – INFINITY EARN': { it: 'Consulente prodotti – INFINITY EARN', en: 'Product advisor – INFINITY EARN' },
   'Beschreiben Sie Ihren Wunsch': { it: 'Descrivete la vostra richiesta', en: 'Describe what you need' },
@@ -277,6 +280,7 @@ const PRODUCT: Record<string, Record<Lang, string>> = {
   'b2b-calc-csv': { de: 'Kalkulationstabelle', it: 'Tabella di calcolo', en: 'Calculation spreadsheet' },
   'b2b-calc-pdf': { de: 'Kalkulation als PDF', it: 'Calcolo in PDF', en: 'Calculation as PDF' },
   'b2b-calc-bundle': { de: 'Kalkulationspaket (Tabelle + PDF)', it: 'Pacchetto di calcolo (tabella + PDF)', en: 'Calculation bundle (spreadsheet + PDF)' },
+  'mini-ww': { de: 'Warenwirtschaft (Programm + Anleitung)', it: 'Gestionale (programma + manuale)', en: 'Inventory management (program + manual)' },
 };
 const ON_REQUEST: Record<Lang, string> = { de: 'gemäß Anfrage', it: 'su richiesta', en: 'as requested' };
 export function productTitle(description: string, lang: Lang): string {

@@ -75,8 +75,8 @@
   },
   "summary": {
     "TESTED_full": 26,
-    "TESTED_partial": 69,
-    "SPECIFIED": 51,
+    "TESTED_partial": 79,
+    "SPECIFIED": 41,
     "BLOCKED": 1,
     "LIVE_VERIFIED": 0
   },
@@ -2236,14 +2236,16 @@
       "approved": true,
       "title": "Perfect Buyer Timing Intelligence",
       "title_de": "Richtiger Zeitpunkt",
-      "status": "SPECIFIED",
-      "scope": "none",
-      "internal_status": "GEPLANT",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
       "milestone": "M6",
-      "implemented": null,
-      "open": "Zeitpunkt-Signale aus belegten Ereignissen mit Ablaufdatum.",
-      "evidence": [],
-      "test_command": null,
+      "implemented": "Zeitpunkt-Signale aus Ausschreibungsfristen: bestes Zeitfenster, Gründe, Belege, Sicherheitsband; ohne Frist TIMING_UNCERTAIN, kein Prozentwert (Admin → Wachstum).",
+      "open": "Weitere belegte Ereignisarten (Standorteröffnung, Migration) aus lizenzierten Quellen.",
+      "evidence": [
+        "tests/integration/growth.test.ts"
+      ],
+      "test_command": "node --test tests/integration/growth.test.ts",
       "live_verified": false
     },
     {
@@ -2288,14 +2290,16 @@
       "approved": true,
       "title": "Demand-Driven Landingpage Factory",
       "title_de": "Nachfrage-Seiten",
-      "status": "SPECIFIED",
-      "scope": "none",
-      "internal_status": "GEPLANT",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
       "milestone": "M6",
-      "implemented": null,
-      "open": "Nachfrage-Unterseiten erst bei belegtem Bedarf und echter Leistung, mit Qualitätsprüfung.",
-      "evidence": [],
-      "test_command": null,
+      "implemented": "Bedarfsseiten /loesungen/… nur für echte Leistungen: inhaltliche QA (echtes Angebot, keine Duplikate, keine Fake-Claims, DE/IT/EN), Zustände QA_BLOCKED/PUBLISHED/UNDER_REVIEW, Sitemap nur veröffentlichte.",
+      "open": "Ansichten/Anfragen je Seite aus Search Console; weitere Cluster erst bei belegtem Bedarf.",
+      "evidence": [
+        "tests/integration/growth.test.ts"
+      ],
+      "test_command": "node --test tests/integration/growth.test.ts",
       "live_verified": false
     },
     {
@@ -2307,13 +2311,14 @@
       "scope": "partial",
       "internal_status": "TEILWEISE",
       "milestone": "M4",
-      "implemented": "Produktberater (DE/IT/EN) mit Rückfragen und ehrlicher Ablehnung; Angebotsvorschau aus den eigenen Positionen; bedienbare Demo der Mini-Warenwirtschaft mit Demo-Hinweis.",
+      "implemented": "Produktberater (DE/IT/EN) mit Rückfragen und ehrlicher Ablehnung; Angebotsvorschau aus den eigenen Positionen; bedienbare Demo der Mini-Warenwirtschaft mit Beispieldaten unter /demo/warenwirtschaft.",
       "open": "Automatische Mini-Vorschau je Anfrage in isolierter Sandbox.",
       "evidence": [
         "tests/integration/advisor.test.ts",
-        "tests/products/mini-ww/ui.test.ts"
+        "tests/products/mini-ww/ui.test.ts",
+        "tests/integration/p4-release.test.ts"
       ],
-      "test_command": "node --test tests/integration/advisor.test.ts tests/products/mini-ww/ui.test.ts",
+      "test_command": "node --test tests/integration/advisor.test.ts tests/products/mini-ww/ui.test.ts tests/integration/p4-release.test.ts",
       "live_verified": false
     },
     {
@@ -2340,14 +2345,17 @@
       "approved": true,
       "title": "First-Response Speed Director",
       "title_de": "Schnelle Erstantwort",
-      "status": "SPECIFIED",
-      "scope": "none",
-      "internal_status": "GEPLANT",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
       "milestone": "M6",
-      "implemented": null,
-      "open": "Antwort-Warteschlange mit Fristen, Priorität und Quotenstopp.",
-      "evidence": [],
-      "test_command": null,
+      "implemented": "Antwort-Warteschlange aus echten Zeitstempeln (Eingang → Angebot → Nachricht) mit Priorität nach Frist, Zuständen QUEUED/PREPARED/SENT/POLICY_BLOCKED/QUOTA_BLOCKED/EXPIRED und Kontaktregel vor Versand.",
+      "open": "Versand über echten Adapter mit Retry/Backoff, sobald ein E-Mail-Anbieter verbunden ist.",
+      "evidence": [
+        "tests/integration/growth.test.ts",
+        "tests/integration/outbox.test.ts"
+      ],
+      "test_command": "node --test tests/integration/growth.test.ts tests/integration/outbox.test.ts",
       "live_verified": false
     },
     {
@@ -2355,14 +2363,16 @@
       "approved": true,
       "title": "Autonomous Business Matchmaking",
       "title_de": "Partner und Empfehlungen",
-      "status": "SPECIFIED",
-      "scope": "none",
-      "internal_status": "GEPLANT",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
       "milestone": "M6",
-      "implemented": null,
-      "open": "Freiwilliges Partnernetz mit Attribution und geprüfter Provision.",
-      "evidence": [],
-      "test_command": null,
+      "implemented": "Partner nur mit Zustimmung und Vertrag, Empfehlungscode (First-Touch), Provision nur aus bestätigtem Zahlungsereignis, Verfall bei Erstattung, Freigabe durch den Eigentümer.",
+      "open": "Partneransicht mit eigenem Zugang; Auszahlung bleibt außerhalb des Systems.",
+      "evidence": [
+        "tests/integration/growth.test.ts"
+      ],
+      "test_command": "node --test tests/integration/growth.test.ts",
       "live_verified": false
     },
     {
@@ -2370,14 +2380,16 @@
       "approved": true,
       "title": "Zero-to-First-Customer Accelerator",
       "title_de": "Erste Kunden gewinnen",
-      "status": "SPECIFIED",
-      "scope": "none",
-      "internal_status": "GEPLANT",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
       "milestone": "M6",
-      "implemented": null,
-      "open": "Erste-Kunden-Experimente mit Null-Kosten-Limit und echten Bestellbelegen.",
-      "evidence": [],
-      "test_command": null,
+      "implemented": "Erste-Kunden-Experimente mit festem Budget 0 € (Datenbankregel), 1–3 eigenen Kanälen, Entscheidung nur aus echten bezahlten Aufträgen; Testzahlungen zählen nicht.",
+      "open": "Erster echter Live-Auftrag (erst nach LA-Freigaben möglich).",
+      "evidence": [
+        "tests/integration/growth.test.ts"
+      ],
+      "test_command": "node --test tests/integration/growth.test.ts",
       "live_verified": false
     },
     {
@@ -2403,14 +2415,16 @@
       "approved": true,
       "title": "High-Intent Search Intelligence",
       "title_de": "Kaufabsicht in der Suche",
-      "status": "SPECIFIED",
-      "scope": "none",
-      "internal_status": "GEPLANT",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
       "milestone": "M6",
-      "implemented": null,
-      "open": "Suchabsichten aus eigenen Search-Console-Daten und echten Anfragen.",
-      "evidence": [],
-      "test_command": null,
+      "implemented": "Suchabsichten aus echten Anfragen (ohne Kontaktdaten): Kauf/Vergleich/Information, Zuordnung zu existierender Leistung oder Machbarkeitsprüfung, Quelle und Datum je Eintrag, kein Suchvolumen.",
+      "open": "Search-Console-Daten nach Domain-Verifikation durch den Eigentümer.",
+      "evidence": [
+        "tests/integration/growth.test.ts"
+      ],
+      "test_command": "node --test tests/integration/growth.test.ts",
       "live_verified": false
     },
     {
@@ -2418,14 +2432,16 @@
       "approved": true,
       "title": "Autonomous Expert Content Publisher",
       "title_de": "Fachinhalte veröffentlichen",
-      "status": "SPECIFIED",
-      "scope": "none",
-      "internal_status": "GEPLANT",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
       "milestone": "M6",
-      "implemented": null,
-      "open": "Geprüfte Fachinhalte mit Quellen und Änderungsprotokoll.",
-      "evidence": [],
-      "test_command": null,
+      "implemented": "Ratgeber /ratgeber/angebot-bis-rechnung (DE/IT/EN) aus der Anleitung des gelieferten Programms; Prüfung auf echte Funktion, erfundene Berichte, Nutzen, Aktualität; Wiedervorlage bei Programmänderung.",
+      "open": "Weitere Artikel erst mit neuen getesteten Funktionen.",
+      "evidence": [
+        "tests/integration/growth.test.ts"
+      ],
+      "test_command": "node --test tests/integration/growth.test.ts",
       "live_verified": false
     },
     {
@@ -2433,14 +2449,16 @@
       "approved": true,
       "title": "Organic Traffic Distribution Network",
       "title_de": "Organische Verbreitung",
-      "status": "SPECIFIED",
-      "scope": "none",
-      "internal_status": "GEPLANT",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
       "milestone": "M6",
-      "implemented": null,
-      "open": "Verbreitung nur über vom Eigentümer verbundene Kanäle.",
-      "evidence": [],
-      "test_command": null,
+      "implemented": "Verbreitungsplan mit datensparsamen Kampagnenlinks; nicht verbundene Kanäle NOT_CONNECTED, Direktnachrichten gesperrt, „veröffentlicht“ nur mit Kanalquittung, idempotent.",
+      "open": "Kanäle (LinkedIn, Instagram, YouTube, Newsletter) verbindet der Eigentümer mit eigenem Konto.",
+      "evidence": [
+        "tests/integration/growth.test.ts"
+      ],
+      "test_command": "node --test tests/integration/growth.test.ts",
       "live_verified": false
     },
     {
@@ -2466,14 +2484,17 @@
       "approved": true,
       "title": "Intent-Matched Landing Experience",
       "title_de": "Passende Landingpage",
-      "status": "SPECIFIED",
-      "scope": "none",
-      "internal_status": "GEPLANT",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
       "milestone": "M6",
-      "implemented": null,
-      "open": "Bedarfsgerechte Lösungsseiten nur mit eigenständigem Angebot.",
-      "evidence": [],
-      "test_command": null,
+      "implemented": "Bedarfsseite Lagerverwaltung führt nur nach Freigabe zur echten Produktseite, sonst ehrlich zum Berater; Sprache und Ziel bleiben beim Sprachwechsel gleich; keine Personalisierung, keine Fake-Knappheit.",
+      "open": "Weitere Bedarfsseiten nur mit eigenständigem Angebot.",
+      "evidence": [
+        "tests/integration/growth.test.ts",
+        "tests/integration/p4-release.test.ts"
+      ],
+      "test_command": "node --test tests/integration/growth.test.ts tests/integration/p4-release.test.ts",
       "live_verified": false
     },
     {
@@ -2485,12 +2506,13 @@
       "scope": "partial",
       "internal_status": "TEILWEISE",
       "milestone": "M3",
-      "implemented": "Bedienbare Demo der Mini-Warenwirtschaft mit echten Berechnungen, Demo-Hinweis, Daten nur im Browser, ohne Netzwerkzugriff.",
-      "open": "Verknüpfung mit verkaufsfähigem Produkt und Kaufweg (Pilot P3/P4).",
+      "implemented": "Demo der Mini-Warenwirtschaft mit Beispieldaten (eigene CSP, kein Netzwerk, noindex), Produktseite mit echten Screenshots als Bilder gekennzeichnet, gleicher Funktionsumfang wie die Standard-Akte, Kaufweg nach Freigabe.",
+      "open": "Ressourcenlimit je Sitzung ist durch reine Browser-Ausführung gegeben; weitere Produkte folgen.",
       "evidence": [
-        "tests/products/mini-ww/ui.test.ts"
+        "tests/products/mini-ww/ui.test.ts",
+        "tests/integration/p4-release.test.ts"
       ],
-      "test_command": "node --test tests/products/mini-ww/ui.test.ts",
+      "test_command": "node --test tests/products/mini-ww/ui.test.ts tests/integration/p4-release.test.ts",
       "live_verified": false
     },
     {
@@ -2535,14 +2557,16 @@
       "approved": true,
       "title": "Search-to-Bank Revenue Optimizer",
       "title_de": "Von der Suche bis zur Bank",
-      "status": "SPECIFIED",
-      "scope": "none",
-      "internal_status": "GEPLANT",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
       "milestone": "M6",
-      "implemented": null,
-      "open": "Kanal-Trichter bis bankbestätigtem Nettoergebnis.",
-      "evidence": [],
-      "test_command": null,
+      "implemented": "Funnel je Kanal: Anfragen → Angebote → bezahlte Aufträge (nur mit Zahlungsereignis) → Lieferungen → Netto (Zahlung − Gebühren − Erstattung); Auszahlung und bankbestätigt getrennt; „nicht zuordenbar“ erlaubt; Optimierung pausiert bei zu wenig Daten.",
+      "open": "Impressionen/Klicks erst mit verbundener Search Console.",
+      "evidence": [
+        "tests/integration/growth.test.ts"
+      ],
+      "test_command": "node --test tests/integration/growth.test.ts",
       "live_verified": false
     }
   ]

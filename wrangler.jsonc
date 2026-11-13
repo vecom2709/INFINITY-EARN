@@ -22,7 +22,7 @@
     "OWNER_DECISION_REF": "Owner-Anweisung im Chat 2026-11-12: Sitz Italien, alle Produkte, Kundensuche automatisch",
     "OWNER_SEAT_COUNTRY": "IT",
     "OWNER_ALLOWED_CAPABILITIES": "b2b-calc-csv,b2b-calc-pdf,b2b-calc-bundle",
-    "ALLOWED_CAPABILITIES": "b2b-calc-csv,b2b-calc-pdf,b2b-calc-bundle",
+    "ALLOWED_CAPABILITIES": "b2b-calc-csv,b2b-calc-pdf,b2b-calc-bundle,mini-ww",
     "OWNER_APPROVE_TED_TERMS": "TED Legal Notice (Wiederverwendung erlaubt, Beschluss 2011/833/EU) geprüft 2026-11-12",
     "MAX_NEW_MONTHLY_FIXED_COST_EUR": "0",
     "ALLOW_PAID_APIS": "false",

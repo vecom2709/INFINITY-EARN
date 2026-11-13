@@ -72,7 +72,7 @@ export function money(minor: number, currency = 'EUR'): string {
 }
 
 /** Interne Produktkennungen durch verständliche Namen ersetzen (keine Technik-Labels in der Oberfläche). */
-const PRODUCT_NAMES: Record<string, string> = { 'b2b-calc-csv': 'Kalkulationstabelle', 'b2b-calc-pdf': 'Kalkulation als PDF', 'b2b-calc-bundle': 'Kalkulationspaket (Tabelle + PDF)' };
+const PRODUCT_NAMES: Record<string, string> = { 'b2b-calc-csv': 'Kalkulationstabelle', 'b2b-calc-pdf': 'Kalkulation als PDF', 'b2b-calc-bundle': 'Kalkulationspaket (Tabelle + PDF)', 'mini-ww': 'Warenwirtschaft (Programm + Anleitung)' };
 export function friendlyTitle(text: string): string {
   return Object.entries(PRODUCT_NAMES).reduce((t, [id, name]) => t.split(id).join(name), text);
 }

@@ -20,6 +20,7 @@ import { acceptanceGate, getStandard, standardGaps } from '../../../services/pro
 import { getCapability, listCapabilities, routeCapability } from '../../../services/product-factory/src/registry.ts';
 import { Client, serve } from '../../http.ts';
 import { makeCtx } from '../../helpers.ts';
+import { isSellable, RELEASE_REQUIRED } from '../../../services/core-api/src/releases.ts';
 
 /** Pilot P3 – Fabrik-Anbindung der Mini-Warenwirtschaft: Konfiguration aus dem Auftrag, Build, Abnahme, Lieferpaket. */
 
@@ -167,10 +168,12 @@ test('Produktart registriert, Standard-Akte vollständig – aber nicht verkaufb
   assert.deepEqual(standardGaps(cap), []);
   const s = getStandard('mini-ww');
   assert.equal(s?.deliverables.manualInPackage, MINI_WW_FILES.pdf);
-  const route = routeCapability('mini-ww');
-  assert.equal(route.ok, false);
-  assert.match(route.ok ? '' : route.reason, /CAPABILITY_DISABLED: Verkaufsfreigabe durch den Eigentümer/);
-  assert.equal(listCapabilities().find((c) => c.id === 'mini-ww')?.enabled, false);
+  // Herstellbar (Akte vollständig) – bestellbar aber erst mit Freigabe und Festpreis des Eigentümers (P4, releases.ts).
+  assert.equal(routeCapability('mini-ww').ok, true);
+  assert.equal(listCapabilities().find((c) => c.id === 'mini-ww')?.enabled, true);
+  const { ctx: c2 } = makeCtx({ env: { ALLOWED_CAPABILITIES: 'b2b-calc-csv,mini-ww' } });
+  assert.equal(isSellable(c2, 'mini-ww'), false, 'ohne Freigabe nicht bestellbar');
+  assert.ok(RELEASE_REQUIRED.has('mini-ww'));
 });
 
 let ctx: AppContext;

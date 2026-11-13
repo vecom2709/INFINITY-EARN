@@ -5,6 +5,8 @@ import { runProductionOnce, type ProductionRunResult } from '../../product-facto
 import type { AppContext } from './context.ts';
 import { WorkflowError } from './errors.ts';
 import { runOutbox } from './outbox.ts';
+import { accrueCommissions, evaluateExperiments } from '../../growth/src/sales-growth.ts';
+import { ingestIntents, syncContent, syncLandingPages } from '../../growth/src/visibility.ts';
 
 export interface TickResult {
   production: ProductionRunResult;
@@ -46,6 +48,16 @@ export function autopilotTick(ctx: AppContext, intervalMs = 60_000): TickResult 
     messages = runOutbox(ctx);
   } catch (e) {
     errors.push(`outbox: ${e instanceof WorkflowError ? e.code : (e as Error).message}`);
+  }
+  // Wachstum (147/139/140/135/148): Suchabsichten auswerten, Provisionen aus bestätigten Zahlungen, Experimente, Seiten-QA.
+  try {
+    ingestIntents(ctx);
+    accrueCommissions(ctx);
+    evaluateExperiments(ctx);
+    syncLandingPages(ctx);
+    syncContent(ctx);
+  } catch (e) {
+    errors.push(`growth: ${e instanceof WorkflowError ? e.code : (e as Error).message}`);
   }
   return { production, invoices, reconciliation, messages, errors };
 }

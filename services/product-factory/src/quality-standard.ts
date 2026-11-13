@@ -113,7 +113,7 @@ const STANDARDS: ProductStandard[] = [
       { text: 'Unverändert ausgeliefert (Prüfsumme)', verifiedBy: 'checksum' },
     ],
     accessibilityAndSecurity: [{ text: 'Kein Netzwerkzugriff möglich (CSP default-src none, keine externen Quellen)', verifiedBy: 'no_network' }],
-    deliverables: { formats: ['zip', 'html', 'pdf'], manualPath: '/admin/muster/mini-ww/anleitung.pdf', manualInPackage: 'bedienungsanleitung.pdf', documentation: ['Bebilderte Bedienungsanleitung im Paket', 'LIESMICH.txt mit Prüfsummen', 'Herkunftsnachweis /pruefen/<sha>', 'Rechnung'] },
+    deliverables: { formats: ['zip', 'html', 'pdf'], manualPath: '/hilfe/mini-ww', manualInPackage: 'bedienungsanleitung.pdf', documentation: ['Bebilderte Bedienungsanleitung im Paket', 'LIESMICH.txt mit Prüfsummen', 'Herkunftsnachweis /pruefen/<sha>', 'Rechnung'] },
     userFlowTests: ['tests/products/mini-ww/domain.test.ts', 'tests/products/mini-ww/ui.test.ts', 'tests/products/mini-ww/factory.test.ts'],
     notDeliverableWhen: ['Wunsch nach Mehrplatz-/Serverbetrieb, Online-Shop-Anbindung oder E-Rechnung (XRechnung/FatturaPA) – nicht Teil dieser Produktart', 'Automatische Prüfung schlägt nach der Wiederholung weiterhin fehl', 'Logo nicht als PNG/JPEG/WebP bis 200 KB lieferbar'],
   },

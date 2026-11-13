@@ -8,6 +8,14 @@ import {
   renderAdvisor, renderCheckoutReturn, renderHome, renderInquiryForm, renderInquiryResult, renderMockCheckout, renderHelp, renderPortal, renderProvenance, renderQuote, renderTrust,
 } from '../../../apps/customer-portal/src/pages.ts';
 import { HERO_IMAGES } from '../../../apps/customer-portal/src/hero-images.generated.ts';
+import { renderArticle, renderLanding, renderWwProduct, TAX_PRESETS, WW_SLUG } from '../../../apps/customer-portal/src/product-pages.ts';
+import { MINI_WW_BUNDLE } from '../../../products/mini-ww/generated/bundle.ts';
+import { SHOTS_JPEG_BASE64 } from '../../../products/mini-ww/generated/shots.ts';
+import { CSP as WW_CSP, htmlFromBundle } from '../../../products/mini-ww/html.ts';
+import { manualSeed } from '../../../products/mini-ww/seed.ts';
+import { addPartner, cleanToken, decideCommission, proposeExperiment, recordAcquisition, setPartnerStatus, stopExperiment } from '../../growth/src/sales-growth.ts';
+import { contentStatus, landingStatus, planDistribution, publishedArticle, publishedLanding, ARTICLE_SLUG } from '../../growth/src/visibility.ts';
+import { activeRelease, isSellable, RELEASE_REQUIRED, releaseProduct, revokeProduct } from './releases.ts';
 import { acquireFromTed } from '../../acquisition/src/connectors/ted.ts';
 import { submitInboundLead, validateInboundLead } from '../../acquisition/src/leads.ts';
 import { rankOpportunities } from '../../acquisition/src/ranking.ts';
@@ -47,8 +55,7 @@ import { createSupportTicket, customerByKey, exportPersonalData } from './custom
 import { WorkflowError } from './errors.ts';
 import { findOrder } from './orders.ts';
 import { effectivePolicy, setStop } from './policy-store.ts';
-import { routeCapability } from '../../product-factory/src/registry.ts';
-import { MINI_WW_FILES, miniWw } from '../../product-factory/src/capabilities/mini-ww.ts';
+import { asMiniWwInput, MINI_WW_FILES, miniWw } from '../../product-factory/src/capabilities/mini-ww.ts';
 import { readZip } from '../../../packages/shared/src/zip.ts';
 import { acceptQuote, autoProcessOpportunity, getQuote, verifyQuoteToken } from './workflow.ts';
 
@@ -193,13 +200,92 @@ export function createHandler(ctx: AppContext): (r: HttpRequest) => Promise<Res>
     for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
     return { status: 200, headers: { 'content-type': 'image/jpeg', 'cache-control': 'public, max-age=31536000, immutable', 'x-content-type-options': 'nosniff' }, body: bytes };
   });
+  // --- P4: Produktseite, echte Screenshots, interaktive Demo und Bestellung der Mini-Warenwirtschaft -------------
+  const b64Bytes = (b64: string): Uint8Array => {
+    const bin = atob(b64);
+    const out = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+    return out;
+  };
+  const shotSrc = (lang: string, name: string): string => `/bilder/ww/${lang}-${name}.jpg`;
+  route('GET', '/bilder/ww/:name', (req): Res => {
+    const m = /^(de|it|en)-([a-z]+)\.jpg$/.exec(req.params.name ?? '');
+    const b64 = m ? SHOTS_JPEG_BASE64[m[1] as 'de' | 'it' | 'en']?.[m[2] as string] : undefined;
+    if (!b64) return { status: 404, headers: { 'content-type': 'text/plain; charset=utf-8' }, body: 'Nicht gefunden' };
+    return { status: 200, headers: { 'content-type': 'image/jpeg', 'cache-control': 'public, max-age=86400', 'x-content-type-options': 'nosniff' }, body: b64Bytes(b64) };
+  });
+  const wwOffer = (): { sellable: boolean; priceMinor: number | null; currency: string } => {
+    const r = activeRelease(ctx, 'mini-ww');
+    return { sellable: isSellable(ctx, 'mini-ww'), priceMinor: r?.price_minor ?? null, currency: r?.currency ?? ctx.config.policy.quote.currency };
+  };
+  route('GET', WW_SLUG, (req) => html(renderWwProduct(L(req), wwOffer(), { shotSrc, src: cleanToken(req.query.get('src')) ?? 'product-page' })));
+  // 152: Demo mit Beispieldaten im Browser des Besuchers – eigene, strenge CSP, kein Netzwerk, keine echten Daten.
+  route('GET', '/demo/warenwirtschaft', (req): Res => {
+    const lang = L(req);
+    const company = { de: 'Musterfirma (Demo)', it: 'Azienda Esempio (demo)', en: 'Example Company (demo)' }[lang];
+    const doc = htmlFromBundle(MINI_WW_BUNDLE, { company, primary: '#087F82', logoDataUrl: null, lang }, { demo: true, seed: manualSeed(lang, ctx.clock()) });
+    return { status: 200, headers: { 'content-type': 'text/html; charset=utf-8', 'content-security-policy': `${WW_CSP}; frame-ancestors 'none'`, 'cache-control': 'no-store', 'x-robots-tag': 'noindex' }, body: doc };
+  });
+  route('POST', `${WW_SLUG}/bestellen`, (req) => {
+    const f = form(req);
+    const lang = L(req);
+    const values = Object.fromEntries(['name', 'email', 'company', 'country', 'brand_company', 'primary', 'language', 'tax', 'term', 'message', 'marketing'].map((k) => [k, (f.get(k) ?? '').slice(0, 2000)]));
+    const offer = wwOffer();
+    if (!offer.sellable) return html(renderWwProduct(lang, offer, { shotSrc }), 409);
+    const errs: string[] = [];
+    const term = Number(values.term);
+    if (!Number.isInteger(term) || term < 1 || term > 120) errs.push(lang === 'de' ? 'Zahlungsziel: 1–120 Tage' : lang === 'it' ? 'Termine di pagamento: 1–120 giorni' : 'Payment term: 1–120 days');
+    const preset = TAX_PRESETS[values.tax ?? ''];
+    if (!preset) errs.push(lang === 'de' ? 'Steuersätze auswählen' : lang === 'it' ? 'Scegliere le aliquote' : 'Choose tax rates');
+    if (!/^#[0-9a-fA-F]{6}$/.test(values.primary ?? '')) errs.push(lang === 'de' ? 'Firmenfarbe ungültig' : lang === 'it' ? 'Colore non valido' : 'Invalid colour');
+    const progLang = values.language === 'it' || values.language === 'en' ? values.language : 'de';
+    const scope = { company: (values.brand_company ?? '').trim(), primary: (values.primary ?? '').toUpperCase(), language: progLang, setup: { taxRates: preset?.rates, paymentTermDays: term } };
+    if (!errs.length) {
+      try {
+        asMiniWwInput(scope);
+      } catch (e) {
+        errs.push((e as Error).message.replace(/^INVALID_INPUT: /, ''));
+      }
+    }
+    if (errs.length) return html(renderWwProduct(lang, offer, { errors: errs, values, shotSrc }), 400);
+    try {
+      const { status, result } = handleInquiry({
+        name: f.get('name'), email: f.get('email'), company: f.get('company'), country: f.get('country'),
+        message: (values.message ?? '').trim() || `Warenwirtschaft für ${scope.company}`,
+        privacyAccepted: f.get('privacy') === '1', marketingConsent: f.get('marketing') === '1', request: { capabilityId: 'mini-ww', scope },
+      }, req);
+      if (status !== 200) return html(renderWwProduct(lang, offer, { errors: result.errors as string[], values, shotSrc }), status);
+      recordAcquisition(ctx, String(result.leadId), { channel: f.get('src') ?? 'product-page', campaign: f.get('cmp'), ref: f.get('ref') });
+      const auto = result.auto as ReturnType<typeof autoProcessOpportunity>;
+      if (auto.stage === 'QUOTED') return redirect(`/angebot/${auto.quote.quoteId}?t=${encodeURIComponent(auto.quote.acceptanceToken)}${lang === 'de' ? '' : `&lang=${lang}`}`);
+      return html(renderInquiryResult('Anfrage erhalten – manuelle Prüfung', 'Ihre Anfrage kann nicht automatisch angeboten werden und wird geprüft.', undefined, lang));
+    } catch (e) {
+      if (e instanceof WorkflowError && e.code === 'ACQUISITION_PAUSED') return html(renderInquiryResult('Vorübergehend pausiert', 'Neue Anfragen werden derzeit nicht angenommen.', undefined, lang), 503);
+      throw e;
+    }
+  });
+  // 135/151 Bedarfsseiten und 148 Ratgeber – nur veröffentlicht, wenn die QA besteht; sonst ehrlich zum Berater.
+  route('GET', '/loesungen/:slug', (req) => {
+    const def = publishedLanding(ctx, req.params.slug ?? '');
+    if (!def) return redirect(`/berater${L(req) === 'de' ? '' : `?lang=${L(req)}`}`);
+    return html(renderLanding(L(req), { slug: def.slug, productHref: def.productHref, text: def.text[L(req)] }, origin()));
+  });
+  route('GET', '/ratgeber/:slug', (req) => {
+    const a = publishedArticle(ctx, req.params.slug ?? '', L(req));
+    if (!a) return html(renderInquiryResult('Nicht gefunden', 'Diese Seite gibt es nicht.', undefined, L(req)), 404);
+    return html(renderArticle(L(req), a, origin()));
+  });
+
   route('GET', '/sitemap.xml', () => {
-    const paths = ['/', '/it', '/en', '/berater', '/anfrage', '/vertrauen', ...offeredFormats().map((id) => `/hilfe/${id}`)];
+    const paths = ['/', '/it', '/en', '/berater', '/anfrage', '/vertrauen', WW_SLUG, ...offeredFormats().map((id) => `/hilfe/${id}`),
+      ...landingStatus(ctx).filter((l) => l.status === 'PUBLISHED').map((l) => `/loesungen/${l.slug}`),
+      ...contentStatus(ctx).filter((c) => c.status === 'PUBLISHED' && c.lang === 'de').map((c) => `/ratgeber/${c.slug}`)];
     return { status: 200, headers: { 'content-type': 'application/xml; charset=utf-8' }, body: `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${paths.map((p) => `<url><loc>${origin()}${p}</loc></url>`).join('')}</urlset>\n` };
   });
   route('GET', '/health', () => json({ status: 'ok', mode: ctx.config.testMode ? 'TEST' : 'LIVE', live_sales_enabled: false, environment: ctx.config.environment, payment_provider: ctx.config.payment.provider }));
-  const offeredFormats = (): string[] => effectivePolicy(ctx)?.allowedCapabilities.filter((id) => routeCapability(id).ok) ?? [];
-  route('GET', '/anfrage', (req) => html(renderInquiryForm([], {}, offeredFormats(), undefined, L(req))));
+  // Formate des Anfrageformulars (Kalkulationen). Fachsoftware wird über ihre eigene Produktseite bestellt.
+  const offeredFormats = (): string[] => effectivePolicy(ctx)?.allowedCapabilities.filter((id) => !RELEASE_REQUIRED.has(id) && isSellable(ctx, id)) ?? [];
+  route('GET', '/anfrage', (req) => html(renderInquiryForm([], { src: cleanToken(req.query.get('src')) ?? undefined, cmp: cleanToken(req.query.get('cmp')) ?? undefined, ref: cleanToken(req.query.get('ref'), 24) ?? undefined }, offeredFormats(), undefined, L(req))));
   // Produktberater: Wunsch in eigenen Worten → vorausgefüllte Anfrage (nichts wird gesendet, bevor der Kunde abschickt).
   route('GET', '/berater', (req) => html(renderAdvisor(undefined, undefined, L(req))));
   route('POST', '/berater', (req) => {
@@ -241,6 +327,7 @@ export function createHandler(ctx: AppContext): (r: HttpRequest) => Promise<Res>
         req,
       );
       if (status !== 200) return html(renderInquiryForm(result.errors as string[], values, formats, undefined, L(req)), status);
+      recordAcquisition(ctx, String(result.leadId), { channel: f.get('src') ?? 'website', campaign: f.get('cmp'), ref: f.get('ref') });
       const auto = result.auto as ReturnType<typeof autoProcessOpportunity>;
       if (auto.stage === 'QUOTED') return redirect(`/angebot/${auto.quote.quoteId}?t=${encodeURIComponent(auto.quote.acceptanceToken)}`);
       if (auto.stage === 'OPEN_POINTS') return html(renderInquiryResult('Anfrage erhalten – offene Punkte', `${tr(L(req), 'Wir benötigen noch Angaben:')} ${auto.openPoints.join('; ')}`, undefined, L(req)));
@@ -539,6 +626,70 @@ export function createHandler(ctx: AppContext): (r: HttpRequest) => Promise<Res>
   /** Nach Owner-Aktionen zurück auf die Konsolenseite, von der die Aktion kam (nur interne Pfade). */
   const back = (req: Req, msg: string): Res => redirect(withFlash(safeBack(form(req).get('_back')), msg));
   const STOP_LABEL: Record<string, string> = { PAUSE_ACQUISITION: 'Kundensuche', PAUSE_PRODUCTION: 'Produktion', PAUSE_PAYMENTS: 'Neue Zahlungen', STOP_ALL_JOBS: 'Alle Tätigkeiten' };
+  // --- P4 Verkaufsfreigabe und Wachstum (nur Eigentümer, mit CSRF) -------------------------------------------
+  const guarded = (fn: () => string): Res | string => {
+    try {
+      return fn();
+    } catch (e) {
+      if (e instanceof WorkflowError) return `Nicht möglich: ${e.code}${e.message && e.message !== e.code ? ` – ${e.message}` : ''}`;
+      throw e;
+    }
+  };
+  const euroToMinor = (raw: string | null | undefined): number => {
+    const v = (raw ?? '').trim().replace(/\./g, '').replace(',', '.');
+    return /^\d+(\.\d{1,2})?$/.test(v) ? Math.round(Number(v) * 100) : Number.NaN;
+  };
+  route('POST', '/admin/produkte/:cap/freigeben', ownerGuard((req) => {
+    const cap = req.params.cap ?? '';
+    const msg = guarded(() => {
+      const r = releaseProduct(ctx, cap, euroToMinor(form(req).get('price')));
+      return `Freigegeben: ${cap} zum Festpreis ${(Number(r.release.price_minor) / 100).toFixed(2).replace('.', ',')} ${r.release.currency}. Musterpaket hat alle Prüfungen bestanden.${r.ceilingMissing ? ' Hinweis: In der Umgebungskonfiguration (ALLOWED_CAPABILITIES) fehlt die Produktart noch – bis dahin nicht bestellbar.' : ''}`;
+    });
+    return back(req, String(msg));
+  }, { csrf: true }));
+  route('POST', '/admin/produkte/:cap/zurueckziehen', ownerGuard((req) => {
+    const msg = guarded(() => {
+      revokeProduct(ctx, req.params.cap ?? '', form(req).get('reason') ?? '');
+      return 'Verkauf gestoppt – die Produktart ist nicht mehr bestellbar. Laufende Aufträge werden normal geliefert.';
+    });
+    return back(req, String(msg));
+  }, { csrf: true }));
+  route('POST', '/admin/partner', ownerGuard((req) => {
+    const f = form(req);
+    const msg = guarded(() => {
+      const p = addPartner(ctx, { name: f.get('name') ?? '', consentRef: f.get('consent') ?? '', contractRef: f.get('contract') ?? '', territory: (f.get('territory') ?? '').toUpperCase().replace(/\s/g, ''), capabilities: (f.get('capabilities') ?? '').split(',').map((s) => s.trim()).filter(Boolean), commissionBps: Math.round(Number((f.get('commission') ?? '').replace(',', '.')) * 100) });
+      return `Partner angelegt. Empfehlungslinks: ${origin()}/anfrage?ref=${p.referral_code} und ${origin()}${WW_SLUG}?ref=${p.referral_code}`;
+    });
+    return back(req, String(msg));
+  }, { csrf: true }));
+  route('POST', '/admin/partner/:id/status', ownerGuard((req) => {
+    const s = form(req).get('status');
+    if (s !== 'ACTIVE' && s !== 'PAUSED' && s !== 'ENDED') return back(req, 'Unbekannter Status');
+    setPartnerStatus(ctx, req.params.id ?? '', s);
+    return back(req, 'Partnerstatus geändert');
+  }, { csrf: true }));
+  route('POST', '/admin/provision/:id', ownerGuard((req) => back(req, String(guarded(() => {
+    const ok = form(req).get('decision') === 'approve';
+    decideCommission(ctx, req.params.id ?? '', ok);
+    return ok ? 'Provision freigegeben (Auszahlung erfolgt außerhalb des Systems durch dich).' : 'Provision verworfen.';
+  }))), { csrf: true }));
+  route('POST', '/admin/experimente', ownerGuard((req) => {
+    const f = form(req);
+    return back(req, String(guarded(() => {
+      proposeExperiment(ctx, { capabilityId: f.get('capability') ?? '', hypothesis: f.get('hypothesis') ?? '', channels: (f.get('channels') ?? '').split(',').map((s) => s.trim()).filter(Boolean), days: Number(f.get('days') ?? '') });
+      return 'Experiment gestartet (Budget 0 €). Ergebnis zählt nur echte bezahlte Aufträge.';
+    })));
+  }, { csrf: true }));
+  route('POST', '/admin/experimente/:id/stoppen', ownerGuard((req) => {
+    stopExperiment(ctx, req.params.id ?? '');
+    return back(req, 'Experiment gestoppt');
+  }, { csrf: true }));
+  route('POST', '/admin/verbreitung', ownerGuard((req) => {
+    const slug = form(req).get('slug') ?? ARTICLE_SLUG;
+    const r = planDistribution(ctx, origin(), slug);
+    return back(req, `Verbreitung geplant: ${r.filter((x) => x.status === 'PLANNED').length} Kanal/Kanäle bereit, ${r.filter((x) => x.status === 'NOT_CONNECTED').length} nicht verbunden.`);
+  }, { csrf: true }));
+
   route('POST', '/admin/stops', ownerGuard((req) => {
     const f = form(req);
     const stop = f.get('stop') ?? '';

@@ -1,6 +1,7 @@
 import type { AppContext } from '../../../services/core-api/src/context.ts';
 import { renderCustomers } from './pages/customers.ts';
 import { renderFinance } from './pages/finance.ts';
+import { renderGrowth, renderProductRelease } from './pages/growth.ts';
 import { renderOrderDetail, renderOrders } from './pages/orders.ts';
 import { renderOverview } from './pages/overview.ts';
 import { renderProducts } from './pages/products.ts';
@@ -25,6 +26,8 @@ export function renderConsole(ctx: AppContext, path: string, query: URLSearchPar
   if (order?.[1]) return renderOrderDetail(pc, order[1]);
   if (sub === 'produkte') return renderProducts(pc);
   if (sub === 'produkte/vorschau') return renderPreviewGallery(pc, query.get('q') ?? '');
+  if (sub === 'produkte/mini-ww') return renderProductRelease(pc, 'mini-ww');
+  if (sub === 'wachstum') return renderGrowth(pc);
   const art = /^produkte\/vorschau\/(art_[a-f0-9]+)$/.exec(sub);
   if (art?.[1]) return renderPreviewDetail(pc, art[1]);
   if (sub === 'finanzen') return renderFinance(pc);

@@ -11,6 +11,7 @@ import { getOrder, type OrderRow } from './orders.ts';
 import { decide, effectivePolicy } from './policy-store.ts';
 import { marketAllows } from './readiness.ts';
 import { createConfirmation } from './contract-confirmation.ts';
+import { activeRelease, RELEASE_REQUIRED } from './releases.ts';
 
 export const QUOTE_VALIDITY_DAYS = 14;
 
@@ -66,6 +67,7 @@ export function assessFeasibility(ctx: AppContext, opportunityId: string, actor:
   if (!opp.capability_id) return { status: 'OPEN_POINTS', openPoints: ['Produktklasse nicht angegeben'] };
   const route = routeCapability(opp.capability_id);
   if (!route.ok) return reject('OUT_OF_SCOPE', route.reason);
+  if (RELEASE_REQUIRED.has(opp.capability_id) && !activeRelease(ctx, opp.capability_id)) return reject('OUT_OF_SCOPE', 'RELEASE_MISSING: Verkaufsfreigabe durch den Eigentümer fehlt');
   const allowed = decide(ctx, { action: 'capability.use', capabilityId: opp.capability_id }, actor, { type: 'opportunity', id: opportunityId });
   if (!allowed.allowed) return reject('OUT_OF_SCOPE', allowed.rule);
   const scope = parseJsonOr<unknown>(opp.scope_json, null);
@@ -106,7 +108,9 @@ export function createQuote(ctx: AppContext, opportunityId: string, actor: 'syst
   if (!policy) throw new WorkflowError('NO_POLICY');
   const cost = opp.estimated_cost_minor ?? 0;
   const currency = opp.currency ?? policy.quote.currency;
-  const price = opts.priceMinor ?? Math.max(priceFromCost(cost, policy.quote.minMarginBps), policy.quote.minMinor);
+  // Freigegebene Fachsoftware hat einen vom Eigentümer festgelegten Festpreis (P4); sonst Kosten + Mindestmarge.
+  const fixed = opp.capability_id ? activeRelease(ctx, opp.capability_id)?.price_minor ?? undefined : undefined;
+  const price = opts.priceMinor ?? fixed ?? Math.max(priceFromCost(cost, policy.quote.minMarginBps), policy.quote.minMinor);
   const d = decide(ctx, { action: 'quote.issue', priceMinor: price, costMinor: cost, currency }, actor, { type: 'opportunity', id: opportunityId });
   if (!d.allowed) {
     if (d.rule === 'NEGATIVE_MARGIN' || d.rule === 'MARGIN_BELOW_MIN') transition(ctx, opportunityId, 'COST_LIMIT', actor, d.reason);

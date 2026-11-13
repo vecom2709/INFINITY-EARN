@@ -66,6 +66,12 @@ Quelle mit Prüfsummen: `docs/spec/v15-147/`. Registry: 127 ursprüngliche (unve
 | Kundengewinnung auf Projektbörsen/Plattformen | Nur mit Konto und erlaubter Schnittstelle; keine Bots/Spam | Eigentümer legt Konten an; Kontakt nur über 137 |
 | Universelle autonome Produktion jeder Art | Nein ohne kostenpflichtige KI-API (Claude-Abo ist keine API) | Freigabe der API-Kosten beim Eigentümer |
 
+## Update 13.11.2026 (Abend): P4 und die zehn geplanten Funktionen
+
+- **P4 erledigt:** Admin → Produkte → Warenwirtschaft mit interaktiver Vorschau (DE/IT/EN), Anleitung, Musterpaket und Live-Abnahmeprüfung. Verkaufsfreigabe mit Festpreis durch den Eigentümer (append-only `product_releases`, Musterpaket muss alle Prüfungen bestehen); Widerruf jederzeit. Öffentliche Produktseite `/produkte/warenwirtschaft` mit echten Screenshots, Demo `/demo/warenwirtschaft` und Bestellformular (Steuersätze IT/DE/AT, Zahlungsziel, Firmenfarbe) – bestellbar erst nach Freigabe.
+- **132, 135, 138, 139, 140, 147, 148, 149, 151, 155:** jetzt TEILWEISE mit getestetem Code (`services/growth/`, Admin → Berichte → Wachstum). Offen bleibt jeweils nur, was ein Konto des Eigentümers braucht (Search Console, Social-Kanäle, E-Mail-Anbieter) oder echte Live-Verkäufe (LA-Freigaben).
+- **Bildquelle Startseite:** kie.ai, 1 Bild, vom Eigentümer beauftragt.
+
 ## Reihenfolge (ohne neue Kosten)
 
 1. L1 Admin Live-Vorschau · 2. L2 `/konto` · 3. L4 Kanalstatus · 4. L5 FAQ/Preise · 5. L6 + L7 Registry-Export und Dokumente · 6. L8 Pilot-Fachanwendung (nur nach Bestätigung des Umfangs).

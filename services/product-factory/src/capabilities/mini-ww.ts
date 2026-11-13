@@ -169,7 +169,8 @@ export const miniWw: ProductCapability = {
   data_privacy: 'Enthält nur Firmenname, Farbe, Logo und Einrichtung des Kunden. Geschäftsdaten bleiben später ausschließlich im Browser des Kunden.',
   artifact_storage: 'Blob-Speicher pro Auftrag, SHA-256 geprüft.',
   refund_criteria: 'Rückerstattung, wenn das Paket die Abnahmeprüfungen nach der Wiederholung nicht besteht oder das Programm die zugesagten Abläufe nicht ausführt.',
-  disabled_reason: 'Verkaufsfreigabe durch den Eigentümer steht aus (P4: Vorschau, Produktseite, Preis).',
+  // Verkauf nur nach Freigabe durch den Eigentümer mit Festpreis (P4, services/core-api/src/releases.ts).
+  disabled_reason: null,
   owner: 'services/product-factory',
   estimatedCostMinor: () => 0,
   complexity: () => 1,

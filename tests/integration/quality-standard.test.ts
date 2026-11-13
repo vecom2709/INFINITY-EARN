@@ -9,10 +9,11 @@ import { runProductionOnce } from '../../services/product-factory/src/production
 import { getCapability, listCapabilities, routeCapability } from '../../services/product-factory/src/registry.ts';
 import { b2bCalcPdf } from '../../services/product-factory/src/capabilities/b2b-calc-pdf.ts';
 import { calcScope, count, inbound, makeCtx, toDelivered, toPaid } from '../helpers.ts';
+import { isSellable } from '../../services/core-api/src/releases.ts';
 
 test('Jede verkaufbare Produktart hat eine vollständige Standard-Akte mit Anleitung und getesteten Abläufen', () => {
   const enabled = listCapabilities().filter((c) => c.enabled);
-  assert.equal(enabled.length, 3);
+  assert.equal(enabled.length, 4, '3 Kalkulationen + Warenwirtschaft (Verkauf zusätzlich nur mit Freigabe)');
   for (const c of enabled) {
     const cap = getCapability(c.id);
     assert.ok(cap);
@@ -24,7 +25,8 @@ test('Jede verkaufbare Produktart hat eine vollständige Standard-Akte mit Anlei
     assert.ok(acceptanceChecks(s).every((name) => cap.qa_suite.includes(name)), 'keine Zusage ohne Prüfung');
   }
   assert.ok(listStandards().filter((s) => !getCapability(s.capabilityId)?.disabled_reason).every((s) => routeCapability(s.capabilityId).ok));
-  assert.equal(routeCapability('mini-ww').ok, false, 'vollständige Akte allein schaltet nicht frei – Verkauf erst nach Eigentümer-Freigabe');
+  // Vollständige Akte = herstellbar; bestellbar erst nach Eigentümer-Freigabe mit Festpreis (tests/integration/p4-release.test.ts).
+  assert.equal(isSellable(makeCtx({ env: { ALLOWED_CAPABILITIES: 'b2b-calc-csv,mini-ww' } }).ctx, 'mini-ww'), false, 'vollständige Akte allein schaltet den Verkauf nicht frei');
   assert.equal(routeCapability('video-production').ok, false, 'gesperrte Produktarten bleiben gesperrt');
 });
 
@@ -80,5 +82,6 @@ test('Produkte-Seite zeigt den Standard je Produkt', () => {
   const { ctx } = makeCtx();
   const html = renderProducts({ ctx, mode: 'test', csrf: 'x', path: '/dashboard/produkte', flash: null } as never);
   assert.ok(html.includes('Premium-Produktstandard'));
-  assert.equal((html.match(/Standard erfüllt/g) ?? []).length, 3);
+  assert.equal((html.match(/Standard erfüllt/g) ?? []).length, 4);
+  assert.match(html, /\/dashboard\/produkte\/mini-ww/, 'Weg zu Vorschau und Freigabe');
 });

@@ -1,6 +1,6 @@
 # Testmatrix – Pflichtfälle aus Gesamtprompt §12
 
-Alle Tests laufen mit `npm run verify` (lokal) und in der GitHub-CI. Stand 2026-11-13: 304 Tests plus 1 E2E, alle bestanden.
+Alle Tests laufen mit `npm run verify` (lokal) und in der GitHub-CI. Stand 2026-11-13: 319 Tests plus 1 E2E, alle bestanden.
 
 | # | Pflichtfall | Status | Nachweis |
 |---|---|---|---|
@@ -9,9 +9,10 @@ Alle Tests laufen mit `npm run verify` (lokal) und in der GitHub-CI. Stand 2026-
 | 3 | Dialogisch geklärter Bedarf → Scope, Angebot, Annahme | ✅ getestet | `tests/integration/advisor.test.ts`, `tests/e2e/pilot.test.ts` |
 | 4 | Stripe serverseitig, negative Webhook-, Doppel- und Fehlerfälle | ✅ getestet (Sandbox) | `tests/integration/payments.test.ts`, `tests/integration/m2-payments.test.ts`. Live: `LIVE_NOT_READY` |
 | 5 | Produktion erst nach bestätigter Zahlung | ✅ getestet | `tests/integration/production.test.ts` (IE-059) |
-| 6 | Bestelltes ERP ist echte Fachsoftware | ✅ getestet (Pilot, Verkauf gesperrt bis P4) | `tests/products/mini-ww/domain.test.ts`, `tests/products/mini-ww/ui.test.ts`, `tests/products/mini-ww/factory.test.ts` – Fachlogik, Oberfläche, Lieferpaket mit Selbsttest und bebilderter Anleitung ([PILOT_FACHSOFTWARE.md](PILOT_FACHSOFTWARE.md)) |
+| 6 | Bestelltes ERP ist echte Fachsoftware | ✅ getestet (Verkauf nur nach Eigentümer-Freigabe) | `tests/products/mini-ww/domain.test.ts`, `tests/products/mini-ww/ui.test.ts`, `tests/products/mini-ww/factory.test.ts`, `tests/integration/p4-release.test.ts` – Fachlogik, Oberfläche, Lieferpaket mit Selbsttest und bebilderter Anleitung, Bestellung bis Lieferung mit Festpreis ([PILOT_FACHSOFTWARE.md](PILOT_FACHSOFTWARE.md)) |
 | 7 | Admin-Produktkarte und echter Build-/Vorschau-Status je Auftrag | ✅ getestet | `tests/integration/live-preview.test.ts` |
-| 8 | Interaktive Vorschau für ausführbare Webprodukte | ⛔ nicht anwendbar | Keine ausführbaren Produkte. Für Tabelle, PDF und ZIP gibt es echte Viewer; sonst „Noch keine Live-Vorschau verfügbar“ |
+| 8 | Interaktive Vorschau für ausführbare Webprodukte | ✅ getestet | `tests/integration/p4-release.test.ts` – Admin → Produkte → Warenwirtschaft: echtes Programm (DE/IT/EN, eigene CSP, kein Netzwerk), Anleitung, Musterpaket, Live-Abnahmeprüfung |
+| 16 | Wachstum ohne Werbebudget (132, 135, 138–140, 147–149, 151, 155) | ✅ getestet (ohne verbundene Fremdkanäle) | `tests/integration/growth.test.ts` – nichts erfunden: Impressionen „nicht gemessen“, Geld nur mit Zahlungsereignis, Kanäle NOT_CONNECTED |
 | 9 | Luxury Turquoise auf allen Oberflächen, Storyscrolling barrierearm | ✅ getestet | `tests/unit/console-ui.test.ts` (Kontrast), `tests/integration/landing.test.ts` |
 | 10 | Rechnung/Steuer passt zu verifizierten Stammdaten, sonst Blocker | ✅ getestet | `tests/integration/italy.test.ts`, `tests/integration/finance.test.ts` |
 | 11 | Live-Finanzen nur aus echten Objekten und Bankbestätigung; keine DEMO-Daten in LIVE | ✅ getestet | `tests/integration/bank-statement.test.ts`, `tests/integration/finance.test.ts` |

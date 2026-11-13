@@ -1,4 +1,5 @@
 import { modulesWithStatus } from '../../../../packages/registry/src/status.ts';
+import { activeRelease } from '../../../../services/core-api/src/releases.ts';
 import { getCapability, listCapabilities } from '../../../../services/product-factory/src/registry.ts';
 import { acceptanceChecks, getStandard, standardGaps } from '../../../../services/product-factory/src/quality-standard.ts';
 import { productLifecycle } from '../../../../services/finance/src/insights.ts';
@@ -9,7 +10,7 @@ import type { PageCtx } from './types.ts';
 const CAPABILITY_TEXT: Record<string, { name: string; text: string }> = {
   'b2b-calc-csv': { name: 'Kalkulationstabelle (CSV)', text: 'Aus Positionen, Mengen und Preisen entsteht automatisch eine geprüfte, in Excel bearbeitbare Kalkulation mit Aufschlag und Summen.' },
   'b2b-calc-bundle': { name: 'Kalkulationspaket (Tabelle + PDF)', text: 'Beide Dateien in einem ZIP. Jede Datei wird mit der Prüfung ihrer eigenen Produktart kontrolliert; der Preis ergibt sich aus dem tatsächlichen Mehraufwand.' },
-  'mini-ww': { name: 'Mini-Warenwirtschaft (Offline-Programm)', text: 'Programm im Design des Kunden mit bebilderter Bedienungsanleitung (PDF) als ZIP. Muster: /admin/muster/mini-ww/paket.zip' },
+  'mini-ww': { name: 'Mini-Warenwirtschaft (Offline-Programm)', text: 'Programm im Design des Kunden mit bebilderter Bedienungsanleitung (PDF) als ZIP. Vorschau und Verkaufsfreigabe: /dashboard/produkte/mini-ww' },
   'b2b-calc-pdf': { name: 'Kalkulation als PDF', text: 'Dieselbe Kalkulation als druckfertiges PDF. Geprüft werden Dateistruktur, Seitenzahl, Vollständigkeit aller Positionen und die nachgerechnete Summe.' },
 };
 
@@ -37,6 +38,7 @@ ${panel({ title: 'Lebenszyklus deiner Produkte', sub: 'Aus echten Lieferungen, P
     [{ label: 'Produkt' }, { label: 'Lieferungen' }, { label: 'Probleme' }, { label: 'Einschätzung', full: true }],
     productLifecycle(pc.ctx, pc.mode === 'test', caps).map((r) => [`<strong>${e(CAPABILITY_TEXT[r.product]?.name ?? r.product)}</strong><span class="sub">Version ${r.version}${r.lastSale ? ` · zuletzt verkauft ${e(r.lastSale.slice(0, 10))}` : ''}</span>`, String(r.delivered), `${r.qaFailed} Prüffehler · ${r.defects} Mängel`, `${tag(r.status, r.status === 'prüfen' ? 'bad' : r.status === 'stabil' ? 'ok' : 'neutral')}<span class="sub">${e(r.reason)}</span>`]),
     'Keine aktiven Produkte', 'Lebenszyklus') })}
+${panel({ id: 'fachsoftware', title: 'Fachsoftware: Warenwirtschaft', sub: activeRelease(pc.ctx, 'mini-ww') ? 'Zum Verkauf freigegeben' : 'Fertig gebaut und geprüft – Verkauf wartet auf deine Freigabe', action: { href: '/dashboard/produkte/mini-ww', label: 'Vorschau und Freigabe' }, body: '<p style="margin:4px 0 0">Programm ausprobieren, bebilderte Anleitung und Musterpaket ansehen, Abnahmeprüfung live ausführen und Festpreis festlegen.</p>' })}
 ${panel({ id: 'live-vorschau', title: 'Live-Vorschauen', sub: 'Jedes produzierte Kundenprodukt mit echtem Stand und echter Ansicht', action: { href: withMode('/dashboard/produkte/vorschau', pc.mode), label: 'Alle ansehen' }, body: `<p style="margin:4px 0 0">${pc.ctx.db.get<{ n: number }>('SELECT COUNT(*) AS n FROM artifacts WHERE test_mode = ?', pc.mode === 'test' ? 1 : 0)?.n ?? 0} produzierte Datei(en) in dieser Ansicht. Tabellen, PDFs und Pakete lassen sich direkt öffnen; Version, Prüfprotokoll und Lieferstatus stehen daneben.</p>` })}
 ${panel({ id: 'standard', title: 'Premium-Produktstandard', sub: 'Verkauft und geliefert wird nur, was alle Abnahmekriterien erfüllt', flush: true, body: `${table(
     [{ label: 'Produkt' }, { label: 'Zweck' }, { label: 'Abnahmekriterien' }, { label: 'Stand', full: true }],

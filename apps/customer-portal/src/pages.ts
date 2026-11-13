@@ -186,7 +186,7 @@ ${chapter(8, T.faq.label, `<div class="reveal"><h2 id="k8">${T.faq.h2}</h2><p cl
   });
 }
 
-export type InquiryValues = Partial<Record<'name' | 'email' | 'company' | 'country' | 'title' | 'items' | 'margin' | 'message' | 'marketing' | 'format', string>>;
+export type InquiryValues = Partial<Record<'name' | 'email' | 'company' | 'country' | 'title' | 'items' | 'margin' | 'message' | 'marketing' | 'format' | 'src' | 'cmp' | 'ref', string>>;
 
 /** Lieferformate, die der Kunde wählen kann – nur was die Policy freigegeben hat (Freischaltung durch den Eigentümer). */
 export const FORMATS: { id: string; label: string; text: string }[] = [
@@ -224,6 +224,7 @@ export function renderInquiryForm(errors: string[] = [], v: InquiryValues = {}, 
 ${errors.length ? `<div class="card err" role="alert"><strong>${t('Bitte korrigieren – Ihre Eingaben sind erhalten geblieben:')}</strong><ul>${errors.map((x) => `<li>${e(t(x))}</li>`).join('')}</ul></div>` : ''}
 ${advisor ? `<div class="card" role="status"><h2>${t('Das habe ich verstanden')}</h2>${advisor.understood.length ? `<ul>${advisor.understood.map((x) => `<li>${e(x)}</li>`).join('')}</ul>` : `<p class="muted">${t('Noch keine konkreten Angaben erkannt.')}</p>`}${advisor.questions.length ? `<h3>${t('Bitte noch ergänzen')}</h3><ul>${advisor.questions.map((x) => `<li>${e(x)}</li>`).join('')}</ul>` : ''}<p class="muted">${t('Alles ist vorausgefüllt und änderbar. Gesendet wird erst mit „Anfrage senden“.')} <a href="/berater">${t('Wunsch neu beschreiben')}</a></p></div>` : ''}
 <form class="card" method="post" action="/anfrage">
+${(['src', 'cmp', 'ref'] as const).map((k) => (v[k] && /^[a-z0-9-]{1,40}$/.test(v[k] ?? '') ? `<input type="hidden" name="${k}" value="${val(k)}">` : '')).join('')}
 <h2>${t('Ihre Angaben')}</h2>
 <label for="name">${t('Name')}</label><input id="name" type="text" name="name" required maxlength="200" autocomplete="name" value="${val('name')}">
 <label for="email">${t('E-Mail')}</label><input id="email" type="email" name="email" required maxlength="254" autocomplete="email" value="${val('email')}">
@@ -281,7 +282,11 @@ ${input.items.length > shown.length ? `<tr><td data-label="${t('Hinweis')}" cols
 export function renderQuote(q: QuoteRow, token: string, lang: Lang = 'de'): string {
   const t = (s: string): string => tr(lang, s);
   const terms = JSON.parse(q.terms_json) as Record<string, unknown>;
-  const scope = JSON.parse(q.scope) as { title?: string; items?: { name: string; quantity: number; unit_cost_minor: number }[] } | null;
+  const scope = JSON.parse(q.scope) as { title?: string; company?: string; language?: string; items?: { name: string; quantity: number; unit_cost_minor: number }[] } | null;
+  const software = !!scope?.company && !scope.items;
+  const scopeLines = software
+    ? `<li>${t('Warenwirtschaft als Programm im Design von')} ${e(scope?.company ?? '')} (${e((scope?.language ?? 'de').toUpperCase())})</li><li>${t('Bebilderte Bedienungsanleitung (PDF)')}</li>`
+    : `<li>${scope?.items?.length ?? 0} ${t('Positionen, Aufschlag und Summen')}</li>`;
   const statusText: Record<string, string> = { ISSUED: 'Gültig', ACCEPTED: 'Angenommen', EXPIRED: 'Abgelaufen', WITHDRAWN: 'Zurückgezogen' };
   return page(
     t('Angebot – INFINITY EARN'),
@@ -289,7 +294,7 @@ export function renderQuote(q: QuoteRow, token: string, lang: Lang = 'de'): stri
 <div class="grid">
 <div class="card"><div class="muted">${t('Preis')}</div><div class="price">${e(money(q.gross_total_minor, q.currency))}</div><p class="muted">${t('Steuer wird noch nicht berechnet (Steuerangaben im Testbetrieb nicht hinterlegt).')}</p>
 <p><span class="tag ${q.status === 'ISSUED' ? 'ok' : 'neutral'}">${e(t(statusText[q.status] ?? q.status))}</span> <span class="muted">${t('gültig bis')} ${e(q.valid_until.slice(0, 10))}</span></p></div>
-<div class="card"><h3>${t('Lieferumfang')}</h3><ul><li>${scope?.items?.length ?? 0} ${t('Positionen, Aufschlag und Summen')}</li><li>${t('Lieferkriterien:')} ${e((terms.delivery_criteria as string[] | undefined)?.join(', ') ?? '')}</li><li>${t('Lieferung')} ${e(String(terms.delivery_deadline_days))} ${t('Tage nach Zahlungseingang')}</li></ul></div></div>
+<div class="card"><h3>${t('Lieferumfang')}</h3><ul>${scopeLines}<li>${t('Lieferkriterien:')} ${e((terms.delivery_criteria as string[] | undefined)?.join(', ') ?? '')}</li><li>${t('Lieferung')} ${e(String(terms.delivery_deadline_days))} ${t('Tage nach Zahlungseingang')}</li></ul></div></div>
 ${quotePreview(q, lang)}
 <div class="card"><h3>${t('Bedingungen')}</h3>${lang === 'de' ? '' : `<p class="muted">${t('Die Bedingungen liegen derzeit nur auf Deutsch vor (Entwurf, rechtliche Prüfung vor dem Echtbetrieb). Maßgeblich ist die deutsche Fassung.')}</p>`}<ul lang="de"><li>Nutzungsrechte: ${e(terms.rights)}</li><li>Rückerstattung: ${e(terms.refund_criteria)}</li><li>${e(terms.withdrawal_notice)}</li><li>${e(terms.privacy_notice)}</li></ul>
 <p class="err" lang="de">${e(terms.notice ?? '')}</p></div>
@@ -396,6 +401,12 @@ export const HELP: Record<string, { title: string; steps: string[]; contents: st
     contents: ['kalkulation.csv – die Tabelle zum Weiterrechnen', 'kalkulation.pdf – dieselbe Kalkulation druckfertig'],
     steps: ['ZIP-Datei speichern.', 'Rechtsklick → „Alle extrahieren“ (Windows) bzw. Doppelklick (Mac).', 'Für die CSV-Datei gelten die Hinweise zur Tabelle, für das PDF die Hinweise zum PDF.'],
     limits: ['Beide Dateien enthalten dieselben Werte; Umsatzsteuer ist nicht enthalten.'],
+  },
+  'mini-ww': {
+    title: 'Warenwirtschaft (Programm + Anleitung)',
+    contents: ['warenwirtschaft.html – das Programm in Ihrem Firmendesign', 'bedienungsanleitung.pdf – bebilderte Anleitung zu jedem Arbeitsablauf', 'LIESMICH.txt – Start in einer Minute und Prüfsummen'],
+    steps: ['ZIP-Datei speichern und entpacken (Rechtsklick → „Alle extrahieren“ bzw. Doppelklick auf dem Mac).', 'warenwirtschaft.html per Doppelklick im Browser öffnen (Edge, Chrome, Firefox oder Safari). Keine Installation, kein Internet nötig.', 'Die Datei immer auf demselben Computer und im selben Browser öffnen – dort liegen Ihre Daten.', 'Unter „Daten“ regelmäßig eine Sicherung herunterladen und extern aufbewahren.', 'Alle Abläufe erklärt die beiliegende Bedienungsanleitung mit Bildern.'],
+    limits: ['Kein Mehrplatz-Server, keine Synchronisation zwischen Geräten.', 'Keine elektronische Rechnungsübermittlung (z. B. SdI/XRechnung).', 'Rechnungen und Steuersätze vor der Verwendung von Ihrer Steuerberatung prüfen lassen.'],
   },
 };
 

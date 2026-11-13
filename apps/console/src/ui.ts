@@ -8,7 +8,7 @@ import { CSS } from './tokens.ts';
  */
 export { e };
 
-export type Area = 'uebersicht' | 'kunden' | 'auftraege' | 'produkte' | 'finanzen' | 'berichte';
+export type Area = 'uebersicht' | 'kunden' | 'auftraege' | 'produkte' | 'finanzen' | 'berichte' | 'wachstum';
 export type ViewMode = 'live' | 'test';
 export type Tone = 'ok' | 'pending' | 'bad' | 'neutral';
 
