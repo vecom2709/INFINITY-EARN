@@ -5,7 +5,7 @@ Stand: 2026-11-13. Ein Eintrag gilt nur mit echtem Nachweis. Nicht getestet hei�
 | Ziel | Ergebnis | Echte Testumgebung | Nachweis |
 |---|---|---|---|
 | Windows 11 x64 (25H2, Build 26200) | **PASS** | dieser Rechner | `tests/products/win-lager/install.test.ts` (lokal) |
-| Windows Server (GitHub `windows-latest`) | **PASS, sobald der CI-Lauf grün ist** | GitHub Actions | Job `windows-program` in `.github/workflows/ci.yml` |
+| Windows Server (GitHub `windows-latest`) | **PASS** | GitHub Actions, Lauf vom 13.11.2026 (Commit 6b2bd3a) | Job `windows-program` in `.github/workflows/ci.yml` |
 | Windows 10 | UNVERIFIED | – | Gleiche Laufzeit (.NET Framework 4.8 ist enthalten), aber ohne eigenen Test keine Zusage |
 | macOS | UNVERIFIED / `COST_APPROVAL_REQUIRED` | – | Mac-Hardware und Apple-Entwicklerkonto nötig |
 | Linux | nicht unterstützt | – | WinForms-Programm; für Linux wäre eine eigene Ausgabe nötig |
