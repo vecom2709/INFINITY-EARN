@@ -1,4 +1,4 @@
-import { cronTick } from '../../ai-orchestrator/src/queue.ts';
+import { cronTick, recoverStaleJobs } from '../../ai-orchestrator/src/queue.ts';
 import { recordInvoiceForOrder } from '../../finance/src/invoice.ts';
 import { reconcile, type ReconciliationResult } from '../../finance/src/reconciliation.ts';
 import { runProductionOnce, type ProductionRunResult } from '../../product-factory/src/production.ts';
@@ -25,6 +25,7 @@ export interface TickResult {
 export function autopilotTick(ctx: AppContext, intervalMs = 60_000): TickResult {
   const errors: string[] = [];
   cronTick(ctx, 'autopilot', intervalMs);
+  recoverStaleJobs(ctx);
   const production = runProductionOnce(ctx);
   const invoices: TickResult['invoices'] = [];
   const delivered = ctx.db.all<{ order_id: string; name: string | null; address: string | null; country: string | null; buyer_type: 'B2B' | 'B2C' | null; vat_id: string | null }>(

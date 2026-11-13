@@ -101,6 +101,19 @@ export function admission(ctx: AppContext, job: JobRow): Admission {
   return { admit: true };
 }
 
+/** Wiederanlauf nach Absturz/Neustart: Jobs, die länger als maxAgeMs auf RUNNING stehen, kommen protokolliert zurück in die Warteschlange. */
+export const STALE_RUNNING_MS = 30 * 60_000;
+export function recoverStaleJobs(ctx: AppContext, maxAgeMs = STALE_RUNNING_MS): number {
+  const now = ctx.clock();
+  const limit = new Date(now.getTime() - maxAgeMs).toISOString();
+  const stale = ctx.db.all<{ job_id: string; kind: string }>(`SELECT job_id, kind FROM jobs WHERE state = 'RUNNING' AND updated_at < ?`, limit);
+  for (const j of stale) {
+    const r = ctx.db.run(`UPDATE jobs SET state = 'QUEUED', reason = 'RECOVERED_AFTER_RESTART', next_run_at = NULL, updated_at = ? WHERE job_id = ? AND state = 'RUNNING'`, now.toISOString(), j.job_id);
+    if (r.changes === 1) ctx.audit.record({ type: 'job.recovered', actor: 'system', subjectType: 'job', subjectId: j.job_id, data: { kind: j.kind }, testMode: ctx.config.testMode });
+  }
+  return stale.length;
+}
+
 /** Nächsten lauffähigen Job holen; nicht zugelassene Jobs bleiben QUEUED (nicht verloren). */
 export function claimNext(ctx: AppContext, kinds: readonly string[]): JobRow | null {
   const now = ctx.clock();

@@ -1,4 +1,5 @@
 import { activeStops } from '../../../../services/core-api/src/policy-store.ts';
+import { autopilotStatus, type JobStatus } from '../../../../services/ai-orchestrator/src/director.ts';
 import { readinessSummary } from '../../../../services/core-api/src/readiness.ts';
 import { dailyReport } from '../../../../services/core-api/src/daily-report.ts';
 import { icon } from '../icons.ts';
@@ -15,6 +16,25 @@ export function autopilotState(pc: PageCtx): { text: 'Testbetrieb' | 'Freigegebe
   if (decisions(pc.ctx, pc.mode === 'test').length > 0) return { text: 'Prüfung erforderlich', explain: 'Ein oder mehrere Vorgänge warten auf deine Entscheidung. Alles andere läuft weiter.' };
   if (pc.ctx.config.testMode) return { text: 'Testbetrieb', explain: 'Alle Abläufe laufen automatisch – aber nur mit Testzahlungen. Echte Verkäufe sind gesperrt, bis alle Live-Freigaben erteilt sind.' };
   return { text: 'Freigegeben', explain: 'Der Echtbetrieb ist freigegeben und läuft innerhalb deiner Grenzen.' };
+}
+
+const JOB_LABEL: Record<JobStatus, string> = {
+  WAITING: 'Wartet', READY: 'Bereit', RUNNING: 'Läuft', QA_PENDING: 'In Prüfung', COMPLETED: 'Erledigt (24 Std.)', FAILED: 'Gescheitert (24 Std.)',
+  RETRY_SCHEDULED: 'Neuer Versuch geplant', AI_QUOTA_BLOCKED: 'Wartet auf KI', RESOURCE_BLOCKED: 'Ohne Ressource', OWNER_APPROVAL_REQUIRED: 'Wartet auf dich',
+};
+
+/** 16.0 Autopilot-Leitstand: nur gemessene Werte (letzter Takt, Job-Zustände, Umgebungen) – keine vorgetäuschte Aktivität. */
+function commandCenter(pc: PageCtx): string {
+  const s = autopilotStatus(pc.ctx);
+  const tone = s.state === 'AKTIV' ? 'ok' : s.state === 'FEHLER' ? 'bad' : s.state === 'ANGEHALTEN' ? 'neutral' : 'pending';
+  const tick = s.tickAgeSeconds === null ? 'noch nie' : s.tickAgeSeconds < 90 ? `vor ${s.tickAgeSeconds} s` : `vor ${Math.round(s.tickAgeSeconds / 60)} min`;
+  const counts = (Object.entries(s.jobs) as [JobStatus, number][]).filter(([k, n]) => n > 0 || k === 'READY' || k === 'WAITING');
+  const body = `<p style="margin:4px 0 8px">${tag(s.state, tone)} <span class="muted">Letzter Takt ${e(tick)} · läuft auch bei ausgeschaltetem PC (Cloudflare)</span></p>
+<ul style="margin:0 0 10px;padding-left:18px">${s.reasons.map((r) => `<li>${e(r)}</li>`).join('')}</ul>
+${table([{ label: 'Jobs' }, { label: 'Anzahl', amount: true }], counts.map(([k, n]) => [e(JOB_LABEL[k]), String(n)]), 'Keine Jobs', 'Jobs nach Zustand')}
+${table([{ label: 'Ausführungsumgebung' }, { label: 'Stand' }, { label: 'Kosten' }], s.environments.map((x) => [`<strong>${e(x.label)}</strong><span class="sub">${e(x.reason)}</span>`, tag(x.available ? 'Verfügbar' : 'Nicht verfügbar', x.available ? 'ok' : 'neutral'), e(x.cost)]), 'Keine Umgebungen', 'Ausführungsumgebungen')}
+<p style="margin:10px 0 0"><a href="${e(withMode('/dashboard/einstellungen', pc.mode))}#autopilot">Stopp-Schalter</a> · <a href="/admin/autopilot.json">Rohdaten (JSON)</a></p>`;
+  return panel({ id: 'leitstand', title: 'Autopilot-Leitstand', sub: 'Gemessen, nicht geschätzt: Takt, Warteschlange und Ausführungsumgebungen', body });
 }
 
 export function renderOverview(pc: PageCtx): string {
@@ -81,6 +101,7 @@ ${panel({ title: 'Dein Unternehmen arbeitet', sub: 'Status des Autopiloten', bod
 <p class="muted" style="font-size:13px;margin:10px 0 0">Zusätzliche Software-Fixkosten: <strong>0 €</strong> freigegeben. Kostenpflichtige Dienste sind technisch gesperrt.</p>
 ${explain('Der Echtbetrieb wird erst möglich, wenn du alle zwölf Live-Freigaben (Unternehmen, Steuer, Zahlungsanbieter, Rechtstexte, Datenschutz) mit Nachweis erteilt hast. Bis dahin laufen alle Abläufe nur mit Testzahlungen.')}` })}
 </div>
+${commandCenter(pc)}
 ${panel({ title: 'Letzte Aufträge', sub: 'Von der Bestellung bis zur Auszahlung – jederzeit nachvollziehbar', action: { href: withMode('/dashboard/auftraege', pc.mode), label: 'Alle Aufträge' }, body: ordersTable, flush: true })}`;
 
   return shell({

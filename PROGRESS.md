@@ -524,3 +524,10 @@ Laufend aktuell in der Konsole unter **Berichte → Funktionsstand**. Jede Funkt
    - Liquiditäts- und Auszahlungsprognose aus echten Daten (098).
    - Abhängigkeit von Großkunden (099).
 3. **Nach LA-01:** Rechnungsformat und Umsatzsteuerprüfung je Sitzland.
+
+## INFINITY EARN 16.0 – 24/7-Autopilot (13.11.2026)
+
+- Bestandsprüfung, Claude-Anbindungsstatus, Szenario-Nachweise und Blocker: `AUTOPILOT_247.md`.
+- Neu: Production Router mit ehrlicher Machbarkeitsprüfung je Arbeitstyp (`services/ai-orchestrator/src/director.ts`), einheitlicher Job-Status (WAITING … OWNER_APPROVAL_REQUIRED), Autopilot-Status (AKTIV … ANGEHALTEN) aus Messwerten im Admin („Autopilot-Leitstand“, `/admin/autopilot.json`), Wiederanlauf hängengebliebener Jobs nach 30 Minuten.
+- KI-Produktion: kein automatischer Ausführungsweg eingerichtet (Abo ist keine 24/7-API, API-Schlüssel kostet Geld) – KI-Aufträge warten sichtbar als AI_QUOTA_BLOCKED, alles Deterministische läuft weiter.
+- Tests: `tests/integration/autopilot-247.test.ts` (9 Szenarien, bestanden).

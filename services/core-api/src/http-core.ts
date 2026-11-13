@@ -11,6 +11,7 @@ import { HERO_IMAGES } from '../../../apps/customer-portal/src/hero-images.gener
 import { renderArticle, renderLanding, renderWwProduct, TAX_PRESETS, WW_SLUG } from '../../../apps/customer-portal/src/product-pages.ts';
 import { MINI_WW_BUNDLE } from '../../../products/mini-ww/generated/bundle.ts';
 import { buildWinManual } from '../../../products/win-lager/manual.ts';
+import { autopilotStatus } from '../../ai-orchestrator/src/director.ts';
 import { claimBuild, failBuild, latestProbe, pendingBuilds, requestProbe, submitBuild } from '../../product-factory/src/external-build.ts';
 import { SHOTS_JPEG_BASE64 } from '../../../products/mini-ww/generated/shots.ts';
 import { CSP as WW_CSP, htmlFromBundle } from '../../../products/mini-ww/html.ts';
@@ -692,6 +693,7 @@ export function createHandler(ctx: AppContext): (r: HttpRequest) => Promise<Res>
       return agentErr(e);
     }
   }));
+  route('GET', '/admin/autopilot.json', ownerGuard(() => json(autopilotStatus(ctx))));
   route('POST', '/admin/produkte/win-lager/probebau', ownerGuard((req) => {
     const r = requestProbe(ctx);
     return back(req, r.created ? 'Probebau angestoßen. Der Windows-Server holt ihn beim nächsten Durchlauf ab (bis ca. 30 Minuten).' : 'Ein Probebau wartet bereits auf den Windows-Server.');

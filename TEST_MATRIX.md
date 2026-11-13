@@ -25,3 +25,7 @@ Alle Tests laufen mit `npm run verify` (lokal) und in der GitHub-CI. Stand 2026-
 | 15 | Negative, Ausfall-, Erstattungs-, Rollen-, Datensicherheits-, Doppel-Event- und Kapazitätsfälle | ✅ getestet | `tests/integration/production.test.ts`, `tests/security/security.test.ts`, `tests/integration/ops.test.ts` |
 
 **Status je Funktion** (SPECIFIED, IMPLEMENTED, TESTED, LIVE_VERIFIED, BLOCKED): siehe [FEATURE_REGISTRY_157.json](FEATURE_REGISTRY_157.json). `LIVE_VERIFIED` wird erst nach einer echten, freigegebenen Live-Transaktion mit Bankbestätigung vergeben.
+
+## 16.0 – 24/7-Autopilot
+
+`tests/integration/autopilot-247.test.ts`: Bestellung bei ausgeschaltetem PC bis Download; KI fehlt → sicher pausiert, Freigabe 1/Tag → genau ein Job; doppelter Webhook; fehlerhafte Produktion nicht geliefert; Free-Tier erschöpft → gespeichert, keine Kosten; Neustart mit Wiederanlauf; Testdaten nie Echtumsatz; LIVE gesperrt; Autopilot-Status und Router; Leitstand nur für den Eigentümer. Zuordnung aller 16 Szenarien: `AUTOPILOT_247.md`.
