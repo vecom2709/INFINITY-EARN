@@ -120,22 +120,22 @@ test('Negativtest 7: gemeldete Auszahlung ohne Bankbestätigung erscheint nur al
   assert.match(fin, /data-metric="bank"[\s\S]*?Noch nicht verbunden/);
 });
 
-test('UI-10 Kostengate sichtbar gesperrt; Funktionsstand zeigt alle 147 ehrlich; Statusbericht ohne personenbezogene Daten', () => {
+test('UI-10 Kostengate sichtbar gesperrt; Funktionsstand zeigt alle 157 ehrlich; Statusbericht ohne personenbezogene Daten', () => {
   const { ctx } = makeCtx();
   toDelivered(ctx);
   const rep = page(ctx, '/dashboard/berichte');
   assert.match(rep, /Technisch gesperrt/);
   assert.match(rep, /0 € pro Monat freigegeben/);
-  assert.equal((rep.match(/<td data-label="Nr\.">\d{3}<\/td>/g) ?? []).length, 147);
+  assert.equal((rep.match(/<td data-label="Nr\.">\d{3}<\/td>/g) ?? []).length, 157);
   for (const n of ['048', '049', '110']) assert.ok(!rep.includes(`<td data-label="Nr.">${n}</td>`), `abgelehnte ${n} nicht gelistet`);
   const filtered = page(ctx, '/dashboard/berichte', 'stand=GESPERRT');
-  assert.ok((filtered.match(/<td data-label="Nr\.">\d{3}<\/td>/g) ?? []).length < 147);
+  assert.ok((filtered.match(/<td data-label="Nr\.">\d{3}<\/td>/g) ?? []).length < 157);
   const set = page(ctx, '/dashboard/einstellungen');
   assert.match(set, /Kostenpflichtige Dienste<\/dt><dd><span class="tag ok"><span class="dot" aria-hidden="true"><\/span>Gesperrt/);
   const s = statusReport(ctx);
   const text = JSON.stringify(s);
   assert.doesNotMatch(text, /@example|@/, 'keine E-Mail-Adressen');
-  assert.equal((s.registry as { approved: number }).approved, 147);
+  assert.equal((s.registry as { approved: number }).approved, 157);
   assert.equal((s.cost_gate as { max_additional_monthly_fixed_eur: number }).max_additional_monthly_fixed_eur, 0);
   assert.equal((s.live as { bank_connected: boolean }).bank_connected, false);
 });
@@ -197,6 +197,6 @@ function describeHttp(): void {
     const overview = await c.get('/dashboard');
     assert.match(overview.text, /Dein Geschäft\. Klar im Blick\./);
     const status = JSON.parse((await c.get('/api/status')).text) as { mode: string; registry: { approved: number } };
-    assert.deepEqual([status.mode, status.registry.approved], ['TEST', 147]);
+    assert.deepEqual([status.mode, status.registry.approved], ['TEST', 157]);
   });
 }

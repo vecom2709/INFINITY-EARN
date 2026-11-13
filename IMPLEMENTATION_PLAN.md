@@ -25,7 +25,7 @@ Stand: 2026-11-13 · Grundlage: `INFINITY_EARN_15_GESAMTPROMPT_ALLES_IN_EINEM.md
 | L3 | **§6/§10 MFA für Admin** | Ja (TOTP, kostenlos) | **Eigentümer-Entscheidung 13.11.2026 (nach Vorlage des Gesamtprompts bestätigt): nur Passwort.** Bleibt: scrypt, Sperre nach 5 Fehlversuchen, serverseitige Sitzungen, CSRF, Audit. Abweichung zu §6/§10 bewusst dokumentiert. |
 | L4 | **§3 Kanalstatus** Website-Chat, E-Mail, WhatsApp, Plattformen je „Nicht verbunden“ | Ja (Anzeige) | Kanalübersicht im Admin |
 | L5 | **§7 Landingpage** Schritt 8: Preis-/Kontakttransparenz, FAQ, Pflichtinformationen | Ja (FAQ/Preise); Impressum braucht LA-02 | ergänzen |
-| L6 | **§12 Status-Vokabular** SPECIFIED/IMPLEMENTED/TESTED/LIVE_VERIFIED/BLOCKED | Ja | Abbildung der heutigen Status, `FEATURE_REGISTRY_147.json` erzeugen |
+| L6 | **§12 Status-Vokabular** SPECIFIED/IMPLEMENTED/TESTED/LIVE_VERIFIED/BLOCKED | Ja | Abbildung der heutigen Status, `FEATURE_REGISTRY_157.json` erzeugen |
 | L7 | **§13 Dokumente** DESIGN_SYSTEM, SYSTEM_ARCHITECTURE, COMMUNICATION_AND_DELIVERY, PRODUCT_FACTORY_REAL_SOFTWARE, ADMIN_LIVE_PREVIEW, TEST_MATRIX | Ja | aus dem echten Stand erzeugen |
 | L8 | **§4 echte Fachsoftware** (ERP/CRM/Warenwirtschaft) als Produkt | Teilweise: braucht je Auftrag Entwicklungsarbeit; dauerhaft autonom nur mit KI-API (kostenpflichtig) | erst eine kleine, vollständig getestete Fachanwendung als Pilot (M3), keine Zusage großer ERP-Projekte |
 | L9 | **§8 Stripe LIVE**, Abos, Kundenportal von Stripe | Code ja; Aktivierung nur mit KYC, Live-Schlüsseln, Freigabe | Eigentümer (LA-03/04) |
@@ -34,7 +34,7 @@ Stand: 2026-11-13 · Grundlage: `INFINITY_EARN_15_GESAMTPROMPT_ALLES_IN_EINEM.md
 
 ## Update 13.11.2026: Gesamtprompt mit 147 Funktionen und Freelancer-Direktive
 
-Quelle mit Prüfsummen: `docs/spec/v15-147/`. Registry: 127 ursprüngliche (unverändert) + 20 beauftragte (131–140, 146–155); 141–145 nicht freigegeben. Export: [FEATURE_REGISTRY_147.json](FEATURE_REGISTRY_147.json).
+Quelle mit Prüfsummen: `docs/spec/v15-147/`. Registry: 127 ursprüngliche (unverändert) + 20 beauftragte (131–140, 146–155); 141–145 nicht freigegeben. Export: [FEATURE_REGISTRY_157.json](FEATURE_REGISTRY_157.json).
 
 **Stand der 20 neuen Funktionen:** 10 teilweise, jeweils mit vorhandenem, getestetem Code:
 - 131 TED-Radar
@@ -77,3 +77,15 @@ Quelle mit Prüfsummen: `docs/spec/v15-147/`. Registry: 127 ursprüngliche (unve
 1. L1 Admin Live-Vorschau · 2. L2 `/konto` · 3. L4 Kanalstatus · 4. L5 FAQ/Preise · 5. L6 + L7 Registry-Export und Dokumente · 6. L8 Pilot-Fachanwendung (nur nach Bestätigung des Umfangs).
 
 Eigentümer-Entscheidungen: L3 (MFA ja/nein), L9 (Stripe LIVE), L10 (Kanäle), L11 (KI-API-Kosten).
+
+## Update 13.11.2026 (Nacht): Gesamtprompt 157 – Universal-Produktion 156–165
+
+- **Quelle und Registry:**
+  - Die Quelle liegt in `docs/spec/v15-157/`; die Prüfsummen stimmen mit dem Original-Manifest des Eigentümers überein.
+  - Die Registry hat jetzt 157 Einträge: 147 bisherige plus 156–165 (`packages/registry/src/registry-extension-157.json`).
+  - 141–145 und 48/49/110 bleiben ausgeschlossen (per Test erzwungen).
+- **156 Auftragsanforderung:** jetzt TEILWEISE mit getestetem Code. Details in [IMPLEMENTATION_PLAN_157.md](IMPLEMENTATION_PLAN_157.md) und [UNIVERSAL_ASSIGNMENT_SCHEMA.md](UNIVERSAL_ASSIGNMENT_SCHEMA.md).
+- **Stand der übrigen neuen Funktionen:**
+  - Teilweise belegt durch vorhandenen Code: 159, 164, 165.
+  - Geplant: 157, 158, 161, 162.
+  - Gesperrt, weil Kosten nötig sind: 160, 163.

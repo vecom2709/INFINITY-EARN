@@ -1,4 +1,5 @@
 import type { AppContext } from '../../../services/core-api/src/context.ts';
+import { renderAssignmentDetail, renderAssignments } from './pages/assignments.ts';
 import { renderCustomers } from './pages/customers.ts';
 import { renderFinance } from './pages/finance.ts';
 import { renderGrowth, renderProductRelease } from './pages/growth.ts';
@@ -22,6 +23,9 @@ export function renderConsole(ctx: AppContext, path: string, query: URLSearchPar
   if (sub === '') return renderOverview(pc);
   if (sub === 'kunden') return renderCustomers(pc);
   if (sub === 'auftraege') return renderOrders(pc, query.get('phase'));
+  if (sub === 'auftraege/anforderungen') return renderAssignments(pc);
+  const asg = /^auftraege\/anforderungen\/(asg_[a-f0-9]+)$/.exec(sub);
+  if (asg?.[1]) return renderAssignmentDetail(pc, asg[1]);
   const order = /^auftraege\/(ord_[a-f0-9]+)$/.exec(sub);
   if (order?.[1]) return renderOrderDetail(pc, order[1]);
   if (sub === 'produkte') return renderProducts(pc);

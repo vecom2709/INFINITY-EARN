@@ -35,7 +35,8 @@ export function renderOrders(pc: PageCtx, filter: string | null): string {
       test ? 'Keine Testaufträge in dieser Ansicht' : 'Noch keine Verkäufe',
       'Aufträge',
     ),
-  })}`;
+  })}
+${panel({ id: 'anforderungen', title: 'Auftragsanforderungen', sub: 'Jeder Kundenwunsch als prüfbare Anforderung: Produktart, Plattform, Lieferumfang, Abnahmekriterien, Rückfragen', action: { href: '/dashboard/auftraege/anforderungen', label: 'Öffnen' }, body: '<p style="margin:4px 0 0">Keine Lieferzusage ohne geklärte Plattform und echten Fähigkeitsnachweis; Versionen mit Kundenbestätigung.</p>' })}`;
   return shell({ title: 'Aufträge', eyebrow: 'Aufträge', heading: 'Deine Aufträge', lead: 'Vom Angebot bis zur Lieferung. Du siehst auf einen Blick, was erledigt ist und wo etwas wartet.', active: 'auftraege', mode: pc.mode, csrf: pc.csrf, path: pc.path, flash: pc.flash, heroAside: modeSwitch('/dashboard/auftraege', pc.mode), body, systemTestMode: pc.ctx.config.testMode });
 }
 

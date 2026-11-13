@@ -70,6 +70,8 @@ export function erasePersonalData(ctx: AppContext, leadId: string, actor: 'owner
       ctx.db.run(`UPDATE leads SET message = NULL, company = NULL, marketing_opt_out = 1, processing_restricted = 1 WHERE lead_id = ?`, leadId);
       ctx.db.run(`UPDATE customers SET processing_restricted = 1 WHERE lead_id = ?`, leadId);
     }
+    // Freitext auch in Auftragsanforderungen (156) entfernen; Prüfsumme und Versionen bleiben als Nachweis.
+    ctx.db.run(`UPDATE assignment_specs SET source_text = '[gelöscht]', spec_json = '{"erased":true}', attachments_json = '[]' WHERE lead_id = ?`, leadId);
   });
   ctx.audit.record({ type: 'gdpr.erasure_processed', actor, subjectType: 'lead', subjectId: leadId, data: { mode }, testMode: ctx.config.testMode });
   return { mode };

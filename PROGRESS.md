@@ -14,6 +14,31 @@ Grundlage: das 15.0-Paket (`docs/spec/v15/`, Prüfsummen laut Manifest geprüft)
 
 ---
 
+## Gesamtprompt mit 157 Funktionen übernommen, Funktion 156 gebaut (2026-11-13)
+
+- **Quelle:**
+  - Die Dateien liegen in `docs/spec/v15-157/`, mit SHA-256-Manifest und Original-Manifest des Eigentümers; die Prüfsummen stimmen.
+  - Neu sind nur die Anlagen I/J/K (156–165).
+- **Registry:**
+  - Jetzt 157 Einträge (1–47, 50–109, 111–140, 146–165), verkettet: 127 → 147 → 157.
+  - 141–145 und 48/49/110 werden nie aufgenommen (Test).
+- **Export:** [FEATURE_REGISTRY_157.json](FEATURE_REGISTRY_157.json): 26 vollständig getestet, 83 teilweise, 45 spezifiziert, 3 gesperrt, 0 live bestätigt.
+- **156 Auftragsanforderung (neu, TEILWEISE):**
+  - Aus jedem Kundenwunsch entsteht eine prüfbare Anforderung: Produktart, Plattform, Lieferumfang, MUSS/SOLL/OPTIONAL, Abnahmekriterien, Abhängigkeiten.
+  - Fehlende Plattform oder Widersprüche führen zu einer Rückfrage, nie zu einer Zusage.
+  - Anhänge zählen nur als Daten; Duplikate werden zusammengeführt.
+  - Versionen sind append-only, mit Kundenbestätigung; ein Löschantrag entfernt den Freitext.
+  - Website-Anfragen landen automatisch unter **Admin → Aufträge → Anforderungen**.
+- **Ehrlich nicht gebaut:**
+  - Geplant: 157 (Windows-Programm mit Installer), 158, 161, 162.
+  - Gesperrt, weil Kosten nötig sind: 160 und 163.
+  - Teilweise aus vorhandenem Code: 159, 164 und 165.
+- **Werkzeuge auf diesem Rechner:**
+  - Vorhanden sind nur die .NET-Laufzeit ohne SDK und WSL ohne Distribution.
+  - Für P3 werden kostenlose Werkzeuge gebraucht (Rust oder .NET SDK, Inno Setup oder WiX).
+
+---
+
 ## Gesamtprompt mit 147 Funktionen übernommen (2026-11-13)
 
 - **Quelle:** `docs/spec/v15-147/` mit SHA-256-Manifest (Dateinamen gekürzt wegen Windows-Pfadlänge, Originalnamen im Manifest).

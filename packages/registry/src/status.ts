@@ -67,6 +67,7 @@ const T = {
   it: 'tests/integration/italy.test.ts',
   gp: 'tests/integration/gesamtprompt.test.ts',
   mwui: 'tests/products/mini-ww/ui.test.ts',
+  asg: 'tests/integration/assignment.test.ts',
 } as const;
 
 type Row = [n: number, area: Area, status: ImplStatus, milestone: Milestone, umgesetzt: string, offen: string, evidence: string[]];
@@ -220,6 +221,17 @@ const ROWS: Row[] = [
   [153, 'kunden', 'TEILWEISE', 'M5', 'Seite „Vertrauen & Fakten“ nur mit überprüfbaren Daten, Echtheitsprüfung je Datei, ehrliche Pflichtangaben.', 'Verifizierte Anbieterangaben (LA-02) und freigegebene echte Bewertungen.', [T.trust, T.gp]],
   [154, 'auftraege', 'TEILWEISE', 'M2', 'Berater → Angebot → Annahme → Stripe Checkout (Sandbox) → signierter Webhook → Auftrag; Zahlung fortsetzen im Portal.', 'Stripe LIVE nach LA-Freigaben.', [T.e2e, T.adv, T.trust]],
   [155, 'berichte', 'TEILWEISE', 'M6', 'Funnel je Kanal: Anfragen → Angebote → bezahlte Aufträge (nur mit Zahlungsereignis) → Lieferungen → Netto (Zahlung − Gebühren − Erstattung); Auszahlung und bankbestätigt getrennt; „nicht zuordenbar“ erlaubt; Optimierung pausiert bei zu wenig Daten.', 'Impressionen/Klicks erst mit verbundener Search Console.', [T.grow]],
+  // --- Erweiterung 157 (Eigentümer, 13.11.2026): Universal-Produktion 156–165 – nur Belegtes ist TEILWEISE ---
+  [156, 'auftraege', 'TEILWEISE', 'M6', 'Auftragsanforderung aus dem Kundentext (DE/IT/EN): Fachbereich, Lieferumfang je Produktart (z. B. Windows-ERP → Datenmodell, Rollen, Installer, Tests; Excel → Zell-/Formel-/Dateiprüfung), Zielplattform, Formate, MUSS/SOLL/OPTIONAL, Abnahmekriterien; Rückfrage bei fehlender Plattform, Konflikte bei Widersprüchen, REVIEW bei Unbekanntem; Anhänge nur als Daten; Duplikate idempotent; Scope-Versionen mit Originaltext und Kundenbestätigung (Admin → Aufträge → Anforderungen).', 'Sprach- und Dokumentanalyse (braucht KI-Zugang mit Kostenfreigabe); automatische Übernahme in Angebot 134/162.', [T.asg]],
+  [157, 'produkte', 'GEPLANT', 'M6', '', 'Erstes echtes Windows-Kleinprogramm mit Installer, Deinstallation und Datenhaltung (P3). macOS/iOS bleibt BLOCKED ohne Mac und Apple-Entwicklerkonto (Kostenfreigabe); die Mini-Warenwirtschaft ist ein Browser-Programm und wird nicht als native Anwendung ausgegeben.', []],
+  [158, 'produkte', 'GEPLANT', 'M6', '', 'Testlabor mit echtem Installations-/Start-/Deinstallationstest je Zielsystem; Windows auf diesem Rechner und Linux in kostenloser CI möglich, macOS nicht ohne Hardware.', []],
+  [159, 'produkte', 'TEILWEISE', 'M6', 'Kalkulationen als Tabelle (CSV) und PDF mit automatischer Prüfung von Summen, Rundung, Sonderzeichen und Layout gegen die echte Datei; PDF zusätzlich zur bearbeitbaren Tabelle.', 'Bearbeitbare .xlsx/.docx/.pptx mit Formeln, Diagrammen und Metadaten-Bereinigung.', [T.qs, T.pdf]],
+  [160, 'produkte', 'GESPERRT', 'M6', '', 'Grafik, 3D, Audio und Video sind auf kostenloser Infrastruktur nicht zuverlässig herstellbar und prüfbar; gesperrt bis zum echten Fähigkeitsnachweis (keine kostenpflichtigen Render-Dienste ohne Freigabe).', []],
+  [161, 'kunden', 'GEPLANT', 'M6', '', 'Sicherer Upload im Kundenportal (Größe, Dateityp, Magic Bytes), Rechteklärung, Zugriffsfristen mit Widerruf, Mandantentrennung, Audit (P1, nächste Stufe).', []],
+  [162, 'kunden', 'GEPLANT', 'M6', '', 'Freelancer-Angebote nur auf Plattformen mit Konto des Eigentümers und erlaubter Schnittstelle; baut auf 134 (Angebote) und 137 (Kontaktregeln) auf; kein automatischer Versand, wo Bots untersagt sind.', []],
+  [163, 'produkte', 'GESPERRT', 'M6', '', 'Autonome KI-Fachrollen brauchen eine KI-API (kostenpflichtig, Eigentümer-Entscheidung L11); ohne Freigabe arbeitet nur der deterministische Kern mit Warteschlange.', []],
+  [164, 'auftraege', 'TEILWEISE', 'M6', 'Admin-Vorschau des echten Produkts (Warenwirtschaft interaktiv), Kundenportal mit Besitzprüfung, Änderungswünsche nach Lieferung als eigener Zusatzauftrag mit Preis und Zahlung.', 'Abnahmesitzung vor der Übergabe mit Feedback je Version und dokumentierter Abnahme.', [T.p4, T.bch, T.docs]],
+  [165, 'auftraege', 'TEILWEISE', 'M6', 'Lieferung erst nach Zahlung und bestandener Prüfung, Prüfsumme und Version je Artefakt, Download nur für den berechtigten Kunden mit Ablaufzeit, Anleitung je Produktart; Bankeingang nur mit Bankbeleg, nie aus Stripe-Auszahlung allein.', 'Installer-Nachweis, Lizenz-/Rechteübertragung als Vertragsdokument, Supportfenster.', [T.prod, T.docs, T.bank]],
 ];
 
 export const MODULE_STATUS: readonly ModuleStatus[] = Object.freeze(

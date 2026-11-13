@@ -1,8 +1,8 @@
 {
   "schema": "infinity-earn-feature-registry/1",
-  "version": "15.0-147",
+  "version": "15.0-157",
   "source_sha256": "152264ef05f781e343f75fbb28dd3a78c8d527fc4fcb357769c0eb043186aa41",
-  "approved_count": 147,
+  "approved_count": 157,
   "rejected": [
     {
       "id": "048",
@@ -68,19 +68,29 @@
       "152",
       "153",
       "154",
-      "155"
+      "155",
+      "156",
+      "157",
+      "158",
+      "159",
+      "160",
+      "161",
+      "162",
+      "163",
+      "164",
+      "165"
     ],
-    "source": "docs/spec/v15-147 (Eigentümer, 13.11.2026)",
+    "source": "docs/spec/v15-147 (131–140, 146–155) und docs/spec/v15-157 (156–165), Eigentümer 13.11.2026",
     "note": "beauftragt, nicht automatisch umgesetzt"
   },
   "summary": {
     "TESTED_full": 26,
-    "TESTED_partial": 79,
-    "SPECIFIED": 41,
-    "BLOCKED": 1,
+    "TESTED_partial": 83,
+    "SPECIFIED": 45,
+    "BLOCKED": 3,
     "LIVE_VERIFIED": 0
   },
-  "note": "Erzeugt aus packages/registry (node scripts/export-registry.ts); 127 ursprüngliche + 20 beauftragte Funktionen. LIVE_VERIFIED erst nach echter, autorisierter Live-Transaktion mit Bankbestätigung.",
+  "note": "Erzeugt aus packages/registry (node scripts/export-registry.ts); 127 ursprüngliche + 30 beauftragte Funktionen. LIVE_VERIFIED erst nach echter, autorisierter Live-Transaktion mit Bankbestätigung.",
   "features": [
     {
       "id": "001",
@@ -2567,6 +2577,169 @@
         "tests/integration/growth.test.ts"
       ],
       "test_command": "node --test tests/integration/growth.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "156",
+      "approved": true,
+      "title": "Universal Assignment Intelligence",
+      "title_de": "Auftragsanforderung verstehen",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M6",
+      "implemented": "Auftragsanforderung aus dem Kundentext (DE/IT/EN): Fachbereich, Lieferumfang je Produktart (z. B. Windows-ERP → Datenmodell, Rollen, Installer, Tests; Excel → Zell-/Formel-/Dateiprüfung), Zielplattform, Formate, MUSS/SOLL/OPTIONAL, Abnahmekriterien; Rückfrage bei fehlender Plattform, Konflikte bei Widersprüchen, REVIEW bei Unbekanntem; Anhänge nur als Daten; Duplikate idempotent; Scope-Versionen mit Originaltext und Kundenbestätigung (Admin → Aufträge → Anforderungen).",
+      "open": "Sprach- und Dokumentanalyse (braucht KI-Zugang mit Kostenfreigabe); automatische Übernahme in Angebot 134/162.",
+      "evidence": [
+        "tests/integration/assignment.test.ts"
+      ],
+      "test_command": "node --test tests/integration/assignment.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "157",
+      "approved": true,
+      "title": "Native Software & Installer Factory",
+      "title_de": "Programme mit Installer",
+      "status": "SPECIFIED",
+      "scope": "none",
+      "internal_status": "GEPLANT",
+      "milestone": "M6",
+      "implemented": null,
+      "open": "Erstes echtes Windows-Kleinprogramm mit Installer, Deinstallation und Datenhaltung (P3). macOS/iOS bleibt BLOCKED ohne Mac und Apple-Entwicklerkonto (Kostenfreigabe); die Mini-Warenwirtschaft ist ein Browser-Programm und wird nicht als native Anwendung ausgegeben.",
+      "evidence": [],
+      "test_command": null,
+      "live_verified": false
+    },
+    {
+      "id": "158",
+      "approved": true,
+      "title": "Cross-Platform Compatibility Laboratory",
+      "title_de": "Plattform-Testlabor",
+      "status": "SPECIFIED",
+      "scope": "none",
+      "internal_status": "GEPLANT",
+      "milestone": "M6",
+      "implemented": null,
+      "open": "Testlabor mit echtem Installations-/Start-/Deinstallationstest je Zielsystem; Windows auf diesem Rechner und Linux in kostenloser CI möglich, macOS nicht ohne Hardware.",
+      "evidence": [],
+      "test_command": null,
+      "live_verified": false
+    },
+    {
+      "id": "159",
+      "approved": true,
+      "title": "Ultimate Office & Document Production",
+      "title_de": "Office- und Dokumentproduktion",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M6",
+      "implemented": "Kalkulationen als Tabelle (CSV) und PDF mit automatischer Prüfung von Summen, Rundung, Sonderzeichen und Layout gegen die echte Datei; PDF zusätzlich zur bearbeitbaren Tabelle.",
+      "open": "Bearbeitbare .xlsx/.docx/.pptx mit Formeln, Diagrammen und Metadaten-Bereinigung.",
+      "evidence": [
+        "tests/integration/quality-standard.test.ts",
+        "tests/integration/m2-product-pdf.test.ts"
+      ],
+      "test_command": "node --test tests/integration/quality-standard.test.ts tests/integration/m2-product-pdf.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "160",
+      "approved": true,
+      "title": "Cinematic & Creative Quality Factory",
+      "title_de": "Grafik, 3D, Audio und Video",
+      "status": "BLOCKED",
+      "scope": "none",
+      "internal_status": "GESPERRT",
+      "milestone": "M6",
+      "implemented": null,
+      "open": "Grafik, 3D, Audio und Video sind auf kostenloser Infrastruktur nicht zuverlässig herstellbar und prüfbar; gesperrt bis zum echten Fähigkeitsnachweis (keine kostenpflichtigen Render-Dienste ohne Freigabe).",
+      "evidence": [],
+      "test_command": null,
+      "live_verified": false
+    },
+    {
+      "id": "161",
+      "approved": true,
+      "title": "Secure Client Asset & Access Concierge",
+      "title_de": "Kundendateien und Zugänge",
+      "status": "SPECIFIED",
+      "scope": "none",
+      "internal_status": "GEPLANT",
+      "milestone": "M6",
+      "implemented": null,
+      "open": "Sicherer Upload im Kundenportal (Größe, Dateityp, Magic Bytes), Rechteklärung, Zugriffsfristen mit Widerruf, Mandantentrennung, Audit (P1, nächste Stufe).",
+      "evidence": [],
+      "test_command": null,
+      "live_verified": false
+    },
+    {
+      "id": "162",
+      "approved": true,
+      "title": "Winning Freelancer Proposal Studio",
+      "title_de": "Angebote für Freelancer-Aufträge",
+      "status": "SPECIFIED",
+      "scope": "none",
+      "internal_status": "GEPLANT",
+      "milestone": "M6",
+      "implemented": null,
+      "open": "Freelancer-Angebote nur auf Plattformen mit Konto des Eigentümers und erlaubter Schnittstelle; baut auf 134 (Angebote) und 137 (Kontaktregeln) auf; kein automatischer Versand, wo Bots untersagt sind.",
+      "evidence": [],
+      "test_command": null,
+      "live_verified": false
+    },
+    {
+      "id": "163",
+      "approved": true,
+      "title": "Autonomous Specialist Production Teams",
+      "title_de": "Abgestimmte Fachteams",
+      "status": "BLOCKED",
+      "scope": "none",
+      "internal_status": "GESPERRT",
+      "milestone": "M6",
+      "implemented": null,
+      "open": "Autonome KI-Fachrollen brauchen eine KI-API (kostenpflichtig, Eigentümer-Entscheidung L11); ohne Freigabe arbeitet nur der deterministische Kern mit Warteschlange.",
+      "evidence": [],
+      "test_command": null,
+      "live_verified": false
+    },
+    {
+      "id": "164",
+      "approved": true,
+      "title": "Interactive Customer Acceptance Studio",
+      "title_de": "Abnahme durch den Kunden",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M6",
+      "implemented": "Admin-Vorschau des echten Produkts (Warenwirtschaft interaktiv), Kundenportal mit Besitzprüfung, Änderungswünsche nach Lieferung als eigener Zusatzauftrag mit Preis und Zahlung.",
+      "open": "Abnahmesitzung vor der Übergabe mit Feedback je Version und dokumentierter Abnahme.",
+      "evidence": [
+        "tests/integration/p4-release.test.ts",
+        "tests/integration/bundle-change-help.test.ts",
+        "tests/integration/portal-documents.test.ts"
+      ],
+      "test_command": "node --test tests/integration/p4-release.test.ts tests/integration/bundle-change-help.test.ts tests/integration/portal-documents.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "165",
+      "approved": true,
+      "title": "Professional Release & Ownership Transfer",
+      "title_de": "Übergabe und Rechte",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M6",
+      "implemented": "Lieferung erst nach Zahlung und bestandener Prüfung, Prüfsumme und Version je Artefakt, Download nur für den berechtigten Kunden mit Ablaufzeit, Anleitung je Produktart; Bankeingang nur mit Bankbeleg, nie aus Stripe-Auszahlung allein.",
+      "open": "Installer-Nachweis, Lizenz-/Rechteübertragung als Vertragsdokument, Supportfenster.",
+      "evidence": [
+        "tests/integration/production.test.ts",
+        "tests/integration/portal-documents.test.ts",
+        "tests/integration/bank-statement.test.ts"
+      ],
+      "test_command": "node --test tests/integration/production.test.ts tests/integration/portal-documents.test.ts tests/integration/bank-statement.test.ts",
       "live_verified": false
     }
   ]

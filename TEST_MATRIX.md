@@ -1,6 +1,6 @@
 # Testmatrix – Pflichtfälle aus Gesamtprompt §12
 
-Alle Tests laufen mit `npm run verify` (lokal) und in der GitHub-CI. Stand 2026-11-13: 319 Tests plus 1 E2E, alle bestanden.
+Alle Tests laufen mit `npm run verify` (lokal) und in der GitHub-CI. Stand 2026-11-13: 331 Tests plus 1 E2E, alle bestanden.
 
 | # | Pflichtfall | Status | Nachweis |
 |---|---|---|---|
@@ -12,13 +12,14 @@ Alle Tests laufen mit `npm run verify` (lokal) und in der GitHub-CI. Stand 2026-
 | 6 | Bestelltes ERP ist echte Fachsoftware | ✅ getestet (Verkauf nur nach Eigentümer-Freigabe) | `tests/products/mini-ww/domain.test.ts`, `tests/products/mini-ww/ui.test.ts`, `tests/products/mini-ww/factory.test.ts`, `tests/integration/p4-release.test.ts` – Fachlogik, Oberfläche, Lieferpaket mit Selbsttest und bebilderter Anleitung, Bestellung bis Lieferung mit Festpreis ([PILOT_FACHSOFTWARE.md](PILOT_FACHSOFTWARE.md)) |
 | 7 | Admin-Produktkarte und echter Build-/Vorschau-Status je Auftrag | ✅ getestet | `tests/integration/live-preview.test.ts` |
 | 8 | Interaktive Vorschau für ausführbare Webprodukte | ✅ getestet | `tests/integration/p4-release.test.ts` – Admin → Produkte → Warenwirtschaft: echtes Programm (DE/IT/EN, eigene CSP, kein Netzwerk), Anleitung, Musterpaket, Live-Abnahmeprüfung |
+| 17 | Kundenwunsch → prüfbare Auftragsanforderung (156, PR-156-01…08) | ✅ getestet (regelbasiert, ohne KI-Dokumentanalyse) | `tests/integration/assignment.test.ts` – Rückfrage statt Zusage, Konflikte, Anhänge nur Daten, Duplikate, Versionen mit Kundenbestätigung, Löschantrag |
 | 16 | Wachstum ohne Werbebudget (132, 135, 138–140, 147–149, 151, 155) | ✅ getestet (ohne verbundene Fremdkanäle) | `tests/integration/growth.test.ts` – nichts erfunden: Impressionen „nicht gemessen“, Geld nur mit Zahlungsereignis, Kanäle NOT_CONNECTED |
 | 9 | Luxury Turquoise auf allen Oberflächen, Storyscrolling barrierearm | ✅ getestet | `tests/unit/console-ui.test.ts` (Kontrast), `tests/integration/landing.test.ts` |
 | 10 | Rechnung/Steuer passt zu verifizierten Stammdaten, sonst Blocker | ✅ getestet | `tests/integration/italy.test.ts`, `tests/integration/finance.test.ts` |
 | 11 | Live-Finanzen nur aus echten Objekten und Bankbestätigung; keine DEMO-Daten in LIVE | ✅ getestet | `tests/integration/bank-statement.test.ts`, `tests/integration/finance.test.ts` |
 | 12 | Keine unautorisierten Ausgaben, Nachrichten, Transaktionen, Deploys | ✅ getestet | `tests/integration/governance.test.ts`, `tests/integration/outbox.test.ts` |
-| 13 | 147 Nummern (1–47, 50–109, 111–140, 146–155) in Registry, Status, Plan; 48/49/110 und 141–145 nicht eingeführt | ✅ getestet | `tests/unit/registry.test.ts`, [FEATURE_REGISTRY_147.json](FEATURE_REGISTRY_147.json) |
+| 13 | 157 Nummern (1–47, 50–109, 111–140, 146–165) in Registry, Status, Plan; 48/49/110 und 141–145 nicht eingeführt | ✅ getestet | `tests/unit/registry.test.ts`, [FEATURE_REGISTRY_157.json](FEATURE_REGISTRY_157.json) |
 | 14 | Jede Lieferung nutzbar, vollständig, sicher im Portal | ✅ getestet | `tests/integration/quality-standard.test.ts`, `tests/integration/portal-documents.test.ts` |
 | 15 | Negative, Ausfall-, Erstattungs-, Rollen-, Datensicherheits-, Doppel-Event- und Kapazitätsfälle | ✅ getestet | `tests/integration/production.test.ts`, `tests/security/security.test.ts`, `tests/integration/ops.test.ts` |
 
-**Status je Funktion** (SPECIFIED, IMPLEMENTED, TESTED, LIVE_VERIFIED, BLOCKED): siehe [FEATURE_REGISTRY_147.json](FEATURE_REGISTRY_147.json). `LIVE_VERIFIED` wird erst nach einer echten, freigegebenen Live-Transaktion mit Bankbestätigung vergeben.
+**Status je Funktion** (SPECIFIED, IMPLEMENTED, TESTED, LIVE_VERIFIED, BLOCKED): siehe [FEATURE_REGISTRY_157.json](FEATURE_REGISTRY_157.json). `LIVE_VERIFIED` wird erst nach einer echten, freigegebenen Live-Transaktion mit Bankbestätigung vergeben.

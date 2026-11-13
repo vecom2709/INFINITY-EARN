@@ -16,6 +16,7 @@ import { manualSeed } from '../../../products/mini-ww/seed.ts';
 import { addPartner, cleanToken, decideCommission, proposeExperiment, recordAcquisition, setPartnerStatus, stopExperiment } from '../../growth/src/sales-growth.ts';
 import { contentStatus, landingStatus, planDistribution, publishedArticle, publishedLanding, ARTICLE_SLUG } from '../../growth/src/visibility.ts';
 import { activeRelease, isSellable, RELEASE_REQUIRED, releaseProduct, revokeProduct } from './releases.ts';
+import { confirmAssignment, createAssignment, reviseAssignment } from './assignments.ts';
 import { acquireFromTed } from '../../acquisition/src/connectors/ted.ts';
 import { submitInboundLead, validateInboundLead } from '../../acquisition/src/leads.ts';
 import { rankOpportunities } from '../../acquisition/src/ranking.ts';
@@ -300,6 +301,16 @@ export function createHandler(ctx: AppContext): (r: HttpRequest) => Promise<Res>
     const v = validateInboundLead(raw);
     if (!v.ok) return { status: 400, result: { errors: v.errors } };
     const r = submitInboundLead(ctx, v.value, { ipHash: ipHash(req) });
+    // 156: Freitext der Anfrage als prüfbare Auftragsanforderung (idempotent je Lead und Text). Darf die Anfrage nie verhindern.
+    const message = typeof raw.message === 'string' ? raw.message.trim() : '';
+    if (message.length >= 20) {
+      try {
+        const reqCap = (raw.request as { capabilityId?: unknown } | undefined)?.capabilityId;
+        createAssignment(ctx, { text: message, channel: 'website', leadId: r.leadId, requestedCapability: typeof reqCap === 'string' ? reqCap : null });
+      } catch (e) {
+        ctx.audit.record({ type: 'assignment.failed', actor: 'system', subjectType: 'lead', subjectId: r.leadId, data: { error: e instanceof Error ? e.message.slice(0, 200) : 'unknown' }, testMode: ctx.config.testMode });
+      }
+    }
     const auto = autoProcessOpportunity(ctx, r.opportunityId);
     if (auto.stage === 'QUOTED') queueQuoteReady(ctx, auto.quote.quoteId);
     return { status: 200, result: { leadId: r.leadId, opportunityId: r.opportunityId, duplicate: r.duplicate, auto } };
@@ -683,6 +694,31 @@ export function createHandler(ctx: AppContext): (r: HttpRequest) => Promise<Res>
   route('POST', '/admin/experimente/:id/stoppen', ownerGuard((req) => {
     stopExperiment(ctx, req.params.id ?? '');
     return back(req, 'Experiment gestoppt');
+  }, { csrf: true }));
+  // --- Funktion 156: Auftragsanforderungen (nur Eigentümer, mit CSRF) ---------------------------------------
+  route('POST', '/admin/anforderungen', ownerGuard((req) => {
+    const f = form(req);
+    let target = '/dashboard/auftraege/anforderungen';
+    const msg = String(guarded(() => {
+      const r = createAssignment(ctx, { text: f.get('text') ?? '', channel: f.get('channel') || 'owner-entry', actor: 'owner' });
+      target = `/dashboard/auftraege/anforderungen/${r.scopeId}`;
+      return r.created ? 'Anforderung erstellt' : 'Diese Anfrage gibt es schon – bestehende Anforderung geöffnet';
+    }));
+    return redirect(withFlash(target, msg));
+  }, { csrf: true }));
+  route('POST', '/admin/anforderungen/:id/version', ownerGuard((req) => {
+    const text = form(req).get('text') ?? '';
+    return back(req, String(guarded(() => {
+      const r = reviseAssignment(ctx, req.params.id ?? '', text, 'owner');
+      return r.changeOrderRequired ? `Version ${r.revision} gespeichert – Änderung nach Bestätigung: Preis neu prüfen (Änderungsauftrag)` : `Version ${r.revision} gespeichert`;
+    })));
+  }, { csrf: true }));
+  route('POST', '/admin/anforderungen/:id/bestaetigen', ownerGuard((req) => {
+    const f = form(req);
+    return back(req, String(guarded(() => {
+      confirmAssignment(ctx, req.params.id ?? '', Number(f.get('revision') ?? ''), 'owner_recorded', f.get('evidence') ?? '');
+      return 'Kundenbestätigung gespeichert';
+    })));
   }, { csrf: true }));
   route('POST', '/admin/verbreitung', ownerGuard((req) => {
     const slug = form(req).get('slug') ?? ARTICLE_SLUG;

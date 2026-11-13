@@ -33,4 +33,6 @@ export const TITLES_DE: Readonly<Record<number, string>> = Object.freeze({
   136: 'Lösung sofort zeigen', 137: 'Kontakt nur erlaubt', 138: 'Schnelle Erstantwort', 139: 'Partner und Empfehlungen', 140: 'Erste Kunden gewinnen',
   146: 'Google-Sichtbarkeit', 147: 'Kaufabsicht in der Suche', 148: 'Fachinhalte veröffentlichen', 149: 'Organische Verbreitung', 150: 'Auffindbar für Suche und KI',
   151: 'Passende Landingpage', 152: 'Produkt ausprobieren', 153: 'Vertrauenszentrum', 154: 'Vom Angebot zur Zahlung', 155: 'Von der Suche bis zur Bank',
+  156: 'Auftragsanforderung verstehen', 157: 'Programme mit Installer', 158: 'Plattform-Testlabor', 159: 'Office- und Dokumentproduktion', 160: 'Grafik, 3D, Audio und Video',
+  161: 'Kundendateien und Zugänge', 162: 'Angebote für Freelancer-Aufträge', 163: 'Abgestimmte Fachteams', 164: 'Abnahme durch den Kunden', 165: 'Übergabe und Rechte',
 });

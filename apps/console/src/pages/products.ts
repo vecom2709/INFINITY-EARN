@@ -1,3 +1,4 @@
+import { REGISTRY } from '../../../../packages/registry/src/registry.ts';
 import { modulesWithStatus } from '../../../../packages/registry/src/status.ts';
 import { activeRelease } from '../../../../services/core-api/src/releases.ts';
 import { getCapability, listCapabilities } from '../../../../services/product-factory/src/registry.ts';
@@ -54,7 +55,7 @@ ${panel({ title: 'Qualität und Lizenzen', body: `<p style="margin:4px 0 8px">Je
 ${panel({ title: 'Neue Produktarten', body: `<p style="margin:4px 0 8px">Neue Produktarten werden erst freigeschaltet, wenn sie nachweislich automatisch, kostenlos und in geprüfter Qualität herstellbar sind.</p>
 <p class="muted" style="margin:0">Video, 3D und Audio bleiben gesperrt, solange keine kostenlose, dauerhaft verfügbare Rechenleistung nachgewiesen ist.</p>` })}
 </div>
-${panel({ title: 'Geplante Funktionen in diesem Bereich', sub: 'Ehrlicher Stand aus dem Funktionskatalog (147 freigegebene Funktionen)', flush: true, body: table(
+${panel({ title: 'Geplante Funktionen in diesem Bereich', sub: `Ehrlicher Stand aus dem Funktionskatalog (${REGISTRY.modules.length} freigegebene Funktionen)`, flush: true, body: table(
     [{ label: 'Nr.' }, { label: 'Funktion' }, { label: 'Stand' }],
     roadmap.map((m) => [String(m.n).padStart(3, '0'), `<strong>${e(m.titleDe)}</strong><span class="sub">${e(m.umgesetzt ?? m.offen ?? '')}</span>`, statusTag(m.status)]),
     'Keine Funktionen', 'Funktionen Produkte') })}`;
