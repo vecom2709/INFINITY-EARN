@@ -12,7 +12,7 @@ import { buildWinManual } from '../products/win-lager/manual.ts';
  *
  *   node scripts/build-win-lager.ts [--company "Musterfirma"] [--color "#1F5FA8"] [--lang de|it|en] [--country IT|DE|AT] [--id win-lager] [--version 1.0.0]
  */
-export interface WinBuildOptions { company: string; color: string; lang: 'de' | 'it' | 'en'; country: 'IT' | 'DE' | 'AT'; productId: string; version: string; outDir?: string }
+export interface WinBuildOptions { company: string; color: string; lang: 'de' | 'it' | 'en'; country: 'IT' | 'DE' | 'AT'; productId: string; version: string; outDir?: string; /** false: ohne Anleitung (nur beim Erzeugen der Abbildungen, die die Anleitung erst braucht) */ manual?: boolean }
 export interface WinBuildResult { outDir: string; setup: string; app: string; manual: string; manifest: WinManifest; testOutput: string }
 export interface WinManifest {
   product: string; productName: string; version: string; company: string; language: string; builtAt: string; toolchain: string;
@@ -78,7 +78,7 @@ namespace InfinityEarn.WinLager {
   public static class BrandData {
     public const string ProductId = ${cs(o.productId)}; public const string ProductName = ${cs(productName)}; public const string Version = ${cs(o.version)};
     public const string Company = ${cs(o.company)}; public const string Color = ${cs(o.color)}; public const string Language = ${cs(o.lang)};
-    public const string Culture = ${cs(CULTURE[o.lang] ?? 'de-DE')}; public const string Currency = "EUR";
+    public const string Culture = ${cs(CULTURE[o.lang] ?? 'de-DE')}; public const string Currency = "EUR"; public const string Country = ${cs(o.country)};
     public static readonly int[] TaxRatesBps = new[] { ${(TAX[o.country] ?? []).join(', ')} };
   }
 }
@@ -100,7 +100,7 @@ namespace InfinityEarn.WinLagerSetup {
   const work = mkdtempSync(join(tmpdir(), 'iewl-'));
   const gen = join(work, 'gen');
   mkdirSync(gen);
-  for (const [dir, files] of [['src', ['Core.cs', 'Strings.cs', 'MainForm.cs', 'Program.cs', 'app.manifest']], ['setup', ['Setup.cs']], ['tests', ['Tests.cs']]] as const) {
+  for (const [dir, files] of [['src', ['Core.cs', 'Legal.cs', 'Strings.cs', 'MainForm.cs', 'Program.cs', 'app.manifest']], ['setup', ['Setup.cs']], ['tests', ['Tests.cs']]] as const) {
     mkdirSync(join(work, dir), { recursive: true });
     for (const f of files) copyFileSync(join(SRC, dir, f), join(work, dir, f));
   }
@@ -108,7 +108,7 @@ namespace InfinityEarn.WinLagerSetup {
   writeFileSync(join(gen, 'SetupData.g.cs'), setupData);
   const refs = ['/r:System.dll', '/r:System.Core.dll', '/r:System.Xml.dll', '/r:System.Xml.Linq.dll'];
   const ui = ['/r:System.Windows.Forms.dll', '/r:System.Drawing.dll'];
-  const core = ['Core.cs', 'Strings.cs'].map((f) => join(work, 'src', f));
+  const core = ['Core.cs', 'Legal.cs', 'Strings.cs'].map((f) => join(work, 'src', f));
   const compile = (args: string[]): void => {
     const r = spawnSync(csc, ['/nologo', '/codepage:65001', '/optimize+', '/warnaserror-', ...args], { encoding: 'utf8' });
     if (r.status !== 0) throw new Error(`COMPILE_FAILED:\n${r.stdout}${r.stderr}`);
@@ -134,14 +134,14 @@ namespace InfinityEarn.WinLagerSetup {
   rmSync(work, { recursive: true, force: true });
   // 4. Bebilderte Anleitung für diese Kundenfassung (Firmenname, Farbe, Steuersätze, Sprache)
   const manual = join(out, `${o.productId}-anleitung-${o.lang}.pdf`);
-  writeFileSync(manual, buildWinManual({ company: o.company, color: o.color, lang: o.lang, country: o.country, productId: o.productId, version: o.version }).bytes);
+  if (o.manual !== false) writeFileSync(manual, buildWinManual({ company: o.company, color: o.color, lang: o.lang, country: o.country, productId: o.productId, version: o.version }).bytes);
   // 5. Signaturstatus ehrlich aus Windows abfragen (ohne Zertifikat: NotSigned)
   const signature = signatureStatus(setup);
   const manifest: WinManifest = {
     product: o.productId, productName, version: o.version, company: o.company, language: o.lang, builtAt: new Date().toISOString(),
     toolchain: `csc ${csc.includes('Framework64') ? 'x64' : 'x86'} .NET Framework 4.x (in Windows enthalten)`,
     signed: false, signature,
-    files: [app, setup, manual].map((p) => ({ name: p.slice(out.length + 1), bytes: readFileSync(p).length, sha256: sha(p) })),
+    files: (o.manual !== false ? [app, setup, manual] : [app, setup]).map((p) => ({ name: p.slice(out.length + 1), bytes: readFileSync(p).length, sha256: sha(p) })),
     unitTests,
   };
   writeFileSync(join(out, 'manifest.json'), `${JSON.stringify(manifest, null, 2)}\n`);

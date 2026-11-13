@@ -1,4 +1,4 @@
-// Oberfläche: drei Arbeitsbereiche (Artikel, Lager, Rechnungen). Jede Aktion speichert sofort; Fehler werden verständlich angezeigt.
+// Oberfläche: fünf Arbeitsbereiche (Artikel, Lager, Kunden, Rechnungen, Firma). Jede Aktion speichert sofort; Fehler werden verständlich angezeigt.
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -19,13 +19,18 @@ namespace InfinityEarn.WinLager
         readonly ToolStripStatusLabel status = new ToolStripStatusLabel();
         readonly List<KeyValuePair<string, int>> draft = new List<KeyValuePair<string, int>>();
 
-        DataGridView articleGrid, moveGrid, invoiceGrid, draftGrid;
-        TextBox fSku, fName, fPrice, fMin, bQty, bReason, iCustomer, iQty;
-        ComboBox fTax, bArticle, iArticle;
-        Label lowLabel, draftTotal;
+        DataGridView articleGrid, moveGrid, invoiceGrid, draftGrid, customerGrid;
+        TextBox fSku, fName, fPrice, fMin, bQty, bReason, iQty;
+        TextBox cName, cStreet, cZip, cCity, cProv, cCountry, cVat, cTaxNo, cSdi, cPec;
+        TextBox sName, sStreet, sZip, sCity, sProv, sVat, sTaxNo;
+        CheckBox sExempt;
+        ComboBox fTax, bArticle, iArticle, iCustomer;
+        DateTimePicker iService;
+        Label lowLabel, draftTotal, sellerHint;
         public TabControl Tabs;
 
         string L(string key) { return Strings.Get(brand.Language, key); }
+        bool Italy { get { return brand.Country == "IT"; } }
 
         public MainForm(Brand brand, Store store)
         {
@@ -50,13 +55,16 @@ namespace InfinityEarn.WinLager
             Tabs = new TabControl { Dock = DockStyle.Fill, Padding = new Point(18, 6) };
             Tabs.TabPages.Add(ArticlesPage());
             Tabs.TabPages.Add(StockPage());
+            Tabs.TabPages.Add(CustomersPage());
             Tabs.TabPages.Add(InvoicesPage());
+            Tabs.TabPages.Add(CompanyPage());
 
             var strip = new StatusStrip();
             strip.Items.Add(status);
             Controls.Add(Tabs);
             Controls.Add(header);
             Controls.Add(strip);
+            FillSellerForm();
             RefreshAll();
             Say(L("datadir") + ": " + Path.GetDirectoryName(store.Path));
             if (store.RecoveredFromBackup) MessageBox.Show(this, L("recovered"), brand.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -90,7 +98,7 @@ namespace InfinityEarn.WinLager
             catch (Exception ex)
             {
                 // Bei Fehler gespeicherten Stand neu laden, damit Ansicht und Datei übereinstimmen.
-                try { var fresh = Store.Load(store.Path); store.Articles = fresh.Articles; store.Movements = fresh.Movements; store.Invoices = fresh.Invoices; } catch { }
+                try { var fresh = Store.Load(store.Path); store.Articles = fresh.Articles; store.Movements = fresh.Movements; store.Invoices = fresh.Invoices; store.Customers = fresh.Customers; store.Seller = fresh.Seller; } catch { }
                 RefreshAll();
                 Fail(ex);
                 return false;
@@ -136,7 +144,7 @@ namespace InfinityEarn.WinLager
                     continue;
                 }
                 row = null;
-                if (c is TextBox || c is ComboBox) c.Width = 280;
+                if (c is TextBox || c is ComboBox || c is DateTimePicker) c.Width = 280;
                 p.Controls.Add(c);
             }
             return p;
@@ -207,6 +215,91 @@ namespace InfinityEarn.WinLager
             }
         }
 
+        // ------------------------------------------------------------ Kunden
+
+        static TextBox Box(string name) { return new TextBox { Name = name }; }
+        static Label Hint(string text) { return new Label { Text = text, AutoSize = true, MaximumSize = new Size(280, 0), ForeColor = Color.FromArgb(91, 101, 118), Margin = new Padding(0, 0, 0, 6), UseMnemonic = false }; }
+
+        TabPage CustomersPage()
+        {
+            var page = new TabPage(L("customers")) { BackColor = BackColor, Padding = new Padding(12) };
+            customerGrid = Grid();
+            customerGrid.SelectionChanged += (s, e) => FillCustomerForm();
+            cName = Box("cName"); cStreet = Box("cStreet"); cZip = Box("cZip"); cCity = Box("cCity"); cProv = Box("cProv"); cCountry = Box("cCountry"); cCountry.Text = brand.Country;
+            cVat = Box("cVat"); cTaxNo = Box("cTaxNo"); cSdi = Box("cSdi"); cPec = Box("cPec");
+            var ctl = new List<Control> { Hint(L("customers_intro")), Lbl(L("f_name")), cName, Lbl(L("f_street")), cStreet, Lbl(L("f_zip")), cZip, Lbl(L("f_city")), cCity };
+            if (Italy) ctl.AddRange(new Control[] { Lbl(L("f_province")), cProv });
+            ctl.AddRange(new Control[] { Lbl(L("f_country")), cCountry, Lbl(L("f_vat")), cVat });
+            if (Italy) ctl.AddRange(new Control[] { Lbl(L("f_taxno")), cTaxNo, Lbl(L("f_sdi")), cSdi, Lbl(L("f_pec")), cPec });
+            ctl.Add(Btn(L("add"), (s, e) => Do(() => store.SaveCustomer(CustomerFromForm(), true)), true));
+            ctl.Add(Btn(L("save"), (s, e) => Do(() => store.SaveCustomer(CustomerFromForm(), false)), false));
+            ctl.Add(Btn(L("delete"), (s, e) => { if (MessageBox.Show(this, L("confirmdelete"), brand.ProductName, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) Do(() => store.DeleteCustomer(cName.Text)); }, false));
+            page.Controls.Add(customerGrid);
+            page.Controls.Add(Side(ctl.ToArray()));
+            return page;
+        }
+
+        Party CustomerFromForm()
+        {
+            return new Party { Name = cName.Text, Street = cStreet.Text, Zip = cZip.Text, City = cCity.Text, Province = cProv.Text, Country = cCountry.Text, VatId = cVat.Text, TaxNumber = cTaxNo.Text, SdiCode = cSdi.Text, Pec = cPec.Text };
+        }
+
+        void FillCustomerForm()
+        {
+            if (customerGrid.SelectedRows.Count == 0) return;
+            var c = store.FindCustomer(Convert.ToString(customerGrid.SelectedRows[0].Cells[0].Value));
+            if (c == null) return;
+            cName.Text = c.Name; cStreet.Text = c.Street; cZip.Text = c.Zip; cCity.Text = c.City; cProv.Text = c.Province; cCountry.Text = c.Country;
+            cVat.Text = c.VatId; cTaxNo.Text = c.TaxNumber; cSdi.Text = c.SdiCode; cPec.Text = c.Pec;
+        }
+
+        // ------------------------------------------------------------ Firma (Pflichtangaben des Verkäufers)
+
+        TabPage CompanyPage()
+        {
+            var page = new TabPage(L("company")) { BackColor = BackColor, Padding = new Padding(12) };
+            // Zweispaltig: jedes Feld als Zelle (Beschriftung + Eingabe), damit alles ohne Scrollen sichtbar ist.
+            var p = new FlowLayoutPanel { Dock = DockStyle.Fill, FlowDirection = FlowDirection.LeftToRight, WrapContents = true, AutoScroll = true, Padding = new Padding(24, 16, 24, 16), BackColor = Color.White };
+            sName = Box("sName"); sStreet = Box("sStreet"); sZip = Box("sZip"); sCity = Box("sCity"); sProv = Box("sProv"); sVat = Box("sVat"); sTaxNo = Box("sTaxNo");
+            sExempt = new CheckBox { Name = "sExempt", Text = L("exempt_" + brand.Country.ToLowerInvariant()), AutoSize = true, Margin = new Padding(0, 12, 0, 0), UseMnemonic = false };
+            var intro = new Label { Text = L("company_intro"), AutoSize = true, MaximumSize = new Size(760, 0), ForeColor = Color.FromArgb(91, 101, 118), Margin = new Padding(0, 0, 0, 4), UseMnemonic = false };
+            var country = new TextBox { Text = brand.Country, ReadOnly = true, TabStop = false };
+            var cells = new List<Control> { Cell(L("f_name"), sName), Cell(L("f_street"), sStreet), Cell(L("f_zip"), sZip), Cell(L("f_city"), sCity) };
+            if (Italy) cells.Add(Cell(L("f_province"), sProv));
+            cells.Add(Cell(L("f_country"), country));
+            if (Italy) { cells.Add(Cell(L("f_vat"), sVat)); cells.Add(Cell(L("f_taxno"), sTaxNo)); }
+            else { cells.Add(Cell(L("f_taxno"), sTaxNo)); cells.Add(Cell(L("f_vat"), sVat)); }
+            p.Controls.Add(intro);
+            p.SetFlowBreak(intro, true);
+            foreach (var c in cells) p.Controls.Add(c);
+            p.SetFlowBreak(cells[cells.Count - 1], true);
+            p.Controls.Add(sExempt);
+            p.SetFlowBreak(sExempt, true);
+            p.Controls.Add(Btn(L("save"), (s, e) => Do(() => store.UpdateSeller(SellerFromForm())), true));
+            page.Controls.Add(p);
+            return page;
+        }
+
+        static Control Cell(string label, TextBox box)
+        {
+            var c = new FlowLayoutPanel { FlowDirection = FlowDirection.TopDown, WrapContents = false, AutoSize = true, Margin = new Padding(0, 0, 32, 0) };
+            box.Width = 360;
+            c.Controls.Add(Lbl(label));
+            c.Controls.Add(box);
+            return c;
+        }
+
+        Party SellerFromForm()
+        {
+            return new Party { Name = sName.Text, Street = sStreet.Text, Zip = sZip.Text, City = sCity.Text, Province = sProv.Text, Country = brand.Country, VatId = sVat.Text, TaxNumber = sTaxNo.Text, Exempt = sExempt.Checked };
+        }
+
+        void FillSellerForm()
+        {
+            var s = store.Seller;
+            sName.Text = s.Name; sStreet.Text = s.Street; sZip.Text = s.Zip; sCity.Text = s.City; sProv.Text = s.Province; sVat.Text = s.VatId; sTaxNo.Text = s.TaxNumber; sExempt.Checked = s.Exempt;
+        }
+
         // ------------------------------------------------------------ Lager
 
         TabPage StockPage()
@@ -243,31 +336,74 @@ namespace InfinityEarn.WinLager
             draftGrid = Grid();
             split.Panel1.Controls.Add(invoiceGrid);
             split.Panel2.Controls.Add(draftGrid);
-            iCustomer = new TextBox { Name = "iCustomer" };
+            iCustomer = new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList, Name = "iCustomer" };
+            // Datumsformat der Programmsprache (das Windows-Steuerelement nähme sonst das Systemformat).
+            iService = new DateTimePicker { Name = "iService", Format = DateTimePickerFormat.Custom, CustomFormat = culture.DateTimeFormat.ShortDatePattern, Value = store.Clock().Date };
+            sellerHint = new Label { AutoSize = true, ForeColor = Color.FromArgb(160, 60, 30), MaximumSize = new Size(280, 0), Margin = new Padding(0, 0, 0, 4), UseMnemonic = false };
             iArticle = new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList, Name = "iArticle" };
             iQty = new TextBox { Name = "iQty", Text = "1" };
             draftTotal = new Label { AutoSize = true, Font = new Font("Segoe UI Semibold", 11f), Margin = new Padding(0, 14, 0, 0) };
             page.Controls.Add(split);
-            page.Controls.Add(Side(new Control[] {
-                Lbl(L("customer")), iCustomer, Lbl(L("item")), iArticle, Lbl(L("qty")), iQty,
+            var ctl = new List<Control> {
+                sellerHint, Lbl(L("customer")), iCustomer, Lbl(L("servicedate")), iService, Lbl(L("item")), iArticle, Lbl(L("qty")), iQty,
                 Btn(L("addline"), (s, e) => { try { draft.Add(new KeyValuePair<string, int>(SkuOf(iArticle), ParseQty(iQty.Text))); RefreshDraft(); } catch (Exception ex) { Fail(ex); } }, false),
                 Btn(L("clearlines"), (s, e) => { draft.Clear(); RefreshDraft(); }, false),
                 draftTotal,
                 Btn(L("create"), (s, e) => CreateInvoice(), true),
                 Btn(L("open"), (s, e) => OpenSelectedInvoice(), false),
-            }));
+            };
+            if (Italy) ctl.Add(Btn(L("fpa_export"), (s, e) => ExportFatturaPa(), false));
+            page.Controls.Add(Side(ctl.ToArray()));
             return page;
         }
 
         void CreateInvoice()
         {
             Invoice inv = null;
-            if (Do(() => { inv = store.CreateInvoice(iCustomer.Text, draft.ToList()); }))
+            if (Do(() => { inv = store.CreateInvoice(SelectedCustomer(), draft.ToList(), iService.Value.Date); }))
             {
                 draft.Clear();
                 RefreshDraft();
                 Say(L("invoice") + " " + inv.Number + " · " + Money.Format(inv.GrossCents, brand.Currency, culture));
             }
+        }
+
+        string SelectedCustomer()
+        {
+            var c = iCustomer.SelectedItem as string;
+            if (c == null) throw DomainException.Of("CUSTOMER", "e_choose_customer");
+            return c;
+        }
+
+        /// <summary>FatturaPA-Datei in den Datenordner (Unterordner „FatturaPA“) schreiben; Name nach Vorgabe des SdI.</summary>
+        public string WriteFatturaPa(Invoice inv)
+        {
+            string dir = Path.Combine(Path.GetDirectoryName(store.Path), "FatturaPA");
+            Directory.CreateDirectory(dir);
+            string file = Path.Combine(dir, FatturaPa.FileName(inv));
+            File.WriteAllBytes(file, FatturaPa.Bytes(inv));
+            return file;
+        }
+
+        void ExportFatturaPa()
+        {
+            var inv = SelectedInvoice();
+            if (inv == null) return;
+            try
+            {
+                string file = WriteFatturaPa(inv);
+                Say(file);
+                MessageBox.Show(this, string.Format(L("fpa_saved"), file), brand.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Information);
+                System.Diagnostics.Process.Start("explorer.exe", "/select,\"" + file + "\"");
+            }
+            catch (Exception ex) { Fail(ex); }
+        }
+
+        Invoice SelectedInvoice()
+        {
+            if (invoiceGrid.SelectedRows.Count == 0) return null;
+            var no = Convert.ToString(invoiceGrid.SelectedRows[0].Cells[0].Value);
+            return store.Invoices.FirstOrDefault(i => i.Number == no);
         }
 
         public string WriteInvoiceFile(Invoice inv)
@@ -281,9 +417,7 @@ namespace InfinityEarn.WinLager
 
         void OpenSelectedInvoice()
         {
-            if (invoiceGrid.SelectedRows.Count == 0) return;
-            var no = Convert.ToString(invoiceGrid.SelectedRows[0].Cells[0].Value);
-            var inv = store.Invoices.FirstOrDefault(i => i.Number == no);
+            var inv = SelectedInvoice();
             if (inv == null) return;
             try { System.Diagnostics.Process.Start(WriteInvoiceFile(inv)); } catch (Exception ex) { Fail(ex); }
         }
@@ -301,9 +435,10 @@ namespace InfinityEarn.WinLager
         public void ShowStatus(string text) { Say(text); }
 
         /// <summary>Rechnungsentwurf vorbelegen (nicht gespeichert) – für die Abbildungen der Anleitung.</summary>
-        public void DemoDraft(string customer, IEnumerable<KeyValuePair<string, int>> lines)
+        public void DemoDraft(string customer, DateTime serviceDate, IEnumerable<KeyValuePair<string, int>> lines)
         {
-            iCustomer.Text = customer;
+            iCustomer.SelectedItem = customer;
+            iService.Value = serviceDate;
             draft.Clear();
             draft.AddRange(lines);
             RefreshDraft();
@@ -316,16 +451,16 @@ namespace InfinityEarn.WinLager
             draftGrid.Columns.Clear();
             draftGrid.Columns.Add("sku", L("sku")); draftGrid.Columns.Add("name", L("name")); draftGrid.Columns.Add("qty", L("qty")); draftGrid.Columns.Add("net", L("net"));
             Shape(draftGrid, "name", new[] { "qty", "net" });
-            long net = 0, tax = 0;
+            var preview = new Invoice { PerRate = true };
             foreach (var l in draft)
             {
                 var a = store.Find(l.Key);
                 if (a == null) continue;
-                var line = new InvoiceLine { Qty = l.Value, UnitCents = a.PriceCents, TaxBps = a.TaxBps };
-                net += line.NetCents; tax += line.TaxCents;
+                var line = new InvoiceLine { Qty = l.Value, UnitCents = a.PriceCents, TaxBps = store.Seller.Exempt ? 0 : a.TaxBps };
+                preview.Lines.Add(line);
                 draftGrid.Rows.Add(a.Sku, a.Name, l.Value, Money.Format(line.NetCents, brand.Currency, culture));
             }
-            draftTotal.Text = L("gross") + ": " + Money.Format(net + tax, brand.Currency, culture);
+            draftTotal.Text = L("gross") + ": " + Money.Format(preview.GrossCents, brand.Currency, culture);
         }
 
         /// <summary>Breite Textspalte, Zahlen rechtsbündig.</summary>
@@ -338,6 +473,16 @@ namespace InfinityEarn.WinLager
                 if (numeric.Contains(c.Name)) { c.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight; c.HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleRight; }
             }
         }
+
+        static void Refill(ComboBox cb, string[] items)
+        {
+            var keep = cb.SelectedItem as string;
+            cb.Items.Clear();
+            cb.Items.AddRange(items);
+            if (keep != null && items.Contains(keep)) cb.SelectedItem = keep; else if (items.Length > 0) cb.SelectedIndex = 0;
+        }
+
+        Party SellerForCheck() { var s = store.Seller.Copy(); s.Country = store.Country; return s; }
 
         void RefreshAll()
         {
@@ -353,13 +498,18 @@ namespace InfinityEarn.WinLager
             lowLabel.Text = low.Count > 0 ? L("low") + ": " + string.Join(", ", low) : "";
 
             var items = store.Articles.OrderBy(a => a.Sku, StringComparer.OrdinalIgnoreCase).Select(a => a.Sku + " – " + a.Name).ToArray();
-            foreach (var cb in new[] { bArticle, iArticle })
-            {
-                var keep = cb.SelectedItem as string;
-                cb.Items.Clear();
-                cb.Items.AddRange(items);
-                if (keep != null && items.Contains(keep)) cb.SelectedItem = keep; else if (items.Length > 0) cb.SelectedIndex = 0;
-            }
+            Refill(bArticle, items);
+            Refill(iArticle, items);
+            Refill(iCustomer, store.Customers.OrderBy(c => c.Name, StringComparer.OrdinalIgnoreCase).Select(c => c.Name).ToArray());
+            var missing = Legal.SellerMissing(SellerForCheck());
+            sellerHint.Text = missing.Count > 0 ? string.Format(L("e_seller"), string.Join(", ", missing)) : "";
+            sellerHint.Visible = missing.Count > 0;
+
+            customerGrid.Columns.Clear();
+            foreach (var k in new[] { "f_name", "f_street", "f_zip", "f_city", "f_country", "f_vat" }) customerGrid.Columns.Add(k, L(k));
+            Shape(customerGrid, "f_name", new string[0]);
+            foreach (var c in store.Customers.OrderBy(c => c.Name, StringComparer.OrdinalIgnoreCase))
+                customerGrid.Rows.Add(c.Name, c.Street, c.Zip, c.City, c.Country, c.VatId.Length > 0 ? c.VatId : c.TaxNumber);
 
             moveGrid.Columns.Clear();
             foreach (var k in new[] { "date", "sku", "qty", "onhand", "reason" }) moveGrid.Columns.Add(k, L(k));
@@ -371,7 +521,7 @@ namespace InfinityEarn.WinLager
             invoiceGrid.Columns.Clear();
             foreach (var k in new[] { "number", "date", "customer", "lines", "gross" }) invoiceGrid.Columns.Add(k, L(k));
             Shape(invoiceGrid, "customer", new[] { "lines", "gross" });
-            foreach (var inv in Enumerable.Reverse(store.Invoices)) invoiceGrid.Rows.Add(inv.Number, inv.Date.ToString("d", culture), inv.Customer, inv.Lines.Count, Money.Format(inv.GrossCents, brand.Currency, culture));
+            foreach (var inv in Enumerable.Reverse(store.Invoices)) invoiceGrid.Rows.Add(inv.Number, inv.DocumentDate.ToString("d", culture), inv.Customer, inv.Lines.Count, Money.Format(inv.GrossCents, brand.Currency, culture));
             if (draftGrid != null) RefreshDraft();
         }
     }

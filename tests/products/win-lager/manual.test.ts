@@ -21,7 +21,7 @@ test('Abbildungen und Texte gehören zum aktuellen Programm (sonst: node scripts
   assert.equal(UI_SOURCE_HASH, uiSourceHash(), 'Oberfläche geändert – Abbildungen neu erzeugen');
   assert.deepEqual(UI_STRINGS, parseStrings(), 'Programmtexte geändert – Anleitungstexte neu erzeugen');
   for (const lang of LANGS) {
-    for (const shot of ['artikel', 'lager', 'rechnungen'] as const) {
+    for (const shot of ['firma', 'artikel', 'lager', 'kunden', 'rechnungen'] as const) {
       const bytes = Buffer.from(SHOTS_JPEG_BASE64[lang][shot], 'base64');
       const info = jpegInfo(bytes);
       assert.ok(info.width >= 900 && info.height >= 500, `${lang}/${shot}: echtes Fenster (${info.width}×${info.height})`);
@@ -38,30 +38,36 @@ test('Jeder Knopf- und Feldname der Anleitung existiert im Programm, in allen dr
   assert.throws(() => winLabel('en', '[[gibtsnicht]]'), /MANUAL_LABEL_UNKNOWN/);
 });
 
-test('Anleitung je Sprache: gültiges PDF, 8 Kapitel, 3 echte Abbildungen, alle Zeichen darstellbar', () => {
-  for (const lang of LANGS) {
-    const r = buildWinManual({ company: 'Ferramenta Rossi', color: '#0F766E', lang, country: lang === 'it' ? 'IT' : 'AT', productId: 'win-lager', version: '1.2.0', created: new Date('2026-11-13T00:00:00Z') });
+test('Anleitung je Sprache und Land: gültiges PDF, 10 Kapitel, 5 echte Abbildungen, alle Zeichen darstellbar', () => {
+  for (const [lang, country] of [['de', 'DE'], ['de', 'AT'], ['it', 'IT'], ['en', 'DE'], ['en', 'IT']] as const) {
+    const r = buildWinManual({ company: 'Ferramenta Rossi', color: '#0F766E', lang, country, productId: 'win-lager', version: '1.2.0', created: new Date('2026-11-13T00:00:00Z') });
     const head = Buffer.from(r.bytes.subarray(0, 8)).toString('latin1');
     assert.ok(head.startsWith('%PDF-1.'), lang);
     assert.ok(Buffer.from(r.bytes.subarray(-6)).toString('latin1').includes('%%EOF'), lang);
-    assert.equal(r.meta.images, 3, lang);
-    assert.deepEqual(r.meta.chapters, ['einrichtung', 'installation', 'artikel', 'lager', 'rechnungen', 'daten', 'update', 'meldungen']);
-    assert.ok(r.meta.pages >= 6, `${lang}: ${r.meta.pages} Seiten`);
+    assert.equal(r.meta.images, 5, lang);
+    assert.deepEqual(r.meta.chapters, ['einrichtung', 'installation', 'firma', 'artikel', 'lager', 'kunden', 'rechnungen', 'daten', 'update', 'meldungen']);
+    assert.ok(r.meta.pages >= 8, `${lang}: ${r.meta.pages} Seiten`);
     const raw = Buffer.from(r.bytes).toString('latin1');
     assert.ok(raw.includes('Ferramenta Rossi'), 'Firmenname des Kunden');
     assert.ok(raw.includes('win-lager-setup-1.2.0.exe'), 'Name der Installationsdatei dieser Fassung');
   }
-  const all = JSON.stringify(WIN_MANUAL_TEXTS) + JSON.stringify(LANGS.map((l) => WIN_MANUAL_TEXTS[l].chapters({ setup: 's', exe: 'e', product: 'p', id: 'i' }))) + JSON.stringify(UI_STRINGS);
+  const all = JSON.stringify(WIN_MANUAL_TEXTS) + JSON.stringify(LANGS.flatMap((l) => (['DE', 'AT', 'IT'] as const).map((country) => WIN_MANUAL_TEXTS[l].chapters({ setup: 's', exe: 'e', product: 'p', id: 'i', country })))) + JSON.stringify(UI_STRINGS);
   const bad = [...new Set([...all].filter((c) => c !== '?' && pdfString(c) === '?'))];
   assert.deepEqual(bad, [], 'kein Zeichen wird im PDF zu „?“');
 });
 
-test('Anleitung verspricht nichts Ungeprüftes', () => {
+test('Anleitung verspricht nichts Ungeprüftes und passt zum Land der Fassung', () => {
   for (const lang of LANGS) {
-    const t = JSON.stringify(WIN_MANUAL_TEXTS[lang].chapters({ setup: 's', exe: 'e', product: 'p', id: 'i' }));
+    const ch = (country: 'DE' | 'AT' | 'IT'): string => JSON.stringify(WIN_MANUAL_TEXTS[lang].chapters({ setup: 's', exe: 'e', product: 'p', id: 'i', country }));
+    const t = ch('DE');
     assert.doesNotMatch(t, /läuft unter Windows 10|funziona con Windows 10|runs on Windows 10/, 'Windows 10 ist nicht getestet');
-    assert.doesNotMatch(t, /Anschrift|indirizzo|address if/, 'Rechnungsfeld hat keine Anschrift');
     assert.match(t, /signiert|firmato|signed/, 'Hinweis auf fehlende Signatur');
+    assert.match(t, /\[\[servicedate\]\]/, 'Leistungsdatum wird erklärt');
+    assert.match(t, /XRechnung/, 'DE: ehrlich, dass noch keine E-Rechnung erzeugt wird');
+    assert.doesNotMatch(t, /fpa_export|FatturaPA/, 'DE: keine FatturaPA');
+    assert.doesNotMatch(ch('AT'), /XRechnung|fpa_export/, 'AT: weder XRechnung-Hinweis noch FatturaPA');
+    assert.match(ch('IT'), /\[\[fpa_export\]\]/, 'IT: FatturaPA-Export erklärt');
+    assert.match(ch('IT'), /Fatture e Corrispettivi/, 'IT: Übermittlungsweg genannt');
   }
 });
 
@@ -76,13 +82,16 @@ test('Programm: keine unübersetzte Meldung mehr im Quelltext', () => {
   for (const lang of LANGS) assert.ok(UI_STRINGS[lang].e_stock_for?.includes('{2}'), `${lang}: Platzhalter erhalten`);
 });
 
-test('Freigabe-Akte: Anleitung und Texte live belegt, Rechnungspflicht und Lieferweg sperren den Verkauf', () => {
+test('Freigabe-Akte: Anleitung, Texte und Pflichtangaben belegt; FatturaPA-Prüfung und Lieferweg sperren den Verkauf', () => {
   const gates = winReleaseGates();
   const by = Object.fromEntries(gates.map((g) => [g.id, g]));
   assert.equal(by.manual?.status, 'PASS');
   assert.equal(by.manual?.live, true);
   assert.equal(by.texts?.status, 'PASS');
-  assert.equal(by['legal-invoice']?.status, 'BLOCKED');
+  assert.equal(by['legal-invoice']?.status, 'PASS');
+  assert.equal(by.fatturapa?.status, 'BLOCKED', 'ohne amtliches Schema und SdI-Annahme nicht freigegeben');
+  assert.match(by.fatturapa?.evidence ?? '', /UNVERIFIED/);
+  assert.equal(by['erechnung-de']?.status, 'OPEN');
   assert.equal(by.delivery?.status, 'BLOCKED');
   assert.equal(by.signing?.status, 'OWNER');
   assert.equal(by.win10?.status, 'OPEN');

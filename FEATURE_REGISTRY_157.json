@@ -2606,7 +2606,7 @@
       "internal_status": "TEILWEISE",
       "milestone": "M6",
       "implemented": "Echtes Windows-Programm „Lager & Rechnung“ (C#/WinForms, .NET Framework 4.x aus Windows, 59 KB) mit Artikeln, Lagerbewegungen ohne negativen Bestand, Rechnungen mit lückenlosen Nummern und Steuer, CSV-/HTML-Export, atomarer Speicherung mit Sicherung, DE/IT/EN, Firmenname/-farbe/Steuersätze je Kunde; Installer pro Benutzer ohne Adminrechte mit Startmenü, Apps-&-Features-Eintrag, Update und Deinstallation, die nur eigene Dateien entfernt und Kundendaten behält; ehrlich als unsigniert gekennzeichnet (Windows meldet NotSigned); Meldungen und Installer in DE/IT/EN; bebilderte Anleitung DE/IT/EN mit echten Bildschirmfotos je Kundenfassung; Freigabe-Akte im Admin.",
-      "open": "Verkauf gesperrt: Rechnungen ohne vollständige Pflichtangaben (§ 14 UStG; in Italien FatturaPA/SdI Pflicht) und kein Bau je Auftrag aus der Cloud-Produktion (braucht Windows-Build-Rechner); Code-Signatur (kostenpflichtig); Festpreis. macOS/iOS BLOCKED (Mac + Apple-Konto, Kostenfreigabe).",
+      "open": "Rechnungen mit Pflichtangaben (§ 14 UStG / AT § 11), Kunden- und Firmenstamm, FatturaPA-Export für Italien. Verkauf gesperrt: FatturaPA amtlich ungeprüft (XSD, SdI-Annahme – UNVERIFIED) und kein Bau je Auftrag aus der Cloud-Produktion (braucht Windows-Build-Rechner); Code-Signatur (kostenpflichtig); Festpreis. macOS/iOS BLOCKED (Mac + Apple-Konto, Kostenfreigabe).",
       "evidence": [
         "tests/products/win-lager/install.test.ts",
         "tests/products/win-lager/manual.test.ts"

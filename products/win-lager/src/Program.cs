@@ -2,7 +2,7 @@
 // Prüfmodi für den echten Installationstest (Funktion 157/158), schreiben einen Bericht und beenden sich:
 //   --check <bericht.json> [<screenshot.png>]   Daten laden, Oberfläche aufbauen und rendern, Bericht schreiben
 //   --add-article <SKU> <Name> <Preis> <Bestand>   Artikel anlegen, Bestand buchen, speichern (Datenhaltung über Neustart)
-//   --shots <ordner>   Abbildungen der Bedienungsanleitung (JPEG) mit Beispieldaten in einem eigenen Temp-Ordner – Kundendaten werden nie berührt
+//   --shots <ordner>   Abbildungen der Bedienungsanleitung (JPEG, dazu Musterrechnung HTML und – Italien – FatturaPA-XML) mit Beispieldaten in einem eigenen Temp-Ordner – Kundendaten werden nie berührt
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -121,6 +121,19 @@ namespace InfinityEarn.WinLager
             { "en", new[] { "Wholesale delivery", "Counter sale", "Example Joinery", "Sample Property Services", "Example Builders" } },
         };
 
+        // Beispielanschriften je Land (erfunden): Verkäufer, dann drei Kunden. { Straße, PLZ, Ort, Provinz, USt-IdNr./P.IVA, Steuernummer/C.F. }
+        static readonly Dictionary<string, string[][]> DemoAddr = new Dictionary<string, string[][]>
+        {
+            { "DE", new[] { new[] { "Musterstraße 12", "12345", "Musterstadt", "", "DE123456789", "12/345/67890" }, new[] { "Holzweg 5", "54321", "Beispielstadt", "", "", "" }, new[] { "Am Markt 3", "54322", "Beispielstadt", "", "", "" }, new[] { "Industriestraße 8", "54323", "Beispieldorf", "", "", "" } } },
+            { "AT", new[] { new[] { "Hauptplatz 12", "8010", "Graz", "", "ATU12345678", "12 345/6789" }, new[] { "Holzgasse 5", "1010", "Wien", "", "", "" }, new[] { "Marktplatz 3", "4020", "Linz", "", "", "" }, new[] { "Industriestraße 8", "5020", "Salzburg", "", "", "" } } },
+            { "IT", new[] { new[] { "Via Roma 12", "00185", "Roma", "RM", "01234567897", "" }, new[] { "Via Verdi 5", "20121", "Milano", "MI", "12345678903", "" }, new[] { "Corso Italia 3", "50123", "Firenze", "FI", "", "80012345676" }, new[] { "Via Garibaldi 8", "10121", "Torino", "TO", "11111111115", "" } } },
+        };
+
+        static Party DemoParty(string name, string country, string[] a)
+        {
+            return new Party { Name = name, Street = a[0], Zip = a[1], City = a[2], Province = a[3], Country = country, VatId = a[4], TaxNumber = a[5] };
+        }
+
         /// <summary>Abbildungen der Anleitung: Beispielbestand in einem eigenen Temp-Ordner, je Bereich ein JPEG. Beispieldaten, nie Kundendaten.</summary>
         static int Shots(Brand brand, string outDir)
         {
@@ -135,6 +148,9 @@ namespace InfinityEarn.WinLager
                 int tick = 0;
                 s.Clock = () => t0.AddHours(5 * tick++);
                 var texts = DemoTexts[lang];
+                var addr = DemoAddr.ContainsKey(brand.Country) ? DemoAddr[brand.Country] : DemoAddr["DE"];
+                s.UpdateSeller(DemoParty(brand.Company, brand.Country, addr[0]));
+                for (int c = 1; c <= 3; c++) s.SaveCustomer(DemoParty(texts[c + 1], brand.Country, addr[c]), true);
                 foreach (var a in DemoArticles[lang])
                 {
                     int ti = Math.Min((int)a[3], brand.TaxRatesBps.Length - 1);
@@ -151,7 +167,7 @@ namespace InfinityEarn.WinLager
                 var jpeg = ImageCodecInfo.GetImageEncoders().First(c => c.FormatID == ImageFormat.Jpeg.Guid);
                 var q = new EncoderParameters(1);
                 q.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, 78L);
-                var names = new[] { "artikel", "lager", "rechnungen" };
+                var names = new[] { "artikel", "lager", "kunden", "rechnungen", "firma" };
                 using (var f = new MainForm(brand, s))
                 {
                     f.ShowInTaskbar = false;
@@ -160,7 +176,7 @@ namespace InfinityEarn.WinLager
                     f.Show();
                     f.SelectArticle("B-310");
                     f.ShowStatus(Strings.Get(brand.Language, "datadir") + ": %APPDATA%\\InfinityEarn\\" + brand.ProductId);
-                    f.DemoDraft(texts[4], new[] { new KeyValuePair<string, int>("A-100", 100), new KeyValuePair<string, int>("C-420", 10) });
+                    f.DemoDraft(texts[4], new DateTime(2026, 11, 4), new[] { new KeyValuePair<string, int>("A-100", 100), new KeyValuePair<string, int>("C-420", 10) });
                     for (int i = 0; i < names.Length; i++)
                     {
                         f.Tabs.SelectedIndex = i;
@@ -175,6 +191,7 @@ namespace InfinityEarn.WinLager
                     f.Close();
                 }
                 File.WriteAllText(Path.Combine(outDir, "rechnung.html"), s.InvoiceHtml(s.Invoices[0], brand), new UTF8Encoding(false));
+                if (brand.Country == "IT") File.WriteAllBytes(Path.Combine(outDir, "fattura.xml"), FatturaPa.Bytes(s.Invoices[0]));
                 return 0;
             }
             catch (Exception ex) { Console.Error.WriteLine(ex.Message); return 1; }

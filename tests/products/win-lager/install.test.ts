@@ -79,7 +79,7 @@ test('Windows: Installer installiert, Programm startet und speichert, Update erh
     assert.equal(r1.ok, true);
     assert.equal(r1.version, '1.0.0');
     assert.deepEqual(r1.articles, [{ sku: 'A-100', stock: 250 }]);
-    assert.equal(r1.tabs, 3, 'Artikel, Lager, Rechnungen');
+    assert.equal(r1.tabs, 5, 'Artikel, Lager, Kunden, Rechnungen, Firma');
     assert.ok(r1.controls > 40, 'echte Oberfläche aufgebaut');
     assert.equal(r1.exe.toLowerCase(), exe.toLowerCase(), 'die installierte Datei lief');
     assert.ok(statSync(shot).size > 10_000, 'Bildschirmfoto des laufenden Programms');

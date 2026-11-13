@@ -15,13 +15,13 @@ import { buildWinLager } from './build-win-lager.ts';
  */
 const ROOT = resolve(import.meta.dirname, '..');
 const SRC = join(ROOT, 'products', 'win-lager', 'src');
-export const SHOT_FILES = ['artikel', 'lager', 'rechnungen'] as const;
+export const SHOT_FILES = ['firma', 'artikel', 'lager', 'kunden', 'rechnungen'] as const;
 const LANGS = { de: 'DE', it: 'IT', en: 'DE' } as const;
 
 /** Prüfsumme der Programmquellen, die das Aussehen bestimmen (Zeilenenden vereinheitlicht). */
 export function uiSourceHash(): string {
   const h = createHash('sha256');
-  for (const f of ['MainForm.cs', 'Program.cs', 'Strings.cs']) h.update(readFileSync(join(SRC, f), 'utf8').replace(/\r\n/g, '\n'));
+  for (const f of ['MainForm.cs', 'Program.cs', 'Strings.cs', 'Core.cs', 'Legal.cs']) h.update(readFileSync(join(SRC, f), 'utf8').replace(/\r\n/g, '\n'));
   return h.digest('hex').slice(0, 16);
 }
 
@@ -45,7 +45,7 @@ function main(): void {
   try {
     for (const [lang, country] of Object.entries(LANGS)) {
       const company = lang === 'it' ? 'Azienda Esempio' : lang === 'en' ? 'Example Company' : 'Musterfirma';
-      const b = buildWinLager({ company, color: '#1F5FA8', lang: lang as 'de', country, productId: 'win-lager', version: '1.0.0', outDir: join(work, lang) });
+      const b = buildWinLager({ company, color: '#1F5FA8', lang: lang as 'de', country, productId: 'win-lager', version: '1.0.0', outDir: join(work, lang), manual: false });
       const dir = join(work, `${lang}-shots`);
       mkdirSync(dir);
       const r = spawnSync(b.app, ['--shots', dir], { encoding: 'utf8', timeout: 60_000 });
@@ -66,7 +66,7 @@ function main(): void {
   writeFileSync(join(out, 'manual-assets.ts'), `// Automatisch erzeugt von scripts/build-win-lager-assets.ts – echte Abbildungen des gebauten Windows-Programms (Beispieldaten) und seine Texte.
 export const UI_SOURCE_HASH = ${JSON.stringify(uiSourceHash())};
 export const UI_STRINGS: Record<'de' | 'it' | 'en', Record<string, string>> = ${JSON.stringify(parseStrings())};
-export const SHOTS_JPEG_BASE64: Record<'de' | 'it' | 'en', Record<'artikel' | 'lager' | 'rechnungen', string>> = ${JSON.stringify(shots)};
+export const SHOTS_JPEG_BASE64: Record<'de' | 'it' | 'en', Record<${SHOT_FILES.map((f) => `'${f}'`).join(' | ')}, string>> = ${JSON.stringify(shots)};
 `);
   console.log(`geschrieben: products/win-lager/generated/manual-assets.ts (Quellen ${uiSourceHash()})`);
 }

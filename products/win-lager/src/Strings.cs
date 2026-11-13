@@ -13,6 +13,7 @@ namespace InfinityEarn.WinLager
         public string Language;
         public string Culture;
         public string Currency;
+        public string Country;
         public int[] TaxRatesBps;
 
         public static Brand Current()
@@ -20,7 +21,7 @@ namespace InfinityEarn.WinLager
             return new Brand
             {
                 ProductId = BrandData.ProductId, ProductName = BrandData.ProductName, Version = BrandData.Version, Company = BrandData.Company,
-                Color = BrandData.Color, Language = BrandData.Language, Culture = BrandData.Culture, Currency = BrandData.Currency, TaxRatesBps = BrandData.TaxRatesBps,
+                Color = BrandData.Color, Language = BrandData.Language, Culture = BrandData.Culture, Currency = BrandData.Currency, Country = BrandData.Country, TaxRatesBps = BrandData.TaxRatesBps,
             };
         }
     }
@@ -98,6 +99,47 @@ namespace InfinityEarn.WinLager
             { "e_qty_int", new[] { "Menge: ganze Zahl ab 1", "Quantità: numero intero da 1", "Quantity: whole number from 1" } },
             { "e_min_int", new[] { "Mindestbestand: ganze Zahl ab 0", "Scorta minima: numero intero da 0", "Minimum: whole number from 0" } },
             { "e_choose", new[] { "Bitte einen Artikel wählen", "Scegliere un articolo", "Please choose an item" } },
+            // Firmendaten, Kunden und Pflichtangaben der Rechnung
+            { "customers", new[] { "Kunden", "Clienti", "Customers" } },
+            { "company", new[] { "Firma", "Azienda", "Company" } },
+            { "f_name", new[] { "Name / Firma", "Nome / Ragione sociale", "Name / company" } },
+            { "f_street", new[] { "Straße und Hausnummer", "Indirizzo e numero civico", "Street and number" } },
+            { "f_zip", new[] { "PLZ", "CAP", "Postcode" } },
+            { "f_city", new[] { "Ort", "Comune", "City" } },
+            { "f_province", new[] { "Provinz (2 Buchstaben)", "Provincia (sigla)", "Province (2 letters)" } },
+            { "f_country", new[] { "Land (z. B. DE)", "Nazione (es. IT)", "Country (e.g. DE)" } },
+            { "f_vat", new[] { "USt-IdNr.", "Partita IVA", "VAT ID" } },
+            { "f_taxno", new[] { "Steuernummer", "Codice fiscale", "Tax number" } },
+            { "f_sdi", new[] { "SdI-Empfängercode", "Codice destinatario", "SdI recipient code" } },
+            { "f_pec", new[] { "PEC-Adresse", "Indirizzo PEC", "PEC address" } },
+            { "w_invalid", new[] { "ungültig", "non valido", "invalid" } },
+            { "company_intro", new[] { "Diese Angaben stehen auf jeder Rechnung und sind gesetzlich vorgeschrieben. Ohne sie erstellt das Programm keine Rechnung. Eine Änderung gilt nur für neue Rechnungen.", "Questi dati compaiono su ogni fattura e sono obbligatori per legge. Senza di essi il programma non crea fatture. Una modifica vale solo per le nuove fatture.", "These details appear on every invoice and are required by law. Without them the program creates no invoice. A change applies to new invoices only." } },
+            { "customers_intro", new[] { "Rechnungen gehen nur an angelegte Kunden mit vollständiger Anschrift. Jede Rechnung behält die Anschrift, die beim Erstellen galt.", "Le fatture vanno solo a clienti registrati con indirizzo completo. Ogni fattura conserva l'indirizzo valido al momento della creazione.", "Invoices go only to saved customers with a full address. Each invoice keeps the address that applied when it was created." } },
+            { "exempt_de", new[] { "Kleinunternehmer (§ 19 UStG) – keine Umsatzsteuer", "Piccola impresa (§ 19 UStG) – senza IVA", "Small business (§ 19 UStG) – no VAT" } },
+            { "exempt_at", new[] { "Kleinunternehmer (§ 6 Abs. 1 Z 27 UStG) – keine Umsatzsteuer", "Piccola impresa (§ 6 c. 1 n. 27 UStG) – senza IVA", "Small business (§ 6 (1) 27 UStG) – no VAT" } },
+            { "exempt_it", new[] { "Regime forfettario (L. 190/2014) – ohne MwSt.", "Regime forfettario (L. 190/2014) – senza IVA", "Flat-rate scheme (L. 190/2014) – no VAT" } },
+            { "note_exempt_de", new[] { "Gemäß § 19 UStG wird keine Umsatzsteuer berechnet.", "Ai sensi del § 19 UStG (Germania) non viene addebitata l'IVA.", "No VAT is charged under § 19 UStG (small business)." } },
+            { "note_exempt_at", new[] { "Umsatzsteuerbefreit – Kleinunternehmer gemäß § 6 Abs. 1 Z 27 UStG.", "Esente IVA – piccola impresa ai sensi del § 6 c. 1 n. 27 UStG (Austria).", "VAT exempt – small business under § 6 (1) 27 UStG (Austria)." } },
+            { "note_exempt_it", new[] { "Operazione in franchigia da IVA ai sensi dell'art. 1, cc. 54-89, L. 190/2014 (Pauschalregelung, ohne MwSt.).", "Operazione in franchigia da IVA ai sensi dell'art. 1, cc. 54-89, L. 190/2014 – regime forfettario.", "Operazione in franchigia da IVA ai sensi dell'art. 1, cc. 54-89, L. 190/2014 (flat-rate scheme, no VAT)." } },
+            { "courtesy", new[] { "Kopie zur Ansicht – die steuerlich gültige Rechnung ist die über das SdI übermittelte XML-Datei (FatturaPA).", "Copia di cortesia – la fattura valida ai fini fiscali è il file XML trasmesso tramite SdI (FatturaPA).", "Courtesy copy – the invoice valid for tax purposes is the XML file sent through the SdI (FatturaPA)." } },
+            { "invoicedate", new[] { "Rechnungsdatum", "Data fattura", "Invoice date" } },
+            { "servicedate", new[] { "Leistungsdatum", "Data dell'operazione", "Date of supply" } },
+            { "pos", new[] { "Pos.", "N.", "No." } },
+            { "netrate", new[] { "Netto {0} %", "Imponibile {0} %", "Net {0} %" } },
+            { "taxrate", new[] { "Umsatzsteuer {0} %", "IVA {0} %", "VAT {0} %" } },
+            { "fpa_export", new[] { "FatturaPA (XML) speichern", "Salva FatturaPA (XML)", "Save FatturaPA (XML)" } },
+            { "fpa_saved", new[] { "XML-Datei gespeichert:\n{0}\n\nÜbermitteln: im kostenlosen Portal „Fatture e Corrispettivi“ der Agenzia delle Entrate hochladen oder per PEC an das SdI senden.", "File XML salvato:\n{0}\n\nTrasmissione: caricarlo nel portale gratuito «Fatture e Corrispettivi» dell'Agenzia delle Entrate oppure inviarlo via PEC allo SdI.", "XML file saved:\n{0}\n\nTo send it: upload it in the free “Fatture e Corrispettivi” portal of the Agenzia delle Entrate or send it to the SdI by PEC." } },
+            { "e_seller", new[] { "Firmendaten unvollständig (Reiter „Firma“): {0}", "Dati aziendali incompleti (scheda «Azienda»): {0}", "Company details incomplete (“Company” tab): {0}" } },
+            { "e_customer_data", new[] { "Kundendaten von {0} unvollständig: {1}", "Dati del cliente {0} incompleti: {1}", "Customer details of {0} incomplete: {1}" } },
+            { "e_customer_unknown", new[] { "Kunde nicht angelegt: {0} (Reiter „Kunden“)", "Cliente non registrato: {0} (scheda «Clienti»)", "Customer not saved: {0} (“Customers” tab)" } },
+            { "e_customer_dup", new[] { "Kunde gibt es schon: {0}", "Cliente già esistente: {0}", "Customer already exists: {0}" } },
+            { "e_customer_notfound", new[] { "Kunde nicht gefunden", "Cliente non trovato", "Customer not found" } },
+            { "e_choose_customer", new[] { "Bitte einen Kunden wählen", "Scegliere un cliente", "Please choose a customer" } },
+            { "e_service_future", new[] { "Leistungsdatum liegt in der Zukunft", "La data dell'operazione è nel futuro", "The date of supply is in the future" } },
+            { "e_service_it", new[] { "Sofortige Rechnung: Leistungsdatum höchstens 12 Tage zurück", "Fattura immediata: data dell'operazione al massimo 12 giorni prima", "Immediate invoice: date of supply at most 12 days back" } },
+            { "e_fpa_country", new[] { "FatturaPA gibt es nur für Verkäufer in Italien", "La FatturaPA è prevista solo per cedenti in Italia", "FatturaPA is only for sellers in Italy" } },
+            { "e_fpa_legacy", new[] { "Diese Rechnung stammt aus einer älteren Programmversion ohne Pflichtangaben – keine FatturaPA möglich", "Questa fattura proviene da una versione precedente senza dati obbligatori – FatturaPA non possibile", "This invoice comes from an older version without mandatory details – no FatturaPA possible" } },
+            { "e_fpa_zero", new[] { "Steuersatz 0 % braucht in der FatturaPA die Art der Befreiung (Natura) – das unterstützt das Programm nicht. Bitte einen Steuersatz wählen oder den Steuerberater fragen.", "L'aliquota 0 % richiede nella FatturaPA la Natura dell'operazione – non supportata dal programma. Scegliere un'aliquota o chiedere al commercialista.", "A 0 % rate needs the nature of the exemption (Natura) in FatturaPA – not supported by the program. Choose a tax rate or ask your tax adviser." } },
             { "version", new[] { "Version", "Versione", "Version" } },
             { "unsignedlabel", new[] { "unsigniert", "non firmato", "unsigned" } },
         };

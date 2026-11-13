@@ -47,10 +47,16 @@ Grundlage: das 15.0-Paket (`docs/spec/v15/`, Prüfsummen laut Manifest geprüft)
     - Der echte Benutzerpfad stand in der Statuszeile.
     - Der Firmenname war unten abgeschnitten, die Datumsspalte ebenfalls.
   - Alle Meldungen der Fachregeln und des Installers gibt es jetzt in DE/IT/EN.
+- **Rechnungen mit Pflichtangaben und FatturaPA (Nachtrag 13.11.2026, Entscheidung: ergänzen):**
+  - Neue Reiter „Firma“ (Pflichtangaben des Verkäufers) und „Kunden“ (Kundenstamm mit Anschrift). Ohne vollständige Firmendaten und angelegten Kunden entsteht keine Rechnung; die Meldung nennt die fehlenden Felder.
+  - Rechnung nach § 14 Abs. 4 UStG (AT § 11 UStG): Name und Anschrift beider Seiten, Steuernummer bzw. USt-IdNr. (Format geprüft), Rechnungsdatum, fortlaufende Nummer, Menge und Bezeichnung, Leistungsdatum, Netto und Steuer je Steuersatz. Kleinunternehmer (DE § 19, AT § 6 Abs. 1 Z 27) und regime forfettario mit gesetzlichem Hinweis.
+  - Firmen- und Kundendaten werden beim Erstellen eingefroren. Steuer wird ab jetzt je Steuersatz gerundet; alte Rechnungen behalten ihre Rundung je Position. Datenschema 2, alte Datendateien werden weiter gelesen.
+  - Italien: FatturaPA-Export (XML, FPR12, Schema 1.2) mit P.IVA- und Codice-fiscale-Prüfziffer, Codice destinatario/PEC, Riepilogo je Aliquota, forfettario mit Natura N2.2 und Bollo, Dateiname nach SdI. Übermittlung macht der Anwender kostenlos im Portal „Fatture e Corrispettivi“ oder per PEC. Steuersatz 0 % ohne forfettario wird mit klarer Meldung abgelehnt statt geraten.
+  - 23 Fachtests im Build (vorher 12), Anleitung mit 10 Kapiteln und 5 echten Bildschirmfotos.
 - **Offen (sperrt den Verkauf, kein Freigabeknopf):**
-  - **Rechnungen nicht rechtlich vollständig.** Es fehlen Pflichtangaben (Anschriften, Steuernummer/USt-IdNr., Leistungsdatum; § 14 UStG). In Italien ist eine elektronische Rechnung (FatturaPA über das SdI) Pflicht. Entscheidung: ergänzen oder ohne Rechnungsfunktion verkaufen.
+  - **FatturaPA amtlich ungeprüft (sperrt die italienische Fassung):** noch nicht gegen das amtliche XSD und nicht durch eine echte Annahme im SdI geprüft (UNVERIFIED). Der Download des XSD braucht deine Freigabe; die Prüfung im Portal braucht deinen Zugang.
   - **Bau je Auftrag aus der Cloud-Produktion:** Der Cloudflare-Worker kann keine Windows-Programme bauen, dafür braucht es einen Windows-Build-Rechner.
-- **Offen (sperrt nicht):** Code-Signatur (Kosten, deine Entscheidung); Festpreis; Windows 10 ungeprüft.
+- **Offen (sperrt nicht):** E-Rechnung Deutschland (XRechnung/ZUGFeRD, Pflicht für B2B ab 2027/2028 – die Anleitung sagt das offen); Code-Signatur (Kosten, deine Entscheidung); Festpreis; Windows 10 ungeprüft. Keine Rechtsberatung: Prüfung durch einen Steuerberater empfohlen.
 
 ---
 
