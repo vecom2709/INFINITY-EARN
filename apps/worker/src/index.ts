@@ -46,8 +46,11 @@ function stringVars(env: Env): Record<string, string> {
   return out;
 }
 
+/** HSTS: Browser verwenden für Staging nur noch HTTPS (ein Jahr). Nur im Worker – lokal läuft http://127.0.0.1. */
+export const HSTS = 'max-age=31536000; includeSubDomains';
+
 function toResponse(res: Res): Response {
-  const headers = new Headers();
+  const headers = new Headers({ 'strict-transport-security': HSTS });
   for (const [k, v] of Object.entries(res.headers ?? {})) {
     if (Array.isArray(v)) v.forEach((x) => headers.append(k, x));
     else headers.set(k, v);
@@ -146,8 +149,18 @@ export class InfinityCore {
   }
 }
 
+/** Unverschlüsselte Aufrufe werden dauerhaft auf HTTPS umgeleitet (Cookies und Daten nie im Klartext). */
+export function httpsRedirect(request: Request): Response | null {
+  const url = new URL(request.url);
+  if (url.protocol !== 'http:') return null;
+  url.protocol = 'https:';
+  return new Response(null, { status: 301, headers: { location: url.toString(), 'strict-transport-security': HSTS } });
+}
+
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
+    const redirect = httpsRedirect(request);
+    if (redirect) return redirect;
     return env.CORE.get(env.CORE.idFromName('infinity-earn-core')).fetch(request);
   },
 };
