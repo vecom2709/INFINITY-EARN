@@ -49,6 +49,8 @@ const pages: [string, string, string][] = [
   ['finanzen-test', '/dashboard/finanzen', 'modus=test'],
   ['berichte', '/dashboard/berichte', ''],
   ['einstellungen', '/dashboard/einstellungen', ''],
+  ['vorschau-galerie', '/dashboard/produkte/vorschau', 'modus=test'],
+  ['vorschau-detail', `/dashboard/produkte/vorschau/${ctx.db.get<{ id: string }>('SELECT artifact_id AS id FROM artifacts ORDER BY created_at LIMIT 1')?.id ?? ''}`, 'modus=test'],
 ];
 for (const [name, path, q] of pages) {
   const html = renderConsole(ctx, path, new URLSearchParams(q), 'vorschau-ohne-funktion');
@@ -73,6 +75,7 @@ if (!edge || process.argv.includes('--no-shots')) {
 const shots: [string, number, number][] = [
   ['uebersicht-echt', 1440, 1500], ['uebersicht-test', 1440, 1700], ['finanzen-test', 1440, 1700], ['auftrag-detail-test', 1440, 1400], ['berichte', 1440, 1600],
   ['uebersicht-test', 390, 3200], ['uebersicht-echt', 390, 2600], ['finanzen-test', 390, 3600], ['uebersicht-test', 320, 3400],
+  ['vorschau-galerie', 1440, 1100], ['vorschau-detail', 1440, 1900], ['vorschau-detail', 390, 3400],
   ['kunde-start', 1440, 1100], ['kunde-angebot', 1440, 1700], ['kunde-portal', 1440, 1500], ['kunde-portal', 390, 2600], ['kunde-anfrage', 390, 2600],
 ];
 for (const [name, w, h] of shots) {

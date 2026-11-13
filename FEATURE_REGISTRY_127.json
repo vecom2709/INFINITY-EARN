@@ -1,0 +1,2164 @@
+{
+  "schema": "infinity-earn-feature-registry/1",
+  "version": "15.0",
+  "source_sha256": "152264ef05f781e343f75fbb28dd3a78c8d527fc4fcb357769c0eb043186aa41",
+  "approved_count": 127,
+  "rejected": [
+    {
+      "id": "048",
+      "approved": false,
+      "note": "NEIN – darf nicht als Zusatzmodul eingeführt werden"
+    },
+    {
+      "id": "049",
+      "approved": false,
+      "note": "NEIN – darf nicht als Zusatzmodul eingeführt werden"
+    },
+    {
+      "id": "110",
+      "approved": false,
+      "note": "NEIN – darf nicht als Zusatzmodul eingeführt werden"
+    }
+  ],
+  "summary": {
+    "TESTED_full": 26,
+    "TESTED_partial": 59,
+    "SPECIFIED": 41,
+    "BLOCKED": 1,
+    "LIVE_VERIFIED": 0
+  },
+  "note": "Erzeugt aus packages/registry (node scripts/export-registry.ts). LIVE_VERIFIED erst nach echter, autorisierter Live-Transaktion mit Bankbestätigung.",
+  "features": [
+    {
+      "id": "001",
+      "approved": true,
+      "title": "AI CEO – Autonomous Business Director",
+      "title_de": "Tagessteuerung des Unternehmens",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M4",
+      "implemented": "Autopilot-Takt unter deterministischer Policy, Notstopps und täglicher Eigentümerbericht aus echten Ereignissen (Konsole und /api/bericht/tag).",
+      "open": "KI-gestützte Tagesplanung und Priorisierung (freigegebener KI-Zugang nötig).",
+      "evidence": [
+        "tests/integration/governance.test.ts",
+        "tests/integration/ops.test.ts",
+        "tests/integration/completion.test.ts"
+      ],
+      "test_command": "node --test tests/integration/governance.test.ts tests/integration/ops.test.ts tests/integration/completion.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "002",
+      "approved": true,
+      "title": "Global Market Intelligence",
+      "title_de": "Marktbeobachtung",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M4",
+      "implemented": "Öffentliche EU-Ausschreibungen (TED) als freigegebene Quelle mit Lizenzprüfung.",
+      "open": "Weitere legale Marktquellen.",
+      "evidence": [
+        "tests/integration/acquisition.test.ts",
+        "tests/integration/m1-acquisition.test.ts"
+      ],
+      "test_command": "node --test tests/integration/acquisition.test.ts tests/integration/m1-acquisition.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "003",
+      "approved": true,
+      "title": "Opportunity Scoring",
+      "title_de": "Bewertung von Geschäftschancen",
+      "status": "TESTED",
+      "scope": "full",
+      "internal_status": "UMGESETZT",
+      "milestone": "M1",
+      "implemented": "Bewertung nach Passung, Nachweis und Risiko; Pflicht-Produktbezug; Rangliste.",
+      "open": null,
+      "evidence": [
+        "tests/integration/m1-acquisition.test.ts",
+        "tests/integration/opportunity.test.ts"
+      ],
+      "test_command": "node --test tests/integration/m1-acquisition.test.ts tests/integration/opportunity.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "004",
+      "approved": true,
+      "title": "Autonomous Customer Acquisition",
+      "title_de": "Kundengewinnung",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M4",
+      "implemented": "Inbound-Anfragen mit Einwilligung, Ausschreibungs-Leads, Angebotsentwürfe nur zur manuellen Einreichung. Automatischer Postausgang: Auftragsnachrichten (Angebot, Zahlung, Lieferung) und Folgeangebote nur mit Einwilligung, Abmeldelink, Sperrliste, Mengenlimit.",
+      "open": "Echter Versand erst mit E-Mail-Dienst des Eigentümers und Anbieterangaben (LA-02); Kaltakquise bleibt gesperrt.",
+      "evidence": [
+        "tests/integration/acquisition.test.ts",
+        "tests/integration/m1-acquisition.test.ts",
+        "tests/integration/outbox.test.ts"
+      ],
+      "test_command": "node --test tests/integration/acquisition.test.ts tests/integration/m1-acquisition.test.ts tests/integration/outbox.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "005",
+      "approved": true,
+      "title": "AI Sales & Negotiation",
+      "title_de": "Angebot und Verhandlung",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M4",
+      "implemented": "Automatische Angebotskalkulation mit Mindestmarge und Preisgrenzen; Produktberater versteht Wünsche in eigenen Worten (DE/IT/EN), fragt Fehlendes nach und lehnt Nicht-Lieferbares ehrlich ab.",
+      "open": "Verhandlung/Gegenangebote.",
+      "evidence": [
+        "tests/integration/opportunity.test.ts",
+        "tests/unit/core.test.ts",
+        "tests/integration/advisor.test.ts"
+      ],
+      "test_command": "node --test tests/integration/opportunity.test.ts tests/unit/core.test.ts tests/integration/advisor.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "006",
+      "approved": true,
+      "title": "Universal Product Factory",
+      "title_de": "Produktherstellung",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M2",
+      "implemented": "Versionierte Produktionsadapter mit eigener QA: Kalkulation als CSV (freigegeben), als PDF und als Paket (technisch fertig, Verkauf nach Policy-Freigabe).",
+      "open": "Weitere Produktklassen erst nach Herstellbarkeitsnachweis.",
+      "evidence": [
+        "tests/integration/production.test.ts",
+        "tests/integration/m2-product-pdf.test.ts"
+      ],
+      "test_command": "node --test tests/integration/production.test.ts tests/integration/m2-product-pdf.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "007",
+      "approved": true,
+      "title": "Software, Web & API Builder",
+      "title_de": "Software, Web und Schnittstellen",
+      "status": "SPECIFIED",
+      "scope": "none",
+      "internal_status": "GEPLANT",
+      "milestone": "M5",
+      "implemented": null,
+      "open": "Software-/Web-/API-Produkte.",
+      "evidence": [],
+      "test_command": null,
+      "live_verified": false
+    },
+    {
+      "id": "008",
+      "approved": true,
+      "title": "Creative & Media Factory",
+      "title_de": "Medienproduktion (Video, 3D, Audio)",
+      "status": "BLOCKED",
+      "scope": "none",
+      "internal_status": "GESPERRT",
+      "milestone": "M5",
+      "implemented": null,
+      "open": "Video/3D/Audio: keine kostenlose, dauerhaft verfügbare Rechenleistung nachgewiesen; Lizenzfragen.",
+      "evidence": [],
+      "test_command": null,
+      "live_verified": false
+    },
+    {
+      "id": "009",
+      "approved": true,
+      "title": "AI Quality Director",
+      "title_de": "Qualitätsprüfung",
+      "status": "TESTED",
+      "scope": "full",
+      "internal_status": "UMGESETZT",
+      "milestone": "M2",
+      "implemented": "Automatische Qualitätsprüfung (Kodierung, Format, Summen, Formel-Injektion, Gestaltung, Prüfsumme) vor jeder Lieferung; Premium-Produktstandard: Standard-Akte je Produkt (Zweck, Referenzen, Gestaltung, Zusagen mit Prüfung, Anleitung), Abnahme-Gate je Lieferung, „nicht lieferfähig“ mit Erstattungsvorschlag an den Eigentümer.",
+      "open": null,
+      "evidence": [
+        "tests/integration/production.test.ts",
+        "tests/integration/quality-standard.test.ts"
+      ],
+      "test_command": "node --test tests/integration/production.test.ts tests/integration/quality-standard.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "010",
+      "approved": true,
+      "title": "Autonomous Order Management",
+      "title_de": "Auftragsführung",
+      "status": "TESTED",
+      "scope": "full",
+      "internal_status": "UMGESETZT",
+      "milestone": "M1",
+      "implemented": "Auftragsführung mit Zustandsmaschine von Anfrage bis Abschluss, Idempotenz.",
+      "open": null,
+      "evidence": [
+        "tests/e2e/pilot.test.ts",
+        "tests/integration/opportunity.test.ts"
+      ],
+      "test_command": "node --test tests/e2e/pilot.test.ts tests/integration/opportunity.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "011",
+      "approved": true,
+      "title": "Subscription Management",
+      "title_de": "Abonnements",
+      "status": "SPECIFIED",
+      "scope": "none",
+      "internal_status": "GEPLANT",
+      "milestone": "M5",
+      "implemented": null,
+      "open": "Abonnements.",
+      "evidence": [],
+      "test_command": null,
+      "live_verified": false
+    },
+    {
+      "id": "012",
+      "approved": true,
+      "title": "AI Customer Support & Returns",
+      "title_de": "Kundenservice und Rückgaben",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M1",
+      "implemented": "Kundenportal: Support, Reklamation, Widerruf; Erstattung nur nach Eigentümerfreigabe.",
+      "open": "Automatische Antwortvorschläge.",
+      "evidence": [
+        "tests/integration/m2-payments.test.ts",
+        "tests/unit/inquiry-form.test.ts"
+      ],
+      "test_command": "node --test tests/integration/m2-payments.test.ts tests/unit/inquiry-form.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "013",
+      "approved": true,
+      "title": "Marketing Intelligence",
+      "title_de": "Marketing-Auswertung",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M4",
+      "implemented": "Wirkung der erlaubten Kanäle auf echte bezahlte Verkäufe (Herkunft, Umwandlung, Messunsicherheit).",
+      "open": "Auswertung von SEO- und Marketingmaßnahmen, sobald solche freigegeben sind.",
+      "evidence": [
+        "tests/integration/insights.test.ts"
+      ],
+      "test_command": "node --test tests/integration/insights.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "014",
+      "approved": true,
+      "title": "Revenue Optimizer",
+      "title_de": "Umsatzoptimierung",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M4",
+      "implemented": "Annahme- und Kaufquote je Preisspanne aus echten Angeboten; Hinweis erst ab 30 Angeboten je Spanne, keine automatische Preisänderung.",
+      "open": "Begrenzte, dokumentierte Preisexperimente (nach Freigabe).",
+      "evidence": [
+        "tests/integration/pricing-lifecycle.test.ts"
+      ],
+      "test_command": "node --test tests/integration/pricing-lifecycle.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "015",
+      "approved": true,
+      "title": "Financial Controller",
+      "title_de": "Finanzübersicht und Abgleich",
+      "status": "TESTED",
+      "scope": "full",
+      "internal_status": "UMGESETZT",
+      "milestone": "M1",
+      "implemented": "Hauptbuch, Kennzahlen LIVE/TEST getrennt, Abgleich mit Anbieter und Kontoauszug, Monatsexport.",
+      "open": null,
+      "evidence": [
+        "tests/integration/finance.test.ts",
+        "tests/integration/m2-payments.test.ts",
+        "tests/integration/bank-statement.test.ts"
+      ],
+      "test_command": "node --test tests/integration/finance.test.ts tests/integration/m2-payments.test.ts tests/integration/bank-statement.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "016",
+      "approved": true,
+      "title": "Tax & Invoice Engine",
+      "title_de": "Belege und Steuer",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M1",
+      "implemented": "Testbelege mit fortlaufender Nummer, unveränderlich, als PDF im Portal; FatturaPA-XML (FPR12) für Sitz Italien mit strenger Prüfung, ohne Platzhalter.",
+      "open": "Freigegebene Steuerregeln (LA-06), Registrierungsdaten (LA-02) und Übermittlungsweg ans SdI.",
+      "evidence": [
+        "tests/integration/finance.test.ts",
+        "tests/integration/portal-documents.test.ts",
+        "tests/integration/italy.test.ts"
+      ],
+      "test_command": "node --test tests/integration/finance.test.ts tests/integration/portal-documents.test.ts tests/integration/italy.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "017",
+      "approved": true,
+      "title": "Legal Compliance Guard",
+      "title_de": "Rechtliche Absicherung",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M3",
+      "implemented": "Live-Sperre, EU-Marktregel, Verbraucherverzicht mit Nachweis, Freigabeliste LA-01…12.",
+      "open": "Rechtsprüfung der Texte (LA-07…09).",
+      "evidence": [
+        "tests/integration/m3-readiness.test.ts",
+        "tests/integration/governance.test.ts"
+      ],
+      "test_command": "node --test tests/integration/m3-readiness.test.ts tests/integration/governance.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "018",
+      "approved": true,
+      "title": "Business Expansion AI",
+      "title_de": "Erweiterung in neue Bereiche",
+      "status": "SPECIFIED",
+      "scope": "none",
+      "internal_status": "GEPLANT",
+      "milestone": "M6",
+      "implemented": null,
+      "open": "Erweiterung in neue Geschäftsbereiche.",
+      "evidence": [],
+      "test_command": null,
+      "live_verified": false
+    },
+    {
+      "id": "019",
+      "approved": true,
+      "title": "Operational Reliability Director",
+      "title_de": "Betriebssicherheit",
+      "status": "TESTED",
+      "scope": "full",
+      "internal_status": "UMGESETZT",
+      "milestone": "M1",
+      "implemented": "Warteschlange mit Backoff und Dead-Letter, Cron-Idempotenz, tägliche verschlüsselte Sicherung.",
+      "open": null,
+      "evidence": [
+        "tests/integration/ops.test.ts",
+        "tests/integration/backup-offsite.test.ts"
+      ],
+      "test_command": "node --test tests/integration/ops.test.ts tests/integration/backup-offsite.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "020",
+      "approved": true,
+      "title": "Controlled Self-Improvement",
+      "title_de": "Kontrollierte Verbesserung",
+      "status": "SPECIFIED",
+      "scope": "none",
+      "internal_status": "GEPLANT",
+      "milestone": "M6",
+      "implemented": null,
+      "open": "Kontrollierte Selbstverbesserung.",
+      "evidence": [],
+      "test_command": null,
+      "live_verified": false
+    },
+    {
+      "id": "021",
+      "approved": true,
+      "title": "Autonomous Demand Hunter",
+      "title_de": "Nachfragesuche",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M4",
+      "implemented": "Nachfragesuche in öffentlichen Ausschreibungen.",
+      "open": "Weitere Nachfragequellen.",
+      "evidence": [
+        "tests/integration/m1-acquisition.test.ts"
+      ],
+      "test_command": "node --test tests/integration/m1-acquisition.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "022",
+      "approved": true,
+      "title": "Customer-First Production",
+      "title_de": "Produktion erst nach Bezahlung",
+      "status": "TESTED",
+      "scope": "full",
+      "internal_status": "UMGESETZT",
+      "milestone": "M1",
+      "implemented": "Produktion startet ausschließlich nach bestätigter Zahlung.",
+      "open": null,
+      "evidence": [
+        "tests/integration/production.test.ts",
+        "tests/integration/governance.test.ts"
+      ],
+      "test_command": "node --test tests/integration/production.test.ts tests/integration/governance.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "023",
+      "approved": true,
+      "title": "AI Business Opportunity Predictor",
+      "title_de": "Prognose von Geschäftschancen",
+      "status": "SPECIFIED",
+      "scope": "none",
+      "internal_status": "GEPLANT",
+      "milestone": "M6",
+      "implemented": null,
+      "open": "Prognose von Geschäftschancen.",
+      "evidence": [],
+      "test_command": null,
+      "live_verified": false
+    },
+    {
+      "id": "024",
+      "approved": true,
+      "title": "Autonomous Acquisition Network",
+      "title_de": "Partnernetzwerk",
+      "status": "SPECIFIED",
+      "scope": "none",
+      "internal_status": "GEPLANT",
+      "milestone": "M4",
+      "implemented": null,
+      "open": "Partner-/Akquisenetzwerk.",
+      "evidence": [],
+      "test_command": null,
+      "live_verified": false
+    },
+    {
+      "id": "025",
+      "approved": true,
+      "title": "AI-to-AI Commerce",
+      "title_de": "Handel zwischen Systemen",
+      "status": "SPECIFIED",
+      "scope": "none",
+      "internal_status": "GEPLANT",
+      "milestone": "M6",
+      "implemented": null,
+      "open": "Handel zwischen Agenten.",
+      "evidence": [],
+      "test_command": null,
+      "live_verified": false
+    },
+    {
+      "id": "026",
+      "approved": true,
+      "title": "Self-Building Microbusinesses",
+      "title_de": "Kleine eigenständige Geschäftsbereiche",
+      "status": "SPECIFIED",
+      "scope": "none",
+      "internal_status": "GEPLANT",
+      "milestone": "M6",
+      "implemented": null,
+      "open": "Kleine eigenständige Geschäftsbereiche.",
+      "evidence": [],
+      "test_command": null,
+      "live_verified": false
+    },
+    {
+      "id": "027",
+      "approved": true,
+      "title": "Intelligent Marketplace Integration",
+      "title_de": "Marktplatz-Anbindung",
+      "status": "SPECIFIED",
+      "scope": "none",
+      "internal_status": "GEPLANT",
+      "milestone": "M5",
+      "implemented": null,
+      "open": "Marktplatz-Anbindungen.",
+      "evidence": [],
+      "test_command": null,
+      "live_verified": false
+    },
+    {
+      "id": "028",
+      "approved": true,
+      "title": "Autonomous Negotiation Pro",
+      "title_de": "Erweiterte Verhandlung",
+      "status": "SPECIFIED",
+      "scope": "none",
+      "internal_status": "GEPLANT",
+      "milestone": "M4",
+      "implemented": null,
+      "open": "Erweiterte Verhandlung.",
+      "evidence": [],
+      "test_command": null,
+      "live_verified": false
+    },
+    {
+      "id": "029",
+      "approved": true,
+      "title": "Universal Product Fusion",
+      "title_de": "Produktkombinationen",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M6",
+      "implemented": "Zwei Produktverfahren (Tabelle, PDF) als ein testbares Paket kombiniert; jede Datei mit eigener QA geprüft.",
+      "open": "Kombinationen weiterer Verfahren, sobald belegt.",
+      "evidence": [
+        "tests/integration/bundle-change-help.test.ts"
+      ],
+      "test_command": "node --test tests/integration/bundle-change-help.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "030",
+      "approved": true,
+      "title": "Global Sales & Localization",
+      "title_de": "Verkauf in mehreren Ländern",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M3",
+      "implemented": "Verkauf nur an Kunden mit Sitz in der EU (technisch erzwungen); Startseite auf Deutsch, Italienisch und Englisch mit hreflang und Sitemap.",
+      "open": "Übersetzung von Anfrage, Angebot und Portal; Länderspezifika.",
+      "evidence": [
+        "tests/integration/m3-readiness.test.ts",
+        "tests/integration/landing.test.ts"
+      ],
+      "test_command": "node --test tests/integration/m3-readiness.test.ts tests/integration/landing.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "031",
+      "approved": true,
+      "title": "Product Recycling & Licensing",
+      "title_de": "Wiederverwendung und Lizenzen",
+      "status": "SPECIFIED",
+      "scope": "none",
+      "internal_status": "GEPLANT",
+      "milestone": "M5",
+      "implemented": null,
+      "open": "Wiederverwertung und Lizenzierung.",
+      "evidence": [],
+      "test_command": null,
+      "live_verified": false
+    },
+    {
+      "id": "032",
+      "approved": true,
+      "title": "Autonomous Subscription Builder",
+      "title_de": "Abo-Aufbau",
+      "status": "SPECIFIED",
+      "scope": "none",
+      "internal_status": "GEPLANT",
+      "milestone": "M5",
+      "implemented": null,
+      "open": "Abonnement-Aufbau.",
+      "evidence": [],
+      "test_command": null,
+      "live_verified": false
+    },
+    {
+      "id": "033",
+      "approved": true,
+      "title": "Self-Optimizing Sales Funnel",
+      "title_de": "Verkaufsweg verbessern",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M4",
+      "implemented": "Trichter und Umwandlung je Stufe aus echten Käufen (Anfrage → Lieferung, je Preisspanne); kein Gewinner aus kleinen Stichproben.",
+      "open": "Verbesserungen am Verkaufsweg als begrenzte Versuche.",
+      "evidence": [
+        "tests/integration/insights.test.ts",
+        "tests/integration/pricing-lifecycle.test.ts"
+      ],
+      "test_command": "node --test tests/integration/insights.test.ts tests/integration/pricing-lifecycle.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "034",
+      "approved": true,
+      "title": "Customer Trust & Reputation Engine",
+      "title_de": "Vertrauen und echte Bewertungen",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M4",
+      "implemented": "Echte Bewertungen nur vom Kunden selbst, nur nach Lieferung, eine je Auftrag, unveränderlich; ehrliche Zusammenfassung.",
+      "open": "Veröffentlichung von Kundenstimmen (nur mit Einwilligung).",
+      "evidence": [
+        "tests/integration/aftercare.test.ts"
+      ],
+      "test_command": "node --test tests/integration/aftercare.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "035",
+      "approved": true,
+      "title": "Autonomous Fraud & Risk Shield",
+      "title_de": "Schutz vor Betrug",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M1",
+      "implemented": "Webhook-Signatur, Replay-Schutz, gefälschte Ereignisse abgelehnt, Eingaben als nicht vertrauenswürdig behandelt.",
+      "open": "Betrugsmuster-Erkennung.",
+      "evidence": [
+        "tests/security/security.test.ts",
+        "tests/integration/payments.test.ts"
+      ],
+      "test_command": "node --test tests/security/security.test.ts tests/integration/payments.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "036",
+      "approved": true,
+      "title": "Revenue Protection & Recovery",
+      "title_de": "Zahlungsschutz und Rückgewinnung",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M2",
+      "implemented": "Erstattungen und Disputes korrekt gebucht (kumulierte Deltas).",
+      "open": "Zahlungsrückgewinnung.",
+      "evidence": [
+        "tests/integration/m2-payments.test.ts"
+      ],
+      "test_command": "node --test tests/integration/m2-payments.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "037",
+      "approved": true,
+      "title": "Zero-Cost Resource Intelligence",
+      "title_de": "Kostenfreie Ressourcen nutzen",
+      "status": "TESTED",
+      "scope": "full",
+      "internal_status": "UMGESETZT",
+      "milestone": "M0",
+      "implemented": "Kostengate 0 €: bezahlte Dienste, Upgrades, Werbung technisch gesperrt; Free-Tier-Drossel.",
+      "open": null,
+      "evidence": [
+        "tests/integration/governance.test.ts",
+        "tests/unit/policy.test.ts"
+      ],
+      "test_command": "node --test tests/integration/governance.test.ts tests/unit/policy.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "038",
+      "approved": true,
+      "title": "Autonomous Business Recovery",
+      "title_de": "Wiederanlauf nach Störungen",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M1",
+      "implemented": "Sicherung und Wiederherstellungstest.",
+      "open": "Automatischer Wiederanlauf-Plan.",
+      "evidence": [
+        "tests/integration/backup-offsite.test.ts",
+        "tests/integration/ops.test.ts"
+      ],
+      "test_command": "node --test tests/integration/backup-offsite.test.ts tests/integration/ops.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "039",
+      "approved": true,
+      "title": "Financial & Tax Evidence Vault",
+      "title_de": "Belegarchiv",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M1",
+      "implemented": "Unveränderliches Audit-Log, Belege, Vertragsbestätigungen mit Prüfsumme, unveränderliche Bankbuchungen, Monatsexport.",
+      "open": "Steuerliche Aufbewahrungsregeln (LA-08).",
+      "evidence": [
+        "tests/integration/finance.test.ts",
+        "tests/integration/contract-confirmation.test.ts",
+        "tests/integration/bank-statement.test.ts"
+      ],
+      "test_command": "node --test tests/integration/finance.test.ts tests/integration/contract-confirmation.test.ts tests/integration/bank-statement.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "040",
+      "approved": true,
+      "title": "Verified Profit Autopilot",
+      "title_de": "Ehrliche Gewinnübersicht",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M1",
+      "implemented": "Trennung bezahlt / Gebühren / Auszahlung / Bankeingang; Bankeingang nur mit Kontoauszug-Nachweis.",
+      "open": "Echte Bankabstimmung erst im Live-Pilot.",
+      "evidence": [
+        "tests/integration/finance.test.ts",
+        "tests/integration/bank-statement.test.ts"
+      ],
+      "test_command": "node --test tests/integration/finance.test.ts tests/integration/bank-statement.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "041",
+      "approved": true,
+      "title": "Autonomous Buyer Network",
+      "title_de": "Käufernetzwerk",
+      "status": "SPECIFIED",
+      "scope": "none",
+      "internal_status": "GEPLANT",
+      "milestone": "M4",
+      "implemented": null,
+      "open": "Käufernetzwerk.",
+      "evidence": [],
+      "test_command": null,
+      "live_verified": false
+    },
+    {
+      "id": "042",
+      "approved": true,
+      "title": "AI Contract & Deal Closer",
+      "title_de": "Vertragsabschluss",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M3",
+      "implemented": "Verbindliche Annahme mit Nachweis und PDF-Vertragsbestätigung.",
+      "open": "Rechtsprüfung (LA-07).",
+      "evidence": [
+        "tests/integration/contract-confirmation.test.ts",
+        "tests/integration/m3-readiness.test.ts"
+      ],
+      "test_command": "node --test tests/integration/contract-confirmation.test.ts tests/integration/m3-readiness.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "043",
+      "approved": true,
+      "title": "Instant Product Preview Engine",
+      "title_de": "Produktvorschau",
+      "status": "TESTED",
+      "scope": "full",
+      "internal_status": "UMGESETZT",
+      "milestone": "M5",
+      "implemented": "Vorschau der Kalkulation im Angebot aus den eigenen Daten des Kunden (max. 8 Positionen), Datei erst nach bestätigter Zahlung.",
+      "open": null,
+      "evidence": [
+        "tests/integration/aftercare.test.ts"
+      ],
+      "test_command": "node --test tests/integration/aftercare.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "044",
+      "approved": true,
+      "title": "Autonomous Production Intelligence",
+      "title_de": "Produktionsplanung",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M2",
+      "implemented": "Komplexitäts- und Kapazitätsgrenzen, „keine Kapazität“ statt Risiko.",
+      "open": "Lernende Produktionsplanung.",
+      "evidence": [
+        "tests/integration/production.test.ts"
+      ],
+      "test_command": "node --test tests/integration/production.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "045",
+      "approved": true,
+      "title": "Multi-Agent Decision Council",
+      "title_de": "Abgestimmte Entscheidungen",
+      "status": "SPECIFIED",
+      "scope": "none",
+      "internal_status": "GEPLANT",
+      "milestone": "M6",
+      "implemented": null,
+      "open": "Entscheidungsrat mehrerer Agenten.",
+      "evidence": [],
+      "test_command": null,
+      "live_verified": false
+    },
+    {
+      "id": "046",
+      "approved": true,
+      "title": "Universal Intellectual Property Guardian",
+      "title_de": "Schutz von Nutzungsrechten",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M2",
+      "implemented": "Rechtenachweis je Artefakt (Herkunft, Generator, Lizenz).",
+      "open": "Prüfung fremder Inhalte.",
+      "evidence": [
+        "tests/integration/production.test.ts"
+      ],
+      "test_command": "node --test tests/integration/production.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "047",
+      "approved": true,
+      "title": "Autonomous Customer Success Engine",
+      "title_de": "Kundenerfolg",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M4",
+      "implemented": "Abnahme durch den Kunden; Mangelmeldung wird zur Reklamation mit Nachbesserung/Erstattung durch den Eigentümer.",
+      "open": "Automatische Nachbesserungsläufe.",
+      "evidence": [
+        "tests/integration/aftercare.test.ts"
+      ],
+      "test_command": "node --test tests/integration/aftercare.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "050",
+      "approved": true,
+      "title": "Autonomous Portfolio Director",
+      "title_de": "Portfolio-Steuerung",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M6",
+      "implemented": "Deckungsbeitrag je Produktart aus dem Hauptbuch (Zahlungen − Gebühren − Erstattungen) mit Aufwandsindikator.",
+      "open": "Ressourcenbedarf je Bereich und Priorisierungsvorschläge.",
+      "evidence": [
+        "tests/integration/portfolio-buyers.test.ts"
+      ],
+      "test_command": "node --test tests/integration/portfolio-buyers.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "051",
+      "approved": true,
+      "title": "Verified Buyer Intelligence",
+      "title_de": "Käuferanalyse",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M4",
+      "implemented": "Trennt nachweisbar zahlende Käufer von Interessenten ausschließlich aus eigenen Vorgängen (Anfrage → Angebot → Annahme → Zahlung).",
+      "open": "Zahlungssignale externer, freigegebener Quellen.",
+      "evidence": [
+        "tests/integration/portfolio-buyers.test.ts"
+      ],
+      "test_command": "node --test tests/integration/portfolio-buyers.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "052",
+      "approved": true,
+      "title": "Autonomous Customer Interview AI",
+      "title_de": "Kundengespräche auswerten",
+      "status": "SPECIFIED",
+      "scope": "none",
+      "internal_status": "GEPLANT",
+      "milestone": "M4",
+      "implemented": null,
+      "open": "Kundeninterviews.",
+      "evidence": [],
+      "test_command": null,
+      "live_verified": false
+    },
+    {
+      "id": "053",
+      "approved": true,
+      "title": "Instant Business Execution Compiler",
+      "title_de": "Umsetzung von Geschäftsplänen",
+      "status": "SPECIFIED",
+      "scope": "none",
+      "internal_status": "GEPLANT",
+      "milestone": "M6",
+      "implemented": null,
+      "open": "Ausführungs-Compiler.",
+      "evidence": [],
+      "test_command": null,
+      "live_verified": false
+    },
+    {
+      "id": "054",
+      "approved": true,
+      "title": "Verified Money Flow Ledger",
+      "title_de": "Geldfluss-Hauptbuch",
+      "status": "TESTED",
+      "scope": "full",
+      "internal_status": "UMGESETZT",
+      "milestone": "M1",
+      "implemented": "Geldfluss-Hauptbuch aus provider-bestätigten Ereignissen, LIVE/TEST getrennt.",
+      "open": null,
+      "evidence": [
+        "tests/integration/finance.test.ts",
+        "tests/integration/m2-payments.test.ts"
+      ],
+      "test_command": "node --test tests/integration/finance.test.ts tests/integration/m2-payments.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "055",
+      "approved": true,
+      "title": "Universal Capability Discovery",
+      "title_de": "Fähigkeiten erkennen",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M2",
+      "implemented": "Fähigkeitsmatrix mit Freischaltgrund; Freigabe zum Verkauf nur über die Policy.",
+      "open": "Automatische Werkzeugsuche mit Lizenzprüfung.",
+      "evidence": [
+        "tests/integration/production.test.ts",
+        "tests/integration/m2-product-pdf.test.ts"
+      ],
+      "test_command": "node --test tests/integration/production.test.ts tests/integration/m2-product-pdf.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "056",
+      "approved": true,
+      "title": "Smart Monetization Architect",
+      "title_de": "Preis- und Erlösmodelle",
+      "status": "SPECIFIED",
+      "scope": "none",
+      "internal_status": "GEPLANT",
+      "milestone": "M5",
+      "implemented": null,
+      "open": "Monetarisierungsmodelle.",
+      "evidence": [],
+      "test_command": null,
+      "live_verified": false
+    },
+    {
+      "id": "057",
+      "approved": true,
+      "title": "Autonomous Delivery Warranty",
+      "title_de": "Liefergarantie",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M2",
+      "implemented": "Lieferkriterien im Angebot, Rückerstattung bei Mangel nach Freigabe.",
+      "open": "Gewährleistungsablauf.",
+      "evidence": [
+        "tests/integration/m2-payments.test.ts"
+      ],
+      "test_command": "node --test tests/integration/m2-payments.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "058",
+      "approved": true,
+      "title": "Intelligent Customer Expansion",
+      "title_de": "Folgeaufträge",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M4",
+      "implemented": "Erkennt zufriedene Kunden (abgenommen, ≥ 4 Sterne) mit passender freigegebener Ergänzung; Kontakt nur mit Einwilligung markiert. Zusatzangebote werden automatisch fertig formuliert (Einwilligung per DB erzwungen, max. 1 je 90 Tage, Abmeldelink).",
+      "open": "Versand nach Freigabe des Kanals und AUTO_MARKETING_OUTREACH=true durch den Eigentümer.",
+      "evidence": [
+        "tests/integration/portfolio-buyers.test.ts",
+        "tests/integration/outbox.test.ts"
+      ],
+      "test_command": "node --test tests/integration/portfolio-buyers.test.ts tests/integration/outbox.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "059",
+      "approved": true,
+      "title": "Profit-Aware Capacity Shield",
+      "title_de": "Kapazität nach Rentabilität",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M1",
+      "implemented": "Mindestmarge und Kapazitätsprüfung vor Annahme.",
+      "open": "Gewinnorientierte Kapazitätsplanung.",
+      "evidence": [
+        "tests/integration/opportunity.test.ts",
+        "tests/integration/production.test.ts"
+      ],
+      "test_command": "node --test tests/integration/opportunity.test.ts tests/integration/production.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "060",
+      "approved": true,
+      "title": "Independent AI Business Auditor",
+      "title_de": "Unabhängige Prüfung",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M1",
+      "implemented": "Vollständige Prüfspur aller Entscheidungen.",
+      "open": "Unabhängiger Prüfbericht.",
+      "evidence": [
+        "tests/integration/governance.test.ts"
+      ],
+      "test_command": "node --test tests/integration/governance.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "061",
+      "approved": true,
+      "title": "Global Paid Opportunity Hunter",
+      "title_de": "Bezahlte Aufträge finden",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M4",
+      "implemented": "Bezahlte Ausschreibungen aus TED.",
+      "open": "Weitere Quellen.",
+      "evidence": [
+        "tests/integration/m1-acquisition.test.ts"
+      ],
+      "test_command": "node --test tests/integration/m1-acquisition.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "062",
+      "approved": true,
+      "title": "Autonomous Tender & Proposal Engine",
+      "title_de": "Ausschreibungen und Angebote",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M4",
+      "implemented": "Angebotsentwürfe zu Ausschreibungen, nie automatisch versendet.",
+      "open": "Vollständige Angebotsunterlagen.",
+      "evidence": [
+        "tests/integration/m1-acquisition.test.ts"
+      ],
+      "test_command": "node --test tests/integration/m1-acquisition.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "063",
+      "approved": true,
+      "title": "Collective Buyer Demand Engine",
+      "title_de": "Gebündelte Nachfrage",
+      "status": "SPECIFIED",
+      "scope": "none",
+      "internal_status": "GEPLANT",
+      "milestone": "M6",
+      "implemented": null,
+      "open": "Gebündelte Nachfrage.",
+      "evidence": [],
+      "test_command": null,
+      "live_verified": false
+    },
+    {
+      "id": "064",
+      "approved": true,
+      "title": "Custom-to-SaaS Transformation",
+      "title_de": "Vom Einzelauftrag zum Produkt",
+      "status": "SPECIFIED",
+      "scope": "none",
+      "internal_status": "GEPLANT",
+      "milestone": "M6",
+      "implemented": null,
+      "open": "Individual zu SaaS.",
+      "evidence": [],
+      "test_command": null,
+      "live_verified": false
+    },
+    {
+      "id": "065",
+      "approved": true,
+      "title": "White-Label Revenue Network",
+      "title_de": "Weiterverkauf unter fremder Marke",
+      "status": "SPECIFIED",
+      "scope": "none",
+      "internal_status": "GEPLANT",
+      "milestone": "M6",
+      "implemented": null,
+      "open": "White-Label.",
+      "evidence": [],
+      "test_command": null,
+      "live_verified": false
+    },
+    {
+      "id": "066",
+      "approved": true,
+      "title": "Autonomous Integration Factory",
+      "title_de": "Integrationen",
+      "status": "SPECIFIED",
+      "scope": "none",
+      "internal_status": "GEPLANT",
+      "milestone": "M5",
+      "implemented": null,
+      "open": "Integrationen.",
+      "evidence": [],
+      "test_command": null,
+      "live_verified": false
+    },
+    {
+      "id": "067",
+      "approved": true,
+      "title": "Precision Usage Billing Engine",
+      "title_de": "Nutzungsabhängige Abrechnung",
+      "status": "SPECIFIED",
+      "scope": "none",
+      "internal_status": "GEPLANT",
+      "milestone": "M5",
+      "implemented": null,
+      "open": "Nutzungsabrechnung.",
+      "evidence": [],
+      "test_command": null,
+      "live_verified": false
+    },
+    {
+      "id": "068",
+      "approved": true,
+      "title": "Autonomous Delivery Scheduler",
+      "title_de": "Lieferplanung",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M1",
+      "implemented": "Lieferfrist im Angebot, Jobwarteschlange.",
+      "open": "Terminplanung.",
+      "evidence": [
+        "tests/integration/ops.test.ts"
+      ],
+      "test_command": "node --test tests/integration/ops.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "069",
+      "approved": true,
+      "title": "International Tax & Sales Eligibility Router",
+      "title_de": "Steuer- und Länderprüfung",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M3",
+      "implemented": "EU-Marktprüfung, B2B/B2C-Unterscheidung; Steuervorschläge für Sitz Italien (forfettario, ordinario, EU-B2B Reverse Charge), OSS-Fälle ohne Vorschlag.",
+      "open": "Freigabe der Steuerregeln durch die Steuerberatung (LA-06).",
+      "evidence": [
+        "tests/integration/m3-readiness.test.ts",
+        "tests/integration/italy.test.ts"
+      ],
+      "test_command": "node --test tests/integration/m3-readiness.test.ts tests/integration/italy.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "070",
+      "approved": true,
+      "title": "Autonomous Growth Experiment Director",
+      "title_de": "Wachstumsversuche",
+      "status": "SPECIFIED",
+      "scope": "none",
+      "internal_status": "GEPLANT",
+      "milestone": "M6",
+      "implemented": null,
+      "open": "Wachstumsexperimente.",
+      "evidence": [],
+      "test_command": null,
+      "live_verified": false
+    },
+    {
+      "id": "071",
+      "approved": true,
+      "title": "Universal Agent Commerce Gateway",
+      "title_de": "Bestellschnittstelle für Systeme",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M6",
+      "implemented": "Maschinenlesbarer Angebotskatalog unter /api/katalog (Produkte, Eingabeschema, Preisregeln, Bestellweg über /api/leads), Testbetrieb gekennzeichnet.",
+      "open": "Eigene Testzugänge für Einkaufssysteme.",
+      "evidence": [
+        "tests/integration/portfolio-buyers.test.ts"
+      ],
+      "test_command": "node --test tests/integration/portfolio-buyers.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "072",
+      "approved": true,
+      "title": "Atomic Order-to-Cash Engine",
+      "title_de": "Durchgehender Bestellablauf",
+      "status": "TESTED",
+      "scope": "full",
+      "internal_status": "UMGESETZT",
+      "milestone": "M1",
+      "implemented": "Durchgehende Kette Anfrage → Zahlung → Produktion → Lieferung → Beleg → Abgleich → Auszahlung → Bank-Testbeleg → Abschluss.",
+      "open": null,
+      "evidence": [
+        "tests/e2e/pilot.test.ts",
+        "tests/integration/bank-statement.test.ts"
+      ],
+      "test_command": "node --test tests/e2e/pilot.test.ts tests/integration/bank-statement.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "073",
+      "approved": true,
+      "title": "Verified Prepayment & Milestone Controller",
+      "title_de": "Vorkasse und Teilzahlungen",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M1",
+      "implemented": "Vorkasse vor Produktion.",
+      "open": "Meilensteinzahlungen.",
+      "evidence": [
+        "tests/integration/governance.test.ts"
+      ],
+      "test_command": "node --test tests/integration/governance.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "074",
+      "approved": true,
+      "title": "Autonomous Customer Workspace Provisioner",
+      "title_de": "Kundenbereiche einrichten",
+      "status": "SPECIFIED",
+      "scope": "none",
+      "internal_status": "GEPLANT",
+      "milestone": "M5",
+      "implemented": null,
+      "open": "Kundenarbeitsbereiche.",
+      "evidence": [],
+      "test_command": null,
+      "live_verified": false
+    },
+    {
+      "id": "075",
+      "approved": true,
+      "title": "Universal License & Entitlement Director",
+      "title_de": "Lizenzen und Zugänge",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M1",
+      "implemented": "Signierte, kundengebundene Download-Berechtigungen, Lizenztext.",
+      "open": "Lizenzverwaltung.",
+      "evidence": [
+        "tests/integration/production.test.ts",
+        "tests/security/security.test.ts"
+      ],
+      "test_command": "node --test tests/integration/production.test.ts tests/security/security.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "076",
+      "approved": true,
+      "title": "Autonomous Referral Revenue Alliance",
+      "title_de": "Empfehlungsprogramm",
+      "status": "SPECIFIED",
+      "scope": "none",
+      "internal_status": "GEPLANT",
+      "milestone": "M6",
+      "implemented": null,
+      "open": "Empfehlungsprogramm.",
+      "evidence": [],
+      "test_command": null,
+      "live_verified": false
+    },
+    {
+      "id": "077",
+      "approved": true,
+      "title": "AI Dispute Resolution Desk",
+      "title_de": "Klärung von Streitfällen",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M2",
+      "implemented": "Dispute-Status und Buchung.",
+      "open": "Klärungsablauf.",
+      "evidence": [
+        "tests/integration/m2-payments.test.ts"
+      ],
+      "test_command": "node --test tests/integration/m2-payments.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "078",
+      "approved": true,
+      "title": "Autonomous Exception Recovery Director",
+      "title_de": "Ausnahmen sicher behandeln",
+      "status": "TESTED",
+      "scope": "full",
+      "internal_status": "UMGESETZT",
+      "milestone": "M1",
+      "implemented": "Ausnahmen gehen zur Eigentümerprüfung statt abzustürzen (blockierte Lieferung, Dead-Letter).",
+      "open": null,
+      "evidence": [
+        "tests/integration/production.test.ts",
+        "tests/integration/contract-confirmation.test.ts"
+      ],
+      "test_command": "node --test tests/integration/production.test.ts tests/integration/contract-confirmation.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "079",
+      "approved": true,
+      "title": "Real-Time True Profit Shield",
+      "title_de": "Gewinnschutz",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M1",
+      "implemented": "Deckungsbeitrag nach Erstattungen, Gebühren, Disputes.",
+      "open": "Echtzeit-Gewinnschutz.",
+      "evidence": [
+        "tests/integration/finance.test.ts"
+      ],
+      "test_command": "node --test tests/integration/finance.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "080",
+      "approved": true,
+      "title": "First-Euro-to-Bank Verification Lab",
+      "title_de": "Nachweis des ersten Bankeingangs",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M1",
+      "implemented": "Bankeingang nur mit gesondertem Kontoauszug (CSV/camt.053), feste Abgleichregeln, Abschluss erst danach – im Testbetrieb nachgewiesen.",
+      "open": "Echter erster Euro erst im freigegebenen Live-Pilot (LA-03/LA-04).",
+      "evidence": [
+        "tests/integration/finance.test.ts",
+        "tests/integration/bank-statement.test.ts"
+      ],
+      "test_command": "node --test tests/integration/finance.test.ts tests/integration/bank-statement.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "081",
+      "approved": true,
+      "title": "Autonomous Demand Knowledge Graph",
+      "title_de": "Wissen über Nachfrage",
+      "status": "SPECIFIED",
+      "scope": "none",
+      "internal_status": "GEPLANT",
+      "milestone": "M6",
+      "implemented": null,
+      "open": "Nachfrage-Wissensgraph.",
+      "evidence": [],
+      "test_command": null,
+      "live_verified": false
+    },
+    {
+      "id": "082",
+      "approved": true,
+      "title": "Self-Reusing Product Component Factory",
+      "title_de": "Wiederverwendbare Bausteine",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M5",
+      "implemented": "Eigene getestete Bausteine werden wiederverwendet: PDF-Erzeugung, ZIP, CSV mit Formelschutz, Design-System der Oberflächen.",
+      "open": "Katalog der Bausteine mit Versionierung.",
+      "evidence": [
+        "tests/integration/contract-confirmation.test.ts",
+        "tests/integration/bundle-change-help.test.ts",
+        "tests/unit/console-ui.test.ts"
+      ],
+      "test_command": "node --test tests/integration/contract-confirmation.test.ts tests/integration/bundle-change-help.test.ts tests/unit/console-ui.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "083",
+      "approved": true,
+      "title": "Autonomous Product Usability Laboratory",
+      "title_de": "Bedienbarkeit testen",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M5",
+      "implemented": "Reproduzierbare Prüfungen: Kontrast, Beschriftungen, Struktur, keine internen Kennungen im Text, Breiten 320–1440 px.",
+      "open": "Nutzungstests mit echten Personen.",
+      "evidence": [
+        "tests/unit/console-ui.test.ts",
+        "tests/integration/portal-documents.test.ts"
+      ],
+      "test_command": "node --test tests/unit/console-ui.test.ts tests/integration/portal-documents.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "084",
+      "approved": true,
+      "title": "Contract-to-Acceptance Compiler",
+      "title_de": "Vom Vertrag zur Abnahme",
+      "status": "TESTED",
+      "scope": "full",
+      "internal_status": "UMGESETZT",
+      "milestone": "M1",
+      "implemented": "Lieferkriterien aus dem Angebot werden zu automatischen Prüfungen; Abnahme oder Mangel durch den Kunden; vollständige Nachweiskette (QA, Prüfsumme, Herkunftsnachweis). Keine automatische Abnahme.",
+      "open": null,
+      "evidence": [
+        "tests/integration/opportunity.test.ts",
+        "tests/integration/aftercare.test.ts"
+      ],
+      "test_command": "node --test tests/integration/opportunity.test.ts tests/integration/aftercare.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "085",
+      "approved": true,
+      "title": "Autonomous Sales Claims & Transparency Guard",
+      "title_de": "Ehrliche Werbeaussagen",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M0",
+      "implemented": "Oberfläche zeigt keine fiktiven Umsätze; Test/Live getrennt, per Test geprüft.",
+      "open": "Prüfung von Werbeaussagen.",
+      "evidence": [
+        "tests/unit/console-ui.test.ts"
+      ],
+      "test_command": "node --test tests/unit/console-ui.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "086",
+      "approved": true,
+      "title": "Self-Service Customer Command Portal",
+      "title_de": "Kundenportal",
+      "status": "TESTED",
+      "scope": "full",
+      "internal_status": "UMGESETZT",
+      "milestone": "M1",
+      "implemented": "Kundenportal: Aufträge mit Fortschritt, Vertragsbestätigung, Beleg-PDF, Download, Datenexport, Support.",
+      "open": null,
+      "evidence": [
+        "tests/e2e/pilot.test.ts",
+        "tests/integration/contract-confirmation.test.ts",
+        "tests/integration/portal-documents.test.ts"
+      ],
+      "test_command": "node --test tests/e2e/pilot.test.ts tests/integration/contract-confirmation.test.ts tests/integration/portal-documents.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "087",
+      "approved": true,
+      "title": "Autonomous Product Lifecycle Director",
+      "title_de": "Produktlebenszyklus",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M5",
+      "implemented": "Lebenszyklus je Produktart aus Lieferungen, Prüffehlern und Mängeln mit Einschätzung neu/stabil/prüfen; Version sichtbar.",
+      "open": "Geplante Versionspflege und Ablösung mit Migrationsprüfung.",
+      "evidence": [
+        "tests/integration/pricing-lifecycle.test.ts"
+      ],
+      "test_command": "node --test tests/integration/pricing-lifecycle.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "088",
+      "approved": true,
+      "title": "Zero-Sales Diagnostic Intelligence",
+      "title_de": "Ursachen fehlender Verkäufe",
+      "status": "TESTED",
+      "scope": "full",
+      "internal_status": "UMGESETZT",
+      "milestone": "M4",
+      "implemented": "Trichter aus echten Datensätzen und technischen Fehlerdaten (Zahlungsabbrüche, abgelehnte Annahmen, QA, angehaltene Aufgaben); benennt Engpass und nächsten Schritt; Null-Umsatz ehrlich.",
+      "open": null,
+      "evidence": [
+        "tests/integration/insights.test.ts"
+      ],
+      "test_command": "node --test tests/integration/insights.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "089",
+      "approved": true,
+      "title": "Official Regulation Change Watcher",
+      "title_de": "Rechtsänderungen beobachten",
+      "status": "SPECIFIED",
+      "scope": "none",
+      "internal_status": "GEPLANT",
+      "milestone": "M6",
+      "implemented": null,
+      "open": "Beobachtung von Rechtsänderungen.",
+      "evidence": [],
+      "test_command": null,
+      "live_verified": false
+    },
+    {
+      "id": "090",
+      "approved": true,
+      "title": "Zero-Touch Owner Governance",
+      "title_de": "Deine Grenzen und Freigaben",
+      "status": "TESTED",
+      "scope": "full",
+      "internal_status": "UMGESETZT",
+      "milestone": "M0",
+      "implemented": "Eigentümer-Grenzen einmalig: Policy, Notstopps, Freigaben mit Nachweis.",
+      "open": null,
+      "evidence": [
+        "tests/integration/governance.test.ts",
+        "tests/integration/m3-readiness.test.ts"
+      ],
+      "test_command": "node --test tests/integration/governance.test.ts tests/integration/m3-readiness.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "091",
+      "approved": true,
+      "title": "Autonomous Enterprise Procurement Desk",
+      "title_de": "Beschaffung für Unternehmen",
+      "status": "SPECIFIED",
+      "scope": "none",
+      "internal_status": "GEPLANT",
+      "milestone": "M6",
+      "implemented": null,
+      "open": "Unternehmensbeschaffung.",
+      "evidence": [],
+      "test_command": null,
+      "live_verified": false
+    },
+    {
+      "id": "092",
+      "approved": true,
+      "title": "Smart Scope Change & Paid Upgrade Engine",
+      "title_de": "Änderungs- und Zusatzaufträge",
+      "status": "TESTED",
+      "scope": "full",
+      "internal_status": "UMGESETZT",
+      "milestone": "M5",
+      "implemented": "Erweiterungswunsch im Portal wird zum eigenen Nachtragsangebot (gleiche Produktart und Aufschlag, nur neue Positionen); beauftragt erst nach Annahme und Zahlung, Original unverändert.",
+      "open": null,
+      "evidence": [
+        "tests/integration/bundle-change-help.test.ts"
+      ],
+      "test_command": "node --test tests/integration/bundle-change-help.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "093",
+      "approved": true,
+      "title": "Autonomous Product Bundling Intelligence",
+      "title_de": "Produktpakete",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M5",
+      "implemented": "Paket Tabelle + PDF (ZIP) mit Prüfung jeder enthaltenen Datei; Preis aus tatsächlichem Mehraufwand, kein Scheinrabatt; Verkauf nach Policy-Freigabe.",
+      "open": "Weitere Pakete, sobald weitere Produktarten belegt sind.",
+      "evidence": [
+        "tests/integration/bundle-change-help.test.ts"
+      ],
+      "test_command": "node --test tests/integration/bundle-change-help.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "094",
+      "approved": true,
+      "title": "Evidence-Based Delivery Certification",
+      "title_de": "Liefernachweis",
+      "status": "TESTED",
+      "scope": "full",
+      "internal_status": "UMGESETZT",
+      "milestone": "M2",
+      "implemented": "Lieferung nur mit bestandenem Prüfprotokoll und Prüfsumme – für jede Produktart eigene Prüfungen.",
+      "open": null,
+      "evidence": [
+        "tests/integration/production.test.ts",
+        "tests/integration/m2-product-pdf.test.ts"
+      ],
+      "test_command": "node --test tests/integration/production.test.ts tests/integration/m2-product-pdf.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "095",
+      "approved": true,
+      "title": "AI Revenue Attribution Intelligence",
+      "title_de": "Woher kamen die Käufer?",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M4",
+      "implemented": "Bezahlter Umsatz je erlaubter Herkunft (eigenes Formular, freigegebene Ausschreibungen) ohne Tracking, mit Hinweis auf Messunsicherheit.",
+      "open": "Kosten je Kanal, sobald bezahlte Kanäle freigegeben sind.",
+      "evidence": [
+        "tests/integration/insights.test.ts"
+      ],
+      "test_command": "node --test tests/integration/insights.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "096",
+      "approved": true,
+      "title": "Universal Accessibility & Localization QA",
+      "title_de": "Barrierefreiheit und Sprache",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M0",
+      "implemented": "Zeichenkodierung im Produkt geprüft; Kontrast/Struktur von Konsole und Kundenseiten per Test.",
+      "open": "Lokalisierung.",
+      "evidence": [
+        "tests/integration/production.test.ts",
+        "tests/unit/console-ui.test.ts",
+        "tests/integration/portal-documents.test.ts"
+      ],
+      "test_command": "node --test tests/integration/production.test.ts tests/unit/console-ui.test.ts tests/integration/portal-documents.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "097",
+      "approved": true,
+      "title": "Autonomous Customer Consent Director",
+      "title_de": "Einwilligungen",
+      "status": "TESTED",
+      "scope": "full",
+      "internal_status": "UMGESETZT",
+      "milestone": "M1",
+      "implemented": "Einwilligungen mit Zweck und Widerruf; ohne Einwilligung keine Werbenachricht; Ein-Klick-Abmeldung /abmelden mit signiertem Link.",
+      "open": null,
+      "evidence": [
+        "tests/integration/acquisition.test.ts",
+        "tests/integration/outbox.test.ts"
+      ],
+      "test_command": "node --test tests/integration/acquisition.test.ts tests/integration/outbox.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "098",
+      "approved": true,
+      "title": "Cash Flow & Payout Forecast Intelligence",
+      "title_de": "Liquiditäts- und Auszahlungsprognose",
+      "status": "TESTED",
+      "scope": "full",
+      "internal_status": "UMGESETZT",
+      "milestone": "M4",
+      "implemented": "Erwartbarer Bankeingang aus bekannten Beträgen abzüglich offener Erstattungen, Erstattungs- und Steuerrücklage; Auszahlungsdatum nur mit eingetragener Anbieterfrist; Auszahlung nie als Bankguthaben.",
+      "open": null,
+      "evidence": [
+        "tests/integration/insights.test.ts",
+        "tests/integration/completion.test.ts"
+      ],
+      "test_command": "node --test tests/integration/insights.test.ts tests/integration/completion.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "099",
+      "approved": true,
+      "title": "Autonomous Customer Concentration Risk Monitor",
+      "title_de": "Abhängigkeit von Großkunden",
+      "status": "TESTED",
+      "scope": "full",
+      "internal_status": "UMGESETZT",
+      "milestone": "M4",
+      "implemented": "Abhängigkeit von einzelnen Kunden (anonymisiert) und Produktarten am bezahlten Umsatz mit Einstufung; Marktplätze: keine angebunden.",
+      "open": null,
+      "evidence": [
+        "tests/integration/insights.test.ts",
+        "tests/integration/completion.test.ts"
+      ],
+      "test_command": "node --test tests/integration/insights.test.ts tests/integration/completion.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "100",
+      "approved": true,
+      "title": "Autonomous Business Milestone Director",
+      "title_de": "Meilensteine",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M3",
+      "implemented": "Meilenstein-Freigaben LA-01…12 mit Nachweispflicht.",
+      "open": "Automatische Meilensteinsteuerung.",
+      "evidence": [
+        "tests/integration/m3-readiness.test.ts"
+      ],
+      "test_command": "node --test tests/integration/m3-readiness.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "101",
+      "approved": true,
+      "title": "Autonomous Buyer Journey Intelligence",
+      "title_de": "Kaufweg der Kunden",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M4",
+      "implemented": "Typische Wartezeit zwischen Anfrage, Angebot, Annahme, Zahlung und Lieferung aus echten Zeitstempeln, ohne Tracking.",
+      "open": "Priorisierte Verbesserungsvorschläge je Hindernis.",
+      "evidence": [
+        "tests/integration/insights.test.ts"
+      ],
+      "test_command": "node --test tests/integration/insights.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "102",
+      "approved": true,
+      "title": "Multimodal Customer Understanding Engine",
+      "title_de": "Kundenanliegen verstehen",
+      "status": "SPECIFIED",
+      "scope": "none",
+      "internal_status": "GEPLANT",
+      "milestone": "M6",
+      "implemented": null,
+      "open": "Multimodales Verständnis.",
+      "evidence": [],
+      "test_command": null,
+      "live_verified": false
+    },
+    {
+      "id": "103",
+      "approved": true,
+      "title": "Pre-Sale Feasibility Proof Lab",
+      "title_de": "Machbarkeit vor dem Verkauf",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M1",
+      "implemented": "Machbarkeitsprüfung der Produktklasse vor dem Angebot.",
+      "open": "Vorab-Prototyp.",
+      "evidence": [
+        "tests/integration/opportunity.test.ts"
+      ],
+      "test_command": "node --test tests/integration/opportunity.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "104",
+      "approved": true,
+      "title": "Competitive Product Benchmark Arena",
+      "title_de": "Produktvergleich",
+      "status": "SPECIFIED",
+      "scope": "none",
+      "internal_status": "GEPLANT",
+      "milestone": "M6",
+      "implemented": null,
+      "open": "Produktvergleich.",
+      "evidence": [],
+      "test_command": null,
+      "live_verified": false
+    },
+    {
+      "id": "105",
+      "approved": true,
+      "title": "Autonomous Product Configuration Marketplace",
+      "title_de": "Konfigurierbare Produkte",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M6",
+      "implemented": "Kunde wählt Lieferformat (Tabelle, PDF, Paket – soweit freigegeben); Preis und Umfang werden automatisch berechnet.",
+      "open": "Weitere kombinierbare Funktionsbausteine.",
+      "evidence": [
+        "tests/integration/m2-product-pdf.test.ts",
+        "tests/integration/bundle-change-help.test.ts"
+      ],
+      "test_command": "node --test tests/integration/m2-product-pdf.test.ts tests/integration/bundle-change-help.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "106",
+      "approved": true,
+      "title": "Pre-Contract Risk & Liability Simulator",
+      "title_de": "Risiken vor Vertragsschluss",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M5",
+      "implemented": "Erklärte Risikohinweise je Auftrag (Verbraucher, Auftragswert, Land, Umfang, frühere Erstattungen), ausdrücklich keine Rechtsbewertung.",
+      "open": "Szenarien für Verspätung und Haftung.",
+      "evidence": [
+        "tests/integration/aftercare.test.ts"
+      ],
+      "test_command": "node --test tests/integration/aftercare.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "107",
+      "approved": true,
+      "title": "Autonomous Data Freshness & Reliability Engine",
+      "title_de": "Aktualität der Daten",
+      "status": "TESTED",
+      "scope": "full",
+      "internal_status": "UMGESETZT",
+      "milestone": "M5",
+      "implemented": "Aktualität der Quellen und abgelaufene Ausschreibungen werden gemeldet; abgelaufene Daten sind im Ablauf gesperrt (Qualifizierung, Angebot, Annahme, Angebotsentwurf).",
+      "open": null,
+      "evidence": [
+        "tests/integration/aftercare.test.ts",
+        "tests/integration/completion.test.ts"
+      ],
+      "test_command": "node --test tests/integration/aftercare.test.ts tests/integration/completion.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "108",
+      "approved": true,
+      "title": "Digital Product Provenance Passport",
+      "title_de": "Herkunftsnachweis für Produkte",
+      "status": "TESTED",
+      "scope": "full",
+      "internal_status": "UMGESETZT",
+      "milestone": "M2",
+      "implemented": "Öffentlicher Herkunftsnachweis je Datei über die Prüfsumme: Produktart, Version, Prüfprotokoll, Rechte, KI-Werkzeuge (keine); Warnungen bei unvollständigem Nachweis; ohne Kundendaten.",
+      "open": null,
+      "evidence": [
+        "tests/integration/production.test.ts",
+        "tests/integration/aftercare.test.ts"
+      ],
+      "test_command": "node --test tests/integration/production.test.ts tests/integration/aftercare.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "109",
+      "approved": true,
+      "title": "Causal Growth Intelligence Lab",
+      "title_de": "Ursachen von Wachstum",
+      "status": "SPECIFIED",
+      "scope": "none",
+      "internal_status": "GEPLANT",
+      "milestone": "M6",
+      "implemented": null,
+      "open": "Ursachenanalyse Wachstum.",
+      "evidence": [],
+      "test_command": null,
+      "live_verified": false
+    },
+    {
+      "id": "111",
+      "approved": true,
+      "title": "Business Demand Event Radar",
+      "title_de": "Anlässe für Nachfrage",
+      "status": "SPECIFIED",
+      "scope": "none",
+      "internal_status": "GEPLANT",
+      "milestone": "M6",
+      "implemented": null,
+      "open": "Nachfrage-Ereignisse.",
+      "evidence": [],
+      "test_command": null,
+      "live_verified": false
+    },
+    {
+      "id": "112",
+      "approved": true,
+      "title": "Verified Paid Pilot Negotiator",
+      "title_de": "Bezahlter Pilotauftrag",
+      "status": "SPECIFIED",
+      "scope": "none",
+      "internal_status": "GEPLANT",
+      "milestone": "M3",
+      "implemented": null,
+      "open": "Bezahlter Pilot.",
+      "evidence": [],
+      "test_command": null,
+      "live_verified": false
+    },
+    {
+      "id": "113",
+      "approved": true,
+      "title": "Automatic Customer Deployment Engine",
+      "title_de": "Bereitstellung beim Kunden",
+      "status": "SPECIFIED",
+      "scope": "none",
+      "internal_status": "GEPLANT",
+      "milestone": "M5",
+      "implemented": null,
+      "open": "Bereitstellung beim Kunden.",
+      "evidence": [],
+      "test_command": null,
+      "live_verified": false
+    },
+    {
+      "id": "114",
+      "approved": true,
+      "title": "Dynamic Refund Reserve Manager",
+      "title_de": "Rücklage für Erstattungen",
+      "status": "TESTED",
+      "scope": "full",
+      "internal_status": "UMGESETZT",
+      "milestone": "M4",
+      "implemented": "Rücklage aus der tatsächlichen Erstattungsquote (bei wenig Daten mindestens 10 %) plus offene Anträge; als Empfehlung, nie als auszahlbarer Gewinn.",
+      "open": null,
+      "evidence": [
+        "tests/integration/aftercare.test.ts"
+      ],
+      "test_command": "node --test tests/integration/aftercare.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "115",
+      "approved": true,
+      "title": "Professional Editable Deliverables Factory",
+      "title_de": "Bearbeitbare Lieferergebnisse",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M2",
+      "implemented": "Bearbeitbare CSV-Kalkulation (Excel-kompatibel).",
+      "open": "Weitere bearbeitbare Formate.",
+      "evidence": [
+        "tests/integration/production.test.ts"
+      ],
+      "test_command": "node --test tests/integration/production.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "116",
+      "approved": true,
+      "title": "Autonomous Industry Edition Generator",
+      "title_de": "Branchenausgaben",
+      "status": "SPECIFIED",
+      "scope": "none",
+      "internal_status": "GEPLANT",
+      "milestone": "M6",
+      "implemented": null,
+      "open": "Branchen-Editionen.",
+      "evidence": [],
+      "test_command": null,
+      "live_verified": false
+    },
+    {
+      "id": "117",
+      "approved": true,
+      "title": "Intelligent Legacy Migration Concierge",
+      "title_de": "Umzug von Altsystemen",
+      "status": "SPECIFIED",
+      "scope": "none",
+      "internal_status": "GEPLANT",
+      "milestone": "M6",
+      "implemented": null,
+      "open": "Migration von Altsystemen.",
+      "evidence": [],
+      "test_command": null,
+      "live_verified": false
+    },
+    {
+      "id": "118",
+      "approved": true,
+      "title": "Autonomous Buyer Trust Room",
+      "title_de": "Vertrauensbereich für Käufer",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M5",
+      "implemented": "Öffentliche Seite „Vertrauen & Fakten“ nur mit überprüfbaren Systemdaten: Anbieterstatus, Bezahlung, Qualität, Echtheitsprüfung, Anleitungen, echte Bewertungen (nie aus dem Testbetrieb).",
+      "open": "Verifizierte Anbieterangaben und geprüfte Rechtstexte (LA-02, LA-07).",
+      "evidence": [
+        "tests/integration/trust-recovery.test.ts"
+      ],
+      "test_command": "node --test tests/integration/trust-recovery.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "119",
+      "approved": true,
+      "title": "Consent-Based Checkout Recovery",
+      "title_de": "Abgebrochene Käufe (nur mit Einwilligung)",
+      "status": "TESTED",
+      "scope": "full",
+      "internal_status": "UMGESETZT",
+      "milestone": "M4",
+      "implemented": "Abgebrochene/fehlgeschlagene Zahlungen werden erkannt; der Kunde setzt sie im Portal selbst fort (neue Zahlungssitzung, Besitzprüfung). Keine Werbeerinnerungen.",
+      "open": null,
+      "evidence": [
+        "tests/integration/trust-recovery.test.ts"
+      ],
+      "test_command": "node --test tests/integration/trust-recovery.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "120",
+      "approved": true,
+      "title": "Customer Outcome Evidence Engine",
+      "title_de": "Ergebnisnachweise",
+      "status": "TESTED",
+      "scope": "full",
+      "internal_status": "UMGESETZT",
+      "milestone": "M5",
+      "implemented": "Freiwillige Nutzenrückmeldung nach Lieferung; schlechte Ergebnisse erzeugen eine Qualitätsmaßnahme zur Entscheidung; Einwilligung zur Veröffentlichung getrennt.",
+      "open": null,
+      "evidence": [
+        "tests/integration/aftercare.test.ts",
+        "tests/integration/completion.test.ts"
+      ],
+      "test_command": "node --test tests/integration/aftercare.test.ts tests/integration/completion.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "121",
+      "approved": true,
+      "title": "Verified Outcome Contracting",
+      "title_de": "Ergebnisbasierte Verträge",
+      "status": "SPECIFIED",
+      "scope": "none",
+      "internal_status": "GEPLANT",
+      "milestone": "M6",
+      "implemented": null,
+      "open": "Ergebnisbasierte Verträge.",
+      "evidence": [],
+      "test_command": null,
+      "live_verified": false
+    },
+    {
+      "id": "122",
+      "approved": true,
+      "title": "Autonomous Free-Tier Capacity Orchestrator",
+      "title_de": "Kostenlose Kontingente steuern",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M1",
+      "implemented": "Free-Tier-Tageslimit mit Drossel, „keine Kapazität“ statt Upgrade.",
+      "open": "Übergreifende Kontingentsteuerung.",
+      "evidence": [
+        "tests/integration/governance.test.ts",
+        "tests/integration/ops.test.ts"
+      ],
+      "test_command": "node --test tests/integration/governance.test.ts tests/integration/ops.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "123",
+      "approved": true,
+      "title": "Regulated Work & Expert Boundary Director",
+      "title_de": "Grenzen bei regulierten Tätigkeiten",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M1",
+      "implemented": "Nur freigegebene Produktklassen; regulierte Tätigkeiten nicht freischaltbar.",
+      "open": "Expertenfreigaben.",
+      "evidence": [
+        "tests/integration/governance.test.ts"
+      ],
+      "test_command": "node --test tests/integration/governance.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "124",
+      "approved": true,
+      "title": "Autonomous Customer Onboarding Tutor",
+      "title_de": "Einführung für neue Nutzer",
+      "status": "TESTED",
+      "scope": "full",
+      "internal_status": "UMGESETZT",
+      "milestone": "M0",
+      "implemented": "Anleitung je gelieferter Produktart (Inhalt, Schritte, ehrliche Grenzen – geprüft gegen die echte Datei) und Erste Schritte für den Eigentümer.",
+      "open": null,
+      "evidence": [
+        "tests/unit/console-ui.test.ts",
+        "tests/integration/bundle-change-help.test.ts"
+      ],
+      "test_command": "node --test tests/unit/console-ui.test.ts tests/integration/bundle-change-help.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "125",
+      "approved": true,
+      "title": "Machine-Readable Business Trust Passport",
+      "title_de": "Maschinenlesbarer Vertrauensnachweis",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M6",
+      "implemented": "Maschinenlesbarer Pass unter /.well-known/infinity-earn.json mit denselben überprüfbaren Fakten; Anbieterdaten ehrlich als unverifiziert.",
+      "open": "Verifizierte Anbieterangaben und Vertragsunterlagen (LA-02, LA-07).",
+      "evidence": [
+        "tests/integration/trust-recovery.test.ts"
+      ],
+      "test_command": "node --test tests/integration/trust-recovery.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "126",
+      "approved": true,
+      "title": "Autonomous Marketplace Reputation Portability",
+      "title_de": "Übertragbare Bewertungen",
+      "status": "SPECIFIED",
+      "scope": "none",
+      "internal_status": "GEPLANT",
+      "milestone": "M6",
+      "implemented": null,
+      "open": "Übertragbare Reputation.",
+      "evidence": [],
+      "test_command": null,
+      "live_verified": false
+    },
+    {
+      "id": "127",
+      "approved": true,
+      "title": "Evidence-Based Dynamic Pricing Laboratory",
+      "title_de": "Preisversuche mit Belegen",
+      "status": "SPECIFIED",
+      "scope": "none",
+      "internal_status": "GEPLANT",
+      "milestone": "M5",
+      "implemented": null,
+      "open": "Preisexperimente.",
+      "evidence": [],
+      "test_command": null,
+      "live_verified": false
+    },
+    {
+      "id": "128",
+      "approved": true,
+      "title": "Autonomous Technical Debt Director",
+      "title_de": "Technische Altlasten",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M6",
+      "implemented": "Bericht docs/tech-debt.md (npm run tech-debt): priorisiert nach Dateigröße, offenen Markierungen und fehlendem Testbezug; Releases nur nach npm run verify.",
+      "open": "Defekt- und Änderungskosten in die Priorisierung einbeziehen.",
+      "evidence": [
+        "tests/integration/pricing-lifecycle.test.ts"
+      ],
+      "test_command": "node --test tests/integration/pricing-lifecycle.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "129",
+      "approved": true,
+      "title": "Subscription Value & Churn Intelligence",
+      "title_de": "Abo-Wert und Kündigungen",
+      "status": "SPECIFIED",
+      "scope": "none",
+      "internal_status": "GEPLANT",
+      "milestone": "M5",
+      "implemented": null,
+      "open": "Abo-Wert und Kündigungen.",
+      "evidence": [],
+      "test_command": null,
+      "live_verified": false
+    },
+    {
+      "id": "130",
+      "approved": true,
+      "title": "Autonomous Dormant Asset Revival",
+      "title_de": "Ungenutzte Produkte wiederbeleben",
+      "status": "SPECIFIED",
+      "scope": "none",
+      "internal_status": "GEPLANT",
+      "milestone": "M6",
+      "implemented": null,
+      "open": "Ungenutzte Produkte wiederbeleben.",
+      "evidence": [],
+      "test_command": null,
+      "live_verified": false
+    }
+  ]
+}

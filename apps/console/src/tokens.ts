@@ -180,6 +180,10 @@ tbody td.amount{text-align:left}tbody td.full{grid-column:1/-1}tbody tr.empty-ro
 td a,.feed h3 a,td .sub a{display:inline-block;min-height:24px;padding:3px 0}
 .metric-head{min-height:44px}
 @media (max-width:900px){.tag{white-space:normal;text-align:left;line-height:1.35}}
+/* Dateivorschau: bleibt auch mobil eine echte Tabelle (originalgetreu), scrollt seitlich im Rahmen */
+@media (max-width:900px){.rawwrap table{display:table;min-width:520px}.rawwrap thead{display:table-header-group}.rawwrap tbody{display:table-row-group;padding:0}
+.rawwrap tr,.rawwrap tbody tr{display:table-row;border:0;border-radius:0;padding:0}.rawwrap th{display:table-cell;padding:10px 12px}
+.rawwrap td,.rawwrap tbody td{display:table-cell;padding:10px 12px;border-top:1px solid #E9F0EF}.rawwrap tbody td::before{content:none}}
 /* LUXURY TURQUOISE – Markenlicht nur dekorativ, sehr zurückhaltend */
 .mark{background:linear-gradient(150deg,#16323F 0%,var(--ocean) 70%);color:var(--brand);box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 6px 14px rgba(14,29,37,.18)}
 .sidebar{background:linear-gradient(180deg,#FBFDFD 0%,#F3F9F8 100%)}

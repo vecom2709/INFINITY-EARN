@@ -4,6 +4,7 @@ import { feedbackSummary } from '../../../../services/core-api/src/aftercare.ts'
 import { buyerSignals, dataFreshness, followUpCandidates } from '../../../../services/finance/src/insights.ts';
 import { effectivePolicy } from '../../../../services/core-api/src/policy-store.ts';
 import { deliveryChannel, outboxSummary } from '../../../../services/core-api/src/outbox.ts';
+import { channelStatus } from '../../../../services/core-api/src/channels.ts';
 import { pipelineLabel } from '../labels.ts';
 import { fmtDate, money } from '../model.ts';
 import { action, e, explain, modeSwitch, panel, shell, table, tag, withMode } from '../ui.ts';
@@ -122,6 +123,10 @@ ${panel({ title: 'Aktive Käufer', sub: 'Kunden mit mindestens einem angenommene
 ${panel({ title: 'Kontaktberechtigung', sub: 'Werbung nur mit Einwilligung', body: `<p style="margin:4px 0 6px"><strong>${consents.granted}</strong> aktive Einwilligung${consents.granted === 1 ? '' : 'en'} für E-Mail-Neuigkeiten · <strong>${consents.withdrawn}</strong> widerrufen</p>
 <p class="muted" style="margin:0">${effectivePolicy(pc.ctx)?.autoMarketingOutreach ? 'Automatische Folgeangebote an Kunden mit Einwilligung sind eingeschaltet.' : 'Automatische Folgeangebote sind ausgeschaltet (AUTO_MARKETING_OUTREACH). Kunden erhalten nur Nachrichten zu ihrem eigenen Auftrag.'}</p>${explain('Eine Einwilligung gilt nur für den angegebenen Zweck und kann jederzeit widerrufen werden. Öffentliche Firmendaten allein erlauben keine Werbung.')}` })}
 </div>
+${panel({ id: 'kanaele', title: 'Kommunikationskanäle', sub: 'Verbunden ist nur, was wirklich angebunden ist', flush: true, body: table(
+    [{ label: 'Kanal' }, { label: 'Richtung' }, { label: 'Status' }, { label: 'Was fehlt', full: true }],
+    channelStatus(pc.ctx).map((c) => [`<strong>${e(c.name)}</strong><span class="sub">${e(c.detail)}</span>`, e(c.direction), c.state === 'CONNECTED' ? tag('Verbunden', 'ok') : c.state === 'READ_ONLY' ? tag('Nur lesend', 'ok') : tag('Nicht verbunden', 'neutral'), c.needs ? e(c.needs) : '<span class="muted">—</span>']),
+    'Keine Kanäle', 'Kommunikationskanäle') })}
 ${renderOutboxPanel(pc)}
 ${renderFeedbackPanel(pc)}
 ${renderBuyerPanel(pc)}

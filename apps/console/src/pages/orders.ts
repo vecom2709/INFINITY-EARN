@@ -59,6 +59,7 @@ export function renderOrderDetail(pc: PageCtx, orderId: string): string | null {
   const ph = phaseOf(o.pipeline_state, bank);
   const stepList = PHASES.map((label, i) => ({ label: i === 6 && ph.index === 6 && !ph.waiting ? 'Auf Bank angekommen' : label, state: (i < ph.index ? 'done' : i === ph.index ? (ph.waiting ? 'wait' : o.pipeline_state === 'CLOSED' ? 'done' : 'now') : 'todo') as 'done' | 'now' | 'todo' | 'wait' }));
   const delivery = pc.ctx.db.get<{ released_at: string; download_count: number; revoked_at: string | null }>('SELECT released_at, download_count, revoked_at FROM deliveries WHERE order_id = ?', orderId);
+  const latestArtifact = pc.ctx.db.get<{ artifact_id: string; version: number }>('SELECT artifact_id, version FROM artifacts WHERE order_id = ? ORDER BY version DESC LIMIT 1', orderId);
   const qa = pc.ctx.db.get<{ passed: number; created_at: string }>('SELECT q.passed, q.created_at FROM qa_runs q JOIN artifacts a ON a.artifact_id = q.artifact_id WHERE a.order_id = ? ORDER BY q.created_at DESC LIMIT 1', orderId);
   const invoices = pc.ctx.db.all<{ invoice_number: string; kind: string; status: string; gross_minor: number; currency: string; created_at: string }>('SELECT invoice_number, kind, status, gross_minor, currency, created_at FROM invoices WHERE order_id = ? ORDER BY created_at', orderId);
   const contract = pc.ctx.db.get<{ created_at: string; download_count: number; buyer_type: string }>('SELECT created_at, download_count, buyer_type FROM contract_confirmations WHERE order_id = ?', orderId);
@@ -78,6 +79,7 @@ export function renderOrderDetail(pc: PageCtx, orderId: string): string | null {
     ['Angenommen', o.accepted_at ? e(fmtDate(o.accepted_at, true)) : '—'],
     ['Vertragsbestätigung', contract ? `PDF erstellt am ${e(fmtDate(contract.created_at, true))} · vom Kunden ${contract.download_count}× abgerufen` : '<span class="muted">nicht vorhanden</span>'],
     ['Qualitätsprüfung', qa ? (qa.passed ? tag('Bestanden', 'ok') : tag('Nicht bestanden', 'bad')) : '<span class="muted">noch nicht geprüft</span>'],
+    ['Live-Vorschau', latestArtifact ? `<a href="${e(withMode(`/dashboard/produkte/vorschau/${latestArtifact.artifact_id}`, mode))}">Produkt ansehen (Version ${latestArtifact.version})</a>` : '<span class="muted">Noch keine Live-Vorschau verfügbar – noch nicht produziert</span>'],
     ['Lieferung', delivery ? (delivery.revoked_at ? tag('Zurückgezogen', 'bad') : `${tag('Bereitgestellt', 'ok')} <span class="muted">${delivery.download_count}× heruntergeladen</span>`) : '<span class="muted">noch nicht geliefert</span>'],
     ['Belege', invoices.length ? invoices.map((i) => `${e(i.kind === 'CREDIT_NOTE' ? 'Gutschrift' : 'Beleg')} ${e(i.invoice_number)} · ${e(money(i.gross_minor, i.currency))}${o.test_mode ? ' <span class="muted">(Testbeleg – keine gültige Rechnung)</span>' : ''}`).join('<br>') : '<span class="muted">noch keiner</span>'],
     ['Bankeingang', bank ? tag('Auf Bank bestätigt', 'ok') : '<span class="muted">Noch nicht bestätigt – kein Bankeingang verifizierbar</span>'],

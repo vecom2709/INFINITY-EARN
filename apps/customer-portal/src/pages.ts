@@ -65,6 +65,9 @@ const HOME_CSS = `
 .cta-final .btn{min-height:54px;padding:14px 26px;font-size:16.5px;border-color:var(--brand);background:linear-gradient(180deg,#22D3CB,var(--brand));color:var(--ocean)}
 .links{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}.links a{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:10px 14px;border-radius:12px;border:1px solid var(--border-strong);background:#fff;color:var(--ink-soft)}
 .links a:hover{text-decoration:none;border-color:var(--accent)}
+.faq{margin-top:28px;max-width:860px}.faq details{border-top:1px solid var(--border);padding:16px 0}.faq details:last-child{border-bottom:1px solid var(--border)}
+.faq summary{cursor:pointer;font-weight:650;font-size:17px;list-style:none;display:flex;justify-content:space-between;gap:16px;min-height:32px;align-items:center}.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";color:var(--accent);font-size:22px;line-height:1}.faq details[open] summary::after{content:"–"}.faq p{margin:8px 0 0;color:var(--ink-soft);max-width:720px}
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion:no-preference) {
     .story-progress{display:block;animation:grow linear both;animation-timeline:scroll(root)}
@@ -91,7 +94,7 @@ const SAMPLE: Record<Lang, { title: string; items: [string, string, string] }> =
   en: { title: 'Office North installation', items: ['Installation', 'Material', 'Travel'] },
 };
 
-export function renderHome(offered: readonly string[] = ['b2b-calc-csv'], lang: Lang = 'de', origin = ''): string {
+export function renderHome(offered: readonly string[] = ['b2b-calc-csv'], lang: Lang = 'de', origin = '', price: { minMinor: number; maxMinor: number } = { minMinor: 5000, maxMinor: 200000 }): string {
   const T = HOME[lang];
   const S = SAMPLE[lang];
   const sample = asCalcInput({ title: S.title, currency: 'EUR', margin_bps: 2000, language: lang, items: [{ name: S.items[0], quantity: 2, unit_cost_minor: 4500 }, { name: S.items[1], quantity: 1, unit_cost_minor: 2000 }, { name: S.items[2], quantity: 1, unit_cost_minor: 3500 }] });
@@ -131,7 +134,10 @@ ${chapter(6, T.c6[0], `<div class="reveal"><h2 id="k6">${T.c6[1]}</h2><p class="
 ${chapter(7, T.c7[0], `<div class="reveal"><h2 id="k7">${T.c7[1]}</h2><p class="sub">${T.c7[2]}</p></div>
 <div class="tiles">${(['download', 'receipt', 'inbox'] as const).map((ic, i) => `<article class="tile reveal"><span class="ic">${icon(ic)}</span><h3>${T.portalTiles[i]?.[0] ?? ''}</h3><p>${T.portalTiles[i]?.[1] ?? ''}</p></article>`).join('')}</div>
 <p class="links"><a href="/portal">${icon('lock', 'sm')} ${T.c7[3]}</a></p>`, 'band mist')}
-<section class="cta-final" aria-labelledby="k8"><div class="chapter reveal"><h2 id="k8">${T.c8[0]}</h2><p class="sub">${T.c8[1]}</p><a class="btn" href="/anfrage">${T.ctaPrimary} ${icon('arrow', 'sm')}</a></div></section>`;
+${chapter(8, T.faq.label, `<div class="reveal"><h2 id="k8">${T.faq.h2}</h2><p class="sub">${T.faq.sub}</p></div>
+<div class="tiles">${[[T.faq.priceTitle, T.faq.price(money(price.minMinor, 'EUR'), money(price.maxMinor, 'EUR'))], [T.faq.contactTitle, T.faq.contact], [T.faq.legalTitle, T.faq.legal]].map(([h, p]) => `<article class="tile reveal"><h3 style="margin-top:0">${h}</h3><p>${p}</p></article>`).join('')}</div>
+<div class="faq reveal">${T.faq.items.map(([q, a]) => `<details><summary>${q}</summary><p>${a}</p></details>`).join('')}</div>`)}
+<section class="cta-final" aria-labelledby="k9"><div class="chapter reveal"><h2 id="k9">${T.c8[0]}</h2><p class="sub">${T.c8[1]}</p><a class="btn" href="/anfrage">${T.ctaPrimary} ${icon('arrow', 'sm')}</a></div></section>`;
   const abs = (p: string): string => `${origin}${p}`;
   return page(T.title, body, {
     testMode: true, active: 'start', wide: true, extraCss: HOME_CSS, description: T.description, lang,

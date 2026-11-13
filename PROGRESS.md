@@ -14,6 +14,33 @@ Grundlage: das 15.0-Paket (`docs/spec/v15/`, Prüfsummen laut Manifest geprüft)
 
 ---
 
+## Konsolidierter Gesamtprompt (2026-11-13)
+
+Grundlage: `INFINITY_EARN_15_GESAMTPROMPT_ALLES_IN_EINEM.md`. Abgleich und Plan: [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md). Die Nummerierung der 127 Funktionen stimmt überein.
+
+- **Admin-Live-Vorschau (§5):** unter Produkte → Live-Vorschauen sowie auf jeder Auftragsdetailseite.
+  - **Galerie:** aller produzierten Kundenprodukte mit Version, Prüfsumme, Prüfprotokoll, Lieferstatus und Suche.
+  - **Echte Ansicht:** Tabelle aus der Datei, PDF im Browser-Viewer, ZIP-Inhalt mit CRC.
+  - **Daneben:** Zusagen mit Prüfergebnis und Versionen.
+  - **Ehrlich:** Manipulierte Dateien werden nicht angezeigt; ohne Viewer steht dort „Noch keine Live-Vorschau verfügbar“. Eine Sperr-Aktion zieht die Lieferung zurück. Siehe [ADMIN_LIVE_PREVIEW.md](ADMIN_LIVE_PREVIEW.md).
+- **`/konto` (§6):** zeigt das Kundenportal. `robots.txt` sperrt den Pfad für Suchmaschinen.
+- **Kommunikationskanäle (§3):** Übersicht unter Kunden. Verbunden sind nur Website und Portal; TED ist nur lesend; E-Mail, WhatsApp, Plattformen und Telefonie stehen auf „Nicht verbunden“, jeweils mit dem, was fehlt.
+- **Landingpage (§7):** neues Kapitel „Preise & Fragen“ mit echtem Preisrahmen aus der Preisregel, 4 Fragen, Kontaktweg und ehrlichen Pflichtangaben (Testbetrieb, Impressum folgt nach Registrierung). Der Abschluss ist jetzt Kapitel 9. In DE/IT/EN.
+- **Registry-Export (§12/§13):** [FEATURE_REGISTRY_127.json](FEATURE_REGISTRY_127.json) mit 127 JA und 3 NEIN.
+  - **Stand:** 26 TESTED vollständig, 59 TESTED teilweise, 41 SPECIFIED, 1 BLOCKED, 0 LIVE_VERIFIED.
+  - **Aktualität:** Ein Test prüft, dass die Datei aktuell ist und jeder Status TESTED einen existierenden Testnachweis hat.
+- **Dokumente (§13):** [DESIGN_SYSTEM_LUXURY_TURQUOISE.md](DESIGN_SYSTEM_LUXURY_TURQUOISE.md), [SYSTEM_ARCHITECTURE.md](SYSTEM_ARCHITECTURE.md), [COMMUNICATION_AND_DELIVERY.md](COMMUNICATION_AND_DELIVERY.md), [PRODUCT_FACTORY_REAL_SOFTWARE.md](PRODUCT_FACTORY_REAL_SOFTWARE.md), [ADMIN_LIVE_PREVIEW.md](ADMIN_LIVE_PREVIEW.md), [TEST_MATRIX.md](TEST_MATRIX.md).
+- **Bewusste Abweichung:** keine MFA für den Admin. Das ist eine Entscheidung des Eigentümers vom 13.11.2026, nach Vorlage des Gesamtprompts bestätigt.
+- **Tests:** 4 neue Tests in `live-preview.test.ts`, 5 in `gesamtprompt.test.ts`. `npm run verify` → **271/271**. Screenshots der Vorschau bei 1440 und 390 px unter `docs/screenshots/m0/`.
+- **Offen:**
+  - echte Fachsoftware als Pilot (Umfang mit dem Eigentümer abstimmen)
+  - interaktive Vorschau ausführbarer Produkte
+  - Kommentare und Korrekturjobs aus der Vorschau
+  - Stripe-Abos und Stripe-Kundenportal
+  - nur mit Konten oder Freigaben des Eigentümers: E-Mail, WhatsApp, Stripe LIVE, KI-API
+
+---
+
 ## Admin-Zugang, drei Sprachen, Produktberater (2026-11-13)
 
 - **`/admin`:** Angemeldet geht es direkt zur Konsole, sonst zur Passwort-Anmeldung. Die Prüfung erfolgt auf dem Server; ein Kunden-Cookie öffnet nichts.

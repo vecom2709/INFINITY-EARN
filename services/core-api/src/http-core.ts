@@ -37,7 +37,8 @@ import { mockPay, mockPayout } from '../../finance/src/mock-provider.ts';
 import { buildTestCamt053, importBankStatement } from '../../finance/src/bank-statement.ts';
 import { buildMonthlyExport } from '../../finance/src/monthly-export.ts';
 import { handlePaymentWebhook, WebhookRejected } from '../../finance/src/payments.ts';
-import { downloadArtifact } from '../../product-factory/src/delivery.ts';
+import { downloadArtifact, quarantineArtifact } from '../../product-factory/src/delivery.ts';
+import { previewFile } from '../../product-factory/src/preview.ts';
 import { csrfValid, login, logout, sessionFromToken, type OwnerSession } from './auth.ts';
 import { autopilotTick } from './autopilot.ts';
 import type { AppContext } from './context.ts';
@@ -175,11 +176,11 @@ export function createHandler(ctx: AppContext): (r: HttpRequest) => Promise<Res>
 
   // --- Öffentlich ---------------------------------------------------------
   const origin = (): string => ctx.config.publicOrigin.replace(/\/$/, '');
-  route('GET', '/', () => html(renderHome(offeredFormats(), 'de', origin())));
-  route('GET', '/it', () => html(renderHome(offeredFormats(), 'it', origin())));
-  route('GET', '/en', () => html(renderHome(offeredFormats(), 'en', origin())));
+  route('GET', '/', () => html(renderHome(offeredFormats(), 'de', origin(), { minMinor: ctx.config.policy.quote.minMinor, maxMinor: ctx.config.policy.quote.maxMinor })));
+  route('GET', '/it', () => html(renderHome(offeredFormats(), 'it', origin(), { minMinor: ctx.config.policy.quote.minMinor, maxMinor: ctx.config.policy.quote.maxMinor })));
+  route('GET', '/en', () => html(renderHome(offeredFormats(), 'en', origin(), { minMinor: ctx.config.policy.quote.minMinor, maxMinor: ctx.config.policy.quote.maxMinor })));
   // Technische Suchmaschinen-Grundlagen: interne Bereiche werden nicht indexiert.
-  route('GET', '/robots.txt', () => ({ status: 200, headers: { 'content-type': 'text/plain; charset=utf-8' }, body: `User-agent: *\nAllow: /\nDisallow: /dashboard\nDisallow: /admin\nDisallow: /portal\nDisallow: /angebot/\nDisallow: /api/\nSitemap: ${origin()}/sitemap.xml\n` }));
+  route('GET', '/robots.txt', () => ({ status: 200, headers: { 'content-type': 'text/plain; charset=utf-8' }, body: `User-agent: *\nAllow: /\nDisallow: /dashboard\nDisallow: /admin\nDisallow: /portal\nDisallow: /konto\nDisallow: /angebot/\nDisallow: /api/\nSitemap: ${origin()}/sitemap.xml\n` }));
   route('GET', '/sitemap.xml', () => {
     const paths = ['/', '/it', '/en', '/berater', '/anfrage', '/vertrauen', ...offeredFormats().map((id) => `/hilfe/${id}`)];
     return { status: 200, headers: { 'content-type': 'application/xml; charset=utf-8' }, body: `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${paths.map((p) => `<url><loc>${origin()}${p}</loc></url>`).join('')}</urlset>\n` };
@@ -339,6 +340,8 @@ export function createHandler(ctx: AppContext): (r: HttpRequest) => Promise<Res>
     mangel: 'Danke – Ihre Mangelmeldung ist eingegangen. Wir melden uns mit einer Nachbesserung oder Erstattung.',
     bewertung: 'Danke für Ihre Rückmeldung.',
   };
+  // Kundenportal: /portal und /konto (Gesamtprompt §6) zeigen dasselbe persönliche Portal.
+  route('GET', '/konto', (req) => html(renderPortal(ctx, customerByKey(ctx, req.cookies[CUSTOMER_COOKIE]), undefined, L(req))));
   route('GET', '/portal', (req) => html(renderPortal(ctx, customerByKey(ctx, req.cookies[CUSTOMER_COOKIE]), PORTAL_MSG[req.query.get('ok') ?? ''] ?? (req.query.get('fehler') ? `${tr(L(req), 'Nicht gespeichert:')} ${tr(L(req), PORTAL_ERR[req.query.get('fehler') ?? ''] ?? 'Bitte Eingaben prüfen.')}` : undefined), L(req))));
   const PORTAL_ERR: Record<string, string> = {
     DEFECT_NEEDS_DESCRIPTION: 'Bitte beschreiben Sie den Mangel kurz.', ALREADY_DECIDED: 'Für diesen Auftrag wurde bereits entschieden.', ALREADY_RATED: 'Sie haben diesen Auftrag bereits bewertet.',
@@ -486,6 +489,31 @@ export function createHandler(ctx: AppContext): (r: HttpRequest) => Promise<Res>
   route('GET', '/dashboard', consolePage);
   route('GET', '/dashboard/:area', consolePage);
   route('GET', '/dashboard/:area/:id', consolePage);
+  route('GET', '/dashboard/:area/:id/:sub', consolePage);
+  // Admin-Live-Vorschau: Originaldatei (oder Datei aus dem Paket) zur Ansicht im Browser – nur Eigentümer, Prüfsumme geprüft.
+  route('GET', '/admin/vorschau/:id/datei', ownerGuard((req) => {
+    const f = previewFile(ctx, req.params.id ?? '', req.query.get('datei') ?? undefined);
+    if (!f) return json({ error: 'NOT_FOUND_OR_INTEGRITY' }, 404);
+    const pdf = f.mediaType === 'application/pdf';
+    return {
+      status: 200,
+      headers: {
+        'content-type': f.mediaType, 'content-disposition': `inline; filename="${f.name.replace(/[^a-z0-9._-]/gi, '_')}"`,
+        // Der eingebaute PDF-Viewer des Browsers braucht Plugin-Rechte für genau diese Antwort; HTML-Seiten bleiben bei default-src 'none'.
+        ...(pdf ? { 'content-security-policy': "default-src 'none'; object-src 'self'; style-src 'unsafe-inline'; img-src 'self' data:" } : {}),
+      },
+      body: f.bytes,
+    };
+  }));
+  route('POST', '/admin/vorschau/:id/sperren', ownerGuard((req) => {
+    try {
+      quarantineArtifact(ctx, req.params.id ?? '', 'Fehler in der Admin-Live-Vorschau gemeldet', 'owner');
+    } catch (e) {
+      if (e instanceof WorkflowError) return back(req, `Nicht möglich: ${e.code}`);
+      throw e;
+    }
+    return back(req, 'Datei gesperrt, Lieferung zurückgezogen – der Auftrag ist in der Nachbearbeitung.');
+  }, { csrf: true }));
   route('GET', '/api/status', ownerGuard(() => json(statusReport(ctx))));
   route('GET', '/api/bericht/tag', ownerGuard((req) => { const test = req.query.get('modus') === 'test'; return json(dailyReport(ctx, test, consoleDecisions(ctx, test).length)); }));
   /** Nach Owner-Aktionen zurück auf die Konsolenseite, von der die Aktion kam (nur interne Pfade). */

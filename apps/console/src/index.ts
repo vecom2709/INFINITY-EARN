@@ -4,6 +4,7 @@ import { renderFinance } from './pages/finance.ts';
 import { renderOrderDetail, renderOrders } from './pages/orders.ts';
 import { renderOverview } from './pages/overview.ts';
 import { renderProducts } from './pages/products.ts';
+import { renderPreviewDetail, renderPreviewGallery } from './pages/preview.ts';
 import { renderReports } from './pages/reports.ts';
 import { renderActivities, renderSettings } from './pages/settings.ts';
 import { modeFrom, type PageCtx } from './pages/types.ts';
@@ -23,6 +24,9 @@ export function renderConsole(ctx: AppContext, path: string, query: URLSearchPar
   const order = /^auftraege\/(ord_[a-f0-9]+)$/.exec(sub);
   if (order?.[1]) return renderOrderDetail(pc, order[1]);
   if (sub === 'produkte') return renderProducts(pc);
+  if (sub === 'produkte/vorschau') return renderPreviewGallery(pc, query.get('q') ?? '');
+  const art = /^produkte\/vorschau\/(art_[a-f0-9]+)$/.exec(sub);
+  if (art?.[1]) return renderPreviewDetail(pc, art[1]);
   if (sub === 'finanzen') return renderFinance(pc);
   if (sub === 'berichte') return renderReports(pc, query.get('stand'));
   if (sub === 'einstellungen') return renderSettings(pc);

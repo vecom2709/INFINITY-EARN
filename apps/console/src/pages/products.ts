@@ -2,7 +2,7 @@ import { modulesWithStatus } from '../../../../packages/registry/src/status.ts';
 import { getCapability, listCapabilities } from '../../../../services/product-factory/src/registry.ts';
 import { acceptanceChecks, getStandard, standardGaps } from '../../../../services/product-factory/src/quality-standard.ts';
 import { productLifecycle } from '../../../../services/finance/src/insights.ts';
-import { e, explain, metric, modeSwitch, panel, shell, table, tag } from '../ui.ts';
+import { e, explain, metric, modeSwitch, panel, shell, table, tag, withMode } from '../ui.ts';
 import { statusTag } from './reports.ts';
 import type { PageCtx } from './types.ts';
 
@@ -36,6 +36,7 @@ ${panel({ title: 'Lebenszyklus deiner Produkte', sub: 'Aus echten Lieferungen, P
     [{ label: 'Produkt' }, { label: 'Lieferungen' }, { label: 'Probleme' }, { label: 'Einschätzung', full: true }],
     productLifecycle(pc.ctx, pc.mode === 'test', caps).map((r) => [`<strong>${e(CAPABILITY_TEXT[r.product]?.name ?? r.product)}</strong><span class="sub">Version ${r.version}${r.lastSale ? ` · zuletzt verkauft ${e(r.lastSale.slice(0, 10))}` : ''}</span>`, String(r.delivered), `${r.qaFailed} Prüffehler · ${r.defects} Mängel`, `${tag(r.status, r.status === 'prüfen' ? 'bad' : r.status === 'stabil' ? 'ok' : 'neutral')}<span class="sub">${e(r.reason)}</span>`]),
     'Keine aktiven Produkte', 'Lebenszyklus') })}
+${panel({ id: 'live-vorschau', title: 'Live-Vorschauen', sub: 'Jedes produzierte Kundenprodukt mit echtem Stand und echter Ansicht', action: { href: withMode('/dashboard/produkte/vorschau', pc.mode), label: 'Alle ansehen' }, body: `<p style="margin:4px 0 0">${pc.ctx.db.get<{ n: number }>('SELECT COUNT(*) AS n FROM artifacts WHERE test_mode = ?', pc.mode === 'test' ? 1 : 0)?.n ?? 0} produzierte Datei(en) in dieser Ansicht. Tabellen, PDFs und Pakete lassen sich direkt öffnen; Version, Prüfprotokoll und Lieferstatus stehen daneben.</p>` })}
 ${panel({ id: 'standard', title: 'Premium-Produktstandard', sub: 'Verkauft und geliefert wird nur, was alle Abnahmekriterien erfüllt', flush: true, body: `${table(
     [{ label: 'Produkt' }, { label: 'Zweck' }, { label: 'Abnahmekriterien' }, { label: 'Stand', full: true }],
     listCapabilities().filter((c) => c.enabled || getStandard(c.id)).map((c) => {

@@ -12,6 +12,7 @@ export interface HomeText {
   c2: [string, string, string]; c3: [string, string, string, string, string]; c4: [string, string, string]; c5: [string, string, string, string, string];
   c6: [string, string, string]; flow: [string, string][]; c7: [string, string, string, string]; portalTiles: [string, string][]; c8: [string, string];
   guide: string; products: Record<string, { label: string; text: string }>;
+  faq: { label: string; h2: string; sub: string; priceTitle: string; price: (min: string, max: string) => string; contactTitle: string; contact: string; legalTitle: string; legal: string; items: [string, string][] };
 }
 
 export const HOME: Record<Lang, HomeText> = {
@@ -35,6 +36,18 @@ export const HOME: Record<Lang, HomeText> = {
     portalTiles: [['Dateien', 'Geprüfte Dateien zum Herunterladen.'], ['Rechnungen', 'Rechnung und Vertragsbestätigung als PDF.'], ['Support', 'Fragen, Änderungen und Mängel direkt im Portal.']],
     c8: ['Bereit für Ihr Angebot?', 'Unverbindlich, bis Sie annehmen und bezahlen.'],
     guide: 'Anleitung',
+    faq: {
+      label: 'Preise & Fragen', h2: 'Klare Preise, klare Antworten.', sub: 'Alles, was Sie vor einer Bestellung wissen sollten.',
+      priceTitle: 'So entsteht der Preis', price: (min, max) => `Jedes Angebot ist ein Festpreis aus dem tatsächlichen Aufwand plus Marge – mindestens ${min}, höchstens ${max} je Auftrag. Umsatzsteuer wird ausgewiesen, sobald der Steuerkontext geprüft ist. Stripe-Gebühren tragen wir.`,
+      contactTitle: 'Kontakt', contact: 'Fragen zu einer Bestellung stellen Sie direkt im Kundenportal – die Antwort steht dort im Verlauf. Für neue Wünsche nutzen Sie den Produktberater.',
+      legalTitle: 'Anbieter und Pflichtangaben', legal: 'INFINITY EARN befindet sich im Testbetrieb. Vollständige Anbieterangaben (Impressum), AGB und Datenschutzerklärung werden vor dem Echtbetrieb nach der Registrierung veröffentlicht. Bis dahin finden keine echten Verkäufe statt.',
+      items: [
+        ['Was passiert nach der Zahlung?', 'Die Datei wird automatisch erstellt und geprüft. Sie finden sie mit Rechnung und Vertragsbestätigung im Kundenportal.'],
+        ['Was, wenn etwas nicht stimmt?', 'Melden Sie den Mangel im Portal. Wir bessern nach – oder der Betrag wird erstattet, wenn die zugesagte Qualität nicht erreicht wird.'],
+        ['Kann ich nachträglich etwas ergänzen?', 'Ja. Zusätzliche Positionen werden als eigenes Angebot kalkuliert und erst nach Ihrer Annahme und Zahlung beauftragt.'],
+        ['Welche Daten speichern Sie?', 'Nur, was für Angebot, Vertrag, Lieferung und Rechnung nötig ist. Eine Kopie Ihrer Daten laden Sie jederzeit im Portal herunter.'],
+      ],
+    },
     products: {
       'b2b-calc-csv': { label: 'Tabelle (CSV, in Excel bearbeitbar)', text: 'Zum Weiterrechnen in Excel oder LibreOffice.' },
       'b2b-calc-pdf': { label: 'Druckfertiges PDF', text: 'Zum Weitergeben, Drucken oder Ablegen.' },
@@ -61,6 +74,18 @@ export const HOME: Record<Lang, HomeText> = {
     portalTiles: [['File', 'File verificati da scaricare.'], ['Fatture', 'Fattura e conferma del contratto in PDF.'], ['Assistenza', 'Domande, modifiche e difetti direttamente nell’area clienti.']],
     c8: ['Pronti per la vostra offerta?', 'Senza impegno finché non accettate e pagate.'],
     guide: 'Istruzioni',
+    faq: {
+      label: 'Prezzi e domande', h2: 'Prezzi chiari, risposte chiare.', sub: 'Tutto ciò che è utile sapere prima di ordinare.',
+      priceTitle: 'Come nasce il prezzo', price: (min, max) => `Ogni offerta è a prezzo fisso, calcolata dal lavoro effettivo più il margine – minimo ${min}, massimo ${max} per ordine. L’IVA viene indicata appena il contesto fiscale è verificato. Le commissioni Stripe sono a nostro carico.`,
+      contactTitle: 'Contatti', contact: 'Le domande su un ordine si pongono direttamente nell’area clienti – la risposta compare lì nello storico. Per nuove richieste usate il consulente prodotti.',
+      legalTitle: 'Fornitore e informazioni obbligatorie', legal: 'INFINITY EARN è in modalità test. Le informazioni complete sul fornitore, le condizioni generali e l’informativa privacy saranno pubblicate dopo la registrazione, prima dell’esercizio reale. Fino ad allora non avvengono vendite reali.',
+      items: [
+        ['Cosa succede dopo il pagamento?', 'Il file viene creato e verificato automaticamente. Lo trovate con fattura e conferma del contratto nell’area clienti.'],
+        ['E se qualcosa non va?', 'Segnalate il difetto nell’area clienti. Correggiamo – oppure l’importo viene rimborsato se la qualità promessa non è raggiunta.'],
+        ['Posso aggiungere qualcosa dopo?', 'Sì. Le voci aggiuntive vengono calcolate come offerta separata e incaricate solo dopo accettazione e pagamento.'],
+        ['Quali dati conservate?', 'Solo quanto serve per offerta, contratto, consegna e fattura. Una copia dei vostri dati si scarica in qualsiasi momento nell’area clienti.'],
+      ],
+    },
     products: {
       'b2b-calc-csv': { label: 'Tabella (CSV, modificabile in Excel)', text: 'Per continuare a calcolare in Excel o LibreOffice.' },
       'b2b-calc-pdf': { label: 'PDF pronto per la stampa', text: 'Da inoltrare, stampare o archiviare.' },
@@ -87,6 +112,18 @@ export const HOME: Record<Lang, HomeText> = {
     portalTiles: [['Files', 'Verified files to download.'], ['Invoices', 'Invoice and contract confirmation as PDF.'], ['Support', 'Questions, changes and defects right in the portal.']],
     c8: ['Ready for your quote?', 'Non-binding until you accept and pay.'],
     guide: 'Guide',
+    faq: {
+      label: 'Prices & FAQ', h2: 'Clear prices, clear answers.', sub: 'Everything you should know before ordering.',
+      priceTitle: 'How the price is set', price: (min, max) => `Every quote is a fixed price based on the actual effort plus margin – at least ${min}, at most ${max} per order. VAT is shown once the tax context has been verified. We cover Stripe fees.`,
+      contactTitle: 'Contact', contact: 'Ask questions about an order directly in the customer portal – the reply appears there in the history. For new requests, use the product advisor.',
+      legalTitle: 'Provider and legal information', legal: 'INFINITY EARN is in test mode. Full provider details, terms and privacy policy will be published after registration, before live operation. Until then no real sales take place.',
+      items: [
+        ['What happens after payment?', 'The file is created and checked automatically. You will find it with the invoice and contract confirmation in the customer portal.'],
+        ['What if something is wrong?', 'Report the defect in the portal. We fix it – or the amount is refunded if the promised quality is not met.'],
+        ['Can I add something later?', 'Yes. Additional items are quoted separately and only ordered after you accept and pay.'],
+        ['What data do you store?', 'Only what is needed for quote, contract, delivery and invoice. You can download a copy of your data in the portal at any time.'],
+      ],
+    },
     products: {
       'b2b-calc-csv': { label: 'Spreadsheet (CSV, editable in Excel)', text: 'For further calculation in Excel or LibreOffice.' },
       'b2b-calc-pdf': { label: 'Print-ready PDF', text: 'For sharing, printing or filing.' },
