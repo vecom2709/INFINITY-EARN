@@ -50,6 +50,7 @@ export function renderSettings(pc: PageCtx): string {
   });
 
   const body = `
+${panel({ id: 'sicherheit', title: 'Anmeldung absichern', sub: 'Zweiter Faktor per Passkey – Windows Hello oder Handy, ohne App', action: { href: '/dashboard/sicherheit', label: 'Sicherheit öffnen' }, body: '<p style="margin:4px 0 0">Schützt die Verwaltung, auch wenn jemand dein Passwort kennt. Vor dem Echtbetrieb einschalten.</p>' })}
 ${panel({ id: 'autopilot', title: 'Stopp-Schalter', sub: 'Du kannst jede Tätigkeit jederzeit sofort anhalten', flush: true, body: table([{ label: 'Tätigkeit' }, { label: 'Zustand' }, { label: 'Aktion', full: true }], stopRows, 'Keine Schalter', 'Stopp-Schalter') })}
 ${panel({ id: 'freigaben', title: `Live-Freigaben (${rs.done} von ${rs.total})`, sub: 'Erst wenn alle Punkte mit Nachweis freigegeben sind, kann der Echtbetrieb vorbereitet werden', flush: true, body: `${table([{ label: 'Punkt' }, { label: 'Stand' }, { label: 'Aktualisieren', full: true }], laRows, 'Keine Freigabepunkte', 'Live-Freigaben')}
 <div style="padding:0 24px 18px">${explain('Freigaben kannst nur du erteilen – mit einem Nachweis (z. B. Registrierungsnummer, Bestätigung des Zahlungsanbieters, geprüfte Texte). Das System erteilt keine Freigabe selbst. Auch nach allen Freigaben bleibt der Echtbetrieb gesperrt, bis er bewusst technisch eingeschaltet wird.')}</div>` })}

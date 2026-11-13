@@ -1,5 +1,6 @@
 import { randomToken, safeEqual, sha256Hex, verifyPassword } from '../../../packages/shared/src/crypto.ts';
 import type { AppContext } from './context.ts';
+import { createChallenge, mfaStatus } from './mfa.ts';
 
 /** Owner-Basisauthentifizierung: scrypt-Passwort, serverseitige Sessions, CSRF-Token, Login-Ratenlimit. */
 export interface OwnerSession {
@@ -28,7 +29,7 @@ export function resetLoginAttempts(): void {
   attempts.clear();
 }
 
-export function login(ctx: AppContext, password: string, ip: string): { ok: true; token: string; csrf: string } | { ok: false; reason: 'DISABLED' | 'RATE_LIMITED' | 'INVALID' } {
+export function login(ctx: AppContext, password: string, ip: string): { ok: true; token: string; csrf: string } | { ok: true; mfaChallenge: string } | { ok: false; reason: 'DISABLED' | 'RATE_LIMITED' | 'INVALID' } {
   const now = ctx.clock().getTime();
   if (!ctx.config.ownerPasswordHash) return { ok: false, reason: 'DISABLED' };
   if (loginRateLimited(ip, now)) {
@@ -41,6 +42,17 @@ export function login(ctx: AppContext, password: string, ip: string): { ok: true
     return { ok: false, reason: 'INVALID' };
   }
   attempts.delete(ip);
+  // Zwei-Faktor aktiv: erst nach dem App- oder Wiederherstellungscode gibt es eine Sitzung.
+  if (mfaStatus(ctx).enabled) {
+    ctx.audit.record({ type: 'security.login_password_ok_mfa_pending', actor: 'owner', subjectType: 'auth', subjectId: 'owner', testMode: ctx.config.testMode });
+    return { ok: true, mfaChallenge: createChallenge(ctx) };
+  }
+  return createSession(ctx);
+}
+
+/** Owner-Sitzung anlegen (nach Passwort bzw. nach Passwort + zweitem Faktor). */
+export function createSession(ctx: AppContext): { ok: true; token: string; csrf: string } {
+  const now = ctx.clock().getTime();
   const token = randomToken(32);
   const csrf = randomToken(24);
   ctx.db.run(

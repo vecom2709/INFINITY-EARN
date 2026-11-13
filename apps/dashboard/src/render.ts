@@ -206,6 +206,23 @@ ${drafts.map((d) => `<tr><td><a href="/admin/drafts/${e(d.draft_id)}">${e(d.draf
 </table></div>`;
 }
 
+/** Anmeldung Stufe 2: Bestätigung per Passkey (Windows Hello, Handy) oder Wiederherstellungscode. */
+export function renderMfaLogin(error?: string): string {
+  return page(
+    'INFINITY EARN – Bestätigung',
+    `<h1>Zweiter Schritt</h1><div class="card" style="max-width:440px">
+${error ? `<p class="err">${e(error)}</p>` : ''}
+<p>Bestätige die Anmeldung mit deinem Gerät – Windows Hello (PIN oder Fingerabdruck) oder die Entsperrung deines Handys.</p>
+<p><button type="button" id="pk-login">Mit Passkey bestätigen</button></p>
+<p id="pk-msg" role="status" aria-live="polite"></p>
+<details><summary>Kein Gerät zur Hand? Wiederherstellungscode verwenden</summary>
+<form method="post" action="/auth/mfa"><label for="code">Wiederherstellungscode</label><input id="code" name="code" autocomplete="one-time-code" maxlength="12" required>
+<p><button>Bestätigen</button></p></form></details>
+<p><a href="/login">Zurück zur Anmeldung</a></p></div>
+<script src="/assets/passkey.js" defer></script>`,
+  );
+}
+
 export function renderLogin(error?: string): string {
   return page(
     'INFINITY EARN – Anmeldung',

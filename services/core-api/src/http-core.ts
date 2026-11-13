@@ -2,7 +2,10 @@ import { toMinor } from '../../../packages/contracts/src/money.ts';
 import { STOP_NAMES, type StopName } from '../../../packages/policies/src/engine.ts';
 import { log } from '../../../packages/events/src/logger.ts';
 import { sha256Hex } from '../../../packages/shared/src/crypto.ts';
-import { renderDashboard, renderLogin } from '../../../apps/dashboard/src/render.ts';
+import { renderDashboard, renderLogin, renderMfaLogin } from '../../../apps/dashboard/src/render.ts';
+import { loginOptions, registrationOptions, register, removePasskey, verifySecondFactor, type AssertionInput, type RegistrationInput } from './mfa.ts';
+import { renderMfa } from '../../../apps/console/src/pages/mfa.ts';
+import { PASSKEY_CSP, PASSKEY_JS } from '../../../apps/console/src/passkey-script.ts';
 import { renderConsole, safeBack, statusReport, withFlash } from '../../../apps/console/src/index.ts';
 import {
   renderAdvisor, renderCheckoutReturn, renderHome, renderInquiryForm, renderInquiryResult, renderMockCheckout, renderHelp, renderPortal, renderProvenance, renderQuote, renderTrust,
@@ -56,7 +59,7 @@ import { buildMonthlyExport } from '../../finance/src/monthly-export.ts';
 import { handlePaymentWebhook, WebhookRejected } from '../../finance/src/payments.ts';
 import { downloadArtifact, quarantineArtifact } from '../../product-factory/src/delivery.ts';
 import { previewFile } from '../../product-factory/src/preview.ts';
-import { csrfValid, login, logout, sessionFromToken, type OwnerSession } from './auth.ts';
+import { createSession, csrfValid, login, loginRateLimited, logout, sessionFromToken, type OwnerSession } from './auth.ts';
 import { autopilotTick } from './autopilot.ts';
 import type { AppContext } from './context.ts';
 import { createSupportTicket, customerByKey, exportPersonalData } from './customers.ts';
@@ -115,6 +118,8 @@ export function isUploadRequest(method: string, url: string, contentType: string
   return UPLOAD_PATH.test(path) && /^multipart\/form-data/i.test(contentType ?? '');
 }
 const OWNER_COOKIE = 'ie_owner';
+/** Kurzlebige Zwei-Faktor-Prüfung nach richtigem Passwort (keine Sitzung). */
+const MFA_COOKIE = 'ie_mfa';
 const CUSTOMER_COOKIE = 'ie_customer';
 /** Nur die gewählte Sprache (de/it/en) – kein Tracking, keine personenbezogenen Daten. */
 const LANG_COOKIE = 'ie_lang';
@@ -603,8 +608,53 @@ export function createHandler(ctx: AppContext): (r: HttpRequest) => Promise<Res>
       const msg = r.reason === 'RATE_LIMITED' ? 'Zu viele Fehlversuche – bitte später erneut.' : r.reason === 'DISABLED' ? 'Login deaktiviert.' : 'Anmeldung fehlgeschlagen.';
       return html(renderLogin(msg), r.reason === 'RATE_LIMITED' ? 429 : 401);
     }
+    if ('mfaChallenge' in r) return redirect('/login/mfa', { 'set-cookie': cookie(ctx, MFA_COOKIE, r.mfaChallenge, 5 * 60) });
     return redirect('/dashboard', { 'set-cookie': cookie(ctx, OWNER_COOKIE, r.token, ctx.config.sessionTtlMinutes * 60) });
   });
+  // ---- Zweiter Faktor (Passkey) – Stufe 2 nur mit gültiger Passwort-Prüfung im Cookie (5 Min., höchstens 5 Versuche)
+  route('GET', '/assets/passkey.js', () => ({ status: 200, headers: { 'content-type': 'text/javascript; charset=utf-8', 'cache-control': 'no-store' }, body: PASSKEY_JS }));
+  route('GET', '/login/mfa', (req) => (req.cookies[MFA_COOKIE] ? html(renderMfaLogin(), 200, { 'content-security-policy': PASSKEY_CSP }) : redirect('/login')));
+  const json2 = (req: Req): Record<string, unknown> => {
+    try {
+      return JSON.parse(req.body || '{}') as Record<string, unknown>;
+    } catch {
+      return {};
+    }
+  };
+  const finishLogin = (): Res => {
+    const s = createSession(ctx);
+    return { status: 200, headers: { 'content-type': 'application/json; charset=utf-8', 'set-cookie': [cookie(ctx, OWNER_COOKIE, s.token, ctx.config.sessionTtlMinutes * 60), cookie(ctx, MFA_COOKIE, '', 0)] }, body: '{"ok":true}' };
+  };
+  route('POST', '/auth/mfa/optionen', (req) => {
+    const o = loginOptions(ctx, req.cookies[MFA_COOKIE]);
+    return o ? json(o) : json({ error: 'EXPIRED' }, 401);
+  });
+  route('POST', '/auth/mfa/passkey', (req) => {
+    if (loginRateLimited(req.ip, ctx.clock().getTime())) return json({ error: 'RATE_LIMITED' }, 429);
+    const v = verifySecondFactor(ctx, req.cookies[MFA_COOKIE], { assertion: json2(req) as AssertionInput });
+    return v.ok ? finishLogin() : json({ error: v.reason }, 401);
+  });
+  route('POST', '/auth/mfa', (req) => {
+    if (loginRateLimited(req.ip, ctx.clock().getTime())) return html(renderMfaLogin('Zu viele Fehlversuche – bitte später erneut.'), 429, { 'content-security-policy': PASSKEY_CSP });
+    const v = verifySecondFactor(ctx, req.cookies[MFA_COOKIE], { recoveryCode: form(req).get('code') ?? '' });
+    if (!v.ok) {
+      if (v.reason === 'INVALID') return html(renderMfaLogin('Wiederherstellungscode ungültig oder bereits verwendet.'), 401, { 'content-security-policy': PASSKEY_CSP });
+      return html(renderLogin(v.reason === 'LOCKED' ? 'Zu viele Fehlversuche – bitte erneut mit Passwort anmelden.' : 'Bestätigung abgelaufen – bitte erneut anmelden.'), 401, { 'set-cookie': cookie(ctx, MFA_COOKIE, '', 0) });
+    }
+    const s = createSession(ctx);
+    return redirect('/dashboard', { 'set-cookie': [cookie(ctx, OWNER_COOKIE, s.token, ctx.config.sessionTtlMinutes * 60), cookie(ctx, MFA_COOKIE, '', 0)] });
+  });
+  // ---- Passkeys verwalten (nur Eigentümer, CSRF)
+  route('GET', '/dashboard/sicherheit', ownerGuard((req, s) => html(renderMfa({ ctx, csrf: s.csrf_token, mode: 'live', path: '/dashboard/sicherheit', ...(req.query.get('msg') ? { flash: req.query.get('msg') as string } : {}) }), 200, { 'content-security-policy': PASSKEY_CSP })));
+  route('POST', '/admin/mfa/passkey/optionen', ownerGuard(() => json(registrationOptions(ctx)), { csrf: true }));
+  route('POST', '/admin/mfa/passkey/registrieren', ownerGuard((req) => {
+    const r = register(ctx, json2(req) as RegistrationInput);
+    return json(r, r.ok ? 200 : 400);
+  }, { csrf: true }));
+  route('POST', '/admin/mfa/passkey/entfernen', ownerGuard((req) => {
+    const f = form(req);
+    return back(req, removePasskey(ctx, f.get('cred') ?? '', f.get('code') ?? undefined) ? 'Gerät entfernt.' : 'Nicht entfernt: Für das letzte Gerät ist ein gültiger Wiederherstellungscode nötig.');
+  }, { csrf: true }));
   route('POST', '/auth/logout', ownerGuard((req) => {
     logout(ctx, req.cookies[OWNER_COOKIE]);
     return redirect('/login', { 'set-cookie': cookie(ctx, OWNER_COOKIE, '', 0) });
