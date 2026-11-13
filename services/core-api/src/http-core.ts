@@ -10,6 +10,7 @@ import {
 import { HERO_IMAGES } from '../../../apps/customer-portal/src/hero-images.generated.ts';
 import { renderArticle, renderLanding, renderWwProduct, TAX_PRESETS, WW_SLUG } from '../../../apps/customer-portal/src/product-pages.ts';
 import { MINI_WW_BUNDLE } from '../../../products/mini-ww/generated/bundle.ts';
+import { buildWinManual } from '../../../products/win-lager/manual.ts';
 import { SHOTS_JPEG_BASE64 } from '../../../products/mini-ww/generated/shots.ts';
 import { CSP as WW_CSP, htmlFromBundle } from '../../../products/mini-ww/html.ts';
 import { manualSeed } from '../../../products/mini-ww/seed.ts';
@@ -634,6 +635,13 @@ export function createHandler(ctx: AppContext): (r: HttpRequest) => Promise<Res>
     const pdf = readZip(musterPaket(req.query.get('lang') ?? 'de')).find((x) => x.name === MINI_WW_FILES.pdf);
     if (!pdf) return json({ error: 'NOT_FOUND' }, 404);
     return { status: 200, headers: { 'content-type': 'application/pdf', 'content-disposition': 'inline; filename="bedienungsanleitung.pdf"', 'content-security-policy': "default-src 'none'; object-src 'self'; style-src 'unsafe-inline'; img-src 'self' data:" }, body: pdf.bytes };
+  }));
+  /** Anleitung des Windows-Programms (Funktion 157) mit Musterfirma – zur Ansicht vor der Freigabe. */
+  route('GET', '/admin/muster/win-lager/anleitung.pdf', ownerGuard((req) => {
+    const q = req.query.get('lang');
+    const lang = q === 'it' || q === 'en' ? q : 'de';
+    const pdf = buildWinManual({ company: lang === 'it' ? 'Azienda Esempio' : lang === 'en' ? 'Example Company' : 'Musterfirma', color: '#1F5FA8', lang, country: lang === 'it' ? 'IT' : 'DE', productId: 'win-lager', version: '1.0.0' });
+    return { status: 200, headers: { 'content-type': 'application/pdf', 'content-disposition': `inline; filename="anleitung-lager-rechnung-${lang}.pdf"`, 'content-security-policy': "default-src 'none'; object-src 'self'; style-src 'unsafe-inline'; img-src 'self' data:" }, body: pdf.bytes };
   }));
   route('GET', '/admin/muster/mini-ww/paket.zip', ownerGuard((req) => ({ status: 200, headers: { 'content-type': 'application/zip', 'content-disposition': 'attachment; filename="mini-ww-muster.zip"' }, body: musterPaket(req.query.get('lang') ?? 'de') })));
   route('POST', '/admin/vorschau/:id/sperren', ownerGuard((req) => {

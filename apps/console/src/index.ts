@@ -9,6 +9,7 @@ import { renderProducts } from './pages/products.ts';
 import { renderPreviewDetail, renderPreviewGallery } from './pages/preview.ts';
 import { renderReports } from './pages/reports.ts';
 import { renderActivities, renderSettings } from './pages/settings.ts';
+import { renderWinLager } from './pages/win-lager.ts';
 import { modeFrom, type PageCtx } from './pages/types.ts';
 
 export { statusReport } from './status-report.ts';
@@ -31,6 +32,7 @@ export function renderConsole(ctx: AppContext, path: string, query: URLSearchPar
   if (sub === 'produkte') return renderProducts(pc);
   if (sub === 'produkte/vorschau') return renderPreviewGallery(pc, query.get('q') ?? '');
   if (sub === 'produkte/mini-ww') return renderProductRelease(pc, 'mini-ww');
+  if (sub === 'produkte/win-lager') return renderWinLager(pc);
   if (sub === 'wachstum') return renderGrowth(pc);
   const art = /^produkte\/vorschau\/(art_[a-f0-9]+)$/.exec(sub);
   if (art?.[1]) return renderPreviewDetail(pc, art[1]);

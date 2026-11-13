@@ -41,9 +41,9 @@ namespace InfinityEarn.WinLager
             BackColor = Color.FromArgb(246, 248, 250);
             AutoScaleMode = AutoScaleMode.Dpi;
 
-            var header = new Panel { Dock = DockStyle.Top, Height = 64, BackColor = accent };
+            var header = new Panel { Dock = DockStyle.Top, Height = 70, BackColor = accent };
             var title = new Label { Text = brand.Company, ForeColor = ReadableOn(accent), Font = new Font("Segoe UI Semibold", 16f), AutoSize = true, Location = new Point(20, 8), UseMnemonic = false };
-            var sub = new Label { Text = brand.ProductName + " · Version " + brand.Version, ForeColor = ReadableOn(accent), AutoSize = true, Location = new Point(22, 38), UseMnemonic = false };
+            var sub = new Label { Text = brand.ProductName + " · " + L("version") + " " + brand.Version, ForeColor = ReadableOn(accent), AutoSize = true, Location = new Point(22, 44), UseMnemonic = false };
             header.Controls.Add(title);
             header.Controls.Add(sub);
 
@@ -155,14 +155,14 @@ namespace InfinityEarn.WinLager
         static int ParseQty(string s)
         {
             int q;
-            if (!int.TryParse((s ?? "").Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out q) || q <= 0) throw new DomainException("QTY", "Menge: ganze Zahl ab 1");
+            if (!int.TryParse((s ?? "").Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out q) || q <= 0) throw DomainException.Of("QTY", "e_qty_int");
             return q;
         }
 
         static int ParseMin(string s)
         {
             int q;
-            if (!int.TryParse((s ?? "").Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out q) || q < 0) throw new DomainException("MIN", "Mindestbestand: ganze Zahl ab 0");
+            if (!int.TryParse((s ?? "").Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out q) || q < 0) throw DomainException.Of("MIN", "e_min_int");
             return q;
         }
 
@@ -228,7 +228,7 @@ namespace InfinityEarn.WinLager
         static string SkuOf(ComboBox cb)
         {
             var s = cb.SelectedItem as string;
-            if (s == null) throw new DomainException("NOT_FOUND", "Bitte einen Artikel wählen");
+            if (s == null) throw DomainException.Of("NOT_FOUND", "e_choose");
             return s.Split(new[] { " – " }, StringSplitOptions.None)[0];
         }
 
@@ -288,6 +288,27 @@ namespace InfinityEarn.WinLager
             try { System.Diagnostics.Process.Start(WriteInvoiceFile(inv)); } catch (Exception ex) { Fail(ex); }
         }
 
+        // ------------------------------------------------------------ Anleitung (nur Abbildungsmodus --shots)
+
+        /// <summary>Artikel in der Liste auswählen (füllt das Formular) – für die Abbildungen der Anleitung.</summary>
+        public void SelectArticle(string sku)
+        {
+            foreach (DataGridViewRow r in articleGrid.Rows)
+                if (string.Equals(Convert.ToString(r.Cells[0].Value), sku, StringComparison.OrdinalIgnoreCase)) { r.Selected = true; articleGrid.CurrentCell = r.Cells[0]; FillArticleForm(); return; }
+        }
+
+        /// <summary>Statuszeile setzen – für die Abbildungen der Anleitung (dort ohne echten Benutzerpfad).</summary>
+        public void ShowStatus(string text) { Say(text); }
+
+        /// <summary>Rechnungsentwurf vorbelegen (nicht gespeichert) – für die Abbildungen der Anleitung.</summary>
+        public void DemoDraft(string customer, IEnumerable<KeyValuePair<string, int>> lines)
+        {
+            iCustomer.Text = customer;
+            draft.Clear();
+            draft.AddRange(lines);
+            RefreshDraft();
+        }
+
         // ------------------------------------------------------------ Anzeigen
 
         void RefreshDraft()
@@ -312,7 +333,7 @@ namespace InfinityEarn.WinLager
         {
             foreach (DataGridViewColumn c in g.Columns)
             {
-                c.FillWeight = c.Name == wide ? 260 : 100;
+                c.FillWeight = c.Name == wide ? 340 : 100;
                 c.MinimumWidth = Math.Max(c.Name == wide ? 160 : 0, TextRenderer.MeasureText(c.HeaderText, g.ColumnHeadersDefaultCellStyle.Font ?? g.Font).Width + 16);
                 if (numeric.Contains(c.Name)) { c.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight; c.HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleRight; }
             }
@@ -343,6 +364,8 @@ namespace InfinityEarn.WinLager
             moveGrid.Columns.Clear();
             foreach (var k in new[] { "date", "sku", "qty", "onhand", "reason" }) moveGrid.Columns.Add(k, L(k));
             Shape(moveGrid, "reason", new[] { "qty", "onhand" });
+            // Datum mit Uhrzeit nie abschneiden
+            moveGrid.Columns["date"].MinimumWidth = TextRenderer.MeasureText(new DateTime(2026, 12, 28, 23, 59, 0).ToString("g", culture), moveGrid.Font).Width + 18;
             foreach (var m in Enumerable.Reverse(store.Movements).Take(500)) moveGrid.Rows.Add(m.At.ToString("g", culture), m.Sku, (m.Delta > 0 ? "+" : "") + m.Delta, m.StockAfter, m.Reason);
 
             invoiceGrid.Columns.Clear();

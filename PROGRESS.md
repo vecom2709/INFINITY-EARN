@@ -35,11 +35,22 @@ Grundlage: das 15.0-Paket (`docs/spec/v15/`, Prüfsummen laut Manifest geprüft)
 - **Vom Test gefundene und behobene Fehler:**
   - Update lief bei geöffnetem Programm durch → jetzt geprüft, Exit-Code 4.
   - Gleichzeitige Speicherungen verloren Daten → jetzt gesperrt, eigene Temp-Datei.
-- **Offen:**
-  - Bau je Auftrag aus der Cloud-Produktion: Der Cloudflare-Worker kann keine Windows-Programme bauen, dafür braucht es einen Windows-Build-Rechner.
-  - Bebilderte Anleitung und Verkaufsfreigabe.
-  - Code-Signatur (Kosten, deine Entscheidung).
-  - Fehlermeldungen der Fachregeln sind nur deutsch.
+- **Bebilderte Anleitung und Freigabe-Akte (Nachtrag 13.11.2026):**
+  - Anleitung als PDF in DE/IT/EN mit 8 Kapiteln und echten Bildschirmfotos des gebauten Programms (`products/win-lager/manual.ts`).
+    - Die Fotos erzeugt das Programm selbst im Modus `--shots` mit Beispieldaten in einem eigenen Temp-Ordner; Kundendaten werden nie berührt.
+    - Knopf- und Feldnamen sowie die Meldungen werden wörtlich aus `Strings.cs` übernommen.
+    - Ein Test schlägt fehl, sobald Oberfläche oder Texte sich ändern und die Fotos nicht neu erzeugt wurden (`node scripts/build-win-lager-assets.ts`).
+  - Jede Kundenfassung bekommt ihre Anleitung mit Firmenname, Farbe und Steuersätzen neben dem Installer.
+  - Admin: `/dashboard/produkte/win-lager` mit der Anleitung in drei Sprachen und einer Freigabe-Akte (`products/win-lager/release.ts`). Anleitung und Texte werden beim Öffnen live geprüft.
+  - Die Fotos haben echte Fehler gezeigt, die behoben sind:
+    - Lagerbuchungen standen auch in der italienischen Fassung auf Deutsch.
+    - Der echte Benutzerpfad stand in der Statuszeile.
+    - Der Firmenname war unten abgeschnitten, die Datumsspalte ebenfalls.
+  - Alle Meldungen der Fachregeln und des Installers gibt es jetzt in DE/IT/EN.
+- **Offen (sperrt den Verkauf, kein Freigabeknopf):**
+  - **Rechnungen nicht rechtlich vollständig.** Es fehlen Pflichtangaben (Anschriften, Steuernummer/USt-IdNr., Leistungsdatum; § 14 UStG). In Italien ist eine elektronische Rechnung (FatturaPA über das SdI) Pflicht. Entscheidung: ergänzen oder ohne Rechnungsfunktion verkaufen.
+  - **Bau je Auftrag aus der Cloud-Produktion:** Der Cloudflare-Worker kann keine Windows-Programme bauen, dafür braucht es einen Windows-Build-Rechner.
+- **Offen (sperrt nicht):** Code-Signatur (Kosten, deine Entscheidung); Festpreis; Windows 10 ungeprüft.
 
 ---
 

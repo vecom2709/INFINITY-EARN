@@ -24,6 +24,11 @@ namespace InfinityEarn.WinLagerSetup
         static string DefaultDir { get { return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Programs", "InfinityEarn", SetupData.ProductId); } }
         static string DataDir { get { return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "InfinityEarn", SetupData.ProductId); } }
 
+        /// <summary>Text in der Sprache der Kundenfassung (de/it/en).</summary>
+        static string T(string de, string it, string en) { return SetupData.Language == "it" ? it : SetupData.Language == "en" ? en : de; }
+
+        static string Running { get { return T("Das Programm läuft noch. Bitte schließen und erneut versuchen. Es wurde nichts verändert.", "Il programma è ancora aperto. Chiuderlo e riprovare. Non è stato modificato nulla.", "The program is still running. Please close it and try again. Nothing was changed."); } }
+
         static void Log(string msg)
         {
             try { File.AppendAllText(logPath, DateTime.Now.ToString("s") + " " + msg + Environment.NewLine, Encoding.UTF8); } catch { }
@@ -51,7 +56,7 @@ namespace InfinityEarn.WinLagerSetup
             }
             catch (Exception ex)
             {
-                return Done(5, "Fehler: " + ex.Message);
+                return Done(5, T("Fehler: ", "Errore: ", "Error: ") + ex.Message);
             }
         }
 
@@ -76,14 +81,14 @@ namespace InfinityEarn.WinLagerSetup
 
         static int Install(string dir)
         {
-            if (!FrameworkPresent()) return Done(3, "Voraussetzung fehlt: .NET Framework 4.6.2 oder neuer ist nicht installiert. Es ist in Windows 10 und 11 enthalten; unter älteren Systemen bitte über Windows Update installieren. Es wurde nichts verändert.");
-            if (!silent && MessageBox.Show(SetupData.ProductName + " " + SetupData.Version + " für " + SetupData.Company + " installieren?\n\nOrdner: " + dir + "\n\nHinweis: Das Programm ist nicht digital signiert.", SetupData.ProductName, MessageBoxButtons.OKCancel, MessageBoxIcon.Question) != DialogResult.OK) return Done(6, "Installation abgebrochen.");
+            if (!FrameworkPresent()) return Done(3, T("Voraussetzung fehlt: .NET Framework 4.6.2 oder neuer ist nicht installiert. Es ist in Windows 10 und 11 enthalten; unter älteren Systemen bitte über Windows Update installieren. Es wurde nichts verändert.", "Requisito mancante: .NET Framework 4.6.2 o successivo non è installato. È incluso in Windows 10 e 11; sui sistemi più vecchi installarlo tramite Windows Update. Non è stato modificato nulla.", "Missing requirement: .NET Framework 4.6.2 or later is not installed. It is included in Windows 10 and 11; on older systems please install it via Windows Update. Nothing was changed."));
+            if (!silent && MessageBox.Show(string.Format(T("{0} {1} für {2} installieren?\n\nOrdner: {3}\n\nHinweis: Das Programm ist nicht digital signiert.", "Installare {0} {1} per {2}?\n\nCartella: {3}\n\nNota: il programma non è firmato digitalmente.", "Install {0} {1} for {2}?\n\nFolder: {3}\n\nNote: the program is not digitally signed."), SetupData.ProductName, SetupData.Version, SetupData.Company, dir), SetupData.ProductName, MessageBoxButtons.OKCancel, MessageBoxIcon.Question) != DialogResult.OK) return Done(6, T("Installation abgebrochen.", "Installazione annullata.", "Installation cancelled."));
 
-            if (ProgramRunning()) return Done(4, "Das Programm läuft noch. Bitte schließen und die Installation erneut starten. Es wurde nichts verändert.");
+            if (ProgramRunning()) return Done(4, Running);
             byte[] app;
             using (var s = Assembly.GetExecutingAssembly().GetManifestResourceStream("app.exe"))
             {
-                if (s == null) return Done(5, "Installationspaket unvollständig (Programm fehlt).");
+                if (s == null) return Done(5, T("Installationspaket unvollständig (Programm fehlt).", "Pacchetto di installazione incompleto (manca il programma).", "Installation package incomplete (program missing)."));
                 using (var m = new MemoryStream()) { s.CopyTo(m); app = m.ToArray(); }
             }
             string previous = null;
@@ -100,7 +105,7 @@ namespace InfinityEarn.WinLagerSetup
             catch (IOException)
             {
                 File.Delete(tmp);
-                return Done(4, "Das Programm läuft noch. Bitte schließen und die Installation erneut starten. Es wurde nichts verändert.");
+                return Done(4, Running);
             }
             string self = Assembly.GetExecutingAssembly().Location;
             string uninst = Path.Combine(dir, "uninstall.exe");
@@ -123,7 +128,7 @@ namespace InfinityEarn.WinLagerSetup
                 k.SetValue("NoRepair", 1, RegistryValueKind.DWord);
             }
             Log("installed " + SetupData.Version + (previous != null ? " (upgrade from " + previous + ")" : "") + " to " + dir);
-            if (!silent && MessageBox.Show(SetupData.ProductName + " wurde installiert" + (previous != null ? " (aktualisiert von " + previous + ")" : "") + ".\nIhre Daten liegen in: " + DataDir + "\n\nJetzt starten?", SetupData.ProductName, MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes)
+            if (!silent && MessageBox.Show(SetupData.ProductName + T(" wurde installiert", " è stato installato", " has been installed") + (previous != null ? string.Format(T(" (aktualisiert von {0})", " (aggiornato da {0})", " (updated from {0})"), previous) : "") + ".\n" + T("Ihre Daten liegen in: ", "I vostri dati si trovano in: ", "Your data is stored in: ") + DataDir + "\n\n" + T("Jetzt starten?", "Avviare ora?", "Start now?"), SetupData.ProductName, MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes)
                 Process.Start(exe);
             return 0;
         }
@@ -146,11 +151,11 @@ namespace InfinityEarn.WinLagerSetup
             string dir = dirArg;
             if (dir == null) using (var k = Registry.CurrentUser.OpenSubKey(KeyPath)) if (k != null) dir = k.GetValue("InstallLocation") as string;
             if (dir == null) dir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            if (!silent && MessageBox.Show(SetupData.ProductName + " entfernen?\n\nIhre Daten bleiben erhalten in:\n" + DataDir, SetupData.ProductName, MessageBoxButtons.OKCancel, MessageBoxIcon.Question) != DialogResult.OK) return Done(6, "Deinstallation abgebrochen.");
+            if (!silent && MessageBox.Show(SetupData.ProductName + T(" entfernen?\n\nIhre Daten bleiben erhalten in:\n", " rimuovere?\n\nI vostri dati restano in:\n", " remove?\n\nYour data is kept in:\n") + DataDir, SetupData.ProductName, MessageBoxButtons.OKCancel, MessageBoxIcon.Question) != DialogResult.OK) return Done(6, T("Deinstallation abgebrochen.", "Disinstallazione annullata.", "Uninstall cancelled."));
             string exe = Path.Combine(dir, SetupData.ExeName);
-            if (ProgramRunning()) return Done(4, "Das Programm läuft noch. Bitte schließen und erneut versuchen. Es wurde nichts entfernt.");
+            if (ProgramRunning()) return Done(4, Running);
             try { if (File.Exists(exe)) File.Delete(exe); }
-            catch (Exception) { return Done(4, "Das Programm läuft noch. Bitte schließen und erneut versuchen. Es wurde nichts entfernt."); }
+            catch (Exception) { return Done(4, Running); }
             foreach (var f in new[] { "install.json", SetupData.ExeName + ".new" }) { var p = Path.Combine(dir, f); if (File.Exists(p)) File.Delete(p); }
             if (File.Exists(ShortcutPath)) File.Delete(ShortcutPath);
             Registry.CurrentUser.DeleteSubKeyTree(KeyPath, false);
@@ -167,7 +172,7 @@ namespace InfinityEarn.WinLagerSetup
                 if (Directory.Exists(dir) && !Directory.EnumerateFileSystemEntries(dir).Any()) Directory.Delete(dir);
             }
             Log("uninstalled from " + dir);
-            return silent ? 0 : Done(0, SetupData.ProductName + " wurde entfernt. Ihre Daten bleiben erhalten in:\n" + DataDir);
+            return silent ? 0 : Done(0, SetupData.ProductName + T(" wurde entfernt. Ihre Daten bleiben erhalten in:\n", " è stato rimosso. I vostri dati restano in:\n", " has been removed. Your data is kept in:\n") + DataDir);
         }
     }
 }

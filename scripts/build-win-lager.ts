@@ -3,6 +3,7 @@ import { execFileSync, spawnSync } from 'node:child_process';
 import { copyFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
+import { buildWinManual } from '../products/win-lager/manual.ts';
 
 /**
  * Baut „Lager & Rechnung für Windows“ (Funktion 157) je Kunde: Fachtests → Programm (.exe) → Installer (setup.exe) → Manifest.
@@ -12,7 +13,7 @@ import { join, resolve } from 'node:path';
  *   node scripts/build-win-lager.ts [--company "Musterfirma"] [--color "#1F5FA8"] [--lang de|it|en] [--country IT|DE|AT] [--id win-lager] [--version 1.0.0]
  */
 export interface WinBuildOptions { company: string; color: string; lang: 'de' | 'it' | 'en'; country: 'IT' | 'DE' | 'AT'; productId: string; version: string; outDir?: string }
-export interface WinBuildResult { outDir: string; setup: string; app: string; manifest: WinManifest; testOutput: string }
+export interface WinBuildResult { outDir: string; setup: string; app: string; manual: string; manifest: WinManifest; testOutput: string }
 export interface WinManifest {
   product: string; productName: string; version: string; company: string; language: string; builtAt: string; toolchain: string;
   signed: false; signature: string; files: { name: string; bytes: number; sha256: string }[]; unitTests: { passed: number; failed: number };
@@ -91,7 +92,7 @@ using System.Reflection;
 namespace InfinityEarn.WinLagerSetup {
   static class SetupData {
     public const string ProductId = ${cs(o.productId)}; public const string ProductName = ${cs(productName)}; public const string Version = ${cs(o.version)};
-    public const string Company = ${cs(o.company)}; public const string ExeName = ${cs(exeName)};
+    public const string Company = ${cs(o.company)}; public const string ExeName = ${cs(exeName)}; public const string Language = ${cs(o.lang)};
   }
 }
 `;
@@ -131,17 +132,20 @@ namespace InfinityEarn.WinLagerSetup {
   copyFileSync(appW, app);
   copyFileSync(join(work, setupName), setup);
   rmSync(work, { recursive: true, force: true });
-  // 4. Signaturstatus ehrlich aus Windows abfragen (ohne Zertifikat: NotSigned)
+  // 4. Bebilderte Anleitung für diese Kundenfassung (Firmenname, Farbe, Steuersätze, Sprache)
+  const manual = join(out, `${o.productId}-anleitung-${o.lang}.pdf`);
+  writeFileSync(manual, buildWinManual({ company: o.company, color: o.color, lang: o.lang, country: o.country, productId: o.productId, version: o.version }).bytes);
+  // 5. Signaturstatus ehrlich aus Windows abfragen (ohne Zertifikat: NotSigned)
   const signature = signatureStatus(setup);
   const manifest: WinManifest = {
     product: o.productId, productName, version: o.version, company: o.company, language: o.lang, builtAt: new Date().toISOString(),
     toolchain: `csc ${csc.includes('Framework64') ? 'x64' : 'x86'} .NET Framework 4.x (in Windows enthalten)`,
     signed: false, signature,
-    files: [app, setup].map((p) => ({ name: p.slice(out.length + 1), bytes: readFileSync(p).length, sha256: sha(p) })),
+    files: [app, setup, manual].map((p) => ({ name: p.slice(out.length + 1), bytes: readFileSync(p).length, sha256: sha(p) })),
     unitTests,
   };
   writeFileSync(join(out, 'manifest.json'), `${JSON.stringify(manifest, null, 2)}\n`);
-  return { outDir: out, setup, app, manifest, testOutput };
+  return { outDir: out, setup, app, manual, manifest, testOutput };
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === resolve(import.meta.filename)) {
@@ -149,6 +153,7 @@ if (process.argv[1] && resolve(process.argv[1]) === resolve(import.meta.filename
   const r = buildWinLager({ company: arg('company', 'Musterfirma'), color: arg('color', '#1F5FA8'), lang: arg('lang', 'de') as 'de', country: arg('country', 'DE') as 'DE', productId: arg('id', 'win-lager'), version: arg('version', '1.0.0') });
   console.log(r.testOutput.trim().split('\n').at(-1));
   console.log(`Installer: ${r.setup}`);
+  console.log(`Anleitung: ${r.manual}`);
   console.log(JSON.stringify(r.manifest.files, null, 2));
   console.log(`Signatur: ${r.manifest.signature} (unsigniert gekennzeichnet)`);
 }

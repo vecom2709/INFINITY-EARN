@@ -33,6 +33,15 @@ Stand: 2026-11-13. Ein Eintrag gilt nur mit echtem Nachweis. Nicht getestet hei�
    - Eine fremde Datei im Programmordner bleibt unangetastet; die Kundendaten bleiben erhalten.
    - Ohne fremde Dateien verschwindet der Ordner vollständig.
 
+## Anleitung und Freigabe
+
+- **Anleitung:** Jede Kundenfassung erhält eine bebilderte Anleitung (PDF, DE/IT/EN) mit echten Bildschirmfotos des gebauten Programms.
+  - Die Fotos entstehen mit `node scripts/build-win-lager-assets.ts`, nur auf Windows.
+  - `tests/products/win-lager/manual.test.ts` prüft auf jedem System, dass Fotos und Texte zum aktuellen Programm gehören.
+- **Freigabe:** Die Admin-Seite `/dashboard/produkte/win-lager` zeigt die Freigabe-Akte. Den Verkauf sperren noch zwei Punkte:
+  - die rechtlichen Pflichtangaben auf Rechnungen (in Italien FatturaPA über das SdI);
+  - der Bau je Auftrag.
+
 ## Werkzeug- und Kostenlage
 
 - **Windows:**

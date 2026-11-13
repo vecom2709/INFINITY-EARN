@@ -15,6 +15,11 @@ namespace InfinityEarn.WinLager
     {
         public readonly string Code;
         public DomainException(string code, string message) : base(message) { Code = code; }
+        /// <summary>Meldung in der Sprache des Programms (Strings.cs), Platzhalter {0} … werden ersetzt.</summary>
+        public static DomainException Of(string code, string key, params object[] args)
+        {
+            return new DomainException(code, string.Format(CultureInfo.InvariantCulture, Strings.Get(BrandData.Language, key), args));
+        }
     }
 
     public class Article
@@ -77,14 +82,14 @@ namespace InfinityEarn.WinLager
         public static long Parse(string text)
         {
             string s = (text ?? "").Trim().Replace("€", "").Replace(" ", "");
-            if (s.Length == 0) throw new DomainException("PRICE", "Preis fehlt");
+            if (s.Length == 0) throw DomainException.Of("PRICE", "e_price_missing");
             int comma = s.LastIndexOf(','), dot = s.LastIndexOf('.');
             if (comma > dot) s = s.Replace(".", "").Replace(',', '.');
             else if (dot > comma && comma >= 0) s = s.Replace(",", "");
             decimal d;
-            if (!decimal.TryParse(s, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out d)) throw new DomainException("PRICE", "Preis ungültig: " + text);
-            if (d < 0 || d > 10000000m) throw new DomainException("PRICE", "Preis außerhalb 0 bis 10.000.000");
-            if (decimal.Round(d, 2) != d) throw new DomainException("PRICE", "Höchstens zwei Nachkommastellen");
+            if (!decimal.TryParse(s, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out d)) throw DomainException.Of("PRICE", "e_price_invalid", text);
+            if (d < 0 || d > 10000000m) throw DomainException.Of("PRICE", "e_price_range");
+            if (decimal.Round(d, 2) != d) throw DomainException.Of("PRICE", "e_price_decimals");
             return (long)(d * 100m);
         }
     }
@@ -117,12 +122,12 @@ namespace InfinityEarn.WinLager
         {
             sku = (sku ?? "").Trim();
             name = (name ?? "").Trim();
-            if (sku.Length == 0 || sku.Length > 30) throw new DomainException("SKU", "Artikelnummer: 1 bis 30 Zeichen");
-            if (name.Length == 0 || name.Length > 120) throw new DomainException("NAME", "Bezeichnung: 1 bis 120 Zeichen");
-            if (Find(sku) != null) throw new DomainException("DUPLICATE", "Artikelnummer gibt es schon: " + sku);
-            if (priceCents < 0) throw new DomainException("PRICE", "Preis darf nicht negativ sein");
-            if (taxBps < 0 || taxBps > 3000) throw new DomainException("TAX", "Steuersatz 0 bis 30 %");
-            if (minStock < 0) throw new DomainException("MIN", "Mindestbestand darf nicht negativ sein");
+            if (sku.Length == 0 || sku.Length > 30) throw DomainException.Of("SKU", "e_sku");
+            if (name.Length == 0 || name.Length > 120) throw DomainException.Of("NAME", "e_name");
+            if (Find(sku) != null) throw DomainException.Of("DUPLICATE", "e_duplicate", sku);
+            if (priceCents < 0) throw DomainException.Of("PRICE", "e_price_negative");
+            if (taxBps < 0 || taxBps > 3000) throw DomainException.Of("TAX", "e_tax");
+            if (minStock < 0) throw DomainException.Of("MIN", "e_min_negative");
             var a = new Article { Sku = sku, Name = name, PriceCents = priceCents, TaxBps = taxBps, Stock = 0, MinStock = minStock };
             Articles.Add(a);
             return a;
@@ -131,21 +136,21 @@ namespace InfinityEarn.WinLager
         public void UpdateArticle(string sku, string name, long priceCents, int taxBps, int minStock)
         {
             var a = Find(sku);
-            if (a == null) throw new DomainException("NOT_FOUND", "Artikel nicht gefunden");
+            if (a == null) throw DomainException.Of("NOT_FOUND", "e_not_found");
             name = (name ?? "").Trim();
-            if (name.Length == 0 || name.Length > 120) throw new DomainException("NAME", "Bezeichnung: 1 bis 120 Zeichen");
-            if (priceCents < 0) throw new DomainException("PRICE", "Preis darf nicht negativ sein");
-            if (taxBps < 0 || taxBps > 3000) throw new DomainException("TAX", "Steuersatz 0 bis 30 %");
-            if (minStock < 0) throw new DomainException("MIN", "Mindestbestand darf nicht negativ sein");
+            if (name.Length == 0 || name.Length > 120) throw DomainException.Of("NAME", "e_name");
+            if (priceCents < 0) throw DomainException.Of("PRICE", "e_price_negative");
+            if (taxBps < 0 || taxBps > 3000) throw DomainException.Of("TAX", "e_tax");
+            if (minStock < 0) throw DomainException.Of("MIN", "e_min_negative");
             a.Name = name; a.PriceCents = priceCents; a.TaxBps = taxBps; a.MinStock = minStock;
         }
 
         public void DeleteArticle(string sku)
         {
             var a = Find(sku);
-            if (a == null) throw new DomainException("NOT_FOUND", "Artikel nicht gefunden");
-            if (Invoices.Any(i => i.Lines.Any(l => string.Equals(l.Sku, a.Sku, StringComparison.OrdinalIgnoreCase)))) throw new DomainException("IN_USE", "Artikel steht auf einer Rechnung und bleibt erhalten");
-            if (a.Stock != 0) throw new DomainException("IN_STOCK", "Erst den Bestand auf 0 buchen");
+            if (a == null) throw DomainException.Of("NOT_FOUND", "e_not_found");
+            if (Invoices.Any(i => i.Lines.Any(l => string.Equals(l.Sku, a.Sku, StringComparison.OrdinalIgnoreCase)))) throw DomainException.Of("IN_USE", "e_in_use");
+            if (a.Stock != 0) throw DomainException.Of("IN_STOCK", "e_in_stock");
             Articles.Remove(a);
         }
 
@@ -153,10 +158,10 @@ namespace InfinityEarn.WinLager
         public Movement Book(string sku, int delta, string reason)
         {
             var a = Find(sku);
-            if (a == null) throw new DomainException("NOT_FOUND", "Artikel nicht gefunden");
-            if (delta == 0) throw new DomainException("QTY", "Menge darf nicht 0 sein");
-            if (Math.Abs((long)delta) > 1000000) throw new DomainException("QTY", "Menge zu groß");
-            if (a.Stock + delta < 0) throw new DomainException("STOCK", "Nicht genug Bestand: " + a.Stock + " vorhanden");
+            if (a == null) throw DomainException.Of("NOT_FOUND", "e_not_found");
+            if (delta == 0) throw DomainException.Of("QTY", "e_qty_zero");
+            if (Math.Abs((long)delta) > 1000000) throw DomainException.Of("QTY", "e_qty_big");
+            if (a.Stock + delta < 0) throw DomainException.Of("STOCK", "e_stock", a.Stock);
             a.Stock += delta;
             var m = new Movement { At = Clock(), Sku = a.Sku, Delta = delta, Reason = (reason ?? "").Trim(), StockAfter = a.Stock };
             Movements.Add(m);
@@ -181,13 +186,13 @@ namespace InfinityEarn.WinLager
         public Invoice CreateInvoice(string customer, IList<KeyValuePair<string, int>> lines)
         {
             customer = (customer ?? "").Trim();
-            if (customer.Length == 0 || customer.Length > 200) throw new DomainException("CUSTOMER", "Kunde: 1 bis 200 Zeichen");
-            if (lines == null || lines.Count == 0) throw new DomainException("NO_LINES", "Mindestens eine Position");
+            if (customer.Length == 0 || customer.Length > 200) throw DomainException.Of("CUSTOMER", "e_customer");
+            if (lines == null || lines.Count == 0) throw DomainException.Of("NO_LINES", "e_no_lines");
             var need = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
             foreach (var l in lines)
             {
-                if (l.Value <= 0) throw new DomainException("QTY", "Menge muss mindestens 1 sein");
-                if (Find(l.Key) == null) throw new DomainException("NOT_FOUND", "Artikel nicht gefunden: " + l.Key);
+                if (l.Value <= 0) throw DomainException.Of("QTY", "e_qty_min1");
+                if (Find(l.Key) == null) throw DomainException.Of("NOT_FOUND", "e_not_found_sku", l.Key);
                 int cur;
                 need.TryGetValue(l.Key, out cur);
                 need[l.Key] = cur + l.Value;
@@ -195,7 +200,7 @@ namespace InfinityEarn.WinLager
             foreach (var n in need)
             {
                 var a = Find(n.Key);
-                if (a.Stock < n.Value) throw new DomainException("STOCK", "Nicht genug Bestand für " + a.Sku + ": " + a.Stock + " vorhanden, " + n.Value + " benötigt");
+                if (a.Stock < n.Value) throw DomainException.Of("STOCK", "e_stock_for", a.Sku, a.Stock, n.Value);
             }
             var inv = new Invoice { Number = NextInvoiceNumber(), Date = Clock(), Customer = customer };
             foreach (var l in lines)
@@ -203,7 +208,7 @@ namespace InfinityEarn.WinLager
                 var a = Find(l.Key);
                 inv.Lines.Add(new InvoiceLine { Sku = a.Sku, Name = a.Name, Qty = l.Value, UnitCents = a.PriceCents, TaxBps = a.TaxBps });
             }
-            foreach (var n in need) Book(n.Key, -n.Value, "Rechnung " + inv.Number);
+            foreach (var n in need) Book(n.Key, -n.Value, Strings.Get(BrandData.Language, "invoice") + " " + inv.Number);
             Invoices.Add(inv);
             return inv;
         }
@@ -212,7 +217,7 @@ namespace InfinityEarn.WinLager
 
         static string D(DateTime d) { return d.ToString("o", CultureInfo.InvariantCulture); }
         static DateTime PD(string s) { return DateTime.Parse(s, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind); }
-        static string S(XElement e, string n) { var a = e.Attribute(n); if (a == null) throw new DomainException("DATA", "Datei beschädigt: " + n + " fehlt"); return a.Value; }
+        static string S(XElement e, string n) { var a = e.Attribute(n); if (a == null) throw DomainException.Of("DATA", "e_data_attr", n); return a.Value; }
         static long L(XElement e, string n) { return long.Parse(S(e, n), CultureInfo.InvariantCulture); }
         static int I(XElement e, string n) { return int.Parse(S(e, n), CultureInfo.InvariantCulture); }
 
@@ -247,7 +252,7 @@ namespace InfinityEarn.WinLager
                     b.RecoveredFromBackup = true;
                     return b;
                 }
-                throw new DomainException("DATA", "Datendatei beschädigt und keine Sicherung vorhanden: " + first.Message);
+                throw DomainException.Of("DATA", "e_data_nobackup", first.Message);
             }
         }
 
@@ -256,8 +261,8 @@ namespace InfinityEarn.WinLager
         void ReadFrom(XDocument x)
         {
             var root = x.Root;
-            if (root == null || root.Name != "winlager") throw new DomainException("DATA", "Keine Datendatei dieses Programms");
-            if (I(root, "schema") > SchemaVersion) throw new DomainException("DATA", "Datei stammt aus einer neueren Programmversion");
+            if (root == null || root.Name != "winlager") throw DomainException.Of("DATA", "e_data_foreign");
+            if (I(root, "schema") > SchemaVersion) throw DomainException.Of("DATA", "e_data_newer");
             Articles = root.Element("articles").Elements("a").Select(e => new Article { Sku = S(e, "sku"), Name = S(e, "name"), PriceCents = L(e, "price"), TaxBps = I(e, "tax"), Stock = I(e, "stock"), MinStock = I(e, "min") }).ToList();
             Movements = root.Element("movements").Elements("m").Select(e => new Movement { At = PD(S(e, "at")), Sku = S(e, "sku"), Delta = I(e, "delta"), Reason = S(e, "reason"), StockAfter = I(e, "after") }).ToList();
             Invoices = root.Element("invoices").Elements("i").Select(e => new Invoice

@@ -1,6 +1,6 @@
 # Testmatrix – Pflichtfälle aus Gesamtprompt §12
 
-Alle Tests laufen mit `npm run verify` (lokal) und in der GitHub-CI. Stand 2026-11-13: 344 Tests plus 1 E2E, alle bestanden.
+Alle Tests laufen mit `npm run verify` (lokal) und in der GitHub-CI. Stand 2026-11-13: 351 Tests plus 1 E2E, alle bestanden.
 
 | # | Pflichtfall | Status | Nachweis |
 |---|---|---|---|
@@ -14,7 +14,7 @@ Alle Tests laufen mit `npm run verify` (lokal) und in der GitHub-CI. Stand 2026-
 | 8 | Interaktive Vorschau für ausführbare Webprodukte | ✅ getestet | `tests/integration/p4-release.test.ts` – Admin → Produkte → Warenwirtschaft: echtes Programm (DE/IT/EN, eigene CSP, kein Netzwerk), Anleitung, Musterpaket, Live-Abnahmeprüfung |
 | 17 | Kundenwunsch → prüfbare Auftragsanforderung (156, PR-156-01…08) | ✅ getestet (regelbasiert, ohne KI-Dokumentanalyse) | `tests/integration/assignment.test.ts` – Rückfrage statt Zusage, Konflikte, Anhänge nur Daten, Duplikate, Versionen mit Kundenbestätigung, Löschantrag |
 | 18 | Kundendateien und Zugänge sicher anfordern, prüfen, freigeben, widerrufen (161, PR-161-01…08) | ✅ getestet (Format-/Signaturprüfung, kein vollständiger Virenscanner) | `tests/integration/client-assets.test.ts`, `tests/security/upload-server.test.ts` – nur beim zugeordneten Kunden, abgelehnte Dateien nie gespeichert, Mandantentrennung, keine Zugangsdaten, Rechte-Pflicht, Versionen, Produktion pausiert |
-| 19 | Echtes Windows-Programm mit Installer, Update und Deinstallation (157/158) | ✅ getestet auf Windows 11 (lokal) und Windows Server (CI); macOS UNVERIFIED | `tests/products/win-lager/install.test.ts` – 12 Fachtests im Build, Installation, Start mit Bildschirmfoto, Daten über Neustart, gleichzeitige Zugriffe, Update mit Daten, laufendes Programm, fehlende Voraussetzung, Deinstallation ohne fremde Dateien, unsigniert gekennzeichnet |
+| 19 | Echtes Windows-Programm mit Installer, Update und Deinstallation (157/158) | ✅ getestet auf Windows 11 (lokal) und Windows Server (CI); macOS UNVERIFIED | `tests/products/win-lager/install.test.ts` – 12 Fachtests im Build, Installation, Start mit Bildschirmfoto, Daten über Neustart, gleichzeitige Zugriffe, Update mit Daten, laufendes Programm, fehlende Voraussetzung, Deinstallation ohne fremde Dateien, unsigniert gekennzeichnet; `tests/products/win-lager/manual.test.ts` – Anleitung DE/IT/EN (PDF, 3 echte Abbildungen, Knopfnamen aus dem Programm, Aktualität der Fotos), keine unübersetzten Meldungen, Freigabe-Akte sperrt ohne Rechnungspflichtangaben und Lieferweg |
 | 16 | Wachstum ohne Werbebudget (132, 135, 138–140, 147–149, 151, 155) | ✅ getestet (ohne verbundene Fremdkanäle) | `tests/integration/growth.test.ts` – nichts erfunden: Impressionen „nicht gemessen“, Geld nur mit Zahlungsereignis, Kanäle NOT_CONNECTED |
 | 9 | Luxury Turquoise auf allen Oberflächen, Storyscrolling barrierearm | ✅ getestet | `tests/unit/console-ui.test.ts` (Kontrast), `tests/integration/landing.test.ts` |
 | 10 | Rechnung/Steuer passt zu verifizierten Stammdaten, sonst Blocker | ✅ getestet | `tests/integration/italy.test.ts`, `tests/integration/finance.test.ts` |
