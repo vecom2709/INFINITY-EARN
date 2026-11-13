@@ -23,7 +23,7 @@
     "backup:restore-test": "node --disable-warning=ExperimentalWarning scripts/restore-backup.ts",
     "backup:pull": "node --disable-warning=ExperimentalWarning scripts/staging-backup-pull.ts",
     "dryrun":"node --disable-warning=ExperimentalWarning scripts/dry-run.ts",
-    "test": "node --disable-warning=ExperimentalWarning --test --test-reporter=spec \"tests/unit/**/*.test.ts\" \"tests/integration/**/*.test.ts\" \"tests/security/**/*.test.ts\"",
+    "test": "node --disable-warning=ExperimentalWarning --test --test-reporter=spec \"tests/unit/**/*.test.ts\" \"tests/integration/**/*.test.ts\" \"tests/security/**/*.test.ts\" \"tests/products/**/*.test.ts\"",
     "test:e2e": "node --disable-warning=ExperimentalWarning --test --test-reporter=spec \"tests/e2e/**/*.test.ts\"",
     "tech-debt": "node --disable-warning=ExperimentalWarning scripts/tech-debt.ts",
     "test:matrix": "node scripts/test-matrix.ts",

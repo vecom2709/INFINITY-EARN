@@ -1,6 +1,21 @@
 # Pilot: erste echte Fachsoftware (Gesamtprompt §4, M3)
 
-Stand 2026-11-13 · **Umfang vom Eigentümer bestätigt: Mini-Warenwirtschaft als Offline-Programm (Weg A).** Gebaut ist noch nichts; als Nächstes kommt Phase P1.
+Stand 2026-11-13 · **Umfang vom Eigentümer bestätigt: Mini-Warenwirtschaft als Offline-Programm (Weg A).**
+
+| Phase | Stand |
+|---|---|
+| **P1 Fachlogik** | ✅ fertig: `products/mini-ww/src` (Stammdaten, Lager, Verkauf, Rechnung/Gutschrift, Zahlungen/offene Posten/Mahnstufen, Rollen, Berichte, Sicherung, CSV), 13 Tests in `tests/products/mini-ww/domain.test.ts` |
+| P2 Oberfläche | offen |
+| P3 Fabrik-Anbindung | offen |
+| P4 Admin-Vorschau, Verkaufsfreigabe | offen |
+
+**P1 – wie die Fachlogik arbeitet:**
+- **Atomar:** Jede Operation läuft auf einer Kopie und wird nur bei Erfolg übernommen; ein abgelehnter Vorgang ändert nichts.
+- **Bestand aus dem Journal:** Er wird immer aus dem Bewegungsjournal berechnet und nie separat gespeichert.
+- **Lückenlose Nummern:** Rechnungs- und Gutschriftnummern werden erst beim Festschreiben vergeben.
+- **Prüfbare Sicherung:** Sie trägt eine Prüfsumme; beim Wiederherstellen wird der gesamte Bestand gegen sein eigenes Journal geprüft. `verifyStore` prüft alle Invarianten.
+- **Browsertauglich:** reines TypeScript ohne Node-Abhängigkeiten, ein Test erzwingt das.
+- **Grenze:** Mengen sind ganze Einheiten. Dezimalmengen (m², Stunden) kommen erst mit einer späteren Erweiterung.
 
 ## Ziel
 

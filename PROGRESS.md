@@ -14,6 +14,23 @@ Grundlage: das 15.0-Paket (`docs/spec/v15/`, Prüfsummen laut Manifest geprüft)
 
 ---
 
+## Pilot-Fachsoftware P1: Fachlogik der Mini-Warenwirtschaft (2026-11-13)
+
+- **Neues Paket** `products/mini-ww`: Stammdaten, Lager, Verkauf (Angebot → Annahme → Auftrag mit Reservierung → Teil- und Restlieferung), Rechnung und Gutschrift, Zahlungen, offene Posten, Mahnstufen, Rollen (Inhaber/Mitarbeiter), Berichte, Sicherung mit Prüfsumme und Konsistenzprüfung, CSV-Import und -Export. Plan und Stand: [PILOT_FACHSOFTWARE.md](PILOT_FACHSOFTWARE.md).
+- **Pflichtfälle getestet:**
+  - negativer Bestand und Reservierung
+  - Doppelbuchung, Überlieferung, Doppelabrechnung
+  - Gutschrift mit Rücknahme und Kundenguthaben
+  - Rechte, Korrektur nur mit Grund
+  - lückenlose Nummern auch nach Wiederherstellung
+  - manipulierte Sicherung wird abgelehnt
+  - CSV alles-oder-nichts mit Formelschutz
+  - abgelaufene Angebote, Steuerrundung, Mahnstufen
+- **Tests:** 13 neue Tests. `npm run verify` → **284/284**.
+- **Noch nicht für Kunden sichtbar:** Oberfläche (P2), Fabrik-Anbindung (P3) und Verkaufsfreigabe (P4) fehlen.
+
+---
+
 ## Konsolidierter Gesamtprompt (2026-11-13)
 
 Grundlage: `INFINITY_EARN_15_GESAMTPROMPT_ALLES_IN_EINEM.md`. Abgleich und Plan: [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md). Die Nummerierung der 127 Funktionen stimmt überein.
