@@ -19,6 +19,8 @@ export interface TextSpec {
   keywords: string[];
   forbidden: string[];
   texts: { kind: TextKind; words_min: number; words_max: number }[];
+  /** Kunde hat bestätigt: nur Unternehmensangaben, keine personenbezogenen Daten. */
+  confirm_no_personal_data: true;
 }
 export interface TextResult { texts: { kind: TextKind; title: string; body: string }[] }
 
@@ -65,8 +67,28 @@ export function validateTextSpec(raw: unknown): TextSpec {
       texts.push({ kind, words_min: min, words_max: max });
     }
   }
+  // Datenschutz: Briefings gehen über das Claude-Abo des Eigentümers (kein Auftragsverarbeitungsvertrag) –
+  // daher nur Unternehmensangaben, keine personenbezogenen Daten. Kunde bestätigt das ausdrücklich, das System prüft zusätzlich.
+  if (r.confirm_no_personal_data !== true) e.push('Bestätigung fehlt: Das Briefing enthält nur Unternehmensangaben, keine personenbezogenen Daten');
+  const pii = personalDataIn([company, offer, audience, ...facts, ...keywords, ...forbidden]);
+  if (pii.length) e.push(`Personenbezogene Daten im Briefing (${pii.join(', ')}) – bitte entfernen`);
   if (e.length) throw new Error(`INVALID_INPUT: ${e.join('; ')}`);
-  return { company, offer, audience, language: language as TextLang, tone, facts, keywords, forbidden, texts };
+  return { company, offer, audience, language: language as TextLang, tone, facts, keywords, forbidden, texts, confirm_no_personal_data: true };
+}
+
+const PII: [string, (s: string) => boolean][] = [
+  ['E-Mail-Adresse', (s) => /[^\s@]+@[^\s@]+\.[^\s@]+/.test(s)],
+  ['Webadresse', (s) => /https?:\/\/|www\./i.test(s)],
+  ['Telefonnummer', (s) => (s.match(/\+?\d[\d\s/().-]{6,}\d/g) ?? []).some((m) => m.replace(/\D/g, '').length >= 8)],
+  ['IBAN', (s) => /\b[A-Z]{2}\d{2}(?:\s?[A-Z0-9]{4}){3,7}\b/.test(s)],
+  ['Datum mit Tag (z. B. Geburtsdatum)', (s) => /\b\d{1,2}\.\s?\d{1,2}\.\s?(?:19|20)\d{2}\b/.test(s)],
+  ['Steuer- oder Ausweisnummer', (s) => /\b[A-Z]{6}\d{2}[A-Z]\d{2}[A-Z]\d{3}[A-Z]\b/i.test(s) || /\b\d{11}\b/.test(s)],
+  ['Anrede mit Namen', (s) => /\b(Herr|Frau|Sig\.|Sig\.ra|Dott\.|Mr\.|Mrs\.|Ms\.)\s+\p{Lu}/u.test(s)],
+];
+
+/** Erkennt typische personenbezogene Angaben in Freitext (Kontaktdaten, Kennnummern, Anrede mit Namen). */
+export function personalDataIn(values: string[]): string[] {
+  return PII.filter(([, test]) => values.some((v) => test(v))).map(([label]) => label);
 }
 
 /** Aufgabe für Claude. Kundendaten stehen nur im JSON-Datenblock und werden ausdrücklich als Daten markiert. */

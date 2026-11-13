@@ -31,6 +31,7 @@ Stand: [Datum] · Fassung 1 (Entwurf 13.11.2026) · Bestandteil der AGB (`agb.md
 ## D. KI-Texte
 - **Lieferung:** die bestellten Textarten (Startseite, Über uns, Leistung, Produkt, FAQ) als Markdown, HTML und JSON mit LIESMICH.
 - **Erstellung:** mit dem KI-System Claude (Anthropic). Das Briefing wird dafür an Anthropic übermittelt (siehe Datenschutzerklärung).
+- **Briefing:** nur Unternehmensangaben, keine personenbezogenen Daten (z. B. keine Namen von Personen, Kontaktdaten, Kennnummern). Der Kunde bestätigt das bei der Bestellung; Briefings mit erkennbaren Kontaktdaten oder Kennnummern werden abgelehnt.
 - **Geprüft vor Lieferung:** bestellte Textarten, Wortzahl, Sprache, Firmenname und Stichworte, keine Garantie-, Superlativ- oder Gratis-Aussagen, keine vom Kunden ausgeschlossenen Begriffe, keine Platzhalter, Links, Kontaktdaten, HTML oder KI-Selbstbezüge.
 - **Nicht zugesagt:** inhaltliche Richtigkeit über die Fakten des Briefings hinaus, bestimmte Suchmaschinen-Platzierungen, Einzigartigkeit gegenüber allen veröffentlichten Texten. Rechts-, Medizin- und Finanzaussagen werden nicht erstellt.
 - **Prüfpflicht:** Der Kunde liest die Texte vor einer Veröffentlichung gegen.

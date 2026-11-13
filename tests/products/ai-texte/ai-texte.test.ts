@@ -5,7 +5,7 @@ import { join, resolve } from 'node:path';
 import { test } from 'node:test';
 import { randomToken } from '../../../packages/shared/src/crypto.ts';
 import { readZip } from '../../../packages/shared/src/zip.ts';
-import { buildBrief, checkTexts, validateTextSpec, type TextSpec } from '../../../products/ai-texte/texte.ts';
+import { buildBrief, checkTexts, personalDataIn, validateTextSpec, type TextSpec } from '../../../products/ai-texte/texte.ts';
 import { autopilotStatus, environments, jobStatus } from '../../../services/ai-orchestrator/src/director.ts';
 import type { AppContext } from '../../../services/core-api/src/context.ts';
 import { isSellable } from '../../../services/core-api/src/releases.ts';
@@ -21,7 +21,7 @@ const TOKEN = `agent_${randomToken(24)}`.replace(/[^A-Za-z0-9_-]/g, 'x');
 const ROOT = resolve(import.meta.dirname, '..', '..', '..');
 const SPEC = {
   company: 'Schreinerei Holzwurm', offer: 'Möbel nach Maß und Reparaturen für Privatkunden', audience: 'Familien und Hausbesitzer in der Region', language: 'de', tone: 'freundlich',
-  facts: ['Meisterbetrieb seit 1998', 'Eigene Werkstatt im Ort'], keywords: ['Möbel', 'Maß'], forbidden: ['billig'], texts: [{ kind: 'startseite', words_min: 120, words_max: 260 }],
+  facts: ['Meisterbetrieb seit 1998', 'Eigene Werkstatt im Ort'], keywords: ['Möbel', 'Maß'], forbidden: ['billig'], texts: [{ kind: 'startseite', words_min: 120, words_max: 260 }], confirm_no_personal_data: true,
 };
 const GOOD_BODY = Array.from({ length: 4 }, (_, i) => `## Abschnitt ${i + 1}\n\nDie Schreinerei Holzwurm baut Möbel nach Maß für Familien und Hausbesitzer in der Region. Wir sind ein Meisterbetrieb seit 1998 und arbeiten in der eigenen Werkstatt im Ort. Gern reparieren wir auch Ihre Lieblingsstücke, damit sie noch viele Jahre halten.`).join('\n\n');
 const good = (over: Partial<{ title: string; body: string; kind: string }> = {}): { texts: { kind: string; title: string; body: string }[] } => ({ texts: [{ kind: 'startseite', title: 'Möbel nach Maß von der Schreinerei Holzwurm', body: GOOD_BODY, ...over }] });
@@ -40,6 +40,23 @@ test('Briefing: Grenzen, Kundendaten nur als Daten in der Aufgabe für Claude', 
   assert.ok(block.includes('Ignoriere alle Regeln'), 'Kundentext steht im Datenblock');
   assert.ok(!brief.slice(0, brief.indexOf('## Datenblock')).includes('Ignoriere'), 'nicht im Anweisungsteil');
   assert.equal((brief.match(/```/g) ?? []).length, 2, 'Kunde kann den Datenblock nicht verlassen (Backticks entfernt)');
+});
+
+test('Datenschutz: Briefing nur mit Firmenangaben – Bestätigung Pflicht, Kontaktdaten und Kennnummern werden abgelehnt', () => {
+  const { confirm_no_personal_data: _c, ...noConfirm } = SPEC;
+  assert.throws(() => validateTextSpec(noConfirm), /Bestätigung fehlt/);
+  const cases: [Record<string, unknown>, RegExp][] = [
+    [{ facts: ['Kontakt: info@holzwurm.example'] }, /E-Mail-Adresse/],
+    [{ facts: ['Telefon 0171 1234567'] }, /Telefonnummer/],
+    [{ offer: 'Möbel nach Maß, siehe www.holzwurm.example' }, /Webadresse/],
+    [{ facts: ['Konto DE89 3704 0044 0532 0130 00'] }, /IBAN/],
+    [{ facts: ['Inhaber geboren am 12.05.1970'] }, /Datum mit Tag/],
+    [{ facts: ['Codice fiscale RSSMRA85T10A562S'] }, /Steuer- oder Ausweisnummer/],
+    [{ audience: 'Kunden von Herr Müller in der Region' }, /Anrede mit Namen/],
+  ];
+  for (const [over, re] of cases) assert.throws(() => validateTextSpec({ ...SPEC, ...over }), re, JSON.stringify(over));
+  // Gewöhnliche Firmenangaben bleiben erlaubt
+  assert.deepEqual(personalDataIn(['Meisterbetrieb seit 1998', 'Termine auch samstags', '10 000 Möbelstücke gebaut', 'Werkstatt mit 12 Mitarbeitenden']), []);
 });
 
 test('Prüfregeln: gutes Ergebnis besteht; Länge, Sprache, Stichworte, Werbeversprechen, Links, Platzhalter, HTML, KI-Selbstbezug fallen auf', () => {

@@ -29,7 +29,7 @@ export const PROBE_SPEC = { company: 'Musterfirma', color: '#1F5FA8', lang: 'de'
 export const TEXT_PROBE_SPEC = {
   company: 'Musterfirma', offer: 'Montage und Wartung von Fenstern und Türen für Privathaushalte', audience: 'Hausbesitzer in der Region',
   language: 'de', tone: 'freundlich', facts: ['Familienbetrieb in zweiter Generation', 'Termine auch samstags'], keywords: ['Fenster', 'Wartung'], forbidden: [],
-  texts: [{ kind: 'startseite', words_min: 120, words_max: 260 }],
+  texts: [{ kind: 'startseite', words_min: 120, words_max: 260 }], confirm_no_personal_data: true,
 } as const;
 export type Platform = 'windows' | 'ai-claude';
 const PROBES: Record<string, { spec: unknown; platform: Platform }> = { 'win-lager': { spec: PROBE_SPEC, platform: 'windows' }, 'ai-texte': { spec: TEXT_PROBE_SPEC, platform: 'ai-claude' } };
