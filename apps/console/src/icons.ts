@@ -30,6 +30,10 @@ const PATHS = {
   logout: '<path d="M14 4h4.5A1.5 1.5 0 0 1 20 5.5v13a1.5 1.5 0 0 1-1.5 1.5H14M10 16.5 5.5 12 10 7.5M5.5 12H16"/>',
   list: '<path d="M8.5 6.5h12M8.5 12h12M8.5 17.5h12M4 6.5h.01M4 12h.01M4 17.5h.01"/>',
   download: '<path d="M12 4v11m-4.5-4.5L12 15l4.5-4.5M4.5 19.5h15"/>',
+  laptop: '<rect x="4.5" y="5" width="15" height="10.5" rx="1.5"/><path d="M2.5 18.5h19l-1-2H3.5Z"/><path d="M10.5 18.5h3"/>',
+  layers: '<path d="m12 3.5 8.5 4.5L12 12.5 3.5 8Z"/><path d="m3.5 12 8.5 4.5 8.5-4.5M3.5 16l8.5 4.5 8.5-4.5"/>',
+  gear: '<circle cx="12" cy="12" r="2.8"/><circle cx="12" cy="12" r="6.3"/><path stroke-width="3.4" stroke-linecap="butt" d="M12 3.2v2.6M12 18.2v2.6M3.2 12h2.6M18.2 12h2.6M5.8 5.8l1.8 1.8M16.4 16.4l1.8 1.8M5.8 18.2l1.8-1.8M16.4 7.6l1.8-1.8"/>',
+  building: '<path d="M4 20.5V5.5L11 3v17.5M11 8h9v12.5M2.5 20.5h19"/><path d="M7 8h1M7 11.5h1M7 15h1M14.5 11.5h2M14.5 15h2"/>',
 } as const;
 
 export type IconName = keyof typeof PATHS;

@@ -82,7 +82,39 @@ export interface PageOptions {
   /** hreflang-Alternativen (Pfad je Sprache). */
   alternates?: { lang: string; href: string }[];
   langSwitch?: { lang: string; href: string; label: string; current: boolean }[];
+  /** Dunkler Kopfbereich (Startseite nach Design-Vorlage): Kopfzeile liegt auf dem dunklen Hero. */
+  theme?: 'dark';
+  /** Eigene Hauptnavigation (sonst Start/Anfrage/Portal). */
+  navItems?: { href: string; label: string; current?: boolean }[];
+  /** Unterzeile neben dem Markennamen im dunklen Kopf. */
+  tagline?: string;
 }
+
+const DARK_CSS = `
+.darkzone{position:relative;z-index:6;background:#03161B;color:#E8F4F2}
+.darkzone header.site.dark{position:absolute;left:0;right:0;top:100%}
+.darkzone .banner{margin:0 auto;max-width:none;border-radius:0;border:0;border-bottom:1px solid rgba(246,223,168,.18);background:#1A1708;color:#F6DFA8;justify-content:center;padding:9px 16px;font-size:13.5px}
+.darkzone .banner strong{color:#FFD27A}
+header.site.dark{position:relative;background:transparent;border:0;-webkit-backdrop-filter:none;backdrop-filter:none;z-index:5}
+header.site.dark .site-in{max-width:1320px;padding:22px 32px 6px;flex-wrap:nowrap}
+.brand.xl{gap:18px;color:#fff}.brand.xl .inf{width:118px;height:58px;display:block;flex:none;filter:drop-shadow(0 0 14px rgba(25,211,197,.55))}
+.brand.xl .bn{display:flex;flex-direction:column;line-height:1.08;padding-left:18px;border-left:1.5px solid rgba(255,255,255,.55)}
+.brand.xl .bn b{font-size:34px;letter-spacing:-.6px;font-weight:700;color:#fff}.brand.xl .bn b i{font-style:normal;color:#22D8C8}
+.brand.xl .bn small{font-size:19px;font-weight:500;color:#E8F4F2;margin-top:4px}
+header.site.dark nav{gap:6px;flex-wrap:nowrap}
+header.site.dark nav a{color:#F2FAF9;font-size:17.5px;font-weight:500;padding:10px 14px;border-radius:0;position:relative;background:none}
+header.site.dark nav a:hover{background:none;color:#22D8C8}
+header.site.dark nav a[aria-current=page]{background:none;color:#22D8C8;font-weight:650}
+header.site.dark nav a[aria-current=page]::after{content:"";position:absolute;left:12px;right:12px;bottom:0;height:3px;border-radius:3px;background:#22D8C8;box-shadow:0 0 12px rgba(34,216,200,.8)}
+header.site.dark .langs{border-color:rgba(255,255,255,.28);margin-left:10px}header.site.dark nav .langs a{color:#BFD9D6;padding:6px 9px;font-size:12.5px}header.site.dark nav .langs a::after{display:none}
+header.site.dark nav .langs a[aria-current=true]{background:#22D8C8;color:#03161B}
+header.site.dark .mode{background:rgba(255,210,122,.12);border-color:rgba(255,210,122,.35);color:#FFD27A;margin-left:6px}
+@media (max-width:1180px){header.site.dark .site-in{flex-wrap:wrap;padding:18px 20px 4px}header.site.dark nav{width:100%;overflow-x:auto;scrollbar-width:none;padding-bottom:4px}header.site.dark nav::-webkit-scrollbar{display:none}header.site.dark nav a{white-space:nowrap}}
+@media (max-width:620px){.brand.xl .inf{width:72px;height:36px}.brand.xl{gap:12px}.brand.xl .bn{padding-left:12px}.brand.xl .bn b{font-size:24px}.brand.xl .bn small{font-size:14px}header.site.dark nav a{font-size:16px;padding:10px 10px}}
+`;
+
+/** Unendlich-Zeichen der Marke in Türkis mit Verlauf (dunkler Kopf). */
+const INFINITY_MARK = `<svg class="inf" viewBox="0 0 120 60" aria-hidden="true" focusable="false"><defs><linearGradient id="infg" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stop-color="#0FB5A6"/><stop offset=".5" stop-color="#3FF0DC"/><stop offset="1" stop-color="#14C4B4"/></linearGradient></defs><path d="M30 12c-10 0-18 8-18 18s8 18 18 18c16 0 30-36 46-36 10 0 18 8 18 18s-8 18-18 18c-16 0-30-36-46-36Z" transform="translate(7 0)" fill="none" stroke="url(#infg)" stroke-width="7" stroke-linecap="round"/></svg>`;
 
 const UI_DE: NonNullable<PageOptions['ui']> = {
   nav: { start: 'Start', inquiry: 'Anfrage stellen', portal: 'Kundenportal', test: 'Testbetrieb' },
@@ -99,12 +131,19 @@ export function page(title: string, body: string, opts: PageOptions = { testMode
   const sw = opts.langSwitch?.length
     ? `<span class="langs" role="group" aria-label="Sprache / Lingua / Language">${opts.langSwitch.map((l) => `<a href="${escapeHtml(l.href)}" hreflang="${escapeHtml(l.lang)}" lang="${escapeHtml(l.lang)}"${l.current ? ' aria-current="true"' : ''}>${escapeHtml(l.label)}</a>`).join('')}</span>`
     : '';
+  const dark = opts.theme === 'dark';
+  const navHtml = opts.navItems
+    ? opts.navItems.map((n) => `<a href="${escapeHtml(n.href)}"${n.current ? ' aria-current="page"' : ''}>${n.label}</a>`).join('')
+    : nav.map(([k, href, label]) => `<a href="${href}"${opts.active === k ? ' aria-current="page"' : ''}>${label}</a>`).join('');
+  const brand = dark
+    ? `<a class="brand xl" href="${ui.home}" aria-label="Infinity Earn – ${ui.nav.start}">${INFINITY_MARK}<span class="bn"><b>Infinity <i>Earn</i></b>${opts.tagline ? `<small>${opts.tagline}</small>` : ''}</span></a>`
+    : `<a class="brand" href="${ui.home}"><span class="mark">${icon('infinity')}</span><span class="brandname">infinity<b>earn</b></span></a>`;
+  const header = `<header class="site${dark ? ' dark' : ''}"><div class="site-in">${brand}
+<nav aria-label="Hauptnavigation">${navHtml}${sw}${opts.testMode ? `<span class="mode"><span class="dot" aria-hidden="true"></span>${ui.nav.test}</span>` : ''}</nav></div></header>`;
   return `<!doctype html><html lang="${opts.lang ?? 'de'}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#F7FAF9"><title>${escapeHtml(title)}</title>${opts.description ? `<meta name="description" content="${escapeHtml(opts.description)}">` : ''}${opts.canonical ? `<link rel="canonical" href="${escapeHtml(opts.canonical)}">` : ''}${alt}<style>${CSS}${opts.extraCss ?? ''}</style></head><body><a class="skip" href="#inhalt">${ui.skip}</a>
-<header class="site"><div class="site-in"><a class="brand" href="${ui.home}"><span class="mark">${icon('infinity')}</span><span class="brandname">infinity<b>earn</b></span></a>
-<nav aria-label="Hauptnavigation">${nav.map(([k, href, label]) => `<a href="${href}"${opts.active === k ? ' aria-current="page"' : ''}>${label}</a>`).join('')}${sw}${opts.testMode ? `<span class="mode"><span class="dot" aria-hidden="true"></span>${ui.nav.test}</span>` : ''}</nav></div></header>
-${banner}<main id="inhalt"${opts.wide ? ' class="wide"' : ''}>${body}</main>
-<footer class="site"><div>INFINITY EARN · ${ui.footer} · <a href="/vertrauen">${ui.trust}</a> · <a href="/pruefen">${ui.verify}</a> · <a href="/admin">${ui.admin}</a></div></footer></body></html>`;
+<meta name="theme-color" content="${dark ? '#03161B' : '#F7FAF9'}"><title>${escapeHtml(title)}</title>${opts.description ? `<meta name="description" content="${escapeHtml(opts.description)}">` : ''}${opts.canonical ? `<link rel="canonical" href="${escapeHtml(opts.canonical)}">` : ''}${alt}<style>${CSS}${dark ? DARK_CSS : ''}${opts.extraCss ?? ''}</style></head><body><a class="skip" href="#inhalt">${ui.skip}</a>
+${dark ? `<div class="darkzone">${banner}${header}</div>` : `${header}\n${banner}`}<main id="inhalt"${opts.wide ? ' class="wide"' : ''}>${body}</main>
+<footer class="site"><div>INFINITY EARN · ${ui.footer} ${opts.navItems ? `· <a href="/portal">${ui.nav.portal}</a> ` : ''}· <a href="/vertrauen">${ui.trust}</a> · <a href="/pruefen">${ui.verify}</a> · <a href="/admin">${ui.admin}</a></div></footer></body></html>`;
 }
 
 export const e = escapeHtml;

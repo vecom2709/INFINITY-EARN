@@ -7,6 +7,7 @@ import { customerInvoices } from '../../../services/finance/src/invoice-pdf.ts';
 import { getAcceptance, getFeedback } from '../../../services/core-api/src/aftercare.ts';
 import { asCalcInput, computeTotals, type CalcInput } from '../../../services/product-factory/src/capabilities/b2b-calc-csv.ts';
 import type { ProvenancePassport } from '../../../services/product-factory/src/provenance.ts';
+import { HERO_IMAGES } from './hero-images.generated.ts';
 import { HOME, LANG_PATH, LANGS, type Lang } from './home-i18n.ts';
 import { frame, productTitle, tr } from './i18n-pages.ts';
 import { acceptanceChecks, listStandards } from '../../../services/product-factory/src/quality-standard.ts';
@@ -26,22 +27,40 @@ const tone = (t: string): string => (t === 'ok' ? 'ok' : t === 'bad' ? 'bad' : t
  * Parallax über CSS-Scroll-Timelines, nur bei „Bewegung erlaubt“; Parallax nur auf großen Bildschirmen.
  * Ohne Unterstützung bleibt alles sofort sichtbar. Inhalte nur aus echten Systemdaten – keine erfundenen Zahlen.
  */
+/** Hero-Foto (kie.ai, vom Eigentümer beauftragt) – über /bilder/ vom eigenen Server, mit Prüfsumme versioniert. */
+const heroUrl = (name: string): string => `/bilder/${name}?v=${HERO_IMAGES[name]?.sha256.slice(0, 12) ?? '0'}`;
+const HERO_SRC = heroUrl('hero-1920.jpg');
+const HERO_SRC_SMALL = heroUrl('hero-960.jpg');
+
 const HOME_CSS = `
 .story-progress{position:fixed;left:0;right:0;top:0;height:3px;z-index:30;transform-origin:0 50%;transform:scaleX(0);background:linear-gradient(90deg,var(--accent),var(--brand));display:none}
-.hero{position:relative;overflow:hidden;background:radial-gradient(1200px 520px at 78% -10%,rgba(24,200,193,.20),transparent 60%),radial-gradient(900px 500px at -10% 110%,rgba(8,127,130,.28),transparent 60%),var(--ocean);color:#E6F1F0}
-.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,.04),transparent 30%);pointer-events:none}
-.hero-in{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:clamp(56px,9vw,120px) 24px clamp(64px,9vw,112px);display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,1fr);gap:56px;align-items:center}
-.kicker{display:inline-flex;align-items:center;gap:10px;font-size:13px;letter-spacing:1.8px;text-transform:uppercase;font-weight:650;color:#9FDCD8}.kicker::before{content:"";width:28px;height:1px;background:var(--brand)}
-.hero h1{font-size:clamp(40px,5.6vw,76px);line-height:1.02;letter-spacing:-2.6px;font-weight:740;margin:22px 0 22px;color:#F7FAF9}
-.hero h1 em{font-style:normal;background:linear-gradient(90deg,#5FE0DA,var(--brand));-webkit-background-clip:text;background-clip:text;color:transparent}
-.hero p.lead{color:#B9CFCE;font-size:clamp(17px,1.5vw,20px);max-width:560px;margin:0 0 32px}
-.hero .btn{min-height:52px;padding:14px 22px;font-size:16px;border-color:var(--brand);background:linear-gradient(180deg,#22D3CB,var(--brand));color:var(--ocean);box-shadow:0 10px 30px rgba(24,200,193,.25)}
-.hero .btn:hover{background:#5FE0DA}.hero .btn.secondary{background:rgba(255,255,255,.06);color:#E6F1F0;border-color:rgba(230,241,240,.28);box-shadow:none}.hero .btn.secondary:hover{background:rgba(255,255,255,.12)}
-.glass{position:relative;border-radius:22px;padding:22px;background:linear-gradient(160deg,rgba(255,255,255,.12),rgba(255,255,255,.04));border:1px solid rgba(255,255,255,.14);box-shadow:0 40px 80px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.12);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
-.sheet{background:#fff;color:var(--ink);border-radius:14px;overflow:hidden;box-shadow:0 18px 40px rgba(0,0,0,.25)}
-.sheet-h{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--border)}.sheet-h b{font-size:15px}.sheet-h small{display:block;color:var(--muted);font-size:12.5px}
-.sheet table{font-size:13.5px}.sheet th{padding:9px 18px}.sheet td{padding:10px 18px;border-bottom:1px solid #E9F0EF}.sheet .r{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}.sheet tfoot td{font-weight:740;background:#F2F9F8;border-bottom:0}
-.glass-note{display:flex;gap:10px;align-items:center;margin-top:14px;color:#B9CFCE;font-size:13px}.glass-note .ico{color:var(--brand)}
+.hero{position:relative;overflow:hidden;color:#E8F4F2;min-height:clamp(600px,55.8vw,1080px);display:flex;align-items:center;
+background:linear-gradient(90deg,rgba(3,22,27,.55) 0%,rgba(3,22,27,.25) 38%,rgba(3,22,27,0) 55%),linear-gradient(180deg,rgba(3,22,27,.55) 0%,rgba(3,22,27,0) 18%),url("${HERO_SRC}") right center/cover no-repeat,#03161B}
+.hero-in{position:relative;z-index:1;width:100%;max-width:1320px;margin:0 auto;padding:clamp(120px,10vw,170px) 32px clamp(80px,8vw,130px)}
+.hero-in>div{max-width:min(760px,50vw)}
+.hero h1 .l1{white-space:nowrap}
+.eyebrow{display:flex;align-items:center;gap:18px;font-size:clamp(14px,1.3vw,19px);letter-spacing:4.5px;text-transform:uppercase;font-weight:700;color:#F2FAF9}.eyebrow::after{content:"";width:clamp(80px,12vw,190px);height:2px;background:linear-gradient(90deg,#22D8C8,rgba(34,216,200,.25))}
+.hero h1{font-size:clamp(38px,4.7vw,78px);line-height:1.06;letter-spacing:-1.4px;font-weight:760;margin:26px 0 22px;color:#fff}
+.hero h1 .accent{display:block;background:linear-gradient(90deg,#16C7B5,#3FF0DC 55%,#18C9B8);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 22px rgba(34,216,200,.25))}
+.hero p.lead{color:#F2FAF9;font-size:clamp(17px,1.65vw,25px);line-height:1.42;max-width:640px;margin:0 0 34px}
+.hero .cta{display:flex;flex-wrap:wrap;gap:28px}
+.hero .btn{min-height:60px;padding:14px 32px;font-size:19px;font-weight:700;border-radius:12px;gap:16px;border:1.5px solid #3FE6D4;background:linear-gradient(180deg,#0FA596,#0A7D74);color:#fff;text-shadow:0 1px 1px rgba(0,0,0,.25);box-shadow:0 0 0 1px rgba(63,230,212,.15),0 12px 34px rgba(25,211,197,.30)}
+.hero .btn:hover{background:linear-gradient(180deg,#12B5A5,#0B8A80)}.hero .btn .ico{width:24px;height:24px;stroke-width:2}
+.hero .btn.secondary{background:rgba(3,22,27,.35);color:#fff;border-color:rgba(255,255,255,.85);box-shadow:none}.hero .btn.secondary:hover{background:rgba(255,255,255,.08)}
+.sample{margin:32px 0 0;max-width:640px;padding:16px;border-radius:20px;background:linear-gradient(160deg,#0B2227,#03161B);box-shadow:0 30px 60px rgba(3,22,27,.25)}
+.sample figcaption{display:flex;gap:8px;align-items:center;margin-top:12px;color:#A9C9C5;font-size:13.5px}.sample figcaption .ico{color:#22D8C8}
+.sheet{background:#112A30;border:1px solid rgba(63,230,212,.18);border-radius:10px;overflow:hidden;color:#E8F4F2}
+.sheet-h{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:9px 12px;border-bottom:1px solid rgba(255,255,255,.07)}.sheet-h b{font-size:13px;color:#fff}.sheet-h small{display:block;color:#8FB3AF;font-size:10.5px}
+.sheet .tag.ok{background:rgba(34,216,200,.16);color:#5FF2E0;font-size:11px;padding:3px 8px}
+.sheet table{font-size:11.5px}.sheet th{padding:6px 12px;background:transparent;color:#8FB3AF;font-size:9.5px}.sheet td{padding:6px 12px;border-bottom:1px solid rgba(255,255,255,.06);color:#D7E9E6}.sheet .r{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.sheet tfoot td{font-weight:740;color:#5FF2E0;background:rgba(34,216,200,.08);border-bottom:0;font-size:12.5px}
+.strip{position:relative;background:linear-gradient(180deg,#F4FAF9 0%,#EAF5F3 70%,#DDF0EE 100%);overflow:hidden}
+.strip-in{position:relative;z-index:1;max-width:1320px;margin:0 auto;padding:28px 24px 58px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}
+.strip a{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;padding:8px 18px;color:var(--ink);border-left:1px solid #C5DAD8}.strip a:first-child{border-left:0}
+.strip a:hover{text-decoration:none}.strip a:hover b{color:var(--accent)}
+.strip .ico{width:62px;height:62px;stroke-width:1.5;color:#0B7F75;margin-bottom:8px}
+.strip b{font-size:clamp(18px,1.7vw,25px);letter-spacing:-.4px;font-weight:720;transition:color .2s}.strip span{font-size:clamp(14px,1.1vw,17px);color:#1E3138}
+.strip .swave{position:absolute;left:0;right:0;bottom:0;width:100%;height:60px}
 .chapter{position:relative;max-width:1200px;margin:0 auto;padding:clamp(72px,10vw,128px) 24px;display:grid;grid-template-columns:200px minmax(0,1fr);gap:48px}
 .band{background:#fff;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}.band.mist{background:linear-gradient(180deg,#F1F8F7,#F7FAF9)}
 .ch-label{position:sticky;top:96px;align-self:start;color:var(--muted);font-size:13px;letter-spacing:1.6px;text-transform:uppercase;font-weight:650}
@@ -80,13 +99,18 @@ const HOME_CSS = `
 @keyframes reveal{from{opacity:0;transform:translateY(28px) scale(.985)}to{opacity:1;transform:none}}
 @keyframes drift{from{transform:translateY(28px)}to{transform:translateY(-28px)}}
 @keyframes grow{to{transform:scaleX(1)}}
-@media (max-width:900px){.hero-in{grid-template-columns:1fr;gap:36px}.chapter{grid-template-columns:1fr;gap:12px}.ch-label{position:static}.ch-label b{font-size:30px;display:inline;margin-right:10px}
+@media (max-width:1100px){.strip-in{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:26px}.strip a:nth-child(3){border-left:0}}
+@media (max-width:900px){.hero{min-height:0;display:block;background:linear-gradient(180deg,#03161B 0%,#03161B 50%,rgba(3,22,27,.35) 72%,rgba(3,22,27,0) 85%),url("${HERO_SRC_SMALL}") 72% 100%/auto 46% no-repeat,#03161B}
+.hero-in{padding:150px 20px 52vw}.hero-in>div{max-width:none}.chapter{grid-template-columns:1fr;gap:12px}.ch-label{position:static}.ch-label b{font-size:30px;display:inline;margin-right:10px}
 .tiles,.checks{grid-template-columns:1fr}.flow{grid-template-columns:1fr 1fr}}
-@media (max-width:520px){.flow{grid-template-columns:1fr}.hero h1{letter-spacing:-1.6px}.hero .btn{width:100%}.sheet td,.sheet th{padding-left:12px;padding-right:12px}}
+@media (max-width:560px){.flow{grid-template-columns:1fr}.hero h1{letter-spacing:-.8px}.hero h1 .l1{white-space:normal}.hero .cta{gap:14px}.hero .btn{width:100%;min-height:56px;font-size:18.7px}.sheet td,.sheet th{padding-left:8px;padding-right:8px}.sample{padding:10px}
+.strip-in{grid-template-columns:1fr;padding-bottom:64px}.strip a{border-left:0;border-top:1px solid #C5DAD8;padding-top:20px}.strip a:first-child{border-top:0}}
 `;
 
 const HOME_ICON: Record<string, Parameters<typeof icon>[0]> = { 'b2b-calc-csv': 'grid', 'b2b-calc-pdf': 'doc', 'b2b-calc-bundle': 'package' };
 const HOME_FORMAT: Record<string, string> = { 'b2b-calc-csv': 'CSV', 'b2b-calc-pdf': 'PDF', 'b2b-calc-bundle': 'ZIP · CSV · PDF' };
+
+const STRIP_WAVE = '<svg class="swave" viewBox="0 0 1600 60" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path d="M0 34C260 8 520 52 800 34S1340 6 1600 30V60H0Z" fill="#BFE6E2" opacity=".55"/><path d="M0 46C300 22 560 60 860 44S1380 20 1600 42V60H0Z" fill="#9ED9D3" opacity=".5"/></svg>';
 
 const SAMPLE: Record<Lang, { title: string; items: [string, string, string] }> = {
   de: { title: 'Montage Büro Nord', items: ['Montage', 'Material', 'Anfahrt'] },
@@ -96,27 +120,36 @@ const SAMPLE: Record<Lang, { title: string; items: [string, string, string] }> =
 
 export function renderHome(offered: readonly string[] = ['b2b-calc-csv'], lang: Lang = 'de', origin = '', price: { minMinor: number; maxMinor: number } = { minMinor: 5000, maxMinor: 200000 }): string {
   const T = HOME[lang];
+  const V = T.v;
   const S = SAMPLE[lang];
+  // Vier Kacheln unter dem Hero: nur echte Angebote, jede führt zu einem echten Ziel.
+  const strip: [Parameters<typeof icon>[0], string, [string, string]][] = [
+    ['laptop', '#k4', V.strip.calc],
+    offered.includes('b2b-calc-bundle') ? ['layers', '#k4', V.strip.bundle] : ['layers', '#k7', V.strip.portal],
+    ['users', '/berater', V.strip.advisor],
+    ['gear', '#k5', V.strip.quality],
+  ];
   const sample = asCalcInput({ title: S.title, currency: 'EUR', margin_bps: 2000, language: lang, items: [{ name: S.items[0], quantity: 2, unit_cost_minor: 4500 }, { name: S.items[1], quantity: 1, unit_cost_minor: 2000 }, { name: S.items[2], quantity: 1, unit_cost_minor: 3500 }] });
   const t = computeTotals(sample);
   const products = FORMATS.filter((f) => offered.includes(f.id));
   const standards = listStandards().filter((s) => offered.includes(s.capabilityId));
   const chapter = (n: number, label: string, inner: string, band = ''): string =>
     `<section class="${band}" aria-labelledby="k${n}"><div class="chapter"><div class="ch-label" aria-hidden="true"><b>0${n}</b>${label}</div><div>${inner}</div></div></section>`;
-  const body = `<div class="story-progress" aria-hidden="true"></div>
+  const heroHtml = `<div class="story-progress" aria-hidden="true"></div>
 <section class="hero" aria-labelledby="k1"><div class="hero-in">
-<div class="reveal"><span class="kicker">INFINITY EARN</span>
-<h1 id="k1">${T.heroH1[0]}<br>${T.heroH1[1]} ${T.heroH1[2]}</h1>
-<p class="lead">${T.heroLead}</p>
-<p class="row"><a class="btn" href="/anfrage">${T.ctaPrimary} ${icon('arrow', 'sm')}</a><a class="btn secondary" href="#k4">${T.ctaProducts}</a></p></div>
-<figure class="glass parallax" style="margin:0" aria-label="${e(T.sample.aria)}">
-<div class="sheet"><div class="sheet-h"><div><b>${e(sample.title)}</b><small>${T.sample.meta}</small></div><span class="tag ok">${icon('check', 'sm')} ${T.sample.checked}</span></div>
+<div class="reveal"><p class="eyebrow">${V.eyebrow}</p>
+<h1 id="k1"><span class="l1">${V.h1a}</span><span class="accent">${V.h1b}</span></h1>
+<p class="lead">${V.lead}</p>
+<p class="cta"><a class="btn" href="#k4">${icon('arrow')} ${V.btnProducts}</a><a class="btn secondary" href="#k3">${icon('building')} ${V.btnSolutions}</a></p></div>
+</div></section>
+<nav class="strip" aria-label="${e(V.nav.products)}"><div class="strip-in">${strip.map(([ic, href, [b, s]]) => `<a href="${href}">${icon(ic)}<b>${b}</b><span>${s}</span></a>`).join('')}</div>${STRIP_WAVE}</nav>`;
+  const sampleFigure = `<figure class="sample reveal" aria-label="${e(T.sample.aria)}"><div class="sheet"><div class="sheet-h"><div><b>${e(sample.title)}</b><small>${T.sample.meta}</small></div><span class="tag ok">${icon('check', 'sm')} ${T.sample.checked}</span></div>
 <table><thead><tr><th>${T.sample.pos}</th><th class="r">${T.sample.qty}</th><th class="r">${T.sample.sum}</th></tr></thead><tbody>
 ${sample.items.map((it, i) => `<tr><td>${e(it.name)}</td><td class="r">${it.quantity}</td><td class="r">${money(t.lines[i] as number, 'EUR')}</td></tr>`).join('')}
 <tr><td>${T.sample.markup}</td><td></td><td class="r">${money(t.markup, 'EUR')}</td></tr></tbody>
 <tfoot><tr><td>${T.sample.total}</td><td></td><td class="r">${money(t.total, 'EUR')}</td></tr></tfoot></table></div>
-<figcaption class="glass-note">${icon('shield', 'sm')} ${T.sample.note}</figcaption></figure>
-</div></section>
+<figcaption>${icon('shield', 'sm')} ${T.sample.note}</figcaption></figure>`;
+  const body = `${heroHtml}
 ${chapter(2, T.c2[0], `<div class="reveal"><h2 id="k2">${T.c2[1]}</h2><p class="sub">${T.c2[2]}</p></div>`)}
 ${chapter(3, T.c3[0], `<div class="reveal"><h2 id="k3">${T.c3[1]}</h2><p class="sub">${T.c3[2]}</p>
 <figure class="compose" style="margin:0"><div class="compose-h"><span class="dot"></span>${T.c3[3]}</div><pre>${e(S.items[0])};2;45,00
@@ -125,7 +158,7 @@ ${e(S.items[2])};1;35
 ${e(T.sample.markup)}</pre></figure>
 <p class="links"><a href="/berater">${icon('send', 'sm')} ${T.c3[4]}</a></p></div>`, 'band')}
 ${chapter(4, T.c4[0], `<div class="reveal"><h2 id="k4">${T.c4[1]}</h2><p class="sub">${T.c4[2]}</p></div>
-<div class="tiles">${products.map((f) => `<article class="tile reveal"><span class="ic">${icon(HOME_ICON[f.id] ?? 'doc')}</span><h3>${e(T.products[f.id]?.label ?? f.label)}</h3><p>${e(T.products[f.id]?.text ?? f.text)}</p><div class="meta"><span class="tag neutral">${e(HOME_FORMAT[f.id] ?? '')}</span><a href="/hilfe/${e(f.id)}">${T.guide}</a></div></article>`).join('')}</div>`, 'band mist')}
+<div class="tiles">${products.map((f) => `<article class="tile reveal"><span class="ic">${icon(HOME_ICON[f.id] ?? 'doc')}</span><h3>${e(T.products[f.id]?.label ?? f.label)}</h3><p>${e(T.products[f.id]?.text ?? f.text)}</p><div class="meta"><span class="tag neutral">${e(HOME_FORMAT[f.id] ?? '')}</span><a href="/hilfe/${e(f.id)}">${T.guide}</a></div></article>`).join('')}</div>${sampleFigure}`, 'band mist')}
 ${chapter(5, T.c5[0], `<div class="reveal"><h2 id="k5">${T.c5[1]}</h2><p class="sub">${T.c5[2]}</p></div>
 <div class="checks">${standards.map((s) => `<article class="tile reveal"><span class="muted" style="font-size:14px">${e(T.products[s.capabilityId]?.label ?? s.capabilityId)}</span><b class="num">${acceptanceChecks(s).length}</b><p>${T.c5[3]}</p><div class="meta">${s.references.map((r) => `<span class="tag neutral">${e(r.name)}</span>`).join('')}</div></article>`).join('')}</div>
 <p class="links"><a href="/vertrauen">${icon('shield', 'sm')} ${T.trust}</a><a href="/pruefen">${icon('check', 'sm')} ${T.c5[4]}</a></p>`)}
@@ -141,6 +174,11 @@ ${chapter(8, T.faq.label, `<div class="reveal"><h2 id="k8">${T.faq.h2}</h2><p cl
   const abs = (p: string): string => `${origin}${p}`;
   return page(T.title, body, {
     testMode: true, active: 'start', wide: true, extraCss: HOME_CSS, description: T.description, lang,
+    theme: 'dark', tagline: V.tagline,
+    navItems: [
+      { href: LANG_PATH[lang], label: T.nav.start, current: true }, { href: '#k4', label: V.nav.products }, { href: '#k2', label: V.nav.business },
+      { href: '#k3', label: V.nav.solutions }, { href: '/vertrauen', label: V.nav.about }, { href: '/anfrage', label: V.nav.contact },
+    ],
     canonical: origin ? abs(LANG_PATH[lang]) : undefined,
     alternates: origin ? [...LANGS.map((l) => ({ lang: l, href: abs(LANG_PATH[l]) })), { lang: 'x-default', href: abs('/') }] : undefined,
     langSwitch: LANGS.map((l) => ({ lang: l, href: LANG_PATH[l], label: l.toUpperCase(), current: l === lang })),

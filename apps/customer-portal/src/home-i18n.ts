@@ -12,6 +12,13 @@ export interface HomeText {
   c2: [string, string, string]; c3: [string, string, string, string, string]; c4: [string, string, string]; c5: [string, string, string, string, string];
   c6: [string, string, string]; flow: [string, string][]; c7: [string, string, string, string]; portalTiles: [string, string][]; c8: [string, string];
   guide: string; products: Record<string, { label: string; text: string }>;
+  /** Kopf und Hero nach Design-Vorlage (dunkel, Laptop, vier Kacheln). */
+  v: {
+    tagline: string; eyebrow: string; h1a: string; h1b: string; lead: string; btnProducts: string; btnSolutions: string;
+    nav: { products: string; business: string; solutions: string; about: string; contact: string };
+    strip: { calc: [string, string]; bundle: [string, string]; portal: [string, string]; advisor: [string, string]; quality: [string, string] };
+    screen: { side: [string, string, string, string, string]; aria: string };
+  };
   faq: { label: string; h2: string; sub: string; priceTitle: string; price: (min: string, max: string) => string; contactTitle: string; contact: string; legalTitle: string; legal: string; items: [string, string][] };
 }
 
@@ -36,6 +43,18 @@ export const HOME: Record<Lang, HomeText> = {
     portalTiles: [['Dateien', 'Geprüfte Dateien zum Herunterladen.'], ['Rechnungen', 'Rechnung und Vertragsbestätigung als PDF.'], ['Support', 'Fragen, Änderungen und Mängel direkt im Portal.']],
     c8: ['Bereit für Ihr Angebot?', 'Unverbindlich, bis Sie annehmen und bezahlen.'],
     guide: 'Anleitung',
+    v: {
+      tagline: 'Digitale Produkte', eyebrow: 'B2B Solutions', h1a: 'Digitale Produkte', h1b: 'für Ihr Business.',
+      lead: 'Professionelle, sofort nutzbare digitale Lösungen zur Effizienzsteigerung – geprüfte Kalkulationen als Tabelle und PDF, mit festem Preis.',
+      btnProducts: 'Produkte entdecken', btnSolutions: 'B2B Lösungen',
+      nav: { products: 'Produkte', business: 'Business', solutions: 'Lösungen', about: 'Über uns', contact: 'Kontakt' },
+      strip: {
+        calc: ['Business-Kalkulationen', 'Professionell und sofort einsatzbereit'], bundle: ['Komplett-Pakete', 'Tabelle und PDF in einem Paket'],
+        portal: ['Kundenportal', 'Dateien, Rechnungen und Support an einem Ort'], advisor: ['Persönlicher Berater', 'Wunsch in eigenen Worten beschreiben'],
+        quality: ['Geprüfte Qualität', 'Jede Lieferung automatisch geprüft'],
+      },
+      screen: { side: ['Kalkulation', 'Tabelle', 'PDF', 'Paket', 'Prüfung'], aria: 'Laptop mit einer echten Beispiel-Kalkulation aus unserem Generator' },
+    },
     faq: {
       label: 'Preise & Fragen', h2: 'Klare Preise, klare Antworten.', sub: 'Alles, was Sie vor einer Bestellung wissen sollten.',
       priceTitle: 'So entsteht der Preis', price: (min, max) => `Jedes Angebot ist ein Festpreis aus dem tatsächlichen Aufwand plus Marge – mindestens ${min}, höchstens ${max} je Auftrag. Umsatzsteuer wird ausgewiesen, sobald der Steuerkontext geprüft ist. Stripe-Gebühren tragen wir.`,
@@ -74,6 +93,18 @@ export const HOME: Record<Lang, HomeText> = {
     portalTiles: [['File', 'File verificati da scaricare.'], ['Fatture', 'Fattura e conferma del contratto in PDF.'], ['Assistenza', 'Domande, modifiche e difetti direttamente nell’area clienti.']],
     c8: ['Pronti per la vostra offerta?', 'Senza impegno finché non accettate e pagate.'],
     guide: 'Istruzioni',
+    v: {
+      tagline: 'Prodotti digitali', eyebrow: 'B2B Solutions', h1a: 'Prodotti digitali', h1b: 'per il tuo business.',
+      lead: 'Soluzioni digitali professionali, subito utilizzabili, per lavorare in modo più efficiente – calcoli verificati come tabella e PDF, a prezzo fisso.',
+      btnProducts: 'Scopri i prodotti', btnSolutions: 'Soluzioni B2B',
+      nav: { products: 'Prodotti', business: 'Business', solutions: 'Soluzioni', about: 'Chi siamo', contact: 'Contatto' },
+      strip: {
+        calc: ['Calcoli aziendali', 'Professionali e subito pronti all’uso'], bundle: ['Pacchetti completi', 'Tabella e PDF in un unico pacchetto'],
+        portal: ['Area clienti', 'File, fatture e assistenza in un unico posto'], advisor: ['Consulente personale', 'Descrivi la tua esigenza con parole tue'],
+        quality: ['Qualità verificata', 'Ogni consegna verificata automaticamente'],
+      },
+      screen: { side: ['Calcolo', 'Tabella', 'PDF', 'Pacchetto', 'Verifica'], aria: 'Laptop con un vero calcolo di esempio del nostro generatore' },
+    },
     faq: {
       label: 'Prezzi e domande', h2: 'Prezzi chiari, risposte chiare.', sub: 'Tutto ciò che è utile sapere prima di ordinare.',
       priceTitle: 'Come nasce il prezzo', price: (min, max) => `Ogni offerta è a prezzo fisso, calcolata dal lavoro effettivo più il margine – minimo ${min}, massimo ${max} per ordine. L’IVA viene indicata appena il contesto fiscale è verificato. Le commissioni Stripe sono a nostro carico.`,
@@ -112,6 +143,18 @@ export const HOME: Record<Lang, HomeText> = {
     portalTiles: [['Files', 'Verified files to download.'], ['Invoices', 'Invoice and contract confirmation as PDF.'], ['Support', 'Questions, changes and defects right in the portal.']],
     c8: ['Ready for your quote?', 'Non-binding until you accept and pay.'],
     guide: 'Guide',
+    v: {
+      tagline: 'Digital products', eyebrow: 'B2B Solutions', h1a: 'Digital products', h1b: 'for your business.',
+      lead: 'Professional, ready-to-use digital solutions for greater efficiency – verified calculations as spreadsheet and PDF, at a fixed price.',
+      btnProducts: 'Discover products', btnSolutions: 'B2B solutions',
+      nav: { products: 'Products', business: 'Business', solutions: 'Solutions', about: 'About us', contact: 'Contact' },
+      strip: {
+        calc: ['Business calculations', 'Professional and ready to use'], bundle: ['Complete packages', 'Spreadsheet and PDF in one package'],
+        portal: ['Customer portal', 'Files, invoices and support in one place'], advisor: ['Personal advisor', 'Describe your need in your own words'],
+        quality: ['Verified quality', 'Every delivery checked automatically'],
+      },
+      screen: { side: ['Calculation', 'Spreadsheet', 'PDF', 'Package', 'Checks'], aria: 'Laptop showing a real sample calculation from our generator' },
+    },
     faq: {
       label: 'Prices & FAQ', h2: 'Clear prices, clear answers.', sub: 'Everything you should know before ordering.',
       priceTitle: 'How the price is set', price: (min, max) => `Every quote is a fixed price based on the actual effort plus margin – at least ${min}, at most ${max} per order. VAT is shown once the tax context has been verified. We cover Stripe fees.`,

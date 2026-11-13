@@ -42,3 +42,12 @@ Quelle der Wahrheit im Code: `apps/console/src/tokens.ts`. Genutzt von der Start
 ## Kundenprogramme
 
 Kundenprodukte bekommen **nicht** automatisch Türkis. Ihre Gestaltung richtet sich nach der Marke des Kunden und ist Teil der Standard-Akte im Produktstandard (siehe [PRODUCT_FACTORY_REAL_SOFTWARE.md](PRODUCT_FACTORY_REAL_SOFTWARE.md)).
+
+## Startseite nach Design-Vorlage (13.11.2026)
+
+Dunkler Hero mit Foto nach der Vorlage des Eigentümers: Marke Infinity Earn mit Unterzeile, sechs Menüpunkte mit echten Zielen, B2B SOLUTIONS, zwei Schaltflächen, darunter vier Kacheln (nur echte Angebote).
+
+- **Foto:** erzeugt mit kie.ai (Modell Flux-2 Pro, 16:9, 1 Bild, 7 Credits) im Auftrag des Eigentümers, ohne Schrift im Bild. Original: `docs/design/hero/kie-hero-original.jpg`; Skript: `scripts/kie-hero.ts` (Schlüssel nur aus `.env`: `KIE_API_KEY`).
+- **Auslieferung:** `apps/customer-portal/assets/hero-1920.jpg` (105 KB) und `hero-960.jpg` (36 KB), eingebettet über `node scripts/build-hero-assets.ts`, ausgeliefert unter `/bilder/…?v=<Prüfsumme>` (CSP `img-src 'self'`).
+- **Ehrlichkeit:** Der Laptop im Foto ist Stimmungsbild; die echte, nachgerechnete Beispiel-Kalkulation steht in Kapitel 04.
+

@@ -23,7 +23,8 @@ for (const lang of LANGS) {
   const local: Record<string, string> = { '/': up, '/it': `${up}it/`, '/en': `${up}en/` };
   const html = renderHome(OFFERED, lang, APP_ORIGIN)
     .replace(/href="(\/(?:it|en)?)"/g, (m, p: string) => (local[p] ? `href="${local[p]}"` : m))
-    .replace(/href="\/(?!\/)([^"]*)"/g, (_m, path: string) => `href="${APP_ORIGIN}/${path}"`);
+    .replace(/href="\/(?!\/)([^"]*)"/g, (_m, path: string) => `href="${APP_ORIGIN}/${path}"`)
+    .replace(/url\("\/bilder\//g, `url("${APP_ORIGIN}/bilder/`);
   if (/href="\/(?!\/)/.test(html)) throw new Error(`Interner Link nicht umgeschrieben (${lang})`);
   const dir = join(out, DIR[lang]);
   mkdirSync(dir, { recursive: true });

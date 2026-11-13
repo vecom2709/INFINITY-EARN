@@ -21,8 +21,9 @@ test('Startseite DE/IT/EN: richtige Sprache, hreflang-Alternativen, Sprachwechse
   const pages = { de: renderHome(ALL, 'de', o), it: renderHome(ALL, 'it', o), en: renderHome(ALL, 'en', o) };
   assert.match(pages.it, /<html lang="it">/);
   assert.match(pages.en, /<html lang="en">/);
-  assert.match(pages.it, /Lavoro digitale/);
-  assert.match(pages.en, /Digital work/);
+  assert.match(pages.it, /Prodotti digitali<\/span><span class="accent">per il tuo business\./);
+  assert.match(pages.en, /Digital products<\/span><span class="accent">for your business\./);
+  assert.match(pages.de, /Digitale Produkte<\/span><span class="accent">für Ihr Business\./);
   assert.match(pages.it, /MODALITÀ TEST/);
   assert.match(pages.en, /TEST MODE/);
   for (const h of Object.values(pages)) {
@@ -35,6 +36,21 @@ test('Startseite DE/IT/EN: richtige Sprache, hreflang-Alternativen, Sprachwechse
   assert.match(pages.de, /<link rel="canonical" href="https:\/\/beispiel\.invalid\/">/);
 });
 
+test('Design-Vorlage: dunkler Kopf mit Marke, sechs Menüpunkte mit echten Zielen, vier Kacheln nur mit echten Angeboten', () => {
+  const h = renderHome(ALL);
+  assert.match(h, /<header class="site dark">/);
+  assert.match(h, /Infinity <i>Earn<\/i><\/b><small>Digitale Produkte<\/small>/);
+  const nav = /<nav aria-label="Hauptnavigation">([\s\S]*?)<\/nav>/.exec(h)?.[1] ?? '';
+  for (const [href, label] of [['/', 'Start'], ['#k4', 'Produkte'], ['#k2', 'Business'], ['#k3', 'Lösungen'], ['/vertrauen', 'Über uns'], ['/anfrage', 'Kontakt']]) assert.ok(nav.includes(`href="${href}"`) && nav.includes(`>${label}</a>`), label);
+  assert.match(nav, /href="\/" aria-current="page">Start/);
+  assert.match(h, /B2B Solutions/);
+  const strip = /<nav class="strip"[\s\S]*?<\/nav>/.exec(h)?.[0] ?? '';
+  assert.equal((strip.match(/<a href=/g) ?? []).length, 4);
+  assert.match(strip, /Komplett-Pakete/, 'Paket nur, wenn freigegeben');
+  assert.doesNotMatch(renderHome(['b2b-calc-csv']), /Komplett-Pakete/);
+  assert.match(h, /footer[\s\S]*href="\/portal"/, 'Kundenportal bleibt erreichbar');
+});
+
 test('HTTP: /it, /en, robots.txt sperrt interne Bereiche, Sitemap nennt nur öffentliche Seiten', async () => {
   const { makeCtx } = await import('../helpers.ts');
   const { createHandler } = await import('../../services/core-api/src/http-core.ts');
@@ -45,6 +61,17 @@ test('HTTP: /it, /en, robots.txt sperrt interne Bereiche, Sitemap nennt nur öff
   assert.match(String((await get('/en')).body), /<html lang="en">/);
   const robots = String((await get('/robots.txt')).body);
   for (const p of ['/dashboard', '/admin', '/portal', '/api/']) assert.ok(robots.includes(`Disallow: ${p}`), p);
+  const home = String((await get('/')).body);
+  const heroPath = /url\("(\/bilder\/hero-1920\.jpg\?v=[0-9a-f]{12})"\)/.exec(home)?.[1];
+  assert.ok(heroPath, 'Hero-Foto vom eigenen Server (CSP img-src self)');
+  const img = await get(heroPath.split('?')[0] ?? '');
+  assert.equal(img.status, 200);
+  assert.equal(img.headers?.['content-type'], 'image/jpeg');
+  const bytes = img.body as Uint8Array;
+  assert.deepEqual([...bytes.slice(0, 3)], [0xff, 0xd8, 0xff], 'echtes JPEG');
+  const { createHash } = await import('node:crypto');
+  assert.ok(heroPath.endsWith(createHash('sha256').update(bytes).digest('hex').slice(0, 12)), 'Version = Prüfsumme');
+  assert.equal((await get('/bilder/gibt-es-nicht.jpg')).status, 404);
   const sitemap = String((await get('/sitemap.xml')).body);
   assert.match(sitemap, /<loc>[^<]+\/it<\/loc>/);
   assert.doesNotMatch(sitemap, /dashboard|admin|portal/);

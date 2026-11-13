@@ -7,6 +7,7 @@ import { renderConsole, safeBack, statusReport, withFlash } from '../../../apps/
 import {
   renderAdvisor, renderCheckoutReturn, renderHome, renderInquiryForm, renderInquiryResult, renderMockCheckout, renderHelp, renderPortal, renderProvenance, renderQuote, renderTrust,
 } from '../../../apps/customer-portal/src/pages.ts';
+import { HERO_IMAGES } from '../../../apps/customer-portal/src/hero-images.generated.ts';
 import { acquireFromTed } from '../../acquisition/src/connectors/ted.ts';
 import { submitInboundLead, validateInboundLead } from '../../acquisition/src/leads.ts';
 import { rankOpportunities } from '../../acquisition/src/ranking.ts';
@@ -183,6 +184,15 @@ export function createHandler(ctx: AppContext): (r: HttpRequest) => Promise<Res>
   route('GET', '/en', () => html(renderHome(offeredFormats(), 'en', origin(), { minMinor: ctx.config.policy.quote.minMinor, maxMinor: ctx.config.policy.quote.maxMinor })));
   // Technische Suchmaschinen-Grundlagen: interne Bereiche werden nicht indexiert.
   route('GET', '/robots.txt', () => ({ status: 200, headers: { 'content-type': 'text/plain; charset=utf-8' }, body: `User-agent: *\nAllow: /\nDisallow: /dashboard\nDisallow: /admin\nDisallow: /portal\nDisallow: /konto\nDisallow: /angebot/\nDisallow: /api/\nSitemap: ${origin()}/sitemap.xml\n` }));
+  // Hero-Bilder der Startseite (eingebettet, unveränderlich – der Dateiname ist in der Seite mit ?v=<sha> versioniert).
+  route('GET', '/bilder/:name', (req): Res => {
+    const img = HERO_IMAGES[req.params.name ?? ''];
+    if (!img) return { status: 404, headers: { 'content-type': 'text/plain; charset=utf-8' }, body: 'Nicht gefunden' };
+    const bin = atob(img.base64);
+    const bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    return { status: 200, headers: { 'content-type': 'image/jpeg', 'cache-control': 'public, max-age=31536000, immutable', 'x-content-type-options': 'nosniff' }, body: bytes };
+  });
   route('GET', '/sitemap.xml', () => {
     const paths = ['/', '/it', '/en', '/berater', '/anfrage', '/vertrauen', ...offeredFormats().map((id) => `/hilfe/${id}`)];
     return { status: 200, headers: { 'content-type': 'application/xml; charset=utf-8' }, body: `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${paths.map((p) => `<url><loc>${origin()}${p}</loc></url>`).join('')}</urlset>\n` };
