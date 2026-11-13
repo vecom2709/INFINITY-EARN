@@ -17,7 +17,7 @@ main{max-width:1180px;margin:0 auto;padding:20px 24px 60px}h1{font-size:26px;mar
 .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px 20px;margin:0 0 16px}.card h2{margin:0 0 12px;font-size:17px}
 .kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:16px}.kpi{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;border-top:3px solid var(--p)}
 .kpi span{color:var(--muted);font-size:13px;display:block}.kpi b{font-size:22px;display:block;margin-top:6px;font-variant-numeric:tabular-nums}.kpi small{color:var(--muted);font-size:12px;display:block;margin-top:6px}
-.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px 14px}.row2{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,1fr);gap:4px 12px}
+.fld{min-width:0}.grid{display:grid;align-items:end;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px 14px}.row2{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,1fr);gap:4px 12px}
 label{display:block;font-size:13px;font-weight:600;margin:8px 0 4px;color:var(--ink)}
 input,select{width:100%;min-height:42px;padding:8px 10px;border:1px solid #C9D0D8;border-radius:10px;font:inherit;background:#fff;color:var(--ink)}
 input[type=checkbox]{width:20px;height:20px;min-height:0;vertical-align:middle}label.check{font-weight:500;display:flex;gap:8px;align-items:center}

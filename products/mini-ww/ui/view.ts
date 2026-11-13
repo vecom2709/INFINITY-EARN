@@ -21,11 +21,11 @@ const form = (action: string, inner: string, hidden: Record<string, string> = {}
 let fieldSeq = 0;
 const field = (label: string, name: string, attrs = '', value = ''): string => {
   const id = `f${++fieldSeq}`;
-  return `<label for="${id}">${esc(label)}</label><input id="${id}" name="${esc(name)}" value="${esc(value)}" ${attrs}>`;
+  return `<div class="fld"><label for="${id}">${esc(label)}</label><input id="${id}" name="${esc(name)}" value="${esc(value)}" ${attrs}></div>`;
 };
 const select = (label: string, name: string, options: [string, string][], attrs = ''): string => {
   const id = `f${++fieldSeq}`;
-  return `<label for="${id}">${esc(label)}</label><select id="${id}" name="${esc(name)}" ${attrs}>${options.map(([v, l]) => `<option value="${esc(v)}">${esc(l)}</option>`).join('')}</select>`;
+  return `<div class="fld"><label for="${id}">${esc(label)}</label><select id="${id}" name="${esc(name)}" ${attrs}>${options.map(([v, l]) => `<option value="${esc(v)}">${esc(l)}</option>`).join('')}</select></div>`;
 };
 const card = (title: string, body: string, id = ''): string => `<section class="card"${id ? ` id="${id}"` : ''}><h2>${esc(title)}</h2>${body}</section>`;
 const table = (head: string[], rows: string[][], empty: string): string =>

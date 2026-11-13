@@ -82,6 +82,10 @@ export function uiSelfcheck(st: AppState, today: string): SelfcheckResult {
         const id = /id="([^"]+)"/.exec(m[2] ?? '')?.[1];
         if (!id || !html.includes(`for="${id}"`)) problems.push(`${r}: Feld ohne Beschriftung`);
       }
+      // Beschriftung und Feld bilden im Raster eine Einheit (sonst stehen Beschriftungen über fremden Feldern)
+      const gridFields = (html.match(/ id="f\d+"/g) ?? []).length;
+      const paired = (html.match(/<div class="fld"><label for="(f\d+)">[^<]*<\/label><(?:input|select) id="\1"/g) ?? []).length;
+      if (paired !== gridFields) problems.push(`${r}: ${gridFields - paired} Feld(er) nicht mit ihrer Beschriftung gruppiert`);
       if (/<script|javascript:|on\w+=/i.test(html)) problems.push(`${r}: eingebettetes Skript`);
     }
   }
