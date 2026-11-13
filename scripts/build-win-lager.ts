@@ -24,6 +24,17 @@ const TAX: Record<string, number[]> = { IT: [2200, 1000, 400, 0], DE: [1900, 700
 const CULTURE: Record<string, string> = { de: 'de-DE', it: 'it-IT', en: 'en-GB' };
 const NAME: Record<string, string> = { de: 'Lager & Rechnung', it: 'Magazzino & Fatture', en: 'Stock & Invoices' };
 
+/** Signaturstatus, wie Windows ihn meldet (NotSigned/Valid/…). Ohne PSModulePath aus PowerShell 7, sonst lädt Windows PowerShell das Modul nicht. */
+export function signatureStatus(file: string): string {
+  const env = { ...process.env };
+  delete env.PSModulePath;
+  try {
+    return execFileSync('powershell.exe', ['-NoProfile', '-NonInteractive', '-Command', `Import-Module Microsoft.PowerShell.Security; (Get-AuthenticodeSignature -LiteralPath '${file.replace(/'/g, "''")}').Status`], { encoding: 'utf8', env }).trim() || 'unbekannt';
+  } catch {
+    return 'unbekannt';
+  }
+}
+
 export function findCsc(): string | null {
   const win = process.env.WINDIR ?? 'C:\\Windows';
   for (const p of [join(win, 'Microsoft.NET', 'Framework64', 'v4.0.30319', 'csc.exe'), join(win, 'Microsoft.NET', 'Framework', 'v4.0.30319', 'csc.exe')]) if (existsSync(p)) return p;
@@ -121,10 +132,7 @@ namespace InfinityEarn.WinLagerSetup {
   copyFileSync(join(work, setupName), setup);
   rmSync(work, { recursive: true, force: true });
   // 4. Signaturstatus ehrlich aus Windows abfragen (ohne Zertifikat: NotSigned)
-  let signature = 'unbekannt';
-  try {
-    signature = execFileSync('powershell.exe', ['-NoProfile', '-NonInteractive', '-Command', `(Get-AuthenticodeSignature -LiteralPath '${setup.replace(/'/g, "''")}').Status`], { encoding: 'utf8' }).trim();
-  } catch { /* bleibt unbekannt */ }
+  const signature = signatureStatus(setup);
   const manifest: WinManifest = {
     product: o.productId, productName, version: o.version, company: o.company, language: o.lang, builtAt: new Date().toISOString(),
     toolchain: `csc ${csc.includes('Framework64') ? 'x64' : 'x86'} .NET Framework 4.x (in Windows enthalten)`,

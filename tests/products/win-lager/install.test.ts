@@ -1,10 +1,10 @@
 import assert from 'node:assert/strict';
-import { execFileSync, spawn, spawnSync } from 'node:child_process';
+import { spawn, spawnSync } from 'node:child_process';
 import { existsSync, mkdtempSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
-import { buildWinLager, validateOptions } from '../../../scripts/build-win-lager.ts';
+import { buildWinLager, signatureStatus, validateOptions } from '../../../scripts/build-win-lager.ts';
 
 /**
  * Funktion 157/158 – echter Windows-Test (PR-157-01/02/03/04/07/08, PR-158-01/04/07): bauen, installieren, starten,
@@ -68,7 +68,7 @@ test('Windows: Installer installiert, Programm startet und speichert, Update erh
     assert.equal(regValue('Publisher'), 'Testfirma Müller & Söhne');
     assert.match(regValue('UninstallString') ?? '', /uninstall\.exe" \/uninstall$/);
     assert.ok(existsSync(LNK), 'Startmenü-Verknüpfung');
-    assert.equal(execFileSync('powershell.exe', ['-NoProfile', '-Command', `(Get-AuthenticodeSignature -LiteralPath '${exe}').Status`], { encoding: 'utf8' }).trim(), 'NotSigned');
+    assert.equal(signatureStatus(exe), 'NotSigned');
 
     // PR-157-03: Daten überleben den Neustart (zwei getrennte Prozesse)
     assert.equal(spawnSync(exe, ['--add-article', 'A-100', 'Schraube M6', '0,15', '250'], { env }).status, 0);
