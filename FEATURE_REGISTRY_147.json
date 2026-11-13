@@ -1,8 +1,8 @@
 {
   "schema": "infinity-earn-feature-registry/1",
-  "version": "15.0",
+  "version": "15.0-147",
   "source_sha256": "152264ef05f781e343f75fbb28dd3a78c8d527fc4fcb357769c0eb043186aa41",
-  "approved_count": 127,
+  "approved_count": 147,
   "rejected": [
     {
       "id": "048",
@@ -20,14 +20,67 @@
       "note": "NEIN – darf nicht als Zusatzmodul eingeführt werden"
     }
   ],
+  "not_approved": [
+    {
+      "id": "141",
+      "approved": false,
+      "note": "nicht freigegeben (früherer Vorschlag)"
+    },
+    {
+      "id": "142",
+      "approved": false,
+      "note": "nicht freigegeben (früherer Vorschlag)"
+    },
+    {
+      "id": "143",
+      "approved": false,
+      "note": "nicht freigegeben (früherer Vorschlag)"
+    },
+    {
+      "id": "144",
+      "approved": false,
+      "note": "nicht freigegeben (früherer Vorschlag)"
+    },
+    {
+      "id": "145",
+      "approved": false,
+      "note": "nicht freigegeben (früherer Vorschlag)"
+    }
+  ],
+  "extension": {
+    "ids": [
+      "131",
+      "132",
+      "133",
+      "134",
+      "135",
+      "136",
+      "137",
+      "138",
+      "139",
+      "140",
+      "146",
+      "147",
+      "148",
+      "149",
+      "150",
+      "151",
+      "152",
+      "153",
+      "154",
+      "155"
+    ],
+    "source": "docs/spec/v15-147 (Eigentümer, 13.11.2026)",
+    "note": "beauftragt, nicht automatisch umgesetzt"
+  },
   "summary": {
     "TESTED_full": 26,
-    "TESTED_partial": 59,
-    "SPECIFIED": 41,
+    "TESTED_partial": 69,
+    "SPECIFIED": 51,
     "BLOCKED": 1,
     "LIVE_VERIFIED": 0
   },
-  "note": "Erzeugt aus packages/registry (node scripts/export-registry.ts). LIVE_VERIFIED erst nach echter, autorisierter Live-Transaktion mit Bankbestätigung.",
+  "note": "Erzeugt aus packages/registry (node scripts/export-registry.ts); 127 ursprüngliche + 20 beauftragte Funktionen. LIVE_VERIFIED erst nach echter, autorisierter Live-Transaktion mit Bankbestätigung.",
   "features": [
     {
       "id": "001",
@@ -2156,6 +2209,338 @@
       "milestone": "M6",
       "implemented": null,
       "open": "Ungenutzte Produkte wiederbeleben.",
+      "evidence": [],
+      "test_command": null,
+      "live_verified": false
+    },
+    {
+      "id": "131",
+      "approved": true,
+      "title": "Global Real Buyer Radar",
+      "title_de": "Nachfrage-Radar",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M4",
+      "implemented": "Quellenregister mit Nutzungsbedingungen-Freigabe; öffentliche EU-Ausschreibungen (TED) täglich mit Original-URL, Frist und Bewertung; nicht freigegebene Quellen bleiben aus.",
+      "open": "Weitere lizenzierte Quellen und Plattform-Adapter; Duplikat-Zusammenführung über Quellen hinweg.",
+      "evidence": [
+        "tests/integration/m1-acquisition.test.ts",
+        "tests/integration/acquisition.test.ts"
+      ],
+      "test_command": "node --test tests/integration/m1-acquisition.test.ts tests/integration/acquisition.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "132",
+      "approved": true,
+      "title": "Perfect Buyer Timing Intelligence",
+      "title_de": "Richtiger Zeitpunkt",
+      "status": "SPECIFIED",
+      "scope": "none",
+      "internal_status": "GEPLANT",
+      "milestone": "M6",
+      "implemented": null,
+      "open": "Zeitpunkt-Signale aus belegten Ereignissen mit Ablaufdatum.",
+      "evidence": [],
+      "test_command": null,
+      "live_verified": false
+    },
+    {
+      "id": "133",
+      "approved": true,
+      "title": "Verified Buyer Qualification",
+      "title_de": "Käufer prüfen",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M1",
+      "implemented": "Qualifizierung und Machbarkeitsprüfung je Anfrage (Quelle, Kontaktgrundlage, Produktklasse, Umfang) mit Gründen.",
+      "open": "Budget-/Betrugs-/Wirtschaftlichkeitsprüfung als eigene Entscheidung mit Belegen.",
+      "evidence": [
+        "tests/integration/opportunity.test.ts",
+        "tests/integration/m1-acquisition.test.ts"
+      ],
+      "test_command": "node --test tests/integration/opportunity.test.ts tests/integration/m1-acquisition.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "134",
+      "approved": true,
+      "title": "Autonomous Precision Proposal Engine",
+      "title_de": "Präzise Angebote",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M4",
+      "implemented": "Automatisches Festpreis-Angebot mit Lieferkriterien; Angebotsentwürfe für Ausschreibungen nur zur manuellen Einreichung.",
+      "open": "Versionierte Angebotseinreichung mit Versandquittung über erlaubte Plattformen.",
+      "evidence": [
+        "tests/integration/opportunity.test.ts",
+        "tests/integration/m1-acquisition.test.ts",
+        "tests/integration/advisor.test.ts"
+      ],
+      "test_command": "node --test tests/integration/opportunity.test.ts tests/integration/m1-acquisition.test.ts tests/integration/advisor.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "135",
+      "approved": true,
+      "title": "Demand-Driven Landingpage Factory",
+      "title_de": "Nachfrage-Seiten",
+      "status": "SPECIFIED",
+      "scope": "none",
+      "internal_status": "GEPLANT",
+      "milestone": "M6",
+      "implemented": null,
+      "open": "Nachfrage-Unterseiten erst bei belegtem Bedarf und echter Leistung, mit Qualitätsprüfung.",
+      "evidence": [],
+      "test_command": null,
+      "live_verified": false
+    },
+    {
+      "id": "136",
+      "approved": true,
+      "title": "Instant Customer Solution Experience",
+      "title_de": "Lösung sofort zeigen",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M4",
+      "implemented": "Produktberater (DE/IT/EN) mit Rückfragen und ehrlicher Ablehnung; Angebotsvorschau aus den eigenen Positionen; bedienbare Demo der Mini-Warenwirtschaft mit Demo-Hinweis.",
+      "open": "Automatische Mini-Vorschau je Anfrage in isolierter Sandbox.",
+      "evidence": [
+        "tests/integration/advisor.test.ts",
+        "tests/products/mini-ww/ui.test.ts"
+      ],
+      "test_command": "node --test tests/integration/advisor.test.ts tests/products/mini-ww/ui.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "137",
+      "approved": true,
+      "title": "Autonomous Legal Contact Router",
+      "title_de": "Kontakt nur erlaubt",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M1",
+      "implemented": "Jede Kundennachricht läuft durch die Kontaktentscheidung (Einwilligung, Opt-out, Werbeschalter); Kanalstatus ehrlich; Ausschreibungs-Kontakte werden nie angeschrieben.",
+      "open": "Kanal-/Rechtsraum-Policies je Plattform mit Versandquittung.",
+      "evidence": [
+        "tests/integration/outbox.test.ts",
+        "tests/integration/acquisition.test.ts",
+        "tests/integration/gesamtprompt.test.ts"
+      ],
+      "test_command": "node --test tests/integration/outbox.test.ts tests/integration/acquisition.test.ts tests/integration/gesamtprompt.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "138",
+      "approved": true,
+      "title": "First-Response Speed Director",
+      "title_de": "Schnelle Erstantwort",
+      "status": "SPECIFIED",
+      "scope": "none",
+      "internal_status": "GEPLANT",
+      "milestone": "M6",
+      "implemented": null,
+      "open": "Antwort-Warteschlange mit Fristen, Priorität und Quotenstopp.",
+      "evidence": [],
+      "test_command": null,
+      "live_verified": false
+    },
+    {
+      "id": "139",
+      "approved": true,
+      "title": "Autonomous Business Matchmaking",
+      "title_de": "Partner und Empfehlungen",
+      "status": "SPECIFIED",
+      "scope": "none",
+      "internal_status": "GEPLANT",
+      "milestone": "M6",
+      "implemented": null,
+      "open": "Freiwilliges Partnernetz mit Attribution und geprüfter Provision.",
+      "evidence": [],
+      "test_command": null,
+      "live_verified": false
+    },
+    {
+      "id": "140",
+      "approved": true,
+      "title": "Zero-to-First-Customer Accelerator",
+      "title_de": "Erste Kunden gewinnen",
+      "status": "SPECIFIED",
+      "scope": "none",
+      "internal_status": "GEPLANT",
+      "milestone": "M6",
+      "implemented": null,
+      "open": "Erste-Kunden-Experimente mit Null-Kosten-Limit und echten Bestellbelegen.",
+      "evidence": [],
+      "test_command": null,
+      "live_verified": false
+    },
+    {
+      "id": "146",
+      "approved": true,
+      "title": "Google Visibility Commander",
+      "title_de": "Google-Sichtbarkeit",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M5",
+      "implemented": "robots.txt (interne Bereiche gesperrt), sitemap.xml, Canonical und hreflang für DE/IT/EN.",
+      "open": "Eigene Domain und Search Console (Eigentümerverifikation), technischer Prüfbericht im Admin.",
+      "evidence": [
+        "tests/integration/landing.test.ts",
+        "tests/integration/gesamtprompt.test.ts"
+      ],
+      "test_command": "node --test tests/integration/landing.test.ts tests/integration/gesamtprompt.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "147",
+      "approved": true,
+      "title": "High-Intent Search Intelligence",
+      "title_de": "Kaufabsicht in der Suche",
+      "status": "SPECIFIED",
+      "scope": "none",
+      "internal_status": "GEPLANT",
+      "milestone": "M6",
+      "implemented": null,
+      "open": "Suchabsichten aus eigenen Search-Console-Daten und echten Anfragen.",
+      "evidence": [],
+      "test_command": null,
+      "live_verified": false
+    },
+    {
+      "id": "148",
+      "approved": true,
+      "title": "Autonomous Expert Content Publisher",
+      "title_de": "Fachinhalte veröffentlichen",
+      "status": "SPECIFIED",
+      "scope": "none",
+      "internal_status": "GEPLANT",
+      "milestone": "M6",
+      "implemented": null,
+      "open": "Geprüfte Fachinhalte mit Quellen und Änderungsprotokoll.",
+      "evidence": [],
+      "test_command": null,
+      "live_verified": false
+    },
+    {
+      "id": "149",
+      "approved": true,
+      "title": "Organic Traffic Distribution Network",
+      "title_de": "Organische Verbreitung",
+      "status": "SPECIFIED",
+      "scope": "none",
+      "internal_status": "GEPLANT",
+      "milestone": "M6",
+      "implemented": null,
+      "open": "Verbreitung nur über vom Eigentümer verbundene Kanäle.",
+      "evidence": [],
+      "test_command": null,
+      "live_verified": false
+    },
+    {
+      "id": "150",
+      "approved": true,
+      "title": "AI & Search Discoverability Engine",
+      "title_de": "Auffindbar für Suche und KI",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M5",
+      "implemented": "Serverseitig lesbare Seiten mit Titeln, Beschreibungen, Canonical/hreflang; maschinenlesbarer Katalog (/api/katalog) und Vertrauenspass (/.well-known/infinity-earn.json).",
+      "open": "JSON-LD (Organization/Service) nach Validierung, Open Graph.",
+      "evidence": [
+        "tests/integration/landing.test.ts",
+        "tests/integration/trust-recovery.test.ts"
+      ],
+      "test_command": "node --test tests/integration/landing.test.ts tests/integration/trust-recovery.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "151",
+      "approved": true,
+      "title": "Intent-Matched Landing Experience",
+      "title_de": "Passende Landingpage",
+      "status": "SPECIFIED",
+      "scope": "none",
+      "internal_status": "GEPLANT",
+      "milestone": "M6",
+      "implemented": null,
+      "open": "Bedarfsgerechte Lösungsseiten nur mit eigenständigem Angebot.",
+      "evidence": [],
+      "test_command": null,
+      "live_verified": false
+    },
+    {
+      "id": "152",
+      "approved": true,
+      "title": "Interactive Product Value Demonstrator",
+      "title_de": "Produkt ausprobieren",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M3",
+      "implemented": "Bedienbare Demo der Mini-Warenwirtschaft mit echten Berechnungen, Demo-Hinweis, Daten nur im Browser, ohne Netzwerkzugriff.",
+      "open": "Verknüpfung mit verkaufsfähigem Produkt und Kaufweg (Pilot P3/P4).",
+      "evidence": [
+        "tests/products/mini-ww/ui.test.ts"
+      ],
+      "test_command": "node --test tests/products/mini-ww/ui.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "153",
+      "approved": true,
+      "title": "Verified Trust & Buyer Confidence Center",
+      "title_de": "Vertrauenszentrum",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M5",
+      "implemented": "Seite „Vertrauen & Fakten“ nur mit überprüfbaren Daten, Echtheitsprüfung je Datei, ehrliche Pflichtangaben.",
+      "open": "Verifizierte Anbieterangaben (LA-02) und freigegebene echte Bewertungen.",
+      "evidence": [
+        "tests/integration/trust-recovery.test.ts",
+        "tests/integration/gesamtprompt.test.ts"
+      ],
+      "test_command": "node --test tests/integration/trust-recovery.test.ts tests/integration/gesamtprompt.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "154",
+      "approved": true,
+      "title": "Frictionless AI Quote-to-Checkout",
+      "title_de": "Vom Angebot zur Zahlung",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
+      "milestone": "M2",
+      "implemented": "Berater → Angebot → Annahme → Stripe Checkout (Sandbox) → signierter Webhook → Auftrag; Zahlung fortsetzen im Portal.",
+      "open": "Stripe LIVE nach LA-Freigaben.",
+      "evidence": [
+        "tests/e2e/pilot.test.ts",
+        "tests/integration/advisor.test.ts",
+        "tests/integration/trust-recovery.test.ts"
+      ],
+      "test_command": "node --test tests/e2e/pilot.test.ts tests/integration/advisor.test.ts tests/integration/trust-recovery.test.ts",
+      "live_verified": false
+    },
+    {
+      "id": "155",
+      "approved": true,
+      "title": "Search-to-Bank Revenue Optimizer",
+      "title_de": "Von der Suche bis zur Bank",
+      "status": "SPECIFIED",
+      "scope": "none",
+      "internal_status": "GEPLANT",
+      "milestone": "M6",
+      "implemented": null,
+      "open": "Kanal-Trichter bis bankbestätigtem Nettoergebnis.",
       "evidence": [],
       "test_command": null,
       "live_verified": false

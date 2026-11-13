@@ -7,18 +7,20 @@ import { channelStatus } from '../../services/core-api/src/channels.ts';
 import { createHandler } from '../../services/core-api/src/http-core.ts';
 import { makeCtx, toOrder } from '../helpers.ts';
 
-test('FEATURE_REGISTRY_127.json ist aktuell: 127 JA, 3 NEIN, Status-Vokabular des Gesamtprompts, nichts live bestätigt', () => {
-  const file = JSON.parse(readFileSync('FEATURE_REGISTRY_127.json', 'utf8')) as { approved_count: number; rejected: { id: string }[]; features: { id: string; status: string; live_verified: boolean; evidence: string[] }[] };
+test('FEATURE_REGISTRY_147.json ist aktuell: 147 JA, 3 NEIN, 141–145 nicht freigegeben, nichts live bestätigt', () => {
+  const file = JSON.parse(readFileSync('FEATURE_REGISTRY_147.json', 'utf8')) as { approved_count: number; rejected: { id: string }[]; not_approved: { id: string }[]; features: { id: string; status: string; live_verified: boolean; evidence: string[] }[] };
   assert.deepEqual(file, JSON.parse(JSON.stringify(featureRegistryExport())), 'Datei veraltet – node scripts/export-registry.ts ausführen');
-  assert.equal(file.approved_count, 127);
+  assert.equal(file.approved_count, 147);
   assert.deepEqual(file.rejected.map((r) => r.id), ['048', '049', '110']);
+  assert.deepEqual(file.not_approved.map((r) => r.id), ['141', '142', '143', '144', '145']);
+  assert.ok(!file.features.some((f) => ['048', '049', '110', '141', '142', '143', '144', '145'].includes(f.id)));
   assert.ok(file.features.every((f) => ['SPECIFIED', 'IMPLEMENTED', 'TESTED', 'LIVE_VERIFIED', 'BLOCKED'].includes(f.status)));
   assert.ok(file.features.every((f) => !f.live_verified && f.status !== 'LIVE_VERIFIED'), 'kein unbewiesener Live-Status');
   assert.ok(file.features.filter((f) => f.status === 'TESTED').every((f) => f.evidence.length > 0 && f.evidence.every((p) => existsSync(p))), 'TESTED nur mit existierendem Testnachweis');
 });
 
 test('Geforderte Dokumente existieren; Testmatrix verweist nur auf existierende Tests', () => {
-  for (const f of ['IMPLEMENTATION_PLAN.md', 'FEATURE_REGISTRY_127.json', 'DESIGN_SYSTEM_LUXURY_TURQUOISE.md', 'SYSTEM_ARCHITECTURE.md', 'COMMUNICATION_AND_DELIVERY.md', 'PRODUCT_FACTORY_REAL_SOFTWARE.md', 'ADMIN_LIVE_PREVIEW.md', 'TEST_MATRIX.md', 'PROGRESS.md']) assert.ok(existsSync(f), f);
+  for (const f of ['IMPLEMENTATION_PLAN.md', 'FEATURE_REGISTRY_147.json', 'DESIGN_SYSTEM_LUXURY_TURQUOISE.md', 'SYSTEM_ARCHITECTURE.md', 'COMMUNICATION_AND_DELIVERY.md', 'PRODUCT_FACTORY_REAL_SOFTWARE.md', 'ADMIN_LIVE_PREVIEW.md', 'TEST_MATRIX.md', 'PROGRESS.md']) assert.ok(existsSync(f), f);
   const matrix = readFileSync('TEST_MATRIX.md', 'utf8');
   const refs = [...matrix.matchAll(/`(tests\/[^`]+\.test\.ts)`/g)].map((m) => m[1] ?? '');
   assert.ok(refs.length >= 15);

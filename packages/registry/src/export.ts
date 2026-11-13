@@ -1,8 +1,8 @@
-import { REGISTRY, REGISTRY_SHA256, REJECTED_IDS, fmtId } from './registry.ts';
+import { EXTENSION_IDS, NOT_APPROVED_IDS, REGISTRY, REGISTRY_SHA256, REJECTED_IDS, fmtId } from './registry.ts';
 import { modulesWithStatus, type ImplStatus } from './status.ts';
 
 /**
- * Export für den Gesamtprompt (§12/§13): FEATURE_REGISTRY_127.json mit dem dort verlangten Status-Vokabular.
+ * Export für den Gesamtprompt (§12/§13): FEATURE_REGISTRY_147.json mit dem dort verlangten Status-Vokabular.
  *  UMGESETZT → TESTED (Testnachweis Pflicht) · TEILWEISE → TESTED mit scope "partial" (Umgesetztes getestet, Rest offen)
  *  GEPLANT → SPECIFIED · GESPERRT → BLOCKED. LIVE_VERIFIED vergibt nur ein echter Live-Nachweis – derzeit keiner.
  */
@@ -38,8 +38,10 @@ export function featureRegistryExport(): unknown {
     source_sha256: REGISTRY_SHA256,
     approved_count: features.length,
     rejected: REJECTED_IDS.map((n) => ({ id: fmtId(n), approved: false, note: 'NEIN – darf nicht als Zusatzmodul eingeführt werden' })),
+    not_approved: NOT_APPROVED_IDS.map((n) => ({ id: fmtId(n), approved: false, note: 'nicht freigegeben (früherer Vorschlag)' })),
+    extension: { ids: EXTENSION_IDS.map(fmtId), source: 'docs/spec/v15-147 (Eigentümer, 13.11.2026)', note: 'beauftragt, nicht automatisch umgesetzt' },
     summary: { TESTED_full: count('TESTED', 'full'), TESTED_partial: count('TESTED', 'partial'), SPECIFIED: count('SPECIFIED'), BLOCKED: count('BLOCKED'), LIVE_VERIFIED: count('LIVE_VERIFIED') },
-    note: 'Erzeugt aus packages/registry (node scripts/export-registry.ts). LIVE_VERIFIED erst nach echter, autorisierter Live-Transaktion mit Bankbestätigung.',
+    note: 'Erzeugt aus packages/registry (node scripts/export-registry.ts); 127 ursprüngliche + 20 beauftragte Funktionen. LIVE_VERIFIED erst nach echter, autorisierter Live-Transaktion mit Bankbestätigung.',
     features,
   };
 }

@@ -29,4 +29,8 @@ export const TITLES_DE: Readonly<Record<number, string>> = Object.freeze({
   119: 'Abgebrochene Käufe (nur mit Einwilligung)', 120: 'Ergebnisnachweise', 121: 'Ergebnisbasierte Verträge', 122: 'Kostenlose Kontingente steuern', 123: 'Grenzen bei regulierten Tätigkeiten',
   124: 'Einführung für neue Nutzer', 125: 'Maschinenlesbarer Vertrauensnachweis', 126: 'Übertragbare Bewertungen', 127: 'Preisversuche mit Belegen', 128: 'Technische Altlasten',
   129: 'Abo-Wert und Kündigungen', 130: 'Ungenutzte Produkte wiederbeleben',
+  131: 'Nachfrage-Radar', 132: 'Richtiger Zeitpunkt', 133: 'Käufer prüfen', 134: 'Präzise Angebote', 135: 'Nachfrage-Seiten',
+  136: 'Lösung sofort zeigen', 137: 'Kontakt nur erlaubt', 138: 'Schnelle Erstantwort', 139: 'Partner und Empfehlungen', 140: 'Erste Kunden gewinnen',
+  146: 'Google-Sichtbarkeit', 147: 'Kaufabsicht in der Suche', 148: 'Fachinhalte veröffentlichen', 149: 'Organische Verbreitung', 150: 'Auffindbar für Suche und KI',
+  151: 'Passende Landingpage', 152: 'Produkt ausprobieren', 153: 'Vertrauenszentrum', 154: 'Vom Angebot zur Zahlung', 155: 'Von der Suche bis zur Bank',
 });

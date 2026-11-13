@@ -25,12 +25,46 @@ Stand: 2026-11-13 · Grundlage: `INFINITY_EARN_15_GESAMTPROMPT_ALLES_IN_EINEM.md
 | L3 | **§6/§10 MFA für Admin** | Ja (TOTP, kostenlos) | **Eigentümer-Entscheidung 13.11.2026 (nach Vorlage des Gesamtprompts bestätigt): nur Passwort.** Bleibt: scrypt, Sperre nach 5 Fehlversuchen, serverseitige Sitzungen, CSRF, Audit. Abweichung zu §6/§10 bewusst dokumentiert. |
 | L4 | **§3 Kanalstatus** Website-Chat, E-Mail, WhatsApp, Plattformen je „Nicht verbunden“ | Ja (Anzeige) | Kanalübersicht im Admin |
 | L5 | **§7 Landingpage** Schritt 8: Preis-/Kontakttransparenz, FAQ, Pflichtinformationen | Ja (FAQ/Preise); Impressum braucht LA-02 | ergänzen |
-| L6 | **§12 Status-Vokabular** SPECIFIED/IMPLEMENTED/TESTED/LIVE_VERIFIED/BLOCKED | Ja | Abbildung der heutigen Status, `FEATURE_REGISTRY_127.json` erzeugen |
+| L6 | **§12 Status-Vokabular** SPECIFIED/IMPLEMENTED/TESTED/LIVE_VERIFIED/BLOCKED | Ja | Abbildung der heutigen Status, `FEATURE_REGISTRY_147.json` erzeugen |
 | L7 | **§13 Dokumente** DESIGN_SYSTEM, SYSTEM_ARCHITECTURE, COMMUNICATION_AND_DELIVERY, PRODUCT_FACTORY_REAL_SOFTWARE, ADMIN_LIVE_PREVIEW, TEST_MATRIX | Ja | aus dem echten Stand erzeugen |
 | L8 | **§4 echte Fachsoftware** (ERP/CRM/Warenwirtschaft) als Produkt | Teilweise: braucht je Auftrag Entwicklungsarbeit; dauerhaft autonom nur mit KI-API (kostenpflichtig) | erst eine kleine, vollständig getestete Fachanwendung als Pilot (M3), keine Zusage großer ERP-Projekte |
 | L9 | **§8 Stripe LIVE**, Abos, Kundenportal von Stripe | Code ja; Aktivierung nur mit KYC, Live-Schlüsseln, Freigabe | Eigentümer (LA-03/04) |
 | L10 | **§3 WhatsApp Business, E-Mail-Versand, Telefonie** | Nein – Konten/Anbieter nötig | Eigentümer wählt Anbieter |
 | L11 | **§9 autonome KI-Agenten rund um die Uhr** | Nein – Claude-Abo ist keine API; KI-API kostet | deterministischer Kern läuft; KI-Schicht erst mit Kostenfreigabe |
+
+## Update 13.11.2026: Gesamtprompt mit 147 Funktionen und Freelancer-Direktive
+
+Quelle mit Prüfsummen: `docs/spec/v15-147/`. Registry: 127 ursprüngliche (unverändert) + 20 beauftragte (131–140, 146–155); 141–145 nicht freigegeben. Export: [FEATURE_REGISTRY_147.json](FEATURE_REGISTRY_147.json).
+
+**Stand der 20 neuen Funktionen:** 10 teilweise, jeweils mit vorhandenem, getestetem Code:
+- 131 TED-Radar
+- 133 Qualifizierung
+- 134 Angebote
+- 136 Berater und Demo
+- 137 Kontaktregeln
+- 146 robots/Sitemap/hreflang
+- 150 Auszeichnung und Katalog
+- 152 Demo
+- 153 Vertrauensseite
+- 154 Angebot bis Checkout
+
+10 sind geplant: 132, 135, 138, 139, 140, 147, 148, 149, 151, 155.
+
+**Freelancer-Direktive (B2B/B2C-Produktion):**
+
+| Anforderung | Ohne Kosten/Konten machbar? | Plan |
+|---|---|---|
+| Bebilderte PDF-Bedienungsanleitung zu jeder Auslieferung | Ja | Pilot P3: echte Screenshots des gebauten Programms, Kapitel je Arbeitsablauf, als PDF ins Lieferpaket |
+| Webanwendungen, ERP/Warenwirtschaft | Ja, als Pilot bewiesen (Offline-Programm) | weitere Produktarten nur mit Standard-Akte und Tests |
+| Excel mit Formeln, Word/PDF/PowerPoint | Ja (offene Formate ohne kostenpflichtige Software) | je Produktart Standard-Akte + automatische Prüfung, dann freischalten |
+| Windows-EXE mit Installer | Bauen ja, auf diesem Windows-Rechner testbar; **ohne Code-Signatur-Zertifikat (kostet) warnt Windows SmartScreen** | Entscheidung zum Zertifikat beim Eigentümer |
+| macOS-Programme | Nein ohne Mac-Hardware oder kostenpflichtigen Mac-Build-Dienst; Signatur/Notarisierung braucht Apple-Entwicklerkonto (99 $/Jahr) | Eigentümer-Freigabe nötig |
+| Linux-Programme | Bauen/Testen möglich (z. B. in kostenloser CI) | später |
+| Android | Debug-Build kostenlos möglich; Play Store braucht Entwicklerkonto (einmalig 25 $) | Eigentümer-Freigabe |
+| iOS | Braucht Mac + Apple-Entwicklerkonto | Eigentümer-Freigabe |
+| Grafik, 3D, Audio, Video | Nicht zuverlässig auf kostenloser Infrastruktur | bleibt gesperrt bis nachgewiesen |
+| Kundengewinnung auf Projektbörsen/Plattformen | Nur mit Konto und erlaubter Schnittstelle; keine Bots/Spam | Eigentümer legt Konten an; Kontakt nur über 137 |
+| Universelle autonome Produktion jeder Art | Nein ohne kostenpflichtige KI-API (Claude-Abo ist keine API) | Freigabe der API-Kosten beim Eigentümer |
 
 ## Reihenfolge (ohne neue Kosten)
 

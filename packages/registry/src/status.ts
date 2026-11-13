@@ -63,6 +63,8 @@ const T = {
   pfb: 'tests/integration/portfolio-buyers.test.ts',
   done: 'tests/integration/completion.test.ts',
   it: 'tests/integration/italy.test.ts',
+  gp: 'tests/integration/gesamtprompt.test.ts',
+  mwui: 'tests/products/mini-ww/ui.test.ts',
 } as const;
 
 type Row = [n: number, area: Area, status: ImplStatus, milestone: Milestone, umgesetzt: string, offen: string, evidence: string[]];
@@ -195,6 +197,27 @@ const ROWS: Row[] = [
   [128, 'berichte', 'TEILWEISE', 'M6', 'Bericht docs/tech-debt.md (npm run tech-debt): priorisiert nach Dateigröße, offenen Markierungen und fehlendem Testbezug; Releases nur nach npm run verify.', 'Defekt- und Änderungskosten in die Priorisierung einbeziehen.', [T.plc]],
   [129, 'finanzen', 'GEPLANT', 'M5', '', 'Abo-Wert und Kündigungen.', []],
   [130, 'produkte', 'GEPLANT', 'M6', '', 'Ungenutzte Produkte wiederbeleben.', []],
+  // --- Erweiterung 147 (Eigentümer, 13.11.2026): beauftragt, nur Vorhandenes ist als TEILWEISE belegt ---
+  [131, 'kunden', 'TEILWEISE', 'M4', 'Quellenregister mit Nutzungsbedingungen-Freigabe; öffentliche EU-Ausschreibungen (TED) täglich mit Original-URL, Frist und Bewertung; nicht freigegebene Quellen bleiben aus.', 'Weitere lizenzierte Quellen und Plattform-Adapter; Duplikat-Zusammenführung über Quellen hinweg.', [T.m1, T.acq]],
+  [132, 'kunden', 'GEPLANT', 'M6', '', 'Zeitpunkt-Signale aus belegten Ereignissen mit Ablaufdatum.', []],
+  [133, 'kunden', 'TEILWEISE', 'M1', 'Qualifizierung und Machbarkeitsprüfung je Anfrage (Quelle, Kontaktgrundlage, Produktklasse, Umfang) mit Gründen.', 'Budget-/Betrugs-/Wirtschaftlichkeitsprüfung als eigene Entscheidung mit Belegen.', [T.opp, T.m1]],
+  [134, 'auftraege', 'TEILWEISE', 'M4', 'Automatisches Festpreis-Angebot mit Lieferkriterien; Angebotsentwürfe für Ausschreibungen nur zur manuellen Einreichung.', 'Versionierte Angebotseinreichung mit Versandquittung über erlaubte Plattformen.', [T.opp, T.m1, T.adv]],
+  [135, 'produkte', 'GEPLANT', 'M6', '', 'Nachfrage-Unterseiten erst bei belegtem Bedarf und echter Leistung, mit Qualitätsprüfung.', []],
+  [136, 'kunden', 'TEILWEISE', 'M4', 'Produktberater (DE/IT/EN) mit Rückfragen und ehrlicher Ablehnung; Angebotsvorschau aus den eigenen Positionen; bedienbare Demo der Mini-Warenwirtschaft mit Demo-Hinweis.', 'Automatische Mini-Vorschau je Anfrage in isolierter Sandbox.', [T.adv, T.mwui]],
+  [137, 'kunden', 'TEILWEISE', 'M1', 'Jede Kundennachricht läuft durch die Kontaktentscheidung (Einwilligung, Opt-out, Werbeschalter); Kanalstatus ehrlich; Ausschreibungs-Kontakte werden nie angeschrieben.', 'Kanal-/Rechtsraum-Policies je Plattform mit Versandquittung.', [T.out, T.acq, T.gp]],
+  [138, 'kunden', 'GEPLANT', 'M6', '', 'Antwort-Warteschlange mit Fristen, Priorität und Quotenstopp.', []],
+  [139, 'kunden', 'GEPLANT', 'M6', '', 'Freiwilliges Partnernetz mit Attribution und geprüfter Provision.', []],
+  [140, 'berichte', 'GEPLANT', 'M6', '', 'Erste-Kunden-Experimente mit Null-Kosten-Limit und echten Bestellbelegen.', []],
+  [146, 'berichte', 'TEILWEISE', 'M5', 'robots.txt (interne Bereiche gesperrt), sitemap.xml, Canonical und hreflang für DE/IT/EN.', 'Eigene Domain und Search Console (Eigentümerverifikation), technischer Prüfbericht im Admin.', [T.land, T.gp]],
+  [147, 'berichte', 'GEPLANT', 'M6', '', 'Suchabsichten aus eigenen Search-Console-Daten und echten Anfragen.', []],
+  [148, 'berichte', 'GEPLANT', 'M6', '', 'Geprüfte Fachinhalte mit Quellen und Änderungsprotokoll.', []],
+  [149, 'berichte', 'GEPLANT', 'M6', '', 'Verbreitung nur über vom Eigentümer verbundene Kanäle.', []],
+  [150, 'berichte', 'TEILWEISE', 'M5', 'Serverseitig lesbare Seiten mit Titeln, Beschreibungen, Canonical/hreflang; maschinenlesbarer Katalog (/api/katalog) und Vertrauenspass (/.well-known/infinity-earn.json).', 'JSON-LD (Organization/Service) nach Validierung, Open Graph.', [T.land, T.trust]],
+  [151, 'kunden', 'GEPLANT', 'M6', '', 'Bedarfsgerechte Lösungsseiten nur mit eigenständigem Angebot.', []],
+  [152, 'produkte', 'TEILWEISE', 'M3', 'Bedienbare Demo der Mini-Warenwirtschaft mit echten Berechnungen, Demo-Hinweis, Daten nur im Browser, ohne Netzwerkzugriff.', 'Verknüpfung mit verkaufsfähigem Produkt und Kaufweg (Pilot P3/P4).', [T.mwui]],
+  [153, 'kunden', 'TEILWEISE', 'M5', 'Seite „Vertrauen & Fakten“ nur mit überprüfbaren Daten, Echtheitsprüfung je Datei, ehrliche Pflichtangaben.', 'Verifizierte Anbieterangaben (LA-02) und freigegebene echte Bewertungen.', [T.trust, T.gp]],
+  [154, 'auftraege', 'TEILWEISE', 'M2', 'Berater → Angebot → Annahme → Stripe Checkout (Sandbox) → signierter Webhook → Auftrag; Zahlung fortsetzen im Portal.', 'Stripe LIVE nach LA-Freigaben.', [T.e2e, T.adv, T.trust]],
+  [155, 'berichte', 'GEPLANT', 'M6', '', 'Kanal-Trichter bis bankbestätigtem Nettoergebnis.', []],
 ];
 
 export const MODULE_STATUS: readonly ModuleStatus[] = Object.freeze(

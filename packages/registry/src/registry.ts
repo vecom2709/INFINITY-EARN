@@ -1,4 +1,5 @@
 import raw from './registry-127.json' with { type: 'json' };
+import extension from './registry-extension-147.json' with { type: 'json' };
 
 /**
  * Read-only-Registry der 127 vom Eigentümer bestätigten Funktionen (INFINITY EARN 15.0).
@@ -67,7 +68,36 @@ export function validateRegistry(data: unknown): Registry {
   });
 }
 
-export const REGISTRY: Registry = validateRegistry(raw);
+/** Die ursprünglichen 127 (unveränderlich, per SHA-256 verankert). */
+export const REGISTRY_127: Registry = validateRegistry(raw);
+
+/**
+ * Erweiterung vom 13.11.2026 (Gesamtprompt 147): 131–140 und 146–155 bestätigt, 141–145 NICHT freigegeben.
+ * Quelle mit Prüfsummen: docs/spec/v15-147/. Die Funktionen sind beauftragt – nicht automatisch umgesetzt.
+ */
+export const EXTENSION_IDS: readonly number[] = Object.freeze([131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155]);
+export const NOT_APPROVED_IDS: readonly number[] = Object.freeze([141, 142, 143, 144, 145]);
+
+export function validateExtension(data: unknown, base: Registry): Registry {
+  const d = data as { version?: unknown; approved_extension_ids?: unknown; not_approved_ids?: unknown; modules?: unknown };
+  const issues: string[] = [];
+  const ids = Array.isArray(d.approved_extension_ids) ? (d.approved_extension_ids as number[]) : [];
+  const mods = Array.isArray(d.modules) ? (d.modules as RegistryModule[]) : [];
+  if (JSON.stringify([...ids].sort((a, b) => a - b)) !== JSON.stringify(EXTENSION_IDS)) issues.push('Erweiterung: IDs müssen exakt 131–140 und 146–155 sein');
+  if (JSON.stringify(d.not_approved_ids) !== JSON.stringify(NOT_APPROVED_IDS)) issues.push('Erweiterung: 141–145 müssen als nicht freigegeben geführt werden');
+  if (mods.length !== EXTENSION_IDS.length) issues.push(`Erweiterung: ${mods.length} Module statt 20`);
+  for (const m of mods) {
+    if (!EXTENSION_IDS.includes(m.n)) issues.push(`Erweiterung: Funktion ${m.n} nicht freigegeben`);
+    if (base.modules.some((b) => b.n === m.n)) issues.push(`Erweiterung: Funktion ${m.n} doppelt`);
+    if (!m.title || !m.goal || !m.gate) issues.push(`Funktion ${m.n}: Titel/Ziel/Gate fehlt`);
+  }
+  if (issues.length) throw new RegistryError(`REGISTRY_UNGUELTIG: ${issues.join('; ')}`);
+  const modules = [...base.modules, ...mods.map((m) => Object.freeze({ n: m.n, title: m.title, goal: m.goal, gate: m.gate }))].sort((a, b) => a.n - b.n);
+  return Object.freeze({ version: String(d.version), approvedIds: Object.freeze(modules.map((m) => m.n)), rejectedIds: REJECTED_IDS, modules: Object.freeze(modules), policy: base.policy });
+}
+
+/** Aktuelle Freigabe: 147 Funktionen (1–47, 50–109, 111–140, 146–155). */
+export const REGISTRY: Registry = validateExtension(extension, REGISTRY_127);
 
 export function moduleById(n: number): RegistryModule | undefined {
   return REGISTRY.modules.find((m) => m.n === n);

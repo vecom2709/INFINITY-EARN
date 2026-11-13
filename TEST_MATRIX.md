@@ -16,8 +16,8 @@ Alle Tests laufen mit `npm run verify` (lokal) und in der GitHub-CI. Stand 2026-
 | 10 | Rechnung/Steuer passt zu verifizierten Stammdaten, sonst Blocker | ✅ getestet | `tests/integration/italy.test.ts`, `tests/integration/finance.test.ts` |
 | 11 | Live-Finanzen nur aus echten Objekten und Bankbestätigung; keine DEMO-Daten in LIVE | ✅ getestet | `tests/integration/bank-statement.test.ts`, `tests/integration/finance.test.ts` |
 | 12 | Keine unautorisierten Ausgaben, Nachrichten, Transaktionen, Deploys | ✅ getestet | `tests/integration/governance.test.ts`, `tests/integration/outbox.test.ts` |
-| 13 | 127 Nummern in Registry, Status, Plan; 48/49/110 nicht eingeführt | ✅ getestet | `tests/unit/registry.test.ts`, [FEATURE_REGISTRY_127.json](FEATURE_REGISTRY_127.json) |
+| 13 | 147 Nummern (1–47, 50–109, 111–140, 146–155) in Registry, Status, Plan; 48/49/110 und 141–145 nicht eingeführt | ✅ getestet | `tests/unit/registry.test.ts`, [FEATURE_REGISTRY_147.json](FEATURE_REGISTRY_147.json) |
 | 14 | Jede Lieferung nutzbar, vollständig, sicher im Portal | ✅ getestet | `tests/integration/quality-standard.test.ts`, `tests/integration/portal-documents.test.ts` |
 | 15 | Negative, Ausfall-, Erstattungs-, Rollen-, Datensicherheits-, Doppel-Event- und Kapazitätsfälle | ✅ getestet | `tests/integration/production.test.ts`, `tests/security/security.test.ts`, `tests/integration/ops.test.ts` |
 
-**Status je Funktion** (SPECIFIED, IMPLEMENTED, TESTED, LIVE_VERIFIED, BLOCKED): siehe [FEATURE_REGISTRY_127.json](FEATURE_REGISTRY_127.json). `LIVE_VERIFIED` wird erst nach einer echten, freigegebenen Live-Transaktion mit Bankbestätigung vergeben.
+**Status je Funktion** (SPECIFIED, IMPLEMENTED, TESTED, LIVE_VERIFIED, BLOCKED): siehe [FEATURE_REGISTRY_147.json](FEATURE_REGISTRY_147.json). `LIVE_VERIFIED` wird erst nach einer echten, freigegebenen Live-Transaktion mit Bankbestätigung vergeben.

@@ -14,6 +14,23 @@ Grundlage: das 15.0-Paket (`docs/spec/v15/`, Prüfsummen laut Manifest geprüft)
 
 ---
 
+## Gesamtprompt mit 147 Funktionen übernommen (2026-11-13)
+
+- **Quelle:** `docs/spec/v15-147/` mit SHA-256-Manifest (Dateinamen gekürzt wegen Windows-Pfadlänge, Originalnamen im Manifest).
+- **Registry:**
+  - Die ursprünglichen 127 bleiben unverändert und SHA-gesichert.
+  - Neue Erweiterung `packages/registry/src/registry-extension-147.json` mit 131–140 und 146–155, jeweils mit Zweck und Schutzgrenzen.
+  - Die Validierung erzwingt: 141–145 nie, 48/49/110 nie.
+- **Ehrlicher Stand der 20 neuen Funktionen:** 10 teilweise (nur mit vorhandenem, getestetem Code), 10 geplant, keine als vollständig umgesetzt; ein Test erzwingt das.
+- **Export:** [FEATURE_REGISTRY_147.json](FEATURE_REGISTRY_147.json): 26 vollständig getestet, 69 teilweise, 51 spezifiziert, 1 gesperrt, 0 live bestätigt.
+- **Freelancer-Direktive:** Bewertung je Plattform in [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md).
+  - Machbar und kostenlos: Web, Offline-Programme, Excel/Office-Dokumente.
+  - Kosten oder Konten nötig: Windows-Signatur, macOS/iOS (Apple-Konto, Mac), Play Store, Plattform-Konten.
+  - Gesperrt bis nachgewiesen: Grafik, 3D, Video.
+- **Tests:** `npm run verify` → **293/293**.
+
+---
+
 ## Pilot-Fachsoftware P2: Oberfläche der Mini-Warenwirtschaft (2026-11-13)
 
 - **Offline-Programm als eine HTML-Datei:** Der TypeScript-Compiler übersetzt den Code, ein kleiner Modullader bündelt ihn; es gibt keine neue Abhängigkeit.
@@ -60,7 +77,7 @@ Grundlage: `INFINITY_EARN_15_GESAMTPROMPT_ALLES_IN_EINEM.md`. Abgleich und Plan:
 - **`/konto` (§6):** zeigt das Kundenportal. `robots.txt` sperrt den Pfad für Suchmaschinen.
 - **Kommunikationskanäle (§3):** Übersicht unter Kunden. Verbunden sind nur Website und Portal; TED ist nur lesend; E-Mail, WhatsApp, Plattformen und Telefonie stehen auf „Nicht verbunden“, jeweils mit dem, was fehlt.
 - **Landingpage (§7):** neues Kapitel „Preise & Fragen“ mit echtem Preisrahmen aus der Preisregel, 4 Fragen, Kontaktweg und ehrlichen Pflichtangaben (Testbetrieb, Impressum folgt nach Registrierung). Der Abschluss ist jetzt Kapitel 9. In DE/IT/EN.
-- **Registry-Export (§12/§13):** [FEATURE_REGISTRY_127.json](FEATURE_REGISTRY_127.json) mit 127 JA und 3 NEIN.
+- **Registry-Export (§12/§13):** [FEATURE_REGISTRY_147.json](FEATURE_REGISTRY_147.json) mit 127 JA und 3 NEIN.
   - **Stand:** 26 TESTED vollständig, 59 TESTED teilweise, 41 SPECIFIED, 1 BLOCKED, 0 LIVE_VERIFIED.
   - **Aktualität:** Ein Test prüft, dass die Datei aktuell ist und jeder Status TESTED einen existierenden Testnachweis hat.
 - **Dokumente (§13):** [DESIGN_SYSTEM_LUXURY_TURQUOISE.md](DESIGN_SYSTEM_LUXURY_TURQUOISE.md), [SYSTEM_ARCHITECTURE.md](SYSTEM_ARCHITECTURE.md), [COMMUNICATION_AND_DELIVERY.md](COMMUNICATION_AND_DELIVERY.md), [PRODUCT_FACTORY_REAL_SOFTWARE.md](PRODUCT_FACTORY_REAL_SOFTWARE.md), [ADMIN_LIVE_PREVIEW.md](ADMIN_LIVE_PREVIEW.md), [TEST_MATRIX.md](TEST_MATRIX.md).
