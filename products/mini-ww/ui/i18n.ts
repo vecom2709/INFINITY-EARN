@@ -95,7 +95,7 @@ const D: Record<string, [string, string]> = {
   ERR_IMMUTABLE: ['Documento emesso: non modificabile, usare una nota di credito.', 'Final document: cannot be changed, use a credit note.'],
   ERR_NOT_IN_INVOICE: ['Articolo non presente nella fattura.', 'Item is not part of the invoice.'], ERR_OVER_CREDIT: ['Quantità superiore a quanto fatturato.', 'Quantity exceeds what was invoiced.'],
   ERR_OVERPAYMENT: ['Importo superiore al residuo da pagare.', 'Amount exceeds what is open.'], ERR_INVALID_DUNNING: ['Termini di sollecito non validi.', 'Invalid dunning periods.'],
-  ERR_INVALID_TAX_RATE: ['Aliquote IVA non valide.', 'Invalid tax rates.'], ERR_TAX_RATE_IN_USE: ['Aliquota usata da articoli.', 'Tax rate is used by items.'],
+  ERR_INVALID_TAX_RATE: ['Aliquote IVA non valide.', 'Invalid tax rates.'], ERR_INVALID_SETUP: ['Configurazione iniziale non valida.', 'Invalid initial setup.'], ERR_TAX_RATE_IN_USE: ['Aliquota usata da articoli.', 'Tax rate is used by items.'],
   ERR_BACKUP_INVALID: ['Il file non è un backup valido.', 'The file is not a valid backup.'], ERR_BACKUP_VERSION: ['Versione del backup non compatibile.', 'Backup version not compatible.'],
   ERR_BACKUP_CORRUPT: ['Backup danneggiato o modificato.', 'Backup is damaged or was altered.'], ERR_BACKUP_INCONSISTENT: ['Backup non coerente: dati non ripristinati.', 'Backup is inconsistent: data not restored.'],
   ERR_CSV_HEADER: ['Intestazione CSV non corretta.', 'Incorrect CSV header.'], ERR_CSV_ROWS: ['Errori nelle righe del CSV: nulla è stato importato.', 'Errors in CSV rows: nothing was imported.'],

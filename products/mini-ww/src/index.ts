@@ -7,3 +7,4 @@ export * from './billing.ts';
 export * from './settings.ts';
 export * from './reports.ts';
 export * from './io.ts';
+export * from './setup.ts';

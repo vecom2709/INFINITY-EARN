@@ -31,6 +31,25 @@ Grundlage: das 15.0-Paket (`docs/spec/v15/`, Prüfsummen laut Manifest geprüft)
 
 ---
 
+## Pilot-Fachsoftware P3: Fabrik-Anbindung der Mini-Warenwirtschaft (2026-11-13)
+
+- **Neue Produktart `mini-ww`:** Die Produktfabrik baut je Auftrag das Offline-Programm im Design des Kunden (Firmenname, Farbe, Logo, Sprache) mit seiner Einrichtung (Steuersätze, Nummernkreise, Zahlungsziel).
+- **Lieferpaket (ZIP):** `warenwirtschaft.html`, `bedienungsanleitung.pdf` und `LIESMICH.txt` mit Prüfsummen.
+  - Die **bebilderte Bedienungsanleitung** hat 13 Seiten, 10 echte Screenshots des Programms und je Arbeitsablauf ein Kapitel, in DE, IT oder EN.
+  - Die Screenshots erzeugt der lokale Edge, kostenlos.
+- **Abnahme je Lieferung:** 9 Prüfungen, darunter:
+  - Der ausgelieferte Code ist die getestete Fassung.
+  - Kein Netzwerkzugriff.
+  - Fachlicher Selbsttest mit der Einrichtung des Kunden.
+  - Keine toten Knöpfe.
+  - Prüfung des Anleitungs-PDFs.
+- **Standard-Akte:** vollständig. **Verkauf bleibt gesperrt**, bis der Eigentümer in P4 Vorschau, Produktseite und Preis freigibt.
+- **Muster für den Eigentümer:** `/admin/muster/mini-ww/anleitung.pdf` und `/admin/muster/mini-ww/paket.zip`.
+- **Tests:** 10 neue in `tests/products/mini-ww/factory.test.ts`. `npm run verify` → **304/304**, E2E 1/1.
+- **Offen:** Die Screenshots zeigen das Standarddesign. Italien braucht FatturaPA über das SdI, das ist nicht enthalten (steht in der Akte).
+
+---
+
 ## Pilot-Fachsoftware P2: Oberfläche der Mini-Warenwirtschaft (2026-11-13)
 
 - **Offline-Programm als eine HTML-Datei:** Der TypeScript-Compiler übersetzt den Code, ein kleiner Modullader bündelt ihn; es gibt keine neue Abhängigkeit.

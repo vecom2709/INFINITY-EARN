@@ -1,6 +1,7 @@
 import { b2bCalcCsv } from './capabilities/b2b-calc-csv.ts';
 import { b2bCalcPdf } from './capabilities/b2b-calc-pdf.ts';
 import { b2bCalcBundle } from './capabilities/b2b-calc-bundle.ts';
+import { miniWw } from './capabilities/mini-ww.ts';
 import { standardGaps } from './quality-standard.ts';
 import type { ProductCapability } from './types.ts';
 
@@ -36,6 +37,7 @@ const REGISTRY: ReadonlyMap<string, ProductCapability> = new Map(
     b2bCalcCsv,
     b2bCalcPdf,
     b2bCalcBundle,
+    miniWw, // Pilot-Fachsoftware: gebaut und abgenommen, Verkauf erst nach Eigentümer-Freigabe (P4)
     disabled('video-production', 'Kein nachgewiesener kostenloser Compute für Video-Rendering (Free-Worker-Limits).'),
     disabled('3d-assets', 'Rendering/Qualität auf kostenloser Hardware nicht belegt.'),
     disabled('logo-design', 'Keine lizenzierte Bild-Engine verfügbar.'),

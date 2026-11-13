@@ -47,6 +47,8 @@ import { WorkflowError } from './errors.ts';
 import { findOrder } from './orders.ts';
 import { effectivePolicy, setStop } from './policy-store.ts';
 import { routeCapability } from '../../product-factory/src/registry.ts';
+import { MINI_WW_FILES, miniWw } from '../../product-factory/src/capabilities/mini-ww.ts';
+import { readZip } from '../../../packages/shared/src/zip.ts';
 import { acceptQuote, autoProcessOpportunity, getQuote, verifyQuoteToken } from './workflow.ts';
 
 /**
@@ -505,6 +507,14 @@ export function createHandler(ctx: AppContext): (r: HttpRequest) => Promise<Res>
       body: f.bytes,
     };
   }));
+  /** Muster der Pilot-Fachsoftware für den Eigentümer (vor der Verkaufsfreigabe P4): echtes Lieferpaket mit Beispielfirma. */
+  const musterPaket = (lang: string): Uint8Array => miniWw.generate({ company: lang === 'it' ? 'Azienda Esempio' : lang === 'en' ? 'Example Company' : 'Musterfirma', primary: '#1F5FA8', language: lang === 'it' || lang === 'en' ? lang : 'de' });
+  route('GET', '/admin/muster/mini-ww/anleitung.pdf', ownerGuard((req) => {
+    const pdf = readZip(musterPaket(req.query.get('lang') ?? 'de')).find((x) => x.name === MINI_WW_FILES.pdf);
+    if (!pdf) return json({ error: 'NOT_FOUND' }, 404);
+    return { status: 200, headers: { 'content-type': 'application/pdf', 'content-disposition': 'inline; filename="bedienungsanleitung.pdf"', 'content-security-policy': "default-src 'none'; object-src 'self'; style-src 'unsafe-inline'; img-src 'self' data:" }, body: pdf.bytes };
+  }));
+  route('GET', '/admin/muster/mini-ww/paket.zip', ownerGuard((req) => ({ status: 200, headers: { 'content-type': 'application/zip', 'content-disposition': 'attachment; filename="mini-ww-muster.zip"' }, body: musterPaket(req.query.get('lang') ?? 'de') })));
   route('POST', '/admin/vorschau/:id/sperren', ownerGuard((req) => {
     try {
       quarantineArtifact(ctx, req.params.id ?? '', 'Fehler in der Admin-Live-Vorschau gemeldet', 'owner');

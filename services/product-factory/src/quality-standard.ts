@@ -20,7 +20,8 @@ export interface ProductStandard {
   design: Verified[];
   features: Verified[];
   accessibilityAndSecurity: Verified[];
-  deliverables: { formats: string[]; manualPath: string; documentation: string[] };
+  /** manualPath: Hilfeseite (/hilfe/…) oder – bei Software mit Anleitung im Lieferpaket – die Musteranleitung im Admin; manualInPackage: Dateiname im Paket */
+  deliverables: { formats: string[]; manualPath: string; manualInPackage?: string; documentation: string[] };
   userFlowTests: string[];
   notDeliverableWhen: string[];
 }
@@ -88,6 +89,34 @@ const STANDARDS: ProductStandard[] = [
     deliverables: { formats: ['zip', 'csv', 'pdf'], manualPath: '/hilfe/b2b-calc-bundle', documentation: ['Anleitung im Kundenportal', 'Herkunftsnachweis /pruefen/<sha>', 'Rechnung'] },
     userFlowTests: ['tests/integration/bundle-change-help.test.ts', 'tests/integration/quality-standard.test.ts'],
   },
+  {
+    capabilityId: 'mini-ww',
+    purpose: 'Eine sofort nutzbare, offline laufende Warenwirtschaft im Design des Kunden: Artikel, Lager, Kunden, Angebote, Aufträge, Lieferungen, Rechnungen, Zahlungen, Gutschriften, Berichte und Datensicherung.',
+    audience: 'Kleine Handels- und Handwerksbetriebe (1–5 Arbeitsplätze, ein Gerät je Bestand), die heute mit Tabellen oder Papier arbeiten.',
+    workflows: ['Artikel anlegen und Wareneingang buchen', 'Angebot erstellen, festschreiben, annehmen', 'Auftrag liefern (auch teilweise)', 'Rechnung aus Lieferungen erstellen, festschreiben, Zahlung erfassen', 'Gutschrift mit Rückbuchung ins Lager', 'Berichte, Sicherung, CSV-Austausch'],
+    references: [
+      { name: 'GoBD-Grundsätze (Nachvollziehbarkeit, Unveränderbarkeit) – Orientierung, keine Zertifizierung', requirement: 'Festgeschriebene Belege unveränderbar, fortlaufende Nummernkreise ohne Lücken, Protokoll jeder Änderung, Storno nur per Gutschrift' },
+      { name: 'Gängige Warenwirtschaften für Kleinbetriebe (Angebot → Auftrag → Lieferschein → Rechnung)', requirement: 'Belegkette mit Reservierung, Teillieferung, Rechnung nur aus Lieferungen, offene Posten und Mahnstufen' },
+      { name: 'WCAG 2.1 AA', requirement: 'Kontrast mindestens 4,5:1 auch mit Kundenfarbe, jedes Feld beschriftet, bedienbar per Tastatur' },
+      { name: 'Content Security Policy (W3C)', requirement: 'Keine Netzwerkverbindungen, keine fremden Skripte – Geschäftsdaten verlassen den Rechner nicht' },
+    ],
+    design: [
+      { text: 'Firmenname, Farbe (automatisch auf AA-Kontrast angepasst), Logo und Sprache des Kunden', verifiedBy: 'branding' },
+      { text: 'Keine funktionslosen Schaltflächen, jedes Feld beschriftet – auf allen Seiten und in beiden Rollen', verifiedBy: 'ui_actions' },
+    ],
+    features: [
+      { text: 'Vollständiger Ablauf Angebot → Auftrag → Lieferung → Rechnung → Zahlung mit den Steuersätzen, Nummernkreisen und dem Zahlungsziel des Kunden', verifiedBy: 'domain_selftest' },
+      { text: 'Ausgeliefert wird genau die gebaute und getestete Programmfassung', verifiedBy: 'program_integrity' },
+      { text: 'Bebilderte Bedienungsanleitung (PDF) mit echten Screenshots, ein Kapitel je Arbeitsablauf, in der Sprache des Kunden', verifiedBy: 'manual_pdf' },
+      { text: 'Paket mit Programm, Anleitung und LIESMICH samt Prüfsummen', verifiedBy: 'zip_structure' },
+      { text: 'LIESMICH erklärt den Start; Prüfsummen stimmen', verifiedBy: 'readme' },
+      { text: 'Unverändert ausgeliefert (Prüfsumme)', verifiedBy: 'checksum' },
+    ],
+    accessibilityAndSecurity: [{ text: 'Kein Netzwerkzugriff möglich (CSP default-src none, keine externen Quellen)', verifiedBy: 'no_network' }],
+    deliverables: { formats: ['zip', 'html', 'pdf'], manualPath: '/admin/muster/mini-ww/anleitung.pdf', manualInPackage: 'bedienungsanleitung.pdf', documentation: ['Bebilderte Bedienungsanleitung im Paket', 'LIESMICH.txt mit Prüfsummen', 'Herkunftsnachweis /pruefen/<sha>', 'Rechnung'] },
+    userFlowTests: ['tests/products/mini-ww/domain.test.ts', 'tests/products/mini-ww/ui.test.ts', 'tests/products/mini-ww/factory.test.ts'],
+    notDeliverableWhen: ['Wunsch nach Mehrplatz-/Serverbetrieb, Online-Shop-Anbindung oder E-Rechnung (XRechnung/FatturaPA) – nicht Teil dieser Produktart', 'Automatische Prüfung schlägt nach der Wiederholung weiterhin fehl', 'Logo nicht als PNG/JPEG/WebP bis 200 KB lieferbar'],
+  },
 ];
 
 const BY_ID = new Map(STANDARDS.map((s) => [s.capabilityId, s]));
@@ -117,7 +146,8 @@ export function standardGaps(cap: ProductCapability, s: ProductStandard | undefi
     if (!cap.qa_suite.includes(v.verifiedBy)) gaps.push(`Zusage ohne Prüfung: „${v.text}“ (${v.verifiedBy})`);
   }
   if (!s.deliverables.formats.includes(cap.output_schema.extension)) gaps.push(`Lieferformat ${cap.output_schema.extension} nicht in der Akte`);
-  if (!s.deliverables.manualPath.startsWith('/hilfe/')) gaps.push('Keine Bedienungsanleitung');
+  const manualOk = s.deliverables.manualPath.startsWith('/hilfe/') || (!!s.deliverables.manualInPackage && s.deliverables.manualPath.startsWith('/admin/muster/') && s.deliverables.formats.includes('pdf'));
+  if (!manualOk) gaps.push('Keine Bedienungsanleitung');
   if (s.userFlowTests.length === 0) gaps.push('Keine getesteten Benutzerabläufe');
   if (s.notDeliverableWhen.length === 0) gaps.push('Keine Kriterien für „nicht lieferfähig“');
   return gaps;

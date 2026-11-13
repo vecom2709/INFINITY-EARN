@@ -121,8 +121,9 @@ export function csvFile(state: AppState, kind: string): { name: string; content:
 }
 
 /** Erststart: leerer Datenbestand mit dem Firmennamen aus dem Kundendesign. */
-export function initialState(company: string, lang: Lang): AppState {
-  return { store: W.emptyStore(company, { id: 'u1', name: tr(lang, 'Inhaber') }), session: { userId: 'u1', lang, mode: 'basic', lastBackup: null } };
+export function initialState(company: string, lang: Lang, setup?: W.Setup): AppState {
+  const empty = W.emptyStore(company, { id: 'u1', name: tr(lang, 'Inhaber') });
+  return { store: setup ? W.applySetup(empty, setup) : empty, session: { userId: 'u1', lang, mode: 'basic', lastBackup: null } };
 }
 
 /** Fachfehler in der Sprache des Benutzers: Deutsch mit Details, IT/EN als verständlicher Text je Fehlercode. */

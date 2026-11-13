@@ -1,6 +1,6 @@
 # Testmatrix – Pflichtfälle aus Gesamtprompt §12
 
-Alle Tests laufen mit `npm run verify` (lokal) und in der GitHub-CI. Stand 2026-11-13: 271 Tests plus 1 E2E, alle bestanden.
+Alle Tests laufen mit `npm run verify` (lokal) und in der GitHub-CI. Stand 2026-11-13: 304 Tests plus 1 E2E, alle bestanden.
 
 | # | Pflichtfall | Status | Nachweis |
 |---|---|---|---|
@@ -9,7 +9,7 @@ Alle Tests laufen mit `npm run verify` (lokal) und in der GitHub-CI. Stand 2026-
 | 3 | Dialogisch geklärter Bedarf → Scope, Angebot, Annahme | ✅ getestet | `tests/integration/advisor.test.ts`, `tests/e2e/pilot.test.ts` |
 | 4 | Stripe serverseitig, negative Webhook-, Doppel- und Fehlerfälle | ✅ getestet (Sandbox) | `tests/integration/payments.test.ts`, `tests/integration/m2-payments.test.ts`. Live: `LIVE_NOT_READY` |
 | 5 | Produktion erst nach bestätigter Zahlung | ✅ getestet | `tests/integration/production.test.ts` (IE-059) |
-| 6 | Bestelltes ERP ist echte Fachsoftware | ⛔ nicht anwendbar | Produktart gesperrt, bis Pilot, Standard-Akte und Prüfungen existieren ([PRODUCT_FACTORY_REAL_SOFTWARE.md](PRODUCT_FACTORY_REAL_SOFTWARE.md)) |
+| 6 | Bestelltes ERP ist echte Fachsoftware | ✅ getestet (Pilot, Verkauf gesperrt bis P4) | `tests/products/mini-ww/domain.test.ts`, `tests/products/mini-ww/ui.test.ts`, `tests/products/mini-ww/factory.test.ts` – Fachlogik, Oberfläche, Lieferpaket mit Selbsttest und bebilderter Anleitung ([PILOT_FACHSOFTWARE.md](PILOT_FACHSOFTWARE.md)) |
 | 7 | Admin-Produktkarte und echter Build-/Vorschau-Status je Auftrag | ✅ getestet | `tests/integration/live-preview.test.ts` |
 | 8 | Interaktive Vorschau für ausführbare Webprodukte | ⛔ nicht anwendbar | Keine ausführbaren Produkte. Für Tabelle, PDF und ZIP gibt es echte Viewer; sonst „Noch keine Live-Vorschau verfügbar“ |
 | 9 | Luxury Turquoise auf allen Oberflächen, Storyscrolling barrierearm | ✅ getestet | `tests/unit/console-ui.test.ts` (Kontrast), `tests/integration/landing.test.ts` |

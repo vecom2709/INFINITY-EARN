@@ -23,7 +23,8 @@ test('Jede verkaufbare Produktart hat eine vollständige Standard-Akte mit Anlei
     for (const f of s.userFlowTests) assert.ok(existsSync(f), `${c.id}: Ablauftest ${f} existiert`);
     assert.ok(acceptanceChecks(s).every((name) => cap.qa_suite.includes(name)), 'keine Zusage ohne Prüfung');
   }
-  assert.ok(listStandards().every((s) => routeCapability(s.capabilityId).ok));
+  assert.ok(listStandards().filter((s) => !getCapability(s.capabilityId)?.disabled_reason).every((s) => routeCapability(s.capabilityId).ok));
+  assert.equal(routeCapability('mini-ww').ok, false, 'vollständige Akte allein schaltet nicht frei – Verkauf erst nach Eigentümer-Freigabe');
   assert.equal(routeCapability('video-production').ok, false, 'gesperrte Produktarten bleiben gesperrt');
 });
 

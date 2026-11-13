@@ -2,7 +2,7 @@ import js from '@eslint/js';
 import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
-  { ignores: ['dist/', 'data/', 'node_modules/', '.wrangler/'] },
+  { ignores: ['dist/', 'data/', 'node_modules/', '.wrangler/', 'products/mini-ww/generated/'] },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {

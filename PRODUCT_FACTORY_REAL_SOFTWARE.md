@@ -15,9 +15,15 @@
 | Kalkulation als PDF | Struktur, Seiten, Vollständigkeit, Summen, Gestaltung (Titel, Netto-Hinweis, Fußzeile), Prüfsumme |
 | Paket (ZIP) | ZIP-Struktur/CRC, Tabellen- und PDF-Prüfungen, Prüfsumme |
 
+## Gebaut und abgenommen, Verkauf noch gesperrt
+
+| Produkt | Prüfungen | Stand |
+|---|---|---|
+| **Mini-Warenwirtschaft** (`mini-ww`, Offline-Programm + bebilderte PDF-Anleitung + LIESMICH als ZIP) | ZIP-Struktur, Programm = getestete Fassung, Kundendesign/Kontrast, kein Netzwerkzugriff, fachlicher Selbsttest mit der Einrichtung des Kunden, keine toten Knöpfe, Anleitung (Seiten, 10 Screenshots, Kapitel, Sprache), LIESMICH-Prüfsummen, Prüfsumme | Standard-Akte vollständig; `disabled_reason`: Verkaufsfreigabe durch den Eigentümer (P4). Details: [PILOT_FACHSOFTWARE.md](PILOT_FACHSOFTWARE.md) |
+
 ## Gesperrt bis nachgewiesen
 
-Software, Websites, Apps, ERP, Grafik, 3D, Video und Audio sind **nicht bestellbar**. Für diese Produktarten gibt es weder eine Standard-Akte noch automatische Prüfungen, und ihre Herstellung auf kostenloser Infrastruktur ist nicht belegt (`services/product-factory/src/registry.ts`).
+Software (außer dem Pilot oben, der ebenfalls noch gesperrt ist), Websites, Apps, große ERP-Systeme, Grafik, 3D, Video und Audio sind **nicht bestellbar**. Für diese Produktarten gibt es weder eine Standard-Akte noch automatische Prüfungen, und ihre Herstellung auf kostenloser Infrastruktur ist nicht belegt (`services/product-factory/src/registry.ts`).
 
 ## Weg zu echter Fachsoftware (Gesamtprompt §4, M3)
 

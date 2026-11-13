@@ -1,4 +1,5 @@
 import { backupFile, csvFile, handle, importCsv, initialState, restoreFrom, type AppState, type Form } from './actions.ts';
+import type { Setup } from '../src/setup.ts';
 import { brandColors, safeLogo, type Brand } from './brand.ts';
 import { tr } from './i18n.ts';
 import { css } from './styles.ts';
@@ -8,7 +9,8 @@ import { renderApp } from './view.ts';
  * Browser-Anbindung des Offline-Programms: Daten im Browser-Speicher, Formulare → Aktionen, Dateien laden/speichern,
  * Drucken. Keine Netzwerkzugriffe – das Programm läuft vollständig offline.
  */
-interface Config { brand: Brand; demo: boolean }
+/** setup: Einrichtung aus dem Auftrag (Erststart). seed: nur für Anleitungsbilder und Demo – nie in einer Kundenauslieferung. */
+interface Config { brand: Brand; demo: boolean; setup?: Setup; seed?: AppState }
 
 const cfgEl = document.getElementById('mini-ww-config');
 const cfg = JSON.parse(cfgEl?.textContent ?? '{}') as Config;
@@ -27,7 +29,7 @@ function load(): AppState {
   } catch {
     /* Speicher nicht verfügbar: mit leerem Bestand starten */
   }
-  return initialState(cfg.brand.company, cfg.brand.lang);
+  return cfg.seed ?? initialState(cfg.brand.company, cfg.brand.lang, cfg.setup);
 }
 
 let state = load();

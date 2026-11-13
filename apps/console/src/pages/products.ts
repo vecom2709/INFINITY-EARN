@@ -9,6 +9,7 @@ import type { PageCtx } from './types.ts';
 const CAPABILITY_TEXT: Record<string, { name: string; text: string }> = {
   'b2b-calc-csv': { name: 'Kalkulationstabelle (CSV)', text: 'Aus Positionen, Mengen und Preisen entsteht automatisch eine geprüfte, in Excel bearbeitbare Kalkulation mit Aufschlag und Summen.' },
   'b2b-calc-bundle': { name: 'Kalkulationspaket (Tabelle + PDF)', text: 'Beide Dateien in einem ZIP. Jede Datei wird mit der Prüfung ihrer eigenen Produktart kontrolliert; der Preis ergibt sich aus dem tatsächlichen Mehraufwand.' },
+  'mini-ww': { name: 'Mini-Warenwirtschaft (Offline-Programm)', text: 'Programm im Design des Kunden mit bebilderter Bedienungsanleitung (PDF) als ZIP. Muster: /admin/muster/mini-ww/paket.zip' },
   'b2b-calc-pdf': { name: 'Kalkulation als PDF', text: 'Dieselbe Kalkulation als druckfertiges PDF. Geprüft werden Dateistruktur, Seitenzahl, Vollständigkeit aller Positionen und die nachgerechnete Summe.' },
 };
 
@@ -43,7 +44,7 @@ ${panel({ id: 'standard', title: 'Premium-Produktstandard', sub: 'Verkauft und g
       const s = getStandard(c.id);
       const cap = getCapability(c.id);
       const gaps = cap ? standardGaps(cap) : ['unbekannt'];
-      return [`<strong>${e(CAPABILITY_TEXT[c.id]?.name ?? c.id)}</strong>${s ? `<span class="sub"><a href="${e(s.deliverables.manualPath)}">Anleitung</a> · ${e(s.deliverables.formats.join(', ').toUpperCase())}</span>` : ''}`, e(s?.purpose ?? '–'), s ? `${acceptanceChecks(s).length} automatische Prüfungen<span class="sub">${e(s.references.map((r) => r.name).join(' · '))}</span>` : '–', gaps.length ? `${tag('Nicht verkaufbar', 'bad')}<span class="sub">${e(gaps.join('; '))}</span>` : tag('Standard erfüllt', 'ok')];
+      return [`<strong>${e(CAPABILITY_TEXT[c.id]?.name ?? c.id)}</strong>${s ? `<span class="sub"><a href="${e(s.deliverables.manualPath)}">Anleitung</a> · ${e(s.deliverables.formats.join(', ').toUpperCase())}</span>` : ''}`, e(s?.purpose ?? '–'), s ? `${acceptanceChecks(s).length} automatische Prüfungen<span class="sub">${e(s.references.map((r) => r.name).join(' · '))}</span>` : '–', gaps.length ? `${tag('Nicht verkaufbar', 'bad')}<span class="sub">${e(gaps.join('; '))}</span>` : !c.enabled ? `${tag('Akte vollständig – Verkauf gesperrt', 'neutral')}<span class="sub">${e(c.disabled_reason ?? '')}</span>` : tag('Standard erfüllt', 'ok')];
     }), 'Keine Produkte', 'Produktstandard')}${explain('Jede Zusage an den Kunden ist mit einer automatischen Prüfung belegt. Fehlt eine Prüfung oder schlägt sie wiederholt fehl, wird nichts ausgeliefert: Der Auftrag wird als nicht lieferfähig markiert, dir wird eine Erstattung zur Freigabe vorgeschlagen und der Kunde erhält eine ehrliche Nachricht.')}` })}
 <div class="grid2 even">
 ${panel({ title: 'Qualität und Lizenzen', body: `<p style="margin:4px 0 8px">Jede Datei wird vor der Lieferung automatisch geprüft: Zeichenkodierung, Format, Summen, Schutz vor Formel-Einschleusung und Prüfsumme. Fällt eine Prüfung durch, wird nichts ausgeliefert.</p>
