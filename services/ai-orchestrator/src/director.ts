@@ -27,8 +27,8 @@ export const WORK_ROUTES: Record<WorkType, { env: EnvironmentId; capabilities: s
   'windows-exe': { env: 'github-windows', capabilities: ['win-lager'], note: 'Echtes Windows-Programm, gebaut auf dem GitHub-Windows-Server' },
   'macos-linux': { env: 'macos', capabilities: [], note: 'Kein Mac/Linux-Desktop-Build eingerichtet' },
   'mobile-app': { env: 'mobile', capabilities: [], note: 'Kein Android/iOS-Build eingerichtet (Apple-Konto kostet Geld)' },
-  webdesign: { env: 'ai-claude', capabilities: [], note: 'Individuelle Gestaltung braucht KI' },
-  text: { env: 'ai-claude', capabilities: [], note: 'Texterstellung braucht KI' },
+  webdesign: { env: 'ai-claude', capabilities: [], note: 'Individuelle Gestaltung braucht KI – noch keine geprüfte Produktart' },
+  text: { env: 'ai-claude', capabilities: ['ai-texte'], note: 'Webseiten-/Produkttexte über das Claude-Abo, automatisch geprüft' },
   'grafik-medien': { env: 'media', capabilities: [], note: 'Keine lizenzierte Bild-/Video-Engine' },
   kundengespraech: { env: 'ai-claude', capabilities: [], note: 'Freie Antworten brauchen KI; Standardantworten (Berater, Status) laufen ohne' },
   angebot: { env: 'worker', capabilities: [], note: 'Angebote für freigegebene Produktarten werden deterministisch berechnet' },
@@ -42,7 +42,10 @@ const PROBE_MAX_AGE_MS = 14 * 86_400_000;
 
 /** Ehrlicher Stand jeder Ausführungsumgebung. */
 export function environments(ctx: AppContext): EnvironmentStatus[] {
-  const probe = latestProbe(ctx);
+  const probe = latestProbe(ctx, 'win-lager');
+  const aiProbe = latestProbe(ctx, 'ai-texte');
+  const aiProbeOk = aiProbe?.state === 'DONE' && aiProbe.qa_passed === 1 && ctx.clock().getTime() - Date.parse(aiProbe.updated_at) < PROBE_MAX_AGE_MS;
+  const aiLimit = ctx.config.ai.dailyTaskLimit;
   const probeOk = probe?.state === 'DONE' && probe.qa_passed === 1 && ctx.clock().getTime() - Date.parse(probe.updated_at) < PROBE_MAX_AGE_MS;
   const win = !ctx.config.buildAgentToken
     ? { available: false, reason: 'Bau-Agent nicht eingerichtet (BUILD_AGENT_TOKEN fehlt)' }
@@ -52,7 +55,16 @@ export function environments(ctx: AppContext): EnvironmentStatus[] {
   return [
     { id: 'worker', label: 'Cloudflare Worker (24/7)', available: !freeTierThrottled(ctx), reason: freeTierThrottled(ctx) ? 'Tageskontingent des kostenlosen Tarifs fast erreicht – gedrosselt' : `Takt jede Minute, ${getUsage(ctx, 'platform_requests')} Anfragen heute`, cost: '0 € (Free-Tarif)' },
     { id: 'github-windows', label: 'GitHub-Windows-Server', ...win, cost: '0 € (öffentliches Repository)' },
-    { id: 'ai-claude', label: 'Claude (KI-Produktion)', available: false, reason: aiQuotaAvailable(ctx) ? 'Kontingent freigegeben, aber kein offiziell erlaubter automatischer Ausführungsweg eingerichtet' : 'Kein automatischer KI-Ausführungsweg eingerichtet (AI_DAILY_TASK_LIMIT=0). Abo ist keine 24/7-API; API-Schlüssel kostet Geld und braucht deine Freigabe.', cost: '—' },
+    {
+      id: 'ai-claude', label: 'Claude (KI-Produktion über dein Abo)', cost: '0 € zusätzlich (Abo-Kontingent)',
+      ...(!ctx.config.buildAgentToken || aiLimit === 0
+        ? { available: false, reason: aiLimit === 0 ? 'Tageslimit AI_DAILY_TASK_LIMIT = 0' : 'Agent-Schlüssel fehlt' }
+        : !aiQuotaAvailable(ctx)
+          ? { available: false, reason: `Tageslimit erreicht (${aiLimit} KI-Läufe) – Aufträge warten bis morgen` }
+          : aiProbeOk
+            ? { available: true, reason: `Probe bestanden (${aiProbe?.updated_at.slice(0, 10)}), heute ${getUsage(ctx, 'ai_tasks')} von ${aiLimit} KI-Läufen` }
+            : { available: false, reason: aiProbe ? `Letzte KI-Probe: ${aiProbe.state}${aiProbe.last_error ? ` – ${aiProbe.last_error.slice(0, 80)}` : ''}` : 'Noch keine bestandene KI-Probe – Abo-Token (CLAUDE_CODE_OAUTH_TOKEN) bei GitHub hinterlegen und Probe starten' }),
+    },
     { id: 'macos', label: 'macOS/Linux-Desktop', available: false, reason: 'Nicht eingerichtet', cost: '—' },
     { id: 'mobile', label: 'Android/iOS', available: false, reason: 'Nicht eingerichtet (Apple-Entwicklerkonto kostenpflichtig)', cost: '—' },
     { id: 'media', label: 'Grafik/Video', available: false, reason: 'Keine lizenzierte Engine', cost: '—' },

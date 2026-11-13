@@ -409,6 +409,12 @@ export const HELP: Record<string, { title: string; steps: string[]; contents: st
     steps: ['ZIP-Datei speichern und entpacken (Rechtsklick → „Alle extrahieren“ bzw. Doppelklick auf dem Mac).', 'warenwirtschaft.html per Doppelklick im Browser öffnen (Edge, Chrome, Firefox oder Safari). Keine Installation, kein Internet nötig.', 'Die Datei immer auf demselben Computer und im selben Browser öffnen – dort liegen Ihre Daten.', 'Unter „Daten“ regelmäßig eine Sicherung herunterladen und extern aufbewahren.', 'Alle Abläufe erklärt die beiliegende Bedienungsanleitung mit Bildern.'],
     limits: ['Kein Mehrplatz-Server, keine Synchronisation zwischen Geräten.', 'Keine elektronische Rechnungsübermittlung (z. B. SdI/XRechnung).', 'Rechnungen und Steuersätze vor der Verwendung von Ihrer Steuerberatung prüfen lassen.'],
   },
+  'ai-texte': {
+    title: 'KI-Texte für Webseite und Shop',
+    contents: ['texte.md – alle Texte als Markdown für Baukasten oder CMS', 'texte.html – zum Ansehen im Browser und Kopieren', 'inhalt.json – dieselben Texte maschinenlesbar', 'LIESMICH.txt – Hinweise zum Gegenlesen'],
+    steps: ['ZIP-Datei speichern und entpacken.', 'texte.html im Browser öffnen und die Texte lesen.', 'Fakten, Namen und Angebote gegenlesen – die Texte verwenden nur Ihre Angaben aus dem Briefing.', 'Texte aus texte.md in Ihren Webseiten-Baukasten oder Ihr CMS übernehmen.'],
+    limits: ['Die Texte werden mit KI geschrieben und automatisch geprüft (Länge, Sprache, Stichworte, keine Garantie- oder Superlativ-Aussagen) – bitte vor der Veröffentlichung gegenlesen.', 'Keine Rechts-, Medizin- oder Finanzaussagen, keine erfundenen Zahlen, Auszeichnungen oder Kundenstimmen.', 'Keine Links, Kontaktdaten oder Bilder in den Texten.'],
+  },
 };
 
 export function renderHelp(product: string): string | null {

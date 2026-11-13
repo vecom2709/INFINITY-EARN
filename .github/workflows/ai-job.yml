@@ -1,0 +1,82 @@
+# KI-Aufträge über das Claude-Abo des Eigentümers (16.0) – offizielle Claude-Code-Action.
+# Ein kurzer Lauf fragt alle 15 Minuten nach offenen KI-Aufträgen; nur dann arbeitet Claude (ein Auftrag je Lauf).
+# Sicherheit:
+#   - Claude bekommt nur work/AUFGABE.md und darf nur Dateien lesen/schreiben (keine Shell, kein Internet).
+#   - Der Agent-Schlüssel steht nur in den Schritten „abholen“ und „hochladen“, nie im Claude-Schritt.
+#   - Dieses Repository ist öffentlich: keine Kundendaten in Protokollen, keine Ergebnisse bei GitHub.
+# Einrichtung durch den Eigentümer: Geheimnis CLAUDE_CODE_OAUTH_TOKEN (aus `claude setup-token`).
+name: KI-Aufträge (Claude-Abo)
+
+on:
+  schedule:
+    - cron: '12,27,42,57 * * * *'
+  workflow_dispatch:
+    inputs:
+      probe:
+        description: 'KI-Probe mit Musterfirma anstoßen'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ai-job
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    outputs:
+      pending: ${{ steps.c.outputs.pending }}
+    steps:
+      - id: c
+        env:
+          AGENT_URL: ${{ vars.WIN_BUILD_AGENT_URL }}
+          TOKEN: ${{ secrets.WIN_BUILD_AGENT_TOKEN }}
+          HAS_CLAUDE: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN != '' }}
+          PROBE: ${{ inputs.probe }}
+        run: |
+          if [ -z "$AGENT_URL" ] || [ -z "$TOKEN" ]; then echo "Agent nicht eingerichtet."; echo "pending=0" >> "$GITHUB_OUTPUT"; exit 0; fi
+          if [ "$HAS_CLAUDE" != "true" ]; then echo "CLAUDE_CODE_OAUTH_TOKEN fehlt – KI-Aufträge warten."; echo "pending=0" >> "$GITHUB_OUTPUT"; exit 0; fi
+          if [ "$PROBE" = "true" ]; then echo "pending=probe" >> "$GITHUB_OUTPUT"; exit 0; fi
+          n=$(curl -fsS --max-time 20 -H "authorization: Bearer $TOKEN" "$AGENT_URL/agent/ai-jobs/offen" | jq -r '.pending')
+          if ! [[ "$n" =~ ^[0-9]+$ ]]; then echo "Antwort unlesbar."; n=0; fi
+          echo "Offene KI-Aufträge: $n"
+          echo "pending=$n" >> "$GITHUB_OUTPUT"
+
+  produce:
+    needs: check
+    if: needs.check.outputs.pending != '0' && needs.check.outputs.pending != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: KI-Auftrag abholen
+        id: claim
+        env:
+          AGENT_URL: ${{ vars.WIN_BUILD_AGENT_URL }}
+          BUILD_AGENT_TOKEN: ${{ secrets.WIN_BUILD_AGENT_TOKEN }}
+          PROBE: ${{ needs.check.outputs.pending == 'probe' && '--probe' || '' }}
+        run: node --disable-warning=ExperimentalWarning scripts/ai-agent.ts claim $PROBE
+      - name: Claude schreibt (Abo)
+        if: steps.claim.outputs.build_id != ''
+        continue-on-error: true
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          prompt: 'Lies die Datei work/AUFGABE.md und erfülle den Auftrag genau. Schreibe das Ergebnis ausschließlich in die Datei work/ergebnis.json. Führe keine anderen Aktionen aus.'
+          claude_args: '--allowedTools Read,Write --max-turns 12'
+          show_full_output: false
+      - name: Ergebnis hochladen
+        if: always() && steps.claim.outputs.build_id != ''
+        env:
+          AGENT_URL: ${{ vars.WIN_BUILD_AGENT_URL }}
+          BUILD_AGENT_TOKEN: ${{ secrets.WIN_BUILD_AGENT_TOKEN }}
+          BUILD_ID: ${{ steps.claim.outputs.build_id }}
+        run: node --disable-warning=ExperimentalWarning scripts/ai-agent.ts submit "$BUILD_ID"

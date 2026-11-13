@@ -3,6 +3,7 @@ import { b2bCalcPdf } from './capabilities/b2b-calc-pdf.ts';
 import { b2bCalcBundle } from './capabilities/b2b-calc-bundle.ts';
 import { miniWw } from './capabilities/mini-ww.ts';
 import { winLager } from './capabilities/win-lager.ts';
+import { aiTexte } from './capabilities/ai-texte.ts';
 import { standardGaps } from './quality-standard.ts';
 import type { ProductCapability } from './types.ts';
 
@@ -40,6 +41,7 @@ const REGISTRY: ReadonlyMap<string, ProductCapability> = new Map(
     b2bCalcBundle,
     miniWw, // Pilot-Fachsoftware: gebaut und abgenommen, Verkauf erst nach Eigentümer-Freigabe (P4)
     winLager, // Windows-Programm (157/158): Bau je Auftrag über den Bau-Agenten, Verkauf erst nach Freigabe
+    aiTexte, // 16.0: KI-Texte über das Claude-Abo (Claude-Code-Action), Verkauf erst nach Freigabe
     disabled('video-production', 'Kein nachgewiesener kostenloser Compute für Video-Rendering (Free-Worker-Limits).'),
     disabled('3d-assets', 'Rendering/Qualität auf kostenloser Hardware nicht belegt.'),
     disabled('logo-design', 'Keine lizenzierte Bild-Engine verfügbar.'),

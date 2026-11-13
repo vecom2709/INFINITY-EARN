@@ -151,7 +151,7 @@ test('Leitstand im Admin zeigt gemessene Werte; Rohdaten nur für den Eigentüme
   assert.match(html, /Autopilot-Leitstand/);
   assert.match(html, /AKTIV/);
   assert.match(html, /GitHub-Windows-Server/);
-  assert.match(html, /Claude \(KI-Produktion\)/);
+  assert.match(html, /Claude \(KI-Produktion über dein Abo\)/);
   const { serve, Client } = await import('../http.ts');
   const srv = await serve(ctx);
   try {

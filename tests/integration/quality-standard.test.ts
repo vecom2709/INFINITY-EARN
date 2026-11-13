@@ -13,7 +13,7 @@ import { isSellable } from '../../services/core-api/src/releases.ts';
 
 test('Jede verkaufbare Produktart hat eine vollständige Standard-Akte mit Anleitung und getesteten Abläufen', () => {
   const enabled = listCapabilities().filter((c) => c.enabled);
-  assert.equal(enabled.length, 5, '3 Kalkulationen + Warenwirtschaft + Windows-Programm (Fachsoftware nur mit Freigabe verkaufbar)');
+  assert.equal(enabled.length, 6, '3 Kalkulationen + Warenwirtschaft + Windows-Programm + KI-Texte (nur mit Freigabe verkaufbar)');
   for (const c of enabled) {
     const cap = getCapability(c.id);
     assert.ok(cap);
@@ -84,6 +84,6 @@ test('Produkte-Seite zeigt den Standard je Produkt', () => {
   const { ctx } = makeCtx();
   const html = renderProducts({ ctx, mode: 'test', csrf: 'x', path: '/dashboard/produkte', flash: null } as never);
   assert.ok(html.includes('Premium-Produktstandard'));
-  assert.equal((html.match(/Standard erfüllt/g) ?? []).length, 5);
+  assert.equal((html.match(/Standard erfüllt/g) ?? []).length, 6);
   assert.match(html, /\/dashboard\/produkte\/mini-ww/, 'Weg zu Vorschau und Freigabe');
 });

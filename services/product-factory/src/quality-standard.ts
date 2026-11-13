@@ -142,6 +142,30 @@ const STANDARDS: ProductStandard[] = [
     userFlowTests: ['tests/products/win-lager/install.test.ts', 'tests/products/win-lager/manual.test.ts', 'tests/products/win-lager/external-build.test.ts'],
     notDeliverableWhen: ['Kein Bau besteht die Abnahmeprüfung nach der Wiederholung', 'Wunsch nach Mehrplatz-/Serverbetrieb oder macOS', 'Italienische Fassung, solange die Annahme der FatturaPA im SdI nicht nachgewiesen ist', 'E-Rechnung für Deutschland (XRechnung/ZUGFeRD) gewünscht'],
   },
+  {
+    capabilityId: 'ai-texte',
+    purpose: 'Webseiten-, Leistungs-, Produkt- und FAQ-Texte nach dem Briefing des Kunden – geschrieben von Claude, automatisch geprüft, als Markdown, HTML und JSON geliefert.',
+    audience: 'Kleine Unternehmen und Selbstständige, die Texte für Webseite oder Shop brauchen und ihre Fakten selbst liefern.',
+    workflows: ['Briefing mit Angebot, Zielgruppe, Fakten und Stichworten abgeben', 'Texte automatisch schreiben und prüfen lassen', 'Paket herunterladen, gegenlesen, veröffentlichen'],
+    references: [
+      { name: 'UWG § 5 (irreführende Werbung) – Orientierung, keine Rechtsberatung', requirement: 'Keine Garantie-, Superlativ- oder Gratis-Aussagen, keine erfundenen Fakten' },
+      { name: 'Gängige Webseiten-Baukästen und CMS', requirement: 'Lieferung als Markdown und sauberes HTML ohne Skripte' },
+    ],
+    design: [{ text: 'Sprache, Tonalität und Wortzahl wie bestellt', verifiedBy: 'text_length' }],
+    features: [
+      { text: 'Genau die bestellten Textarten', verifiedBy: 'text_structure' },
+      { text: 'In der bestellten Sprache', verifiedBy: 'text_language' },
+      { text: 'Firmenname in jedem Text, alle Stichworte verwendet', verifiedBy: 'text_brief' },
+      { text: 'Keine Garantien, Superlative oder vom Kunden verbotenen Begriffe', verifiedBy: 'text_claims' },
+      { text: 'Markdown und HTML entsprechen genau den geprüften Texten', verifiedBy: 'text_render' },
+      { text: 'Paket mit Markdown, HTML, JSON und LIESMICH', verifiedBy: 'zip_structure' },
+      { text: 'Unverändert ausgeliefert (Prüfsumme)', verifiedBy: 'checksum' },
+    ],
+    accessibilityAndSecurity: [{ text: 'Keine Platzhalter, Links, Kontaktdaten, HTML oder KI-Selbstbezüge im Text', verifiedBy: 'text_safety' }],
+    deliverables: { formats: ['zip', 'md', 'html', 'json'], manualPath: '/hilfe/ai-texte', manualInPackage: 'LIESMICH.txt', documentation: ['LIESMICH.txt mit Hinweis zum Gegenlesen', 'Herkunftsnachweis /pruefen/<sha>', 'Rechnung'] },
+    userFlowTests: ['tests/products/ai-texte/ai-texte.test.ts'],
+    notDeliverableWhen: ['Kein Ergebnis besteht die Prüfung nach drei Versuchen', 'Briefing ohne prüfbare Fakten oder mit Wunsch nach Rechts-, Medizin- oder Finanzaussagen', 'KI-Kontingent dauerhaft erschöpft (Auftrag wartet, Kunde wird über Verzögerung informiert)'],
+  },
 ];
 
 const BY_ID = new Map(STANDARDS.map((s) => [s.capabilityId, s]));

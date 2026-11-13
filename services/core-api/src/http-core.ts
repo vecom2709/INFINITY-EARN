@@ -12,6 +12,8 @@ import { renderArticle, renderLanding, renderWwProduct, TAX_PRESETS, WW_SLUG } f
 import { MINI_WW_BUNDLE } from '../../../products/mini-ww/generated/bundle.ts';
 import { buildWinManual } from '../../../products/win-lager/manual.ts';
 import { autopilotStatus } from '../../ai-orchestrator/src/director.ts';
+import { getCapability } from '../../product-factory/src/registry.ts';
+import { buildBrief, validateTextSpec } from '../../../products/ai-texte/texte.ts';
 import { claimBuild, failBuild, latestProbe, pendingBuilds, requestProbe, submitBuild } from '../../product-factory/src/external-build.ts';
 import { SHOTS_JPEG_BASE64 } from '../../../products/mini-ww/generated/shots.ts';
 import { CSP as WW_CSP, htmlFromBundle } from '../../../products/mini-ww/html.ts';
@@ -665,6 +667,46 @@ export function createHandler(ctx: AppContext): (r: HttpRequest) => Promise<Res>
   };
   const runnerRef = (req: Req): string => (/^[A-Za-z0-9._:/-]{1,120}$/.test(req.headers['x-runner-ref'] ?? '') ? (req.headers['x-runner-ref'] as string) : 'unbekannt');
   const agentErr = (e: unknown): Res => (e instanceof WorkflowError ? json({ error: e.code, detail: e.message.slice(0, 200) }, 409) : json({ error: 'INTERNAL' }, 500));
+  // KI-Agent (16.0): gleicher Schlüssel, eigene Pfade, nur Aufträge der Plattform ai-claude; Ergebnis als JSON (klein).
+  route('GET', '/agent/ai-jobs/offen', agentGuard(() => json({ pending: pendingBuilds(ctx, 'ai-claude') })));
+  route('POST', '/agent/ai-jobs/abholen', agentGuard((req) => {
+    if (req.query.get('probe') === '1') requestProbe(ctx, 'ai-texte');
+    const b = claimBuild(ctx, runnerRef(req), 'ai-claude');
+    if (!b) return { status: 204 };
+    const cap = getCapability(ctx.db.get<{ capability_id: string }>('SELECT capability_id FROM external_builds WHERE build_id = ?', b.build_id)?.capability_id ?? '');
+    return json({ ...b, capability: cap?.capability_id, brief: cap?.capability_id === 'ai-texte' ? buildBrief(validateTextSpec(b.spec)) : null });
+  }));
+  route('POST', '/agent/ai-jobs/:id/ergebnis', agentGuard((req) => {
+    try {
+      const r = submitBuild(ctx, req.params.id ?? '', new TextEncoder().encode(req.body), 'ai-claude');
+      return json({ outcome: r.outcome, passed: r.passed, failed: r.checks.filter((c) => !c.passed).map((c) => c.check) });
+    } catch (e) {
+      return agentErr(e);
+    }
+  }));
+  route('POST', '/agent/ai-jobs/:id/fehler', agentGuard((req) => {
+    let reason: string;
+    try {
+      reason = String((JSON.parse(req.body || '{}') as { reason?: unknown }).reason ?? '');
+    } catch {
+      reason = 'unlesbar';
+    }
+    try {
+      return json(failBuild(ctx, req.params.id ?? '', reason));
+    } catch (e) {
+      return agentErr(e);
+    }
+  }));
+  route('POST', '/admin/produkte/ai-texte/probe', ownerGuard((req) => {
+    const r = requestProbe(ctx, 'ai-texte');
+    return back(req, r.created ? 'KI-Probe angestoßen. Der GitHub-Lauf holt sie beim nächsten Durchlauf ab (bis ca. 30 Minuten), sofern dein Abo-Token hinterlegt ist.' : 'Eine KI-Probe wartet bereits.');
+  }, { csrf: true }));
+  route('GET', '/admin/muster/ai-texte/probe.zip', ownerGuard(() => {
+    const p = latestProbe(ctx, 'ai-texte');
+    const bytes = p?.result_path ? ctx.blobs.get(p.result_path) : null;
+    if (!p || !bytes) return json({ error: 'NO_PROBE' }, 404);
+    return { status: 200, headers: { 'content-type': 'application/zip', 'content-disposition': 'attachment; filename="ki-texte-probe.zip"' }, body: bytes };
+  }));
   route('GET', '/agent/win-builds/offen', agentGuard(() => json({ pending: pendingBuilds(ctx) })));
   route('POST', '/agent/win-builds/abholen', agentGuard((req) => {
     if (req.query.get('probe') === '1') requestProbe(ctx);
@@ -674,7 +716,7 @@ export function createHandler(ctx: AppContext): (r: HttpRequest) => Promise<Res>
   route('POST', '/agent/win-builds/:id/ergebnis', agentGuard((req) => {
     if (!req.bodyBytes || req.bodyBytes.length === 0) return json({ error: 'ZIP_REQUIRED' }, 400);
     try {
-      const r = submitBuild(ctx, req.params.id ?? '', req.bodyBytes);
+      const r = submitBuild(ctx, req.params.id ?? '', req.bodyBytes, 'windows');
       return json({ outcome: r.outcome, passed: r.passed, failed: r.checks.filter((c) => !c.passed).map((c) => c.check) });
     } catch (e) {
       return agentErr(e);

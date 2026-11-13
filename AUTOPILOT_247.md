@@ -19,16 +19,14 @@ Ziel: Das Geschäft läuft rund um die Uhr auf Cloudflare, auch wenn der private
 | Einheitlicher Job-Status (WAITING … OWNER_APPROVAL_REQUIRED) | **neu** (Abbildung des echten Zustands) | `jobStatus()` |
 | Autopilot-Status AKTIV … ANGEHALTEN | **neu**, aus Messwerten | `autopilotStatus()`, Admin-Übersicht „Autopilot-Leitstand“, `/admin/autopilot.json` |
 
-## 2. Claude-Anbindung (Phase C) – ehrliches Ergebnis
+## 2. Claude-Anbindung (Phase C) – über das Claude-Abo, auf Wunsch des Eigentümers
 
-- **Offiziell vorhanden:** Claude Code in GitHub Actions (`anthropics/claude-code-action`) mit einem Abo-Token aus `claude setup-token` (Pro/Max/Team/Enterprise) oder mit API-Schlüssel.
-- **Grenze:** Die Verbraucher-Bedingungen erlauben automatisierten Zugriff nur mit API-Schlüssel oder ausdrücklicher Erlaubnis von Anthropic. Abo-Kontingente sind für gewöhnliche, individuelle Nutzung bemessen; Berichten zufolge läuft programmatische Nutzung seit Juni 2026 über ein eigenes, begrenztes Budget (nicht offiziell geprüft).
-- **Entscheidung:** Kein 24/7-Geschäftsbetrieb auf dem Abo. KI-Aufträge bleiben sicher in der Warteschlange (`AI_QUOTA_BLOCKED`), sichtbar im Leitstand. Alles Deterministische läuft weiter.
-- **Was du freigeben müsstest, um KI-Produktion zu starten** (jeweils deine Entscheidung):
-  1. Bestätigung, dass dein Tarif automatisierte geschäftliche Nutzung erlaubt – oder ein Anthropic-API-Schlüssel (kostet Geld).
-  2. Token/Schlüssel selbst erzeugen und als GitHub-Geheimnis hinterlegen (ich lege keine Zugänge an).
-  3. Tageslimit `AI_DAILY_TASK_LIMIT` > 0.
-  4. Danach baue ich den KI-Agenten nach demselben Muster wie den Windows-Bau (abholen → isoliert ausführen → prüfen → liefern), ohne Geschäfts-, Datenbank- oder Zahlungsschlüssel im KI-Lauf.
+- **Weg:** offizielle `anthropics/claude-code-action@v1` in GitHub Actions mit dem Abo-Token `CLAUDE_CODE_OAUTH_TOKEN` aus `claude setup-token` – **kein API-Schlüssel, keine API-Kosten**. Workflow: `.github/workflows/ai-job.yml`, Agent: `scripts/ai-agent.ts`.
+- **Ablauf:** Bezahlter KI-Auftrag → Bauauftrag (Plattform `ai-claude`) → GitHub-Lauf alle 15 Minuten holt ihn ab → Claude schreibt nur `work/ergebnis.json` → Worker formt das Lieferpaket selbst und prüft es (Produktart `ai-texte`) → Lieferung. Höchstens 3 Versuche.
+- **Sicherheit:** Claude bekommt nur die Aufgabe (Kundendaten als markierter Datenblock), darf nur Dateien lesen/schreiben (`--allowedTools Read,Write`), keine Ausgaben im öffentlichen Protokoll (`show_full_output: false`). Der Agent-Schlüssel steht nur in den Schritten „abholen“/„hochladen“, nie im Claude-Schritt. Keine Geschäfts-, Datenbank- oder Zahlungsschlüssel im KI-Lauf.
+- **Grenzen des Abos:** Es gelten die Nutzungslimits deines Tarifs; zusätzlich Tageslimit `AI_DAILY_TASK_LIMIT` (Staging: 3). Ist es erreicht, startet kein Lauf und Aufträge warten sichtbar (`AI_QUOTA_BLOCKED`, Leitstand „WARTET AUF KI“). Die Verbraucher-Bedingungen von Anthropic beschränken automatisierten Zugriff; ob dein Tarif gewerblichen Dauerbetrieb abdeckt, musst du selbst prüfen.
+- **Stand:** gebaut und getestet ohne Token (Abholen, Prüfen, Liefern, Limit, Fehlerwege). **UNVERIFIED:** echter Lauf mit Claude – braucht dein Token. Danach Probe: GitHub → Actions → „KI-Aufträge (Claude-Abo)“ → Run workflow mit Haken „KI-Probe“ oder Admin-Knopf. Erst eine bestandene Probe schaltet Claude im Router auf „verfügbar“.
+- **Erstes KI-Produkt:** KI-Texte (Startseite, Über uns, Leistung, Produkt, FAQ) – gewählt, weil Texte sich am zuverlässigsten automatisch abnehmen lassen. Prüfungen: Textarten, Wortzahl, Sprache, Firmenname und Stichworte, keine Garantie-/Superlativ-/Gratis-Aussagen oder verbotenen Begriffe, keine Platzhalter, Links, Kontaktdaten, HTML oder KI-Selbstbezüge.
 
 ## 3. Production Router
 
@@ -38,7 +36,8 @@ Ziel: Das Geschäft läuft rund um die Uhr auf Cloudflare, auch wenn der private
 | Web-Software (Mini-Warenwirtschaft) | Cloudflare Worker | verfügbar |
 | Windows-EXE (Lager & Rechnung) | GitHub-Windows-Server | verfügbar, sobald Probebau < 14 Tage bestanden |
 | Angebot, Qualitätssicherung, Auslieferung, Kundenbetreuung | Cloudflare Worker | verfügbar |
-| Texte, Webdesign, individuelle Software, freie Kundengespräche | Claude | **nicht verfügbar** (siehe 2.) |
+| Texte (Produktart `ai-texte`) | Claude über dein Abo | verfügbar nach bestandener KI-Probe (Token nötig) |
+| Webdesign, individuelle Software, freie Kundengespräche | Claude | **nicht verfügbar** – noch keine geprüfte Produktart |
 | macOS/Linux-Desktop, Android/iOS, Grafik/Video | – | **nicht verfügbar** |
 
 Zugesagt wird nur, was `assess()` als machbar meldet. Gestoppte Produktion → keine Zusage.
@@ -74,7 +73,7 @@ Zugesagt wird nur, was `assess()` als machbar meldet. Gestoppte Produktion → k
 
 ## 7. Verbleibende Blocker und Eigentümerfreigaben
 
-- KI-Produktion: Entscheidung zu Abo-Bedingungen oder API-Schlüssel (Kosten) – siehe 2.
+- KI-Produktion: dein Abo-Token `CLAUDE_CODE_OAUTH_TOKEN` als GitHub-Geheimnis hinterlegen und KI-Probe starten – siehe 2.; Tarifbedingungen selbst prüfen.
 - LIVE: LA-01 bis LA-12, Stripe-KYC, Unternehmens- und Steuerregistrierung.
 - Kundengewinnung mit Versand: Versandkanal und Plattformregeln je Kanal (bisher: Postausgang ohne Versand, kein Spam).
 - Administrativer MFA-Schutz: noch nicht umgesetzt (Passwort + Sitzung) – nächster Sicherheitsschritt.

@@ -27,6 +27,6 @@ export interface ProductCapability {
   complexity(input: unknown): number;
   generate(input: unknown): Uint8Array;
   /** Gesetzt, wenn das Produkt nicht im Worker entstehen kann (z. B. Windows-Programm): Bau durch einen externen Bau-Agenten. */
-  externalBuild?: { platform: 'windows'; spec(input: unknown): unknown };
+  externalBuild?: { platform: 'windows' | 'ai-claude'; spec(input: unknown): unknown; /** Rohergebnis des Agenten → Lieferartefakt (Standard: unverändert). */ assemble?(raw: Uint8Array, input: unknown): Uint8Array };
   runQa(bytes: Uint8Array, input: unknown): QaCheckResult[];
 }

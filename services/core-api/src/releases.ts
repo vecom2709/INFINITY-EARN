@@ -96,7 +96,7 @@ export function revokeProduct(ctx: AppContext, capabilityId: string, reason: str
 }
 
 /** Produktarten, die eine Freigabe mit Festpreis brauchen (Fachsoftware); Kalkulationen werden aus dem Aufwand berechnet. */
-export const RELEASE_REQUIRED = new Set(['mini-ww', 'win-lager']);
+export const RELEASE_REQUIRED = new Set(['mini-ww', 'win-lager', 'ai-texte']);
 
 /** Bestellbar = Policy erlaubt + Akte vollständig + (falls nötig) aktive Freigabe der aktuellen Version. */
 export function isSellable(ctx: AppContext, capabilityId: string): boolean {
