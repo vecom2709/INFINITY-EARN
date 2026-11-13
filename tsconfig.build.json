@@ -5,5 +5,6 @@
     "outDir": "dist",
     "rootDir": "."
   },
-  "include": ["packages", "services", "apps", "scripts", "products"]
+  "include": ["packages", "services", "apps", "scripts", "products"],
+  "exclude": ["products/mini-ww/ui"]
 }

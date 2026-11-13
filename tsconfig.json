@@ -17,5 +17,6 @@
     "noEmit": true,
     "types": ["node"]
   },
-  "include": ["packages", "services", "apps", "scripts", "tests", "products"]
+  "include": ["packages", "services", "apps", "scripts", "tests", "products"],
+  "exclude": ["products/mini-ww/ui/main.ts"]
 }

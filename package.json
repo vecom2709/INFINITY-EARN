@@ -27,7 +27,7 @@
     "test:e2e": "node --disable-warning=ExperimentalWarning --test --test-reporter=spec \"tests/e2e/**/*.test.ts\"",
     "tech-debt": "node --disable-warning=ExperimentalWarning scripts/tech-debt.ts",
     "test:matrix": "node scripts/test-matrix.ts",
-    "typecheck": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json && tsc -p products/mini-ww/tsconfig.json",
     "lint": "eslint .",
     "build": "tsc -p tsconfig.build.json",
     "verify": "npm run typecheck && npm run lint && npm test && npm run test:e2e && npm run test:matrix && npm run build"

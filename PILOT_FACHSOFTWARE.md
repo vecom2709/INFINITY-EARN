@@ -5,7 +5,7 @@ Stand 2026-11-13 · **Umfang vom Eigentümer bestätigt: Mini-Warenwirtschaft al
 | Phase | Stand |
 |---|---|
 | **P1 Fachlogik** | ✅ fertig: `products/mini-ww/src` (Stammdaten, Lager, Verkauf, Rechnung/Gutschrift, Zahlungen/offene Posten/Mahnstufen, Rollen, Berichte, Sicherung, CSV), 13 Tests in `tests/products/mini-ww/domain.test.ts` |
-| P2 Oberfläche | offen |
+| **P2 Oberfläche** | ✅ fertig: `products/mini-ww/ui` – Offline-Programm als **eine HTML-Datei** (ca. 104 KB), DE/IT/EN, Einsteiger/Profi, Kundendesign mit automatischer Kontrastanpassung, Druckansicht für Angebote/Rechnungen (Browser-Druck → PDF), Sicherung/Wiederherstellung, CSV. CSP verbietet jeden Netzwerkzugriff. 8 Tests in `tests/products/mini-ww/ui.test.ts`; im echten Browser durchgespielt (Artikel → Rechnung → Zahlung, Neuladen, Druck, Mobil 375 px). **Demo:** https://vecom2709.github.io/INFINITY-EARN/mini-ww-demo/ |
 | P3 Fabrik-Anbindung | offen |
 | P4 Admin-Vorschau, Verkaufsfreigabe | offen |
 

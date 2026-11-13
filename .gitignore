@@ -10,3 +10,4 @@ data/
 .wrangler/
 .claude/
 site/
+build/

@@ -14,6 +14,23 @@ Grundlage: das 15.0-Paket (`docs/spec/v15/`, Prüfsummen laut Manifest geprüft)
 
 ---
 
+## Pilot-Fachsoftware P2: Oberfläche der Mini-Warenwirtschaft (2026-11-13)
+
+- **Offline-Programm als eine HTML-Datei:** Der TypeScript-Compiler übersetzt den Code, ein kleiner Modullader bündelt ihn; es gibt keine neue Abhängigkeit.
+  - Die Daten liegen im Browser des Kunden.
+  - Die eingebettete Sicherheitsrichtlinie (CSP) verbietet jeden Netzwerkzugriff.
+- **Bereiche:** Übersicht (Umsatz, offene Posten, Lagerwert, letzte Sicherung, Aufgaben), Artikel, Kunden, Angebote, Aufträge, Rechnungen mit Gutschrift und Zahlung, Berichte, Daten (Sicherung, CSV, Integritätsprüfung), Einstellungen (Firma, Benutzer, Ansicht, Sprache).
+  - Druckansicht für Belege.
+  - DE/IT/EN einschließlich aller Fehlermeldungen der Fachlogik.
+  - Einsteiger- und Profiansicht.
+  - Kundenfarben werden automatisch auf lesbaren Kontrast gebracht.
+  - Auf dem Handy werden Tabellen zu Karten.
+- **Tests:** 8 neue Tests, darunter keine Schaltfläche ohne Funktion, jedes Feld beschriftet, Doppelklick-Schutz bei Lieferungen und eine gebaute Datei ohne Netzwerkzugriff. `npm run verify` → **292/292**.
+- **Browserprüfung:** Ablauf von Artikel bis bezahlter Rechnung, Neuladen ohne Datenverlust, Druckansicht und Mobilansicht ohne Überlauf.
+- **Demo:** https://vecom2709.github.io/INFINITY-EARN/mini-ww-demo/ (auch `/it/` und `/en/`).
+
+---
+
 ## Pilot-Fachsoftware P1: Fachlogik der Mini-Warenwirtschaft (2026-11-13)
 
 - **Neues Paket** `products/mini-ww`: Stammdaten, Lager, Verkauf (Angebot → Annahme → Auftrag mit Reservierung → Teil- und Restlieferung), Rechnung und Gutschrift, Zahlungen, offene Posten, Mahnstufen, Rollen (Inhaber/Mitarbeiter), Berichte, Sicherung mit Prüfsumme und Konsistenzprüfung, CSV-Import und -Export. Plan und Stand: [PILOT_FACHSOFTWARE.md](PILOT_FACHSOFTWARE.md).
