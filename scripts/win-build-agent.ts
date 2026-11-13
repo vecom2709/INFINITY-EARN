@@ -22,12 +22,21 @@ export interface AgentResult { build_id: string; outcome: string; passed: boolea
 
 const sha = (b: Uint8Array): string => createHash('sha256').update(b).digest('hex');
 
+/** Netzwerkfehler (z. B. vom Server geschlossene, ruhende Verbindung nach einem langen Bau) bis zu zweimal wiederholen.
+ *  Unbedenklich: Ein doppelt angekommenes Ergebnis lehnt der Worker mit 409 ab, statt doppelt zu liefern. */
 async function call(o: AgentOptions, path: string, init: { method: string; body?: Uint8Array | string; type?: string }): Promise<Response> {
-  return fetch(`${o.url.replace(/\/$/, '')}${path}`, {
-    method: init.method,
-    headers: { authorization: `Bearer ${o.token}`, 'x-runner-ref': o.runner, ...(init.type ? { 'content-type': init.type } : {}) },
-    ...(init.body !== undefined ? { body: init.body } : {}),
-  });
+  for (let attempt = 1; ; attempt++) {
+    try {
+      return await fetch(`${o.url.replace(/\/$/, '')}${path}`, {
+        method: init.method,
+        headers: { authorization: `Bearer ${o.token}`, 'x-runner-ref': o.runner, ...(init.type ? { 'content-type': init.type } : {}) },
+        ...(init.body !== undefined ? { body: init.body } : {}),
+      });
+    } catch (e) {
+      if (attempt >= 3) throw e;
+      await new Promise((r) => setTimeout(r, 1000 * attempt));
+    }
+  }
 }
 
 /** Baut ein Paket für einen Auftrag. Rückgabe: ZIP-Bytes. */

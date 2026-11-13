@@ -180,7 +180,7 @@ test('Ohne eingerichteten Schlüssel ist die Bau-Schnittstelle abgeschaltet', as
 });
 
 test('Datenschutz im öffentlichen GitHub-Workflow: keine Kundendaten in Eingaben, Geheimnisse nur über Umgebungsvariablen', () => {
-  const wf = readFileSync('.github/workflows/win-build.yml', 'utf8');
+  const wf = readFileSync('.github/workflows/win-build.yml', 'utf8').replace(/\r\n/g, '\n'); // Windows-Checkout liefert CRLF
   const runs = [...wf.matchAll(/run: \|?\n?([\s\S]*?)(?=\n {6}- |\n {2}\w|$)/g)].map((m) => m[1] ?? '').join('\n');
   assert.doesNotMatch(runs, /\$\{\{/, 'keine Ausdrücke direkt in Skripten (Einschleusung)');
   assert.doesNotMatch(wf, /upload-artifact|company|spec/i, 'keine Bauergebnisse oder Kundenangaben bei GitHub');
