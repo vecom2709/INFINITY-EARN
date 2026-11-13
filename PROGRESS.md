@@ -14,6 +14,35 @@ Grundlage: das 15.0-Paket (`docs/spec/v15/`, Prüfsummen laut Manifest geprüft)
 
 ---
 
+## P3: Echtes Windows-Programm mit Installer (157/158, 2026-11-13)
+
+- **„Lager & Rechnung für Windows“:**
+  - Artikel, Wareneingang und -ausgang; der Bestand wird nie negativ, und eine Warnung erscheint unter Mindestbestand.
+  - Rechnungen mit lückenloser Nummer je Jahr, Steuer je Position (kaufmännisch gerundet), alles-oder-nichts-Abbuchung.
+  - Export als CSV (Excel-tauglich) und als druckfertige HTML-Rechnung.
+  - Speichern atomar mit Sicherungskopie; bei beschädigter Datei wird die Sicherung geladen, nie still überschrieben.
+  - Sprachen DE/IT/EN; Firmenname, Farbe und Steuersätze (IT/DE/AT) je Kunde.
+- **Werkzeug ohne Downloads:**
+  - Gebaut wird mit dem in Windows enthaltenen C#-Compiler (.NET Framework 4.x); Programm 45 KB, Installer 59 KB.
+  - Rust wurde geprüft und verworfen: Es bräuchte mehrere GB Build-Werkzeuge, ohne messbaren Vorteil für dieses Programm.
+- **Installer pro Benutzer, ohne Administratorrechte:**
+  - Startmenü, Eintrag unter „Apps & Features“, Update mit erhaltenen Daten.
+  - Deinstallation entfernt nur eigene Dateien; die Kundendaten bleiben erhalten.
+  - Ehrlich **unsigniert**: Windows meldet `NotSigned`.
+- **Echter Windows-Test:**
+  - Lokal auf Windows 11 und neu in der GitHub-CI auf Windows Server.
+  - Details in [CROSS_PLATFORM_BUILD_MATRIX.md](CROSS_PLATFORM_BUILD_MATRIX.md).
+- **Vom Test gefundene und behobene Fehler:**
+  - Update lief bei geöffnetem Programm durch → jetzt geprüft, Exit-Code 4.
+  - Gleichzeitige Speicherungen verloren Daten → jetzt gesperrt, eigene Temp-Datei.
+- **Offen:**
+  - Bau je Auftrag aus der Cloud-Produktion: Der Cloudflare-Worker kann keine Windows-Programme bauen, dafür braucht es einen Windows-Build-Rechner.
+  - Bebilderte Anleitung und Verkaufsfreigabe.
+  - Code-Signatur (Kosten, deine Entscheidung).
+  - Fehlermeldungen der Fachregeln sind nur deutsch.
+
+---
+
 ## Funktion 161: Kundendateien und Zugänge (2026-11-13)
 
 - **Admin → Auftrag → „Dateien und Zugänge vom Kunden“:** Logo, Dokument, Daten oder Zugang anfordern. Die Anfrage erscheint nur im Portal dieses Kunden.

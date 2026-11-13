@@ -15,8 +15,8 @@ Stand: 2026-11-13 · Quelle: `docs/spec/v15-157/` (SHA-256 laut Manifest des Eig
 | Nr. | Funktion | Stand | Was läuft (getestet) / was fehlt |
 |---|---|---|---|
 | 156 | Auftragsanforderung verstehen | **TEILWEISE** | Aus dem Kundentext wird eine Auftragsanforderung (AssignmentSpec) mit Produktart, Plattform, Lieferumfang, MUSS/SOLL/OPTIONAL, Abnahmekriterien, Rückfragen und Konflikten. Scope-Versionen mit Kundenbestätigung, Website-Anfragen automatisch (Admin → Aufträge → Anforderungen). Pflichttests PR-156-01…08 in `tests/integration/assignment.test.ts`. **Offen:** Sprach- und Dokumentanalyse (KI-Zugang mit Kostenfreigabe) und automatische Übernahme ins Angebot. |
-| 157 | Programme mit Installer | GEPLANT | Die Mini-Warenwirtschaft ist ein Browser-Programm und wird **nicht** als native Anwendung ausgegeben. Erstes Windows-Programm mit Installer: P3. |
-| 158 | Plattform-Testlabor | GEPLANT | Windows ist auf diesem Rechner testbar, Linux in kostenloser CI; macOS nicht ohne Mac. |
+| 157 | Programme mit Installer | **TEILWEISE** | Echtes Windows-Programm „Lager & Rechnung“ mit Installer, Update und Deinstallation, je Kunde gebaut (Firma, Farbe, Sprache, Steuersätze), unsigniert gekennzeichnet. Code: `products/win-lager/`, Build: `node scripts/build-win-lager.ts`. **Offen:** Bau je Auftrag aus der Cloud-Produktion (braucht Windows-Build-Rechner), Anleitung mit Screenshots, Verkaufsfreigabe, Code-Signatur (Kosten). |
+| 158 | Plattform-Testlabor | **TEILWEISE** | Echter Installationstest auf Windows 11 (lokal) und Windows Server (GitHub-CI), siehe [CROSS_PLATFORM_BUILD_MATRIX.md](CROSS_PLATFORM_BUILD_MATRIX.md). macOS UNVERIFIED, Linux nicht unterstützt. |
 | 159 | Office- und Dokumentproduktion | **TEILWEISE** | Kalkulation als CSV und PDF mit automatischer Prüfung. **Offen:** bearbeitbare .xlsx/.docx/.pptx. |
 | 160 | Grafik, 3D, Audio, Video | GESPERRT | Auf kostenloser Infrastruktur nicht zuverlässig herstellbar und prüfbar. |
 | 161 | Kundendateien und Zugänge | **TEILWEISE** | Anfrage nur beim Kunden des Auftrags, sicherer Upload im Portal (Format, Magic Bytes, keine ausführbaren Dateien/Makros/Skripte/Zugangsdaten), Rechte-Pflicht, befristete widerrufbare Freigabe, Mandantentrennung, Versionen, Produktion pausiert bei fehlender Datei. Pflichttests PR-161-01…08 in `tests/integration/client-assets.test.ts`. **Offen:** vollständiger Virenscanner, E-Mail-Hinweis an den Kunden, Nutzung der Dateien in den Generatoren. |
@@ -54,7 +54,7 @@ Entschieden wird beim Start von P3, nach Installation der kostenlosen Werkzeuge.
 | P1a | 156 Auftragsanforderung (Schema, Rückfragen, Konflikte, Versionen, Bestätigung, Admin, Website-Anbindung) | **erledigt** (Teil: ohne KI-Sprach-/Dokumentanalyse) |
 | P1b | 161 sicherer Upload und Zugriffsrechte im Kundenportal | **erledigt** (Teil: ohne vollständigen Virenscanner) |
 | P2 | 162 Freelancer-Angebote mit Plattform-Gate (Plattformkonten des Eigentümers nötig) | wartet auf Konten |
-| P3 | 157/158/159: ein installierbares Windows-Kleinprogramm mit Fachlogik und eine geprüfte .xlsx | wartet auf Installation kostenloser Werkzeuge |
+| P3 | 157/158/159: ein installierbares Windows-Kleinprogramm mit Fachlogik und eine geprüfte .xlsx | **Windows-Programm erledigt** (ohne Downloads, mit dem in Windows enthaltenen Compiler); .xlsx offen |
 | P4 | 160/163 nur mit verfügbaren Ressourcen bzw. Kostenfreigabe | gesperrt |
 | P5 | 164/165: Abnahmesitzung vor Übergabe, Rechteübertragung, Installer-Nachweis | nach P3 |
 | P6 | Produktionsbetrieb mit echter Zahlung | erst nach LA-01…12 und Stripe LIVE |

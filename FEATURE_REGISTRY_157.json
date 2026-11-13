@@ -85,8 +85,8 @@
   },
   "summary": {
     "TESTED_full": 26,
-    "TESTED_partial": 84,
-    "SPECIFIED": 44,
+    "TESTED_partial": 86,
+    "SPECIFIED": 42,
     "BLOCKED": 3,
     "LIVE_VERIFIED": 0
   },
@@ -2601,14 +2601,16 @@
       "approved": true,
       "title": "Native Software & Installer Factory",
       "title_de": "Programme mit Installer",
-      "status": "SPECIFIED",
-      "scope": "none",
-      "internal_status": "GEPLANT",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
       "milestone": "M6",
-      "implemented": null,
-      "open": "Erstes echtes Windows-Kleinprogramm mit Installer, Deinstallation und Datenhaltung (P3). macOS/iOS bleibt BLOCKED ohne Mac und Apple-Entwicklerkonto (Kostenfreigabe); die Mini-Warenwirtschaft ist ein Browser-Programm und wird nicht als native Anwendung ausgegeben.",
-      "evidence": [],
-      "test_command": null,
+      "implemented": "Echtes Windows-Programm „Lager & Rechnung“ (C#/WinForms, .NET Framework 4.x aus Windows, 45 KB) mit Artikeln, Lagerbewegungen ohne negativen Bestand, Rechnungen mit lückenlosen Nummern und Steuer, CSV-/HTML-Export, atomarer Speicherung mit Sicherung, DE/IT/EN, Firmenname/-farbe/Steuersätze je Kunde; Installer pro Benutzer ohne Adminrechte mit Startmenü, Apps-&-Features-Eintrag, Update und Deinstallation, die nur eigene Dateien entfernt und Kundendaten behält; ehrlich als unsigniert gekennzeichnet (Windows meldet NotSigned).",
+      "open": "Bau je Auftrag aus der Cloud-Produktion (der Worker kann keine Windows-Programme bauen – braucht Windows-Build-Rechner); Code-Signatur (kostenpflichtig); Bedienungsanleitung mit Screenshots; Verkaufsfreigabe. macOS/iOS BLOCKED (Mac + Apple-Konto, Kostenfreigabe).",
+      "evidence": [
+        "tests/products/win-lager/install.test.ts"
+      ],
+      "test_command": "node --test tests/products/win-lager/install.test.ts",
       "live_verified": false
     },
     {
@@ -2616,14 +2618,16 @@
       "approved": true,
       "title": "Cross-Platform Compatibility Laboratory",
       "title_de": "Plattform-Testlabor",
-      "status": "SPECIFIED",
-      "scope": "none",
-      "internal_status": "GEPLANT",
+      "status": "TESTED",
+      "scope": "partial",
+      "internal_status": "TEILWEISE",
       "milestone": "M6",
-      "implemented": null,
-      "open": "Testlabor mit echtem Installations-/Start-/Deinstallationstest je Zielsystem; Windows auf diesem Rechner und Linux in kostenloser CI möglich, macOS nicht ohne Hardware.",
-      "evidence": [],
-      "test_command": null,
+      "implemented": "Echter Windows-Test je Build (lokal Windows 11 und in der GitHub-CI auf Windows Server): Installation, Start mit aufgebauter Oberfläche und Bildschirmfoto, Daten über Neustart, gleichzeitige Zugriffe ohne Datenverlust, Update mit erhaltenen Daten, laufendes Programm blockiert Update/Deinstallation, fehlende Voraussetzung, Deinstallation ohne fremde Dateien; Signaturstatus von Windows abgefragt; auf anderen Systemen ehrlich übersprungen.",
+      "open": "macOS UNVERIFIED (keine Hardware), Linux nicht unterstützt; Tests für hohe Bildschirmskalierung und Tastaturbedienung; Ressourcen-Grenzwerte je Vertrag.",
+      "evidence": [
+        "tests/products/win-lager/install.test.ts"
+      ],
+      "test_command": "node --test tests/products/win-lager/install.test.ts",
       "live_verified": false
     },
     {

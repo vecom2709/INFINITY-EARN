@@ -31,3 +31,16 @@ jobs:
         run: npm run check:env
         env:
           ENVIRONMENT: test
+
+  # Funktion 157/158: echtes Windows – bauen mit dem in Windows enthaltenen C#-Compiler, installieren, starten, aktualisieren, deinstallieren.
+  windows-program:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: node --disable-warning=ExperimentalWarning --test --test-reporter=spec tests/products/win-lager/install.test.ts
