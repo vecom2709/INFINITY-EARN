@@ -157,7 +157,8 @@ test('KI-Agent-Skript: holt Aufgabe, lädt Ergebnis hoch, meldet fehlendes Ergeb
     writeFileSync(join(dir, 'work', 'ergebnis.json'), JSON.stringify(good()));
     assert.equal((await submit(id2 ?? '')).outcome, 'DELIVERED');
     assert.equal(buildByOrder(c, orderId)?.state, 'DONE');
-    assert.ok(!logs.join('\n').includes('Holzwurm'), 'Firmenname nie im Protokoll');
+    // ::add-mask:: ist die GitHub-Anweisung zum Ausblenden – sie selbst erscheint nicht im Protokoll
+    assert.ok(!logs.filter((l) => !l.startsWith('::add-mask::')).join('\n').includes('Holzwurm'), 'Firmenname nie im Protokoll');
   } finally {
     console.log = orig;
     process.chdir(cwd);
