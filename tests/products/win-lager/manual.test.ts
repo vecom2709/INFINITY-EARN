@@ -93,7 +93,8 @@ test('Freigabe-Akte: Anleitung, Texte und Pflichtangaben belegt; FatturaPA-Prüf
   assert.equal(by.fatturapa?.status, 'BLOCKED', 'ohne echte SdI-Annahme nicht freigegeben');
   assert.match(by.fatturapa?.evidence ?? '', /UNVERIFIED/);
   assert.equal(by['erechnung-de']?.status, 'OPEN');
-  assert.equal(by.delivery?.status, 'BLOCKED');
+  assert.equal(by.delivery?.status, 'BLOCKED', 'ohne bestandenen Probebau');
+  assert.equal(winReleaseGates({ state: 'DONE', qa_passed: 1, runner_ref: 'github:1/1', updated_at: '2026-11-13T20:00:00Z', last_error: null }).find((g) => g.id === 'delivery')?.status, 'PASS', 'bestandener Probebau belegt den Lieferweg');
   assert.equal(by.signing?.status, 'OWNER');
   assert.equal(by.win10?.status, 'OPEN');
   assert.deepEqual(releaseSummary(gates), { sellable: false, blocked: 2, owner: 2 });

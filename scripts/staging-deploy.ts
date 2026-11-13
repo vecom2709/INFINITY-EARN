@@ -38,8 +38,15 @@ if (!readVars().BACKUP_ENCRYPTION_KEY) {
   }
   console.log('   ✓ Sicherungs-Schlüssel erzeugt (in .dev.vars, nicht angezeigt)');
 }
+if (!readVars().BUILD_AGENT_TOKEN) {
+  // Schlüssel des Windows-Bau-Agenten (Funktion 157/158), vom Eigentümer für Staging freigegeben. Wird nie angezeigt;
+  // an GitHub übertragen mit: node scripts/win-build-agent-setup.ts
+  const sep = readFileSync('.dev.vars', 'utf8').endsWith('\n') ? '' : '\n';
+  appendFileSync('.dev.vars', `${sep}BUILD_AGENT_TOKEN=${randomToken(32).replace(/[^A-Za-z0-9_-]/g, '')}\n`);
+  console.log('   ✓ Schlüssel für den Windows-Bau-Agenten erzeugt (in .dev.vars, nicht angezeigt)');
+}
 const vars = readVars();
-const names = ['MOCK_WEBHOOK_SECRET', 'DOWNLOAD_SIGNING_KEY', 'OWNER_PASSWORD_HASH', 'BACKUP_ENCRYPTION_KEY'];
+const names = ['MOCK_WEBHOOK_SECRET', 'DOWNLOAD_SIGNING_KEY', 'OWNER_PASSWORD_HASH', 'BACKUP_ENCRYPTION_KEY', 'BUILD_AGENT_TOKEN'];
 for (const n of names) {
   if (!vars[n]) {
     console.error(`ABGEBROCHEN: ${n} fehlt in .dev.vars (npm run staging:secrets).`);

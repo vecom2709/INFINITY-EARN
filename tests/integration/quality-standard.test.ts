@@ -13,14 +13,16 @@ import { isSellable } from '../../services/core-api/src/releases.ts';
 
 test('Jede verkaufbare Produktart hat eine vollständige Standard-Akte mit Anleitung und getesteten Abläufen', () => {
   const enabled = listCapabilities().filter((c) => c.enabled);
-  assert.equal(enabled.length, 4, '3 Kalkulationen + Warenwirtschaft (Verkauf zusätzlich nur mit Freigabe)');
+  assert.equal(enabled.length, 5, '3 Kalkulationen + Warenwirtschaft + Windows-Programm (Fachsoftware nur mit Freigabe verkaufbar)');
   for (const c of enabled) {
     const cap = getCapability(c.id);
     assert.ok(cap);
     assert.deepEqual(standardGaps(cap), [], c.id);
     const s = getStandard(c.id);
-    assert.ok(s && HELP[c.id], `${c.id}: Bedienungsanleitung vorhanden`);
-    assert.equal(s.deliverables.manualPath, `/hilfe/${c.id}`);
+    assert.ok(s, `${c.id}: Standard-Akte`);
+    // Anleitung: öffentliche Hilfeseite oder – bei Software mit Anleitung im Lieferpaket – Musteranleitung im Admin
+    const inPackage = !!s.deliverables.manualInPackage && s.deliverables.manualPath.startsWith('/admin/muster/');
+    assert.ok(inPackage || (s.deliverables.manualPath === `/hilfe/${c.id}` && HELP[c.id]), `${c.id}: Bedienungsanleitung vorhanden`);
     for (const f of s.userFlowTests) assert.ok(existsSync(f), `${c.id}: Ablauftest ${f} existiert`);
     assert.ok(acceptanceChecks(s).every((name) => cap.qa_suite.includes(name)), 'keine Zusage ohne Prüfung');
   }
@@ -82,6 +84,6 @@ test('Produkte-Seite zeigt den Standard je Produkt', () => {
   const { ctx } = makeCtx();
   const html = renderProducts({ ctx, mode: 'test', csrf: 'x', path: '/dashboard/produkte', flash: null } as never);
   assert.ok(html.includes('Premium-Produktstandard'));
-  assert.equal((html.match(/Standard erfüllt/g) ?? []).length, 4);
+  assert.equal((html.match(/Standard erfüllt/g) ?? []).length, 5);
   assert.match(html, /\/dashboard\/produkte\/mini-ww/, 'Weg zu Vorschau und Freigabe');
 });

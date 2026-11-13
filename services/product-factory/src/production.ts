@@ -13,7 +13,8 @@ import { routeCapability } from './registry.ts';
 import { acceptanceGate } from './quality-standard.ts';
 import { createRefundRequest } from '../../finance/src/refunds.ts';
 import { queueNotDeliverable } from '../../core-api/src/outbox.ts';
-import type { QaCheckResult } from './types.ts';
+import type { ProductCapability, QaCheckResult } from './types.ts';
+import { awaitExternalBuild } from './external-build.ts';
 
 /**
  * 13 „Nicht lieferfähig“: Auftrag wird gekennzeichnet, eine volle Erstattung wird dem Eigentümer zur Freigabe
@@ -30,7 +31,7 @@ export function markNotDeliverable(ctx: AppContext, orderId: string, reason: str
   queueNotDeliverable(ctx, orderId);
 }
 
-export type ProductionOutcome = 'DELIVERED' | 'QA_FAILED' | 'RETRY' | 'DEAD_LETTER' | 'BLOCKED' | 'NO_CAPACITY';
+export type ProductionOutcome = 'DELIVERED' | 'QA_FAILED' | 'RETRY' | 'DEAD_LETTER' | 'BLOCKED' | 'NO_CAPACITY' | 'WAITING';
 
 export interface ProductionRunResult {
   processed: number;
@@ -94,6 +95,8 @@ function processJob(ctx: AppContext, job: JobRow, hooks: ProductionHooks): Produ
 
   tryTransition(ctx, opp.opportunity_id, 'IN_PRODUCTION', 'system', `Job ${job.job_id}`);
   setFulfillmentState(ctx, order.order_id, 'IN_PRODUCTION');
+  // Windows-Programme entstehen beim Bau-Agenten; der Auftrag wartet, bis das Ergebnis hochgeladen und geprüft ist.
+  if (cap.externalBuild) return awaitExternalBuild(ctx, job, order.order_id, cap, scope);
   let bytes: Uint8Array;
   try {
     hooks.beforeGenerate?.(job);
@@ -108,6 +111,18 @@ function processJob(ctx: AppContext, job: JobRow, hooks: ProductionHooks): Produ
     }
     return { ...base, outcome: state === 'DEAD_LETTER' ? 'DEAD_LETTER' : 'RETRY', detail: (e as Error).message };
   }
+  return finishProduction(ctx, job, order, opp, cap, scope, bytes, hooks);
+}
+
+type Order = ReturnType<typeof getOrder>;
+type Opportunity = ReturnType<typeof getOpportunity>;
+
+/**
+ * Gemeinsamer Abschluss für selbst erzeugte und extern gebaute Produkte: Artefakt speichern, Abnahmeprüfung,
+ * bei Erfolg Lieferung freigeben – sonst Wiederholung bzw. „nicht lieferfähig“.
+ */
+export function finishProduction(ctx: AppContext, job: JobRow, order: Order, opp: Opportunity, cap: ProductCapability, scope: unknown, bytes: Uint8Array, hooks: ProductionHooks = {}): ProductionRunResult['results'][number] {
+  const base = { jobId: job.job_id, orderId: job.order_id };
   const original = bytes;
   const artifact = storeArtifact(ctx, {
     orderId: order.order_id,

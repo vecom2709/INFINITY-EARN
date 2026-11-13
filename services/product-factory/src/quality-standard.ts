@@ -117,6 +117,31 @@ const STANDARDS: ProductStandard[] = [
     userFlowTests: ['tests/products/mini-ww/domain.test.ts', 'tests/products/mini-ww/ui.test.ts', 'tests/products/mini-ww/factory.test.ts'],
     notDeliverableWhen: ['Wunsch nach Mehrplatz-/Serverbetrieb, Online-Shop-Anbindung oder E-Rechnung (XRechnung/FatturaPA) – nicht Teil dieser Produktart', 'Automatische Prüfung schlägt nach der Wiederholung weiterhin fehl', 'Logo nicht als PNG/JPEG/WebP bis 200 KB lieferbar'],
   },
+  {
+    capabilityId: 'win-lager',
+    purpose: 'Ein echtes Windows-Programm mit Installer im Namen des Kunden: Artikel, Lager, Kunden und Rechnungen mit den gesetzlichen Pflichtangaben, in Italien zusätzlich die FatturaPA.',
+    audience: 'Kleine Handels- und Handwerksbetriebe mit einem Windows-Rechner, die Lager und Rechnungen ohne Internet und ohne Abo führen wollen.',
+    workflows: ['Installieren ohne Administratorrechte', 'Firmendaten einmal eintragen', 'Artikel anlegen, Wareneingang und -ausgang buchen', 'Kunden anlegen', 'Rechnung erstellen, drucken, in Italien als FatturaPA speichern', 'Daten sichern, Update, Deinstallation'],
+    references: [
+      { name: '§ 14 Abs. 4 UStG (Deutschland), § 11 UStG (Österreich)', requirement: 'Pflichtangaben auf jeder Rechnung; ohne vollständige Firmen- und Kundendaten keine Rechnung' },
+      { name: 'FatturaPA, Schema FPR12 v1.2.3 (Agenzia delle Entrate)', requirement: 'Jede erzeugte XML-Datei gegen das amtliche Schema geprüft' },
+      { name: 'Windows-Installationsgewohnheiten (Startmenü, Apps > Deinstallieren)', requirement: 'Installation pro Benutzer, Update mit Datenerhalt, Deinstallation ohne fremde Dateien' },
+    ],
+    design: [{ text: 'Firmenname, Farbe und Sprache des Kunden im Programm', verifiedBy: 'branding' }],
+    features: [
+      { text: 'Jeder Bau besteht alle Fachtests (Lager, Rechnung, Pflichtangaben, FatturaPA, Datensicherung)', verifiedBy: 'unit_tests' },
+      { text: 'Echter Windows-Installer', verifiedBy: 'installer' },
+      { text: 'Bauprotokoll passt zum Auftrag und zu den Dateien', verifiedBy: 'build_manifest' },
+      { text: 'Bebilderte Bedienungsanleitung (PDF) mit echten Bildschirmfotos in der Sprache des Kunden', verifiedBy: 'manual_pdf' },
+      { text: 'Paket mit Installer, Anleitung, Bauprotokoll und LIESMICH', verifiedBy: 'zip_structure' },
+      { text: 'LIESMICH erklärt Start und fehlende Signatur; Prüfsummen stimmen', verifiedBy: 'readme' },
+      { text: 'Unverändert ausgeliefert (Prüfsumme)', verifiedBy: 'checksum' },
+    ],
+    accessibilityAndSecurity: [{ text: 'Ehrlich als unsigniert gekennzeichnet; Geschäftsdaten bleiben auf dem Rechner des Kunden', verifiedBy: 'build_manifest' }],
+    deliverables: { formats: ['zip', 'exe', 'pdf'], manualPath: '/admin/muster/win-lager/anleitung.pdf', manualInPackage: 'win-lager-anleitung-<sprache>.pdf', documentation: ['Bebilderte Bedienungsanleitung im Paket', 'LIESMICH.txt mit Prüfsummen', 'Bauprotokoll manifest.json', 'Herkunftsnachweis /pruefen/<sha>', 'Rechnung'] },
+    userFlowTests: ['tests/products/win-lager/install.test.ts', 'tests/products/win-lager/manual.test.ts', 'tests/products/win-lager/external-build.test.ts'],
+    notDeliverableWhen: ['Kein Bau besteht die Abnahmeprüfung nach der Wiederholung', 'Wunsch nach Mehrplatz-/Serverbetrieb oder macOS', 'Italienische Fassung, solange die Annahme der FatturaPA im SdI nicht nachgewiesen ist', 'E-Rechnung für Deutschland (XRechnung/ZUGFeRD) gewünscht'],
+  },
 ];
 
 const BY_ID = new Map(STANDARDS.map((s) => [s.capabilityId, s]));

@@ -11,6 +11,7 @@ import { HERO_IMAGES } from '../../../apps/customer-portal/src/hero-images.gener
 import { renderArticle, renderLanding, renderWwProduct, TAX_PRESETS, WW_SLUG } from '../../../apps/customer-portal/src/product-pages.ts';
 import { MINI_WW_BUNDLE } from '../../../products/mini-ww/generated/bundle.ts';
 import { buildWinManual } from '../../../products/win-lager/manual.ts';
+import { claimBuild, failBuild, latestProbe, pendingBuilds, requestProbe, submitBuild } from '../../product-factory/src/external-build.ts';
 import { SHOTS_JPEG_BASE64 } from '../../../products/mini-ww/generated/shots.ts';
 import { CSP as WW_CSP, htmlFromBundle } from '../../../products/mini-ww/html.ts';
 import { manualSeed } from '../../../products/mini-ww/seed.ts';
@@ -102,9 +103,13 @@ export const MAX_BODY = 64 * 1024;
 export const MAX_UPLOAD_BODY = UPLOAD_MAX_BYTES + 64 * 1024;
 const noticeCode = (v: string | null): string | undefined => (v && /^[A-Za-z_]{2,24}$/.test(v) ? v : undefined);
 const UPLOAD_PATH = /^\/portal\/dateien\/arq_[a-f0-9]{32}$/;
-/** Nur POST multipart auf den Upload-Pfad darf größer sein und wird als Bytes gelesen. */
+const BUILD_RESULT_PATH = /^\/agent\/win-builds\/bld_[a-f0-9]{32}\/ergebnis$/;
+/** Nur POST multipart auf den Upload-Pfad (bzw. ZIP des Bau-Agenten) darf größer sein und wird als Bytes gelesen. */
 export function isUploadRequest(method: string, url: string, contentType: string | undefined): boolean {
-  return method === 'POST' && UPLOAD_PATH.test(url.split('?')[0] ?? '') && /^multipart\/form-data/i.test(contentType ?? '');
+  const path = url.split('?')[0] ?? '';
+  if (method !== 'POST') return false;
+  if (BUILD_RESULT_PATH.test(path)) return /^application\/zip$/i.test((contentType ?? '').trim());
+  return UPLOAD_PATH.test(path) && /^multipart\/form-data/i.test(contentType ?? '');
 }
 const OWNER_COOKIE = 'ie_owner';
 const CUSTOMER_COOKIE = 'ie_customer';
@@ -642,6 +647,60 @@ export function createHandler(ctx: AppContext): (r: HttpRequest) => Promise<Res>
     const lang = q === 'it' || q === 'en' ? q : 'de';
     const pdf = buildWinManual({ company: lang === 'it' ? 'Azienda Esempio' : lang === 'en' ? 'Example Company' : 'Musterfirma', color: '#1F5FA8', lang, country: lang === 'it' ? 'IT' : 'DE', productId: 'win-lager', version: '1.0.0' });
     return { status: 200, headers: { 'content-type': 'application/pdf', 'content-disposition': `inline; filename="anleitung-lager-rechnung-${lang}.pdf"`, 'content-security-policy': "default-src 'none'; object-src 'self'; style-src 'unsafe-inline'; img-src 'self' data:" }, body: pdf.bytes };
+  }));
+  // ---------------------------------------------------------------- Windows-Bau-Agent (Funktion 157/158)
+  // Eigener Schlüssel (Authorization: Bearer), kein Sitzungs-Cookie. Gibt nur die vier Bauangaben heraus.
+  const agentGuard = (h: Handler): Handler => (req) => {
+    const token = ctx.config.buildAgentToken;
+    if (!token) return json({ error: 'AGENT_NOT_CONFIGURED' }, 503);
+    const given = /^Bearer ([A-Za-z0-9_-]{32,200})$/.exec(req.headers.authorization ?? '')?.[1] ?? '';
+    let diff = given.length === token.length ? 0 : 1; // Länge ist kein Geheimnis; Inhalt in konstanter Zeit vergleichen
+    for (let i = 0; i < token.length; i++) diff |= token.charCodeAt(i) ^ (given.charCodeAt(i) || 0);
+    if (diff !== 0) {
+      ctx.audit.record({ type: 'build.agent_denied', actor: 'system', subjectType: 'route', subjectId: req.path.slice(0, 80), testMode: ctx.config.testMode });
+      return json({ error: 'UNAUTHORIZED' }, 401);
+    }
+    return h(req);
+  };
+  const runnerRef = (req: Req): string => (/^[A-Za-z0-9._:/-]{1,120}$/.test(req.headers['x-runner-ref'] ?? '') ? (req.headers['x-runner-ref'] as string) : 'unbekannt');
+  const agentErr = (e: unknown): Res => (e instanceof WorkflowError ? json({ error: e.code, detail: e.message.slice(0, 200) }, 409) : json({ error: 'INTERNAL' }, 500));
+  route('GET', '/agent/win-builds/offen', agentGuard(() => json({ pending: pendingBuilds(ctx) })));
+  route('POST', '/agent/win-builds/abholen', agentGuard((req) => {
+    if (req.query.get('probe') === '1') requestProbe(ctx);
+    const b = claimBuild(ctx, runnerRef(req));
+    return b ? json(b) : { status: 204 };
+  }));
+  route('POST', '/agent/win-builds/:id/ergebnis', agentGuard((req) => {
+    if (!req.bodyBytes || req.bodyBytes.length === 0) return json({ error: 'ZIP_REQUIRED' }, 400);
+    try {
+      const r = submitBuild(ctx, req.params.id ?? '', req.bodyBytes);
+      return json({ outcome: r.outcome, passed: r.passed, failed: r.checks.filter((c) => !c.passed).map((c) => c.check) });
+    } catch (e) {
+      return agentErr(e);
+    }
+  }));
+  route('POST', '/agent/win-builds/:id/fehler', agentGuard((req) => {
+    let reason: string;
+    try {
+      reason = String((JSON.parse(req.body || '{}') as { reason?: unknown }).reason ?? '');
+    } catch {
+      reason = 'unlesbar';
+    }
+    try {
+      return json(failBuild(ctx, req.params.id ?? '', reason));
+    } catch (e) {
+      return agentErr(e);
+    }
+  }));
+  route('POST', '/admin/produkte/win-lager/probebau', ownerGuard((req) => {
+    const r = requestProbe(ctx);
+    return back(req, r.created ? 'Probebau angestoßen. Der Windows-Server holt ihn beim nächsten Durchlauf ab (bis ca. 30 Minuten).' : 'Ein Probebau wartet bereits auf den Windows-Server.');
+  }, { csrf: true }));
+  route('GET', '/admin/muster/win-lager/probebau.zip', ownerGuard(() => {
+    const p = latestProbe(ctx);
+    const bytes = p?.result_path ? ctx.blobs.get(p.result_path) : null;
+    if (!p || !bytes) return json({ error: 'NO_PROBE' }, 404);
+    return { status: 200, headers: { 'content-type': 'application/zip', 'content-disposition': 'attachment; filename="probebau-win-lager.zip"' }, body: bytes };
   }));
   route('GET', '/admin/muster/mini-ww/paket.zip', ownerGuard((req) => ({ status: 200, headers: { 'content-type': 'application/zip', 'content-disposition': 'attachment; filename="mini-ww-muster.zip"' }, body: musterPaket(req.query.get('lang') ?? 'de') })));
   route('POST', '/admin/vorschau/:id/sperren', ownerGuard((req) => {

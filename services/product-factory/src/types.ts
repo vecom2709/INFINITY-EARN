@@ -26,5 +26,7 @@ export interface ProductCapability {
   estimatedCostMinor(input: unknown): number;
   complexity(input: unknown): number;
   generate(input: unknown): Uint8Array;
+  /** Gesetzt, wenn das Produkt nicht im Worker entstehen kann (z. B. Windows-Programm): Bau durch einen externen Bau-Agenten. */
+  externalBuild?: { platform: 'windows'; spec(input: unknown): unknown };
   runQa(bytes: Uint8Array, input: unknown): QaCheckResult[];
 }

@@ -1,0 +1,64 @@
+# Windows-Bau je Auftrag (Funktion 157/158).
+# Ein kurzer Linux-Lauf fragt alle 15 Minuten beim Worker nach offenen Bauaufträgen; nur wenn welche warten,
+# startet der Windows-Server und baut sie (scripts/win-build-agent.ts).
+# Datenschutz: Dieses Repository ist öffentlich. Kundenangaben gelangen nie in Eingaben, Protokolle oder Artefakte
+# von GitHub – der Agent holt sie verschlüsselt beim Worker ab und lädt das Ergebnis direkt dorthin zurück.
+# Einrichtung: Repository-Variable WIN_BUILD_AGENT_URL und Geheimnis WIN_BUILD_AGENT_TOKEN.
+name: Windows-Bau je Auftrag
+
+on:
+  schedule:
+    - cron: '7,22,37,52 * * * *'
+  workflow_dispatch:
+    inputs:
+      probe:
+        description: 'Probebau mit Musterfirma anstoßen'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: win-build
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    outputs:
+      pending: ${{ steps.c.outputs.pending }}
+    steps:
+      - id: c
+        env:
+          AGENT_URL: ${{ vars.WIN_BUILD_AGENT_URL }}
+          TOKEN: ${{ secrets.WIN_BUILD_AGENT_TOKEN }}
+          PROBE: ${{ inputs.probe }}
+        run: |
+          if [ -z "$AGENT_URL" ] || [ -z "$TOKEN" ]; then echo "Bau-Agent nicht eingerichtet."; echo "pending=0" >> "$GITHUB_OUTPUT"; exit 0; fi
+          if [ "$PROBE" = "true" ]; then echo "pending=probe" >> "$GITHUB_OUTPUT"; exit 0; fi
+          n=$(curl -fsS --max-time 20 -H "authorization: Bearer $TOKEN" "$AGENT_URL/agent/win-builds/offen" | jq -r '.pending')
+          if ! [[ "$n" =~ ^[0-9]+$ ]]; then echo "Antwort unlesbar."; n=0; fi
+          echo "Offene Bauaufträge: $n"
+          echo "pending=$n" >> "$GITHUB_OUTPUT"
+
+  build:
+    needs: check
+    if: needs.check.outputs.pending != '0' && needs.check.outputs.pending != ''
+    runs-on: windows-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - name: Bauaufträge bearbeiten
+        env:
+          AGENT_URL: ${{ vars.WIN_BUILD_AGENT_URL }}
+          BUILD_AGENT_TOKEN: ${{ secrets.WIN_BUILD_AGENT_TOKEN }}
+          PROBE: ${{ needs.check.outputs.pending == 'probe' && '--probe' || '' }}
+        shell: bash
+        run: node --disable-warning=ExperimentalWarning scripts/win-build-agent.ts --max 3 $PROBE

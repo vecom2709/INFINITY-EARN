@@ -37,7 +37,20 @@ export function textsCheck(): { ok: boolean; detail: string } {
   return { ok: missing.length === 0 && keys.length > 50, detail: missing.length ? `Fehlt: ${missing.join(', ')}` : `${keys.length} Texte je Sprache (Oberfläche, Meldungen der Fachregeln)` };
 }
 
-export function winReleaseGates(): ReleaseGate[] {
+/** Stand des letzten Probebaus über den GitHub-Windows-Server (aus der Datenbank, live). */
+export interface ProbeStatus { state: string; qa_passed: number | null; runner_ref: string | null; updated_at: string; last_error: string | null }
+
+function deliveryGate(probe: ProbeStatus | null | undefined): ReleaseGate {
+  const base = { id: 'delivery', title: 'Bau je Auftrag (GitHub-Windows-Server)', live: true };
+  const how = 'Bezahlte Aufträge legen einen Bauauftrag an. Der GitHub-Windows-Server fragt alle 15 Minuten nach, baut mit den 24 Fachtests und lädt das Paket hoch; der Worker prüft es selbst und gibt erst dann die Lieferung frei. Höchstens 3 Versuche, danach „nicht lieferfähig“. Kundendaten erscheinen nie in den öffentlichen GitHub-Protokollen.';
+  if (probe?.state === 'DONE' && probe.qa_passed === 1) {
+    return { ...base, status: 'PASS', evidence: `${how} Letzter Probebau bestanden am ${probe.updated_at.slice(0, 16).replace('T', ' ')} UTC (${probe.runner_ref ?? 'unbekannt'}).` };
+  }
+  const st = probe ? `Letzter Probebau: ${probe.state}${probe.last_error ? ` – ${probe.last_error.slice(0, 120)}` : ''}.` : 'Noch kein Probebau über den GitHub-Windows-Server.';
+  return { ...base, status: 'BLOCKED', evidence: `${how} ${st}`, next: 'Probebau anstoßen (Knopf unten) und das Ergebnis abwarten – belegt den Weg mit echtem Server.' };
+}
+
+export function winReleaseGates(probe?: ProbeStatus | null): ReleaseGate[] {
   const manual = manualCheck();
   const texts = textsCheck();
   return [
@@ -54,9 +67,8 @@ export function winReleaseGates(): ReleaseGate[] {
       next: 'Mit deinem Zugang eine Musterrechnung im Portal „Fatture e Corrispettivi“ der Agenzia delle Entrate hochladen und die Annahme prüfen.' },
     { id: 'erechnung-de', title: 'E-Rechnung Deutschland (XRechnung/ZUGFeRD)', status: 'OPEN', live: false,
       evidence: 'Für Rechnungen an Unternehmen in Deutschland gilt die Pflicht zur E-Rechnung ab 2027 (Vorjahresumsatz über 800.000 €) bzw. ab 2028. Das Programm erstellt noch keine E-Rechnung; die Anleitung der deutschen Fassung sagt das offen.' },
-    { id: 'delivery', title: 'Lieferweg je Auftrag', status: 'BLOCKED', live: false,
-      evidence: 'Cloudflare kann keine Windows-Programme übersetzen. Ein Auftrag kann deshalb noch nicht automatisch zu einem Kundeninstaller werden.',
-      next: 'Bau auf einem Windows-Rechner (dieser Rechner oder GitHub-Windows-Server) mit Übergabe an die Auslieferung anbinden.' },
+    deliveryGate(probe),
+    { id: 'schedule', title: 'Zeitplan bei GitHub dauerhaft aktiv', status: 'OPEN', live: false, evidence: 'GitHub pausiert Zeitpläne in öffentlichen Repositories nach 60 Tagen ohne Änderungen. Lieferzeit bis ca. 30 Minuten; ein Sofort-Auslöser braucht ein GitHub-Token (deine Entscheidung).' },
     { id: 'win10', title: 'Windows 10 geprüft', status: 'OPEN', live: false, evidence: 'Gleiche Laufzeit wie Windows 11, aber ohne eigenen Test. Die Anleitung sagt daher nur „vorgesehen“.' },
     { id: 'signing', title: 'Code-Signatur', status: 'OWNER', live: false, evidence: 'Nicht signiert (Windows meldet „NotSigned“). Beim Download warnt SmartScreen; die Anleitung erklärt das. Ein Zertifikat kostet Geld und braucht deine Freigabe.' },
     { id: 'price', title: 'Festpreis', status: 'OWNER', live: false, evidence: 'Legst du bei der Freigabe fest, innerhalb der Preisgrenzen der Policy.' },

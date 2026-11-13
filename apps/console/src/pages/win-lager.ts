@@ -1,4 +1,5 @@
 import { releaseSummary, winReleaseGates, type GateStatus } from '../../../../products/win-lager/release.ts';
+import { latestProbe } from '../../../../services/product-factory/src/external-build.ts';
 import { e, explain, metric, panel, shell, table, tag } from '../ui.ts';
 import type { PageCtx } from './types.ts';
 
@@ -11,7 +12,9 @@ const TAG: Record<GateStatus, [string, 'ok' | 'bad' | 'pending' | 'neutral']> = 
 };
 
 export function renderWinLager(pc: PageCtx): string {
-  const gates = winReleaseGates();
+  const probe = latestProbe(pc.ctx) ?? null;
+  const gates = winReleaseGates(probe);
+  const back = '/dashboard/produkte/win-lager';
   const sum = releaseSummary(gates);
   const repo = 'https://github.com/vecom2709/INFINITY-EARN';
   const body = `<section class="metrics" aria-label="Freigabestand">
@@ -28,6 +31,9 @@ ${panel({ id: 'akte', title: 'Freigabe-Akte', sub: 'Was belegt ist und was den V
     [{ label: 'Punkt' }, { label: 'Stand' }, { label: 'Nachweis', full: true }],
     gates.map((g) => [`<strong>${e(g.title)}</strong>${g.live ? '<span class="sub">Live geprüft</span>' : ''}`, tag(...(TAG[g.status])), `${e(g.evidence)}${g.next ? `<span class="sub">Nächster Schritt: ${e(g.next)}</span>` : ''}`]),
     'Keine Punkte', 'Freigabe-Akte') })}
+${panel({ id: 'bau', title: 'Bau je Auftrag', sub: 'Probebau mit Musterfirma über den GitHub-Windows-Server – gleiche Prüfung wie bei echten Aufträgen', body: `<p style="margin:4px 0 10px">${probe ? `Letzter Probebau: <strong>${e(probe.state === 'DONE' && probe.qa_passed === 1 ? 'bestanden' : probe.state === 'PENDING' || probe.state === 'CLAIMED' ? 'läuft' : 'nicht bestanden')}</strong> · ${e(probe.updated_at.slice(0, 16).replace('T', ' '))} UTC${probe.result_path ? ' · <a href="/admin/muster/win-lager/probebau.zip">Ergebnis herunterladen</a>' : ''}` : 'Noch kein Probebau.'}</p>
+<form class="action" method="post" action="/admin/produkte/win-lager/probebau"><input type="hidden" name="_csrf" value="${e(pc.csrf)}"><input type="hidden" name="_back" value="${e(back)}"><button class="btn" type="submit">Probebau anstoßen</button></form>
+${explain('Der Windows-Server bei GitHub schaut alle 15 Minuten nach. Ein Probebau baut das Programm für „Musterfirma“, lädt es hoch und durchläuft dieselbe Abnahmeprüfung wie ein Kundenauftrag.')}` })}
 ${panel({ id: 'freigabe', title: 'Zum Verkauf freigeben', sub: sum.sellable ? 'Alle Pflichtpunkte sind belegt.' : 'Noch nicht möglich', body: sum.sellable
     ? '<p>Alle Pflichtpunkte sind belegt. Die Freigabe mit Festpreis wird angebunden, sobald der Lieferweg je Auftrag steht.</p>'
     : `<p class="err" style="margin:0">Freigabe gesperrt: ${sum.blocked} Punkt(e) oben sind noch offen. Es gibt deshalb keinen Freigabeknopf – das Windows-Programm ist nicht bestellbar und erscheint nicht im Shop.</p>` })}`;

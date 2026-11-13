@@ -41,7 +41,8 @@ Stand: 2026-11-13. Ein Eintrag gilt nur mit echtem Nachweis. Nicht getestet hei�
 - **Rechnungen:** Pflichtangaben nach § 14 Abs. 4 UStG (AT § 11 UStG) sind umgesetzt und getestet. Die italienische Fassung erzeugt zusätzlich die FatturaPA (XML) zum Hochladen im SdI, geprüft gegen das eingebettete amtliche Schema (`products/win-lager/schema/`, FPR12 v1.2.3).
 - **Freigabe:** Die Admin-Seite `/dashboard/produkte/win-lager` zeigt die Freigabe-Akte. Den Verkauf sperren noch zwei Punkte:
   - die echte Annahme der FatturaPA im SdI – sperrt die italienische Fassung;
-  - der Bau je Auftrag.
+  - der Nachweis des Baus je Auftrag durch einen bestandenen Probebau.
+- **Bau je Auftrag:** Der Worker legt je bezahltem Auftrag einen Bauauftrag an; der GitHub-Windows-Server (`.github/workflows/win-build.yml`) holt ihn alle 15 Minuten ab, baut mit `scripts/win-build-agent.ts` und lädt das Paket hoch; der Worker prüft und liefert. Einrichtung für Staging: `node scripts/win-build-agent-setup.ts`.
 
 ## Werkzeug- und Kostenlage
 

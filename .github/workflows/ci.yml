@@ -43,4 +43,4 @@ jobs:
           node-version: '24'
           cache: npm
       - run: npm ci
-      - run: node --disable-warning=ExperimentalWarning --test --test-reporter=spec tests/products/win-lager/install.test.ts
+      - run: node --disable-warning=ExperimentalWarning --test --test-reporter=spec tests/products/win-lager/install.test.ts tests/products/win-lager/external-build.test.ts
