@@ -35,13 +35,46 @@ const FORMAT_WORDS: [RegExp, string][] = [
   [/\bpdf\b/i, 'b2b-calc-pdf'],
   [/\b(tabelle|excel|csv|libreoffice|foglio|spreadsheet|tabella)\b/i, 'b2b-calc-csv'],
 ];
-const FORMAT_NAME: Record<string, string> = { 'b2b-calc-csv': 'Tabelle (CSV)', 'b2b-calc-pdf': 'PDF', 'b2b-calc-bundle': 'Paket aus Tabelle und PDF' };
+type Lang = 'de' | 'it' | 'en';
+const MSG = {
+  de: {
+    fmt: { 'b2b-calc-csv': 'Tabelle (CSV)', 'b2b-calc-pdf': 'PDF', 'b2b-calc-bundle': 'Paket aus Tabelle und PDF' } as Record<string, string>,
+    items: (n: number) => `${n} Position${n === 1 ? '' : 'en'} mit Menge und Einzelpreis`,
+    askItems: 'Welche Positionen sollen hinein? Bitte je Zeile: Bezeichnung;Menge;Einzelpreis',
+    margin: (p: string) => `Aufschlag ${p} %`, askMargin: 'Welcher Aufschlag in Prozent? (0 %, wenn keiner gewünscht ist)',
+    format: (f: string) => `Lieferformat: ${f}`, notOffered: (f: string) => `${f} ist derzeit nicht bestellbar – bitte ein verfügbares Format wählen.`,
+    askFormat: 'In welchem Format möchten Sie die Kalkulation erhalten?', askContact: 'Ihr Name, Ihre E-Mail-Adresse und Ihr Land – für das Angebot.',
+    out: (w: string) => `„${w}“ gehört derzeit nicht zu unseren lieferbaren Produkten. Wir liefern nur, was wir nachweislich herstellen und automatisch prüfen können: Kalkulationen als Tabelle, PDF oder Paket.`,
+    title: 'Kalkulation',
+  },
+  it: {
+    fmt: { 'b2b-calc-csv': 'Tabella (CSV)', 'b2b-calc-pdf': 'PDF', 'b2b-calc-bundle': 'Pacchetto con tabella e PDF' } as Record<string, string>,
+    items: (n: number) => `${n} ${n === 1 ? 'voce' : 'voci'} con quantità e prezzo unitario`,
+    askItems: 'Quali voci devono essere incluse? Una per riga: Descrizione;Quantità;Prezzo unitario',
+    margin: (p: string) => `Ricarico ${p} %`, askMargin: 'Quale ricarico in percentuale? (0 % se non desiderato)',
+    format: (f: string) => `Formato di consegna: ${f}`, notOffered: (f: string) => `${f} non è attualmente ordinabile – scegliete un formato disponibile.`,
+    askFormat: 'In quale formato desiderate ricevere il calcolo?', askContact: 'Nome, indirizzo e-mail e paese – per l’offerta.',
+    out: (w: string) => `«${w}» al momento non rientra tra i nostri prodotti disponibili. Consegniamo solo ciò che possiamo produrre e verificare automaticamente: calcoli come tabella, PDF o pacchetto.`,
+    title: 'Calcolo',
+  },
+  en: {
+    fmt: { 'b2b-calc-csv': 'Spreadsheet (CSV)', 'b2b-calc-pdf': 'PDF', 'b2b-calc-bundle': 'Bundle of spreadsheet and PDF' } as Record<string, string>,
+    items: (n: number) => `${n} item${n === 1 ? '' : 's'} with quantity and unit price`,
+    askItems: 'Which items should be included? One per line: Description;Quantity;Unit price',
+    margin: (p: string) => `Markup ${p} %`, askMargin: 'What markup in percent? (0 % if none)',
+    format: (f: string) => `Delivery format: ${f}`, notOffered: (f: string) => `${f} cannot currently be ordered – please choose an available format.`,
+    askFormat: 'In which format would you like the calculation?', askContact: 'Your name, email address and country – for the quote.',
+    out: (w: string) => `“${w}” is currently not one of our available products. We only deliver what we can demonstrably produce and verify automatically: calculations as spreadsheet, PDF or bundle.`,
+    title: 'Calculation',
+  },
+};
 
 function clean(s: string): string {
   return s.replace(/^[-•*\d.)\s]+(?=\D)/, '').replace(/\s+/g, ' ').trim();
 }
 
-export function understand(text: string, offered: readonly string[]): AdvisorResult {
+export function understand(text: string, offered: readonly string[], lang: Lang = 'de'): AdvisorResult {
+  const T = MSG[lang];
   const raw = text.slice(0, 5000);
   const segments = raw.split(/\r?\n|,\s+(?=\D)|;\s+(?=\D)|:\s+|(?<=[€\d])\.\s+(?=\D)|\s+(?:und|e|and)\s+(?=\D)/i).map((s) => s.trim()).filter(Boolean);
   const items: string[] = [];
@@ -62,20 +95,18 @@ export function understand(text: string, offered: readonly string[]): AdvisorRes
   const format = wanted && offered.includes(wanted) ? wanted : null;
   const scope = raw.match(OUT_OF_SCOPE)?.[1] ?? null;
   const firstLine = clean(rest.find((r) => r.length >= 4 && r.length <= 80 && !OUT_OF_SCOPE.test(r) && !/%/.test(r)) ?? '');
-  const title = firstLine.replace(/^(ich brauche|ich möchte|bitte|mi serve|vorrei|i need|please)\s+/i, '').replace(/^(eine|einen|ein|una|un|a|an)\s+/i, '').slice(0, 120) || 'Kalkulation';
+  const title = firstLine.replace(/^(ich brauche|ich möchte|bitte|mi serve|vorrei|i need|please)\s+/i, '').replace(/^(eine|einen|ein|una|un|a|an)\s+/i, '').slice(0, 120) || T.title;
 
   const understood: string[] = [];
   const questions: string[] = [];
-  if (items.length) understood.push(`${items.length} Position${items.length === 1 ? '' : 'en'} mit Menge und Einzelpreis`);
-  else questions.push('Welche Positionen sollen hinein? Bitte je Zeile: Bezeichnung;Menge;Einzelpreis');
-  if (marginPct !== null && marginPct >= 0 && marginPct <= 90) understood.push(`Aufschlag ${String(marginPct).replace('.', ',')} %`);
-  else questions.push('Welcher Aufschlag in Prozent? (0 %, wenn keiner gewünscht ist)');
-  if (format) understood.push(`Lieferformat: ${FORMAT_NAME[format]}`);
-  else if (wanted && !offered.includes(wanted)) questions.push(`${FORMAT_NAME[wanted]} ist derzeit nicht bestellbar – bitte ein verfügbares Format wählen.`);
-  else if (offered.length > 1) questions.push('In welchem Format möchten Sie die Kalkulation erhalten?');
-  questions.push('Ihr Name, Ihre E-Mail-Adresse und Ihr Land – für das Angebot.');
-  const outOfScope = scope && items.length === 0
-    ? `„${scope}“ gehört derzeit nicht zu unseren lieferbaren Produkten. Wir liefern nur, was wir nachweislich herstellen und automatisch prüfen können: Kalkulationen als Tabelle, PDF oder Paket.`
-    : null;
+  if (items.length) understood.push(T.items(items.length));
+  else questions.push(T.askItems);
+  if (marginPct !== null && marginPct >= 0 && marginPct <= 90) understood.push(T.margin(String(marginPct).replace('.', ',')));
+  else questions.push(T.askMargin);
+  if (format) understood.push(T.format(T.fmt[format] ?? format));
+  else if (wanted && !offered.includes(wanted)) questions.push(T.notOffered(T.fmt[wanted] ?? wanted));
+  else if (offered.length > 1) questions.push(T.askFormat);
+  questions.push(T.askContact);
+  const outOfScope = scope && items.length === 0 ? T.out(scope) : null;
   return { items, marginPct: marginPct !== null && marginPct >= 0 && marginPct <= 90 ? marginPct : null, format, title, understood, questions, outOfScope };
 }

@@ -23,6 +23,8 @@ import { assertCanResume, offerCatalog, trustFacts } from './trust.ts';
 import { dailyReport } from './daily-report.ts';
 import { queueQuoteReady, unsubscribe } from './outbox.ts';
 import { understand } from './advisor.ts';
+import { pickLang, tr } from '../../../apps/customer-portal/src/i18n-pages.ts';
+import type { Lang } from '../../../apps/customer-portal/src/home-i18n.ts';
 import { decisions as consoleDecisions } from '../../../apps/console/src/model.ts';
 import { verifyProvenance } from '../../product-factory/src/provenance.ts';
 import { downloadInvoice } from '../../finance/src/invoice-pdf.ts';
@@ -80,6 +82,8 @@ type Handler = (req: Req) => Res | Promise<Res>;
 export const MAX_BODY = 64 * 1024;
 const OWNER_COOKIE = 'ie_owner';
 const CUSTOMER_COOKIE = 'ie_customer';
+/** Nur die gewählte Sprache (de/it/en) – kein Tracking, keine personenbezogenen Daten. */
+const LANG_COOKIE = 'ie_lang';
 
 export const SECURITY_HEADERS: Record<string, string> = {
   'content-security-policy': "default-src 'none'; style-src 'unsafe-inline'; img-src 'self'; form-action 'self'; frame-ancestors 'none'; base-uri 'none'",
@@ -108,15 +112,22 @@ function cookie(ctx: AppContext, name: string, value: string, maxAgeSec: number,
 }
 
 /** Formular-Positionen "Bezeichnung;Menge;Einzelkosten" -> strukturierter Scope. */
-export function parseItemsText(text: string, currency: string): { items: { name: string; quantity: number; unit_cost_minor: number }[]; errors: string[] } {
+const ITEM_ERR = {
+  de: { line: 'Zeile', three: (s: string) => `(„${s}“): bitte genau drei Angaben mit Semikolon trennen – Bezeichnung;Menge;Einzelpreis, z. B. Montage;10;45.00`, name: 'Bezeichnung fehlt oder ist zu lang', qty: (q: string) => `Menge muss eine ganze Zahl ab 1 sein (gefunden: „${q}“)`, price: (p: string) => `Einzelpreis ungültig (gefunden: „${p}“, erlaubt z. B. 45.00 oder 45,00)`, none: 'Mindestens eine Position angeben.' },
+  it: { line: 'Riga', three: (s: string) => `(«${s}»): indicare esattamente tre dati separati da punto e virgola – Descrizione;Quantità;Prezzo unitario, es. Montaggio;10;45.00`, name: 'Descrizione mancante o troppo lunga', qty: (q: string) => `La quantità deve essere un numero intero da 1 (trovato: «${q}»)`, price: (p: string) => `Prezzo unitario non valido (trovato: «${p}», consentito es. 45.00 o 45,00)`, none: 'Indicare almeno una voce.' },
+  en: { line: 'Line', three: (s: string) => `(“${s}”): please give exactly three values separated by semicolons – Description;Quantity;Unit price, e.g. Installation;10;45.00`, name: 'Description missing or too long', qty: (q: string) => `Quantity must be a whole number from 1 (found: “${q}”)`, price: (p: string) => `Unit price invalid (found: “${p}”, allowed e.g. 45.00 or 45,00)`, none: 'Enter at least one item.' },
+} as const;
+
+export function parseItemsText(text: string, currency: string, lang: Lang = 'de'): { items: { name: string; quantity: number; unit_cost_minor: number }[]; errors: string[] } {
   const items: { name: string; quantity: number; unit_cost_minor: number }[] = [];
   const errors: string[] = [];
+  const M = ITEM_ERR[lang];
   text.split(/\r?\n/).map((l) => l.trim()).filter(Boolean).forEach((line, idx) => {
     // Erlaubte Trenner: Semikolon, Tabulator (Copy & Paste aus Tabellen) oder senkrechter Strich.
     const parts = line.split(/[;\t|]/).map((p) => p.trim());
     const shown = line.length > 60 ? `${line.slice(0, 60)}…` : line;
     if (parts.length !== 3) {
-      errors.push(`Zeile ${idx + 1} („${shown}“): bitte genau drei Angaben mit Semikolon trennen – Bezeichnung;Menge;Einzelpreis, z. B. Montage;10;45.00`);
+      errors.push(`${M.line} ${idx + 1} ${M.three(shown)}`);
       return;
     }
     const [name, qty, rawCost] = parts as [string, string, string];
@@ -128,12 +139,12 @@ export function parseItemsText(text: string, currency: string): { items: { name:
     } catch {
       unit = -1;
     }
-    if (!name || name.length > 200) errors.push(`Zeile ${idx + 1}: Bezeichnung fehlt oder ist zu lang`);
-    else if (!Number.isInteger(quantity) || quantity < 1) errors.push(`Zeile ${idx + 1}: Menge muss eine ganze Zahl ab 1 sein (gefunden: „${qty}“)`);
-    else if (unit < 0) errors.push(`Zeile ${idx + 1}: Einzelpreis ungültig (gefunden: „${rawCost}“, erlaubt z. B. 45.00 oder 45,00)`);
+    if (!name || name.length > 200) errors.push(`${M.line} ${idx + 1}: ${M.name}`);
+    else if (!Number.isInteger(quantity) || quantity < 1) errors.push(`${M.line} ${idx + 1}: ${M.qty(qty)}`);
+    else if (unit < 0) errors.push(`${M.line} ${idx + 1}: ${M.price(rawCost)}`);
     else items.push({ name, quantity, unit_cost_minor: unit });
   });
-  if (items.length === 0 && errors.length === 0) errors.push('Mindestens eine Position angeben.');
+  if (items.length === 0 && errors.length === 0) errors.push(M.none);
   return { items, errors };
 }
 
@@ -159,6 +170,8 @@ export function createHandler(ctx: AppContext): (r: HttpRequest) => Promise<Res>
     return handler(req, s);
   };
   const ipHash = (req: Req): string => sha256Hex(`ip:${req.ip}`).slice(0, 16);
+  /** Sprache der Kundenseiten: ?lang= > Cookie > Browsersprache > Deutsch. */
+  const L = (req: Req): Lang => pickLang(req.query.get('lang'), req.cookies[LANG_COOKIE], req.headers['accept-language'] as string | undefined);
 
   // --- Öffentlich ---------------------------------------------------------
   const origin = (): string => ctx.config.publicOrigin.replace(/\/$/, '');
@@ -173,15 +186,15 @@ export function createHandler(ctx: AppContext): (r: HttpRequest) => Promise<Res>
   });
   route('GET', '/health', () => json({ status: 'ok', mode: ctx.config.testMode ? 'TEST' : 'LIVE', live_sales_enabled: false, environment: ctx.config.environment, payment_provider: ctx.config.payment.provider }));
   const offeredFormats = (): string[] => effectivePolicy(ctx)?.allowedCapabilities.filter((id) => routeCapability(id).ok) ?? [];
-  route('GET', '/anfrage', () => html(renderInquiryForm([], {}, offeredFormats())));
+  route('GET', '/anfrage', (req) => html(renderInquiryForm([], {}, offeredFormats(), undefined, L(req))));
   // Produktberater: Wunsch in eigenen Worten → vorausgefüllte Anfrage (nichts wird gesendet, bevor der Kunde abschickt).
-  route('GET', '/berater', () => html(renderAdvisor()));
+  route('GET', '/berater', (req) => html(renderAdvisor(undefined, undefined, L(req))));
   route('POST', '/berater', (req) => {
     const text = (form(req).get('wunsch') ?? '').slice(0, 5000);
-    if (!text.trim()) return html(renderAdvisor('', 'Bitte beschreiben Sie kurz, was Sie brauchen.'), 400);
-    const a = understand(text, offeredFormats());
-    if (a.outOfScope) return html(renderInquiryResult('Derzeit nicht lieferbar', a.outOfScope, { href: '/berater', label: 'Anderen Wunsch beschreiben' }));
-    return html(renderInquiryForm([], { title: a.title, items: a.items.join('\n'), margin: a.marginPct === null ? '' : String(a.marginPct).replace('.', ','), format: a.format ?? undefined, message: text.slice(0, 2000) }, offeredFormats(), { understood: a.understood, questions: a.questions }));
+    if (!text.trim()) return html(renderAdvisor('', 'Bitte beschreiben Sie kurz, was Sie brauchen.', L(req)), 400);
+    const a = understand(text, offeredFormats(), L(req));
+    if (a.outOfScope) return html(renderInquiryResult('Derzeit nicht lieferbar', a.outOfScope, { href: '/berater', label: 'Anderen Wunsch beschreiben' }, L(req)));
+    return html(renderInquiryForm([], { title: a.title, items: a.items.join('\n'), margin: a.marginPct === null ? '' : String(a.marginPct).replace('.', ','), format: a.format ?? undefined, message: text.slice(0, 2000) }, offeredFormats(), { understood: a.understood, questions: a.questions }, L(req)));
   });
 
   const handleInquiry = (raw: Record<string, unknown>, req: Req): { status: number; result: Record<string, unknown> } => {
@@ -196,7 +209,7 @@ export function createHandler(ctx: AppContext): (r: HttpRequest) => Promise<Res>
   route('POST', '/anfrage', (req) => {
     const f = form(req);
     const currency = ctx.config.policy.quote.currency;
-    const parsed = parseItemsText(f.get('items') ?? '', currency);
+    const parsed = parseItemsText(f.get('items') ?? '', currency, L(req));
     const marginPct = Number((f.get('margin') ?? '0').replace(',', '.'));
     const errors = [...parsed.errors];
     if (!Number.isFinite(marginPct) || marginPct < 0 || marginPct > 90) errors.push('Aufschlag: 0–90 %');
@@ -204,7 +217,7 @@ export function createHandler(ctx: AppContext): (r: HttpRequest) => Promise<Res>
     const formats = offeredFormats();
     const capabilityId = f.get('format') || 'b2b-calc-csv';
     if (!formats.includes(capabilityId)) errors.push('Dieses Lieferformat ist derzeit nicht verfügbar.');
-    if (errors.length) return html(renderInquiryForm(errors, values, formats), 400);
+    if (errors.length) return html(renderInquiryForm(errors, values, formats, undefined, L(req)), 400);
     try {
       const { status, result } = handleInquiry(
         {
@@ -214,13 +227,13 @@ export function createHandler(ctx: AppContext): (r: HttpRequest) => Promise<Res>
         },
         req,
       );
-      if (status !== 200) return html(renderInquiryForm(result.errors as string[], values, formats), status);
+      if (status !== 200) return html(renderInquiryForm(result.errors as string[], values, formats, undefined, L(req)), status);
       const auto = result.auto as ReturnType<typeof autoProcessOpportunity>;
       if (auto.stage === 'QUOTED') return redirect(`/angebot/${auto.quote.quoteId}?t=${encodeURIComponent(auto.quote.acceptanceToken)}`);
-      if (auto.stage === 'OPEN_POINTS') return html(renderInquiryResult('Anfrage erhalten – offene Punkte', `Wir benötigen noch Angaben: ${auto.openPoints.join('; ')}`));
-      return html(renderInquiryResult('Anfrage erhalten – manuelle Prüfung', 'Ihre Anfrage kann nicht automatisch angeboten werden und wird geprüft.'));
+      if (auto.stage === 'OPEN_POINTS') return html(renderInquiryResult('Anfrage erhalten – offene Punkte', `${tr(L(req), 'Wir benötigen noch Angaben:')} ${auto.openPoints.join('; ')}`, undefined, L(req)));
+      return html(renderInquiryResult('Anfrage erhalten – manuelle Prüfung', 'Ihre Anfrage kann nicht automatisch angeboten werden und wird geprüft.', undefined, L(req)));
     } catch (e) {
-      if (e instanceof WorkflowError && e.code === 'ACQUISITION_PAUSED') return html(renderInquiryResult('Vorübergehend pausiert', 'Neue Anfragen werden derzeit nicht angenommen.'), 503);
+      if (e instanceof WorkflowError && e.code === 'ACQUISITION_PAUSED') return html(renderInquiryResult('Vorübergehend pausiert', 'Neue Anfragen werden derzeit nicht angenommen.', undefined, L(req)), 503);
       throw e;
     }
   });
@@ -247,10 +260,10 @@ export function createHandler(ctx: AppContext): (r: HttpRequest) => Promise<Res>
     try {
       q = getQuote(ctx, req.params.id ?? '');
     } catch {
-      return html(renderInquiryResult('Nicht gefunden', 'Angebot nicht gefunden.'), 404);
+      return html(renderInquiryResult('Nicht gefunden', 'Angebot nicht gefunden.', undefined, L(req)), 404);
     }
-    if (!verifyQuoteToken(q, token)) return html(renderInquiryResult('Kein Zugriff', 'Der Angebotslink ist ungültig.'), 403);
-    return html(renderQuote(q, token));
+    if (!verifyQuoteToken(q, token)) return html(renderInquiryResult('Kein Zugriff', 'Der Angebotslink ist ungültig.', undefined, L(req)), 403);
+    return html(renderQuote(q, token, L(req)));
   });
 
   route('POST', '/angebot/:id/annehmen', async (req) => {
@@ -277,7 +290,7 @@ export function createHandler(ctx: AppContext): (r: HttpRequest) => Promise<Res>
       }
       return redirect('/portal', headers);
     } catch (e) {
-      if (e instanceof WorkflowError) return html(renderInquiryResult('Annahme nicht möglich', e.message), 400);
+      if (e instanceof WorkflowError) return html(renderInquiryResult('Annahme nicht möglich', e.message, undefined, L(req)), 400);
       throw e;
     }
   });
@@ -291,8 +304,8 @@ export function createHandler(ctx: AppContext): (r: HttpRequest) => Promise<Res>
     if (blocked) return blocked;
     const ref = orderBySession(req.params.session ?? '');
     const order = ref ? findOrder(ctx, ref.order_id) : undefined;
-    if (!order) return html(renderInquiryResult('Nicht gefunden', 'Checkout-Sitzung unbekannt.'), 404);
-    return html(renderMockCheckout(order));
+    if (!order) return html(renderInquiryResult('Nicht gefunden', 'Checkout-Sitzung unbekannt.', undefined, L(req)), 404);
+    return html(renderMockCheckout(order, L(req)));
   });
 
   route('POST', '/checkout/mock/:session/pay', (req) => {
@@ -301,14 +314,14 @@ export function createHandler(ctx: AppContext): (r: HttpRequest) => Promise<Res>
     const ref = orderBySession(req.params.session ?? '');
     const order = ref ? findOrder(ctx, ref.order_id) : undefined;
     const customer = customerByKey(ctx, req.cookies[CUSTOMER_COOKIE]);
-    if (!order || !customer || customer.customer_id !== order.customer_id) return html(renderInquiryResult('Kein Zugriff', 'Nur der bestellende Kunde kann die Testzahlung auslösen.'), 403);
+    if (!order || !customer || customer.customer_id !== order.customer_id) return html(renderInquiryResult('Kein Zugriff', 'Nur der bestellende Kunde kann die Testzahlung auslösen.', undefined, L(req)), 403);
     const outcome = form(req).get('outcome');
     mockPay(ctx, order, { outcome: outcome === 'pending' ? 'pending' : outcome === 'failed' ? 'failed' : 'paid' });
     return redirect(`/checkout/erfolg?order=${encodeURIComponent(order.order_id)}`);
   });
 
   // Rückleitung vom Checkout: ändert NIEMALS den Zahlungsstatus (IE-034).
-  route('GET', '/checkout/erfolg', (req) => html(renderCheckoutReturn(findOrder(ctx, req.query.get('order') ?? ''))));
+  route('GET', '/checkout/erfolg', (req) => html(renderCheckoutReturn(findOrder(ctx, req.query.get('order') ?? ''), L(req))));
 
   route('POST', '/webhooks/payments', (req) => {
     try {
@@ -326,7 +339,7 @@ export function createHandler(ctx: AppContext): (r: HttpRequest) => Promise<Res>
     mangel: 'Danke – Ihre Mangelmeldung ist eingegangen. Wir melden uns mit einer Nachbesserung oder Erstattung.',
     bewertung: 'Danke für Ihre Rückmeldung.',
   };
-  route('GET', '/portal', (req) => html(renderPortal(ctx, customerByKey(ctx, req.cookies[CUSTOMER_COOKIE]), PORTAL_MSG[req.query.get('ok') ?? ''] ?? (req.query.get('fehler') ? `Nicht gespeichert: ${PORTAL_ERR[req.query.get('fehler') ?? ''] ?? 'Bitte Eingaben prüfen.'}` : undefined))));
+  route('GET', '/portal', (req) => html(renderPortal(ctx, customerByKey(ctx, req.cookies[CUSTOMER_COOKIE]), PORTAL_MSG[req.query.get('ok') ?? ''] ?? (req.query.get('fehler') ? `${tr(L(req), 'Nicht gespeichert:')} ${tr(L(req), PORTAL_ERR[req.query.get('fehler') ?? ''] ?? 'Bitte Eingaben prüfen.')}` : undefined), L(req))));
   const PORTAL_ERR: Record<string, string> = {
     DEFECT_NEEDS_DESCRIPTION: 'Bitte beschreiben Sie den Mangel kurz.', ALREADY_DECIDED: 'Für diesen Auftrag wurde bereits entschieden.', ALREADY_RATED: 'Sie haben diesen Auftrag bereits bewertet.',
     INVALID_RATING: 'Bitte 1 bis 5 Sterne wählen.', NOT_DELIVERED: 'Erst nach der Lieferung möglich.', FORBIDDEN: 'Kein Zugriff auf diesen Auftrag.',
@@ -357,14 +370,14 @@ export function createHandler(ctx: AppContext): (r: HttpRequest) => Promise<Res>
   });
   route('POST', '/portal/nachtrag', (req) => {
     const f = form(req);
-    const parsed = parseItemsText(f.get('items') ?? '', ctx.config.policy.quote.currency);
-    if (parsed.errors.length) return html(renderInquiryResult('Nachtrag nicht erstellt', `Bitte die Positionen prüfen: ${parsed.errors.slice(0, 3).join(' · ')}`, { href: '/portal', label: 'Zurück zum Kundenportal' }), 400);
+    const parsed = parseItemsText(f.get('items') ?? '', ctx.config.policy.quote.currency, L(req));
+    if (parsed.errors.length) return html(renderInquiryResult('Nachtrag nicht erstellt', `${tr(L(req), 'Bitte die Positionen prüfen:')} ${parsed.errors.slice(0, 3).join(' · ')}`, { href: '/portal', label: 'Zurück zum Kundenportal' }, L(req)), 400);
     try {
       const r = requestChange(ctx, req.cookies[CUSTOMER_COOKIE], f.get('order_id') ?? '', parsed.items, f.get('note') ?? '');
       if (r.quote) return redirect(`/angebot/${r.quote.quoteId}?t=${encodeURIComponent(r.quote.acceptanceToken)}`);
-      return html(renderInquiryResult('Nachtrag erhalten', 'Ihr Wunsch wird geprüft. Sie erhalten ein Angebot, sobald es kalkuliert ist – beauftragt ist dadurch noch nichts.', { href: '/portal', label: 'Zum Kundenportal' }));
+      return html(renderInquiryResult('Nachtrag erhalten', 'Ihr Wunsch wird geprüft. Sie erhalten ein Angebot, sobald es kalkuliert ist – beauftragt ist dadurch noch nichts.', { href: '/portal', label: 'Zum Kundenportal' }, L(req)));
     } catch (e) {
-      if (e instanceof WorkflowError && (e.code === 'ACQUISITION_PAUSED')) return html(renderInquiryResult('Vorübergehend pausiert', 'Neue Anfragen werden derzeit nicht angenommen.'), 503);
+      if (e instanceof WorkflowError && (e.code === 'ACQUISITION_PAUSED')) return html(renderInquiryResult('Vorübergehend pausiert', 'Neue Anfragen werden derzeit nicht angenommen.', undefined, L(req)), 503);
       return portalError(e);
     }
   });
@@ -372,7 +385,7 @@ export function createHandler(ctx: AppContext): (r: HttpRequest) => Promise<Res>
   // Abmeldung aus Werbenachrichten: ein Klick genügt, keine Anmeldung nötig. Ungültige Links verraten nichts.
   route('GET', '/abmelden/:token', (req) => {
     const ok = unsubscribe(ctx, req.params.token ?? '');
-    return html(renderInquiryResult(ok ? 'Abgemeldet' : 'Link ungültig', ok ? 'Sie erhalten keine Werbenachrichten mehr. Nachrichten zu laufenden Aufträgen bleiben davon unberührt.' : 'Dieser Abmeldelink ist ungültig oder abgelaufen.'), ok ? 200 : 404);
+    return html(renderInquiryResult(ok ? 'Abgemeldet' : 'Link ungültig', ok ? 'Sie erhalten keine Werbenachrichten mehr. Nachrichten zu laufenden Aufträgen bleiben davon unberührt.' : 'Dieser Abmeldelink ist ungültig oder abgelaufen.', undefined, L(req)), ok ? 200 : 404);
   });
   route('GET', '/.well-known/infinity-earn.json', () => json(trustFacts(ctx)));
   route('GET', '/api/katalog', () => json(offerCatalog(ctx)));
@@ -415,7 +428,7 @@ export function createHandler(ctx: AppContext): (r: HttpRequest) => Promise<Res>
       }
       return redirect('/portal?ok=1');
     } catch (e) {
-      if (e instanceof WorkflowError) return html(renderInquiryResult('Nicht möglich', e.code), e.code === 'FORBIDDEN' ? 403 : 400);
+      if (e instanceof WorkflowError) return html(renderInquiryResult('Nicht möglich', e.code, undefined, L(req)), e.code === 'FORBIDDEN' ? 403 : 400);
       throw e;
     }
   });
@@ -675,6 +688,14 @@ export function createHandler(ctx: AppContext): (r: HttpRequest) => Promise<Res>
     } catch (e) {
       log('error', 'request_failed', { path: req.path, error: e });
       res = json({ error: 'INTERNAL_ERROR' }, 500);
+    }
+    // Sprachwahl merken: ausdrücklich per ?lang= oder über die Startseiten /, /it, /en.
+    const q = req.query.get('lang');
+    const chosen = q === 'de' || q === 'it' || q === 'en' ? q : req.method === 'GET' ? ({ '/': 'de', '/it': 'it', '/en': 'en' } as Record<string, string>)[req.path] : undefined;
+    if (chosen && req.cookies[LANG_COOKIE] !== chosen && res.status < 400) {
+      const c = `${LANG_COOKIE}=${chosen}; Path=/; Max-Age=31536000; SameSite=Lax${ctx.config.secureCookies ? '; Secure' : ''}`;
+      const prev = res.headers?.['set-cookie'];
+      res = { ...res, headers: { ...(res.headers ?? {}), 'set-cookie': prev === undefined ? c : [...(Array.isArray(prev) ? prev : [prev]), c] } };
     }
     return { ...res, headers: { ...SECURITY_HEADERS, ...(res.headers ?? {}) } };
   };

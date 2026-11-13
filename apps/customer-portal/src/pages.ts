@@ -8,6 +8,7 @@ import { getAcceptance, getFeedback } from '../../../services/core-api/src/after
 import { asCalcInput, computeTotals, type CalcInput } from '../../../services/product-factory/src/capabilities/b2b-calc-csv.ts';
 import type { ProvenancePassport } from '../../../services/product-factory/src/provenance.ts';
 import { HOME, LANG_PATH, LANGS, type Lang } from './home-i18n.ts';
+import { frame, productTitle, tr } from './i18n-pages.ts';
 import { acceptanceChecks, listStandards } from '../../../services/product-factory/src/quality-standard.ts';
 import type { TrustFacts } from '../../../services/core-api/src/trust.ts';
 import { getDeliveryByOrder, issueDownloadToken } from '../../../services/product-factory/src/delivery.ts';
@@ -152,165 +153,174 @@ export const FORMATS: { id: string; label: string; text: string }[] = [
 
 /** Anfrageformular. Bei Fehlern bleiben alle Eingaben erhalten; Fehler stehen oben und am Positionsfeld. */
 /** Produktberater: Wunsch in eigenen Worten beschreiben (DE/IT/EN). Ohne Skripte, ohne kostenpflichtige KI. */
-export function renderAdvisor(text = '', error?: string): string {
-  return page('Produktberater – INFINITY EARN', `<h1>Beschreiben Sie Ihren Wunsch</h1>
-<p class="lead">In eigenen Worten, auf Deutsch, Italienisch oder Englisch. Der Berater erkennt Positionen, Aufschlag und Format, füllt die Anfrage für Sie vor und fragt nur nach, was noch fehlt.</p>
-${error ? `<div class="card err" role="alert">${e(error)}</div>` : ''}
+export function renderAdvisor(text = '', error?: string, lang: Lang = 'de'): string {
+  const t = (s: string): string => tr(lang, s);
+  return page(t('Produktberater – INFINITY EARN'), `<h1>${t('Beschreiben Sie Ihren Wunsch')}</h1>
+<p class="lead">${t('In eigenen Worten, auf Deutsch, Italienisch oder Englisch. Der Berater erkennt Positionen, Aufschlag und Format, füllt die Anfrage für Sie vor und fragt nur nach, was noch fehlt.')}</p>
+${error ? `<div class="card err" role="alert">${e(t(error))}</div>` : ''}
 <form class="card" method="post" action="/berater">
-<label for="wunsch">Ihr Wunsch</label>
-<textarea id="wunsch" name="wunsch" required maxlength="5000" placeholder="Kalkulation Badsanierung als PDF: Fliesen 24 m² à 38 €, Arbeit 16 h à 52 €, Entsorgung pauschal 180 €, Aufschlag 15 %">${e(text)}</textarea>
-<p class="muted">Beispiele: <span class="mono">2 x Montage à 45 €</span> · <span class="mono">Arbeit 16 h à 52 €</span> · <span class="mono">Entsorgung pauschal 180 €</span> · oder Zeilen direkt aus Excel.</p>
-<p><button>Weiter</button></p>
-<p class="muted">Es wird noch nichts gesendet. Im nächsten Schritt sehen und ändern Sie alles, bevor Sie die Anfrage abschicken.</p></form>
-<p class="muted">Lieber direkt ausfüllen? <a href="/anfrage">Zum Anfrageformular</a></p>`, { testMode: true, active: 'anfrage' });
+<label for="wunsch">${t('Ihr Wunsch')}</label>
+<textarea id="wunsch" name="wunsch" required maxlength="5000" placeholder="${e(t('Kalkulation Badsanierung als PDF: Fliesen 24 m² à 38 €, Arbeit 16 h à 52 €, Entsorgung pauschal 180 €, Aufschlag 15 %'))}">${e(text)}</textarea>
+<p class="muted">${t('Beispiele:')} <span class="mono">${t('2 x Montage à 45 €')}</span> · <span class="mono">${t('Arbeit 16 h à 52 €')}</span> · <span class="mono">${t('Entsorgung pauschal 180 €')}</span> · ${t('oder Zeilen direkt aus Excel.')}</p>
+<p><button>${t('Weiter')}</button></p>
+<p class="muted">${t('Es wird noch nichts gesendet. Im nächsten Schritt sehen und ändern Sie alles, bevor Sie die Anfrage abschicken.')}</p></form>
+<p class="muted">${t('Lieber direkt ausfüllen?')} <a href="/anfrage">${t('Zum Anfrageformular')}</a></p>`, { testMode: true, ...frame(lang, 'anfrage') });
 }
 
-export function renderInquiryForm(errors: string[] = [], v: InquiryValues = {}, allowed: readonly string[] = ['b2b-calc-csv'], advisor?: { understood: string[]; questions: string[] }): string {
+export function renderInquiryForm(errors: string[] = [], v: InquiryValues = {}, allowed: readonly string[] = ['b2b-calc-csv'], advisor?: { understood: string[]; questions: string[] }, lang: Lang = 'de'): string {
+  const t = (s: string): string => tr(lang, s);
+  const P = HOME[lang].products;
   const formats = FORMATS.filter((f) => allowed.includes(f.id));
   const chosen = formats.some((f) => f.id === v.format) ? v.format : formats[0]?.id;
   const val = (k: keyof InquiryValues, def = ''): string => e(v[k] ?? def);
-  const itemErrors = errors.filter((x) => x.startsWith('Zeile') || x.startsWith('Mindestens'));
+  const itemErrors = errors.filter((x) => /^(Zeile|Riga|Line)\b|^(Mindestens|Indicare|Enter at least)/.test(x));
   return page(
-    'Anfrage – INFINITY EARN',
-    `<h1>Angebot anfordern</h1><p class="lead">Kalkulation aus Ihren Positionen – ${formats.length > 1 ? 'als Excel-Tabelle oder druckfertiges PDF' : 'als Tabelle (CSV, in Excel bearbeitbar)'}. Sie erhalten sofort ein unverbindliches Angebot.</p>
-${errors.length ? `<div class="card err" role="alert"><strong>Bitte korrigieren – Ihre Eingaben sind erhalten geblieben:</strong><ul>${errors.map((x) => `<li>${e(x)}</li>`).join('')}</ul></div>` : ''}
-${advisor ? `<div class="card" role="status"><h2>Das habe ich verstanden</h2>${advisor.understood.length ? `<ul>${advisor.understood.map((x) => `<li>${e(x)}</li>`).join('')}</ul>` : '<p class="muted">Noch keine konkreten Angaben erkannt.</p>'}${advisor.questions.length ? `<h3>Bitte noch ergänzen</h3><ul>${advisor.questions.map((x) => `<li>${e(x)}</li>`).join('')}</ul>` : ''}<p class="muted">Alles ist vorausgefüllt und änderbar. Gesendet wird erst mit „Anfrage senden“. <a href="/berater">Wunsch neu beschreiben</a></p></div>` : ''}
+    t('Anfrage – INFINITY EARN'),
+    `<h1>${t('Angebot anfordern')}</h1><p class="lead">${t(formats.length > 1 ? 'Kalkulation aus Ihren Positionen – als Excel-Tabelle oder druckfertiges PDF. Sie erhalten sofort ein unverbindliches Angebot.' : 'Kalkulation aus Ihren Positionen – als Tabelle (CSV, in Excel bearbeitbar). Sie erhalten sofort ein unverbindliches Angebot.')}</p>
+${errors.length ? `<div class="card err" role="alert"><strong>${t('Bitte korrigieren – Ihre Eingaben sind erhalten geblieben:')}</strong><ul>${errors.map((x) => `<li>${e(t(x))}</li>`).join('')}</ul></div>` : ''}
+${advisor ? `<div class="card" role="status"><h2>${t('Das habe ich verstanden')}</h2>${advisor.understood.length ? `<ul>${advisor.understood.map((x) => `<li>${e(x)}</li>`).join('')}</ul>` : `<p class="muted">${t('Noch keine konkreten Angaben erkannt.')}</p>`}${advisor.questions.length ? `<h3>${t('Bitte noch ergänzen')}</h3><ul>${advisor.questions.map((x) => `<li>${e(x)}</li>`).join('')}</ul>` : ''}<p class="muted">${t('Alles ist vorausgefüllt und änderbar. Gesendet wird erst mit „Anfrage senden“.')} <a href="/berater">${t('Wunsch neu beschreiben')}</a></p></div>` : ''}
 <form class="card" method="post" action="/anfrage">
-<h2>Ihre Angaben</h2>
-<label for="name">Name</label><input id="name" type="text" name="name" required maxlength="200" autocomplete="name" value="${val('name')}">
-<label for="email">E-Mail</label><input id="email" type="email" name="email" required maxlength="254" autocomplete="email" value="${val('email')}">
-<label for="company">Firma (optional)</label><input id="company" type="text" name="company" maxlength="200" autocomplete="organization" value="${val('company')}">
-<label for="country">Land (ISO, z. B. DE)</label><input id="country" type="text" name="country" required maxlength="2" value="${val('country', 'DE')}">
-<h2>Ihre Kalkulation</h2>
-<label for="title">Titel der Kalkulation</label><input id="title" type="text" name="title" required maxlength="200" value="${val('title')}">
-<label for="items">Positionen – eine pro Zeile: <span class="mono">Bezeichnung;Menge;Einzelpreis in EUR</span></label>
-<p class="muted">Beispiel: <span class="mono">Montage;10;45.00</span> – auch Komma (45,00) oder aus Excel kopierte Zeilen (Tabulator) gehen.</p>
-${itemErrors.length ? `<p class="err">${itemErrors.map((x) => e(x)).join('<br>')}</p>` : ''}
+<h2>${t('Ihre Angaben')}</h2>
+<label for="name">${t('Name')}</label><input id="name" type="text" name="name" required maxlength="200" autocomplete="name" value="${val('name')}">
+<label for="email">${t('E-Mail')}</label><input id="email" type="email" name="email" required maxlength="254" autocomplete="email" value="${val('email')}">
+<label for="company">${t('Firma (optional)')}</label><input id="company" type="text" name="company" maxlength="200" autocomplete="organization" value="${val('company')}">
+<label for="country">${t('Land (ISO, z. B. DE)')}</label><input id="country" type="text" name="country" required maxlength="2" value="${val('country', lang === 'it' ? 'IT' : 'DE')}">
+<h2>${t('Ihre Kalkulation')}</h2>
+<label for="title">${t('Titel der Kalkulation')}</label><input id="title" type="text" name="title" required maxlength="200" value="${val('title')}">
+<label for="items">${t('Positionen – eine pro Zeile:')} <span class="mono">${t('Bezeichnung;Menge;Einzelpreis in EUR')}</span></label>
+<p class="muted">${t('Beispiel:')} <span class="mono">Montage;10;45.00</span> ${t('– auch Komma (45,00) oder aus Excel kopierte Zeilen (Tabulator) gehen.')}</p>
+${itemErrors.length ? `<p class="err">${itemErrors.map((x) => e(t(x))).join('<br>')}</p>` : ''}
 <textarea id="items" name="items" required placeholder="Montage;10;45.00&#10;Material;3;120.50">${val('items')}</textarea>
-${formats.length > 1 ? `<fieldset><legend><strong>Lieferformat</strong></legend>${formats.map((f) => `<label><input type="radio" name="format" value="${f.id}"${f.id === chosen ? ' checked' : ''}> ${e(f.label)} – <span class="muted">${e(f.text)}</span></label>`).join('')}</fieldset>` : `<input type="hidden" name="format" value="${e(chosen ?? 'b2b-calc-csv')}">`}
-<label for="margin">Gewünschter Aufschlag in %</label><input id="margin" type="text" name="margin" maxlength="5" value="${val('margin', '20')}">
-<label for="message">Nachricht</label><textarea id="message" name="message" required maxlength="5000">${val('message')}</textarea>
-<label><input type="checkbox" name="privacy" value="1" required> Ich habe den Datenschutzhinweis gelesen (Entwurf, Testmodus).</label>
-<label><input type="checkbox" name="marketing" value="1"${v.marketing === '1' ? ' checked' : ''}> Ich möchte Neuigkeiten per E-Mail erhalten (freiwillig, jederzeit widerrufbar).</label>
-<p><button>Anfrage senden</button></p><p class="muted">Kostenlos und unverbindlich. Wir schreiben Ihnen nur zu Ihrer Anfrage.</p></form>`,
-    { testMode: true, active: 'anfrage' },
+${formats.length > 1 ? `<fieldset><legend><strong>${t('Lieferformat')}</strong></legend>${formats.map((f) => `<label><input type="radio" name="format" value="${f.id}"${f.id === chosen ? ' checked' : ''}> ${e(lang === 'de' ? f.label : P[f.id]?.label ?? f.label)} – <span class="muted">${e(lang === 'de' ? f.text : P[f.id]?.text ?? f.text)}</span></label>`).join('')}</fieldset>` : `<input type="hidden" name="format" value="${e(chosen ?? 'b2b-calc-csv')}">`}
+<label for="margin">${t('Gewünschter Aufschlag in %')}</label><input id="margin" type="text" name="margin" maxlength="5" value="${val('margin', '20')}">
+<label for="message">${t('Nachricht')}</label><textarea id="message" name="message" required maxlength="5000">${val('message')}</textarea>
+<label><input type="checkbox" name="privacy" value="1" required> ${t('Ich habe den Datenschutzhinweis gelesen (Entwurf, Testmodus).')}</label>
+<label><input type="checkbox" name="marketing" value="1"${v.marketing === '1' ? ' checked' : ''}> ${t('Ich möchte Neuigkeiten per E-Mail erhalten (freiwillig, jederzeit widerrufbar).')}</label>
+<p><button>${t('Anfrage senden')}</button></p><p class="muted">${t('Kostenlos und unverbindlich. Wir schreiben Ihnen nur zu Ihrer Anfrage.')}</p></form>`,
+    { testMode: true, ...frame(lang, 'anfrage') },
   );
 }
 
-export function renderInquiryResult(title: string, text: string, link?: { href: string; label: string }): string {
-  return page('Anfrage – INFINITY EARN', `<h1>${e(title)}</h1><div class="card"><p>${e(text)}</p>${link ? `<p><a class="btn" href="${e(link.href)}">${e(link.label)}</a></p>` : ''}</div>`, { testMode: true, active: 'anfrage' });
+export function renderInquiryResult(title: string, text: string, link?: { href: string; label: string }, lang: Lang = 'de'): string {
+  const t = (s: string): string => tr(lang, s);
+  return page(t('Anfrage – INFINITY EARN'), `<h1>${e(t(title))}</h1><div class="card"><p>${e(t(text))}</p>${link ? `<p><a class="btn" href="${e(link.href)}">${e(t(link.label))}</a></p>` : ''}</div>`, { testMode: true, ...frame(lang, 'anfrage') });
 }
 
 const STEPS = ['Anfrage', 'Angebot', 'Bezahlt', 'In Arbeit', 'Geliefert'];
-function progress(active: number): string {
-  return `<ol class="progress-steps" aria-label="Fortschritt">${STEPS.map((s, i) => `<li class="${i < active ? 'done' : i === active ? 'now' : ''}"${i === active ? ' aria-current="step"' : ''}>${e(s)}</li>`).join('')}</ol>`;
+function progress(active: number, lang: Lang = 'de'): string {
+  return `<ol class="progress-steps" aria-label="${tr(lang, 'Fortschritt')}">${STEPS.map((s, i) => `<li class="${i < active ? 'done' : i === active ? 'now' : ''}"${i === active ? ' aria-current="step"' : ''}>${e(tr(lang, s))}</li>`).join('')}</ol>`;
 }
 
 /**
  * 043 Vorschau vor dem Kauf: zeigt die Kalkulation aus den eigenen Positionen des Kunden (keine fremden Daten),
  * ohne die Datei herauszugeben – das Vollprodukt gibt es erst nach bestätigter Zahlung.
  */
-function quotePreview(q: QuoteRow): string {
+function quotePreview(q: QuoteRow, lang: Lang = 'de'): string {
+  const t = (s: string): string => tr(lang, s);
   let input: CalcInput;
   try {
     input = asCalcInput(JSON.parse(q.scope));
   } catch {
     return '';
   }
-  const t = computeTotals(input);
+  const tot = computeTotals(input);
   const shown = input.items.slice(0, 8);
-  return `<div class="card"><h3>Vorschau Ihrer Kalkulation</h3><p class="muted">So wird Ihre Datei aufgebaut – berechnet aus Ihren Angaben. Die fertige Datei erhalten Sie nach bestätigter Zahlung.</p>
-<div class="table-wrap"><table class="cards"><caption class="sr-only">Vorschau der Kalkulation</caption><thead><tr><th scope="col">Position</th><th scope="col">Menge</th><th scope="col">Einzelpreis</th><th scope="col">Summe</th></tr></thead><tbody>
-${shown.map((it, i) => `<tr><td data-label="Position">${e(it.name)}</td><td data-label="Menge">${it.quantity}</td><td data-label="Einzelpreis">${e(money(it.unit_cost_minor, input.currency))}</td><td data-label="Summe">${e(money(t.lines[i] as number, input.currency))}</td></tr>`).join('')}
-${input.items.length > shown.length ? `<tr><td data-label="Hinweis" colspan="4" class="muted">… und ${input.items.length - shown.length} weitere Positionen</td></tr>` : ''}
+  return `<div class="card"><h3>${t('Vorschau Ihrer Kalkulation')}</h3><p class="muted">${t('So wird Ihre Datei aufgebaut – berechnet aus Ihren Angaben. Die fertige Datei erhalten Sie nach bestätigter Zahlung.')}</p>
+<div class="table-wrap"><table class="cards"><caption class="sr-only">${t('Vorschau der Kalkulation')}</caption><thead><tr><th scope="col">${t('Position')}</th><th scope="col">${t('Menge')}</th><th scope="col">${t('Einzelpreis')}</th><th scope="col">${t('Summe')}</th></tr></thead><tbody>
+${shown.map((it, i) => `<tr><td data-label="${t('Position')}">${e(it.name)}</td><td data-label="${t('Menge')}">${it.quantity}</td><td data-label="${t('Einzelpreis')}">${e(money(it.unit_cost_minor, input.currency))}</td><td data-label="${t('Summe')}">${e(money(tot.lines[i] as number, input.currency))}</td></tr>`).join('')}
+${input.items.length > shown.length ? `<tr><td data-label="${t('Hinweis')}" colspan="4" class="muted">… ${lang === 'de' ? 'und' : lang === 'it' ? 'e' : 'and'} ${input.items.length - shown.length} ${t('weitere Positionen')}</td></tr>` : ''}
 </tbody></table></div>
-<p style="margin:12px 0 0">Zwischensumme ${e(money(t.subtotal, input.currency))} · Aufschlag ${(input.margin_bps / 100).toFixed(2).replace('.', ',')} % = ${e(money(t.markup, input.currency))} · <strong>Kalkulierter Gesamtwert ${e(money(t.total, input.currency))}</strong></p>
-<p class="muted" style="font-size:14px;margin:6px 0 0">Das ist der Inhalt Ihrer Kalkulation – nicht der Preis dieses Angebots.</p></div>`;
+<p style="margin:12px 0 0">${t('Zwischensumme')} ${e(money(tot.subtotal, input.currency))} · ${t('Aufschlag')} ${(input.margin_bps / 100).toFixed(2).replace('.', ',')} % = ${e(money(tot.markup, input.currency))} · <strong>${t('Kalkulierter Gesamtwert')} ${e(money(tot.total, input.currency))}</strong></p>
+<p class="muted" style="font-size:14px;margin:6px 0 0">${t('Das ist der Inhalt Ihrer Kalkulation – nicht der Preis dieses Angebots.')}</p></div>`;
 }
 
-export function renderQuote(q: QuoteRow, token: string): string {
+export function renderQuote(q: QuoteRow, token: string, lang: Lang = 'de'): string {
+  const t = (s: string): string => tr(lang, s);
   const terms = JSON.parse(q.terms_json) as Record<string, unknown>;
   const scope = JSON.parse(q.scope) as { title?: string; items?: { name: string; quantity: number; unit_cost_minor: number }[] } | null;
   const statusText: Record<string, string> = { ISSUED: 'Gültig', ACCEPTED: 'Angenommen', EXPIRED: 'Abgelaufen', WITHDRAWN: 'Zurückgezogen' };
   return page(
-    'Angebot – INFINITY EARN',
-    `${progress(q.status === 'ACCEPTED' ? 2 : 1)}<h1>Ihr Angebot</h1><p class="lead">${e(friendlyTitle(q.description))} · ${e(scope?.title ?? '')}</p>
+    t('Angebot – INFINITY EARN'),
+    `${progress(q.status === 'ACCEPTED' ? 2 : 1, lang)}<h1>${t('Ihr Angebot')}</h1><p class="lead">${e(lang === 'de' ? friendlyTitle(q.description) : productTitle(q.description, lang))} · ${e(scope?.title ?? '')}</p>
 <div class="grid">
-<div class="card"><div class="muted">Preis</div><div class="price">${e(money(q.gross_total_minor, q.currency))}</div><p class="muted">Steuer wird noch nicht berechnet (Steuerangaben im Testbetrieb nicht hinterlegt).</p>
-<p><span class="tag ${q.status === 'ISSUED' ? 'ok' : 'neutral'}">${e(statusText[q.status] ?? q.status)}</span> <span class="muted">gültig bis ${e(q.valid_until.slice(0, 10))}</span></p></div>
-<div class="card"><h3>Lieferumfang</h3><ul><li>${scope?.items?.length ?? 0} Positionen, Aufschlag und Summen</li><li>Lieferkriterien: ${e((terms.delivery_criteria as string[] | undefined)?.join(', ') ?? '')}</li><li>Lieferung ${e(String(terms.delivery_deadline_days))} Tage nach Zahlungseingang</li></ul></div></div>
-${quotePreview(q)}
-<div class="card"><h3>Bedingungen</h3><ul><li>Nutzungsrechte: ${e(terms.rights)}</li><li>Rückerstattung: ${e(terms.refund_criteria)}</li><li>${e(terms.withdrawal_notice)}</li><li>${e(terms.privacy_notice)}</li></ul>
-<p class="err">${e(terms.notice ?? '')}</p></div>
-${q.status === 'ISSUED' ? `<form class="card" method="post" action="/angebot/${e(q.quote_id)}/annehmen"><h2>Angebot annehmen</h2>
+<div class="card"><div class="muted">${t('Preis')}</div><div class="price">${e(money(q.gross_total_minor, q.currency))}</div><p class="muted">${t('Steuer wird noch nicht berechnet (Steuerangaben im Testbetrieb nicht hinterlegt).')}</p>
+<p><span class="tag ${q.status === 'ISSUED' ? 'ok' : 'neutral'}">${e(t(statusText[q.status] ?? q.status))}</span> <span class="muted">${t('gültig bis')} ${e(q.valid_until.slice(0, 10))}</span></p></div>
+<div class="card"><h3>${t('Lieferumfang')}</h3><ul><li>${scope?.items?.length ?? 0} ${t('Positionen, Aufschlag und Summen')}</li><li>${t('Lieferkriterien:')} ${e((terms.delivery_criteria as string[] | undefined)?.join(', ') ?? '')}</li><li>${t('Lieferung')} ${e(String(terms.delivery_deadline_days))} ${t('Tage nach Zahlungseingang')}</li></ul></div></div>
+${quotePreview(q, lang)}
+<div class="card"><h3>${t('Bedingungen')}</h3>${lang === 'de' ? '' : `<p class="muted">${t('Die Bedingungen liegen derzeit nur auf Deutsch vor (Entwurf, rechtliche Prüfung vor dem Echtbetrieb). Maßgeblich ist die deutsche Fassung.')}</p>`}<ul lang="de"><li>Nutzungsrechte: ${e(terms.rights)}</li><li>Rückerstattung: ${e(terms.refund_criteria)}</li><li>${e(terms.withdrawal_notice)}</li><li>${e(terms.privacy_notice)}</li></ul>
+<p class="err" lang="de">${e(terms.notice ?? '')}</p></div>
+${q.status === 'ISSUED' ? `<form class="card" method="post" action="/angebot/${e(q.quote_id)}/annehmen"><h2>${t('Angebot annehmen')}</h2>
 <input type="hidden" name="t" value="${e(token)}">
-<label for="bname">Rechnungsname</label><input id="bname" type="text" name="buyer_name" required maxlength="200" autocomplete="organization">
-<label for="baddr">Rechnungsadresse</label><input id="baddr" type="text" name="buyer_address" required maxlength="300" autocomplete="street-address">
-<label for="bcountry">Land (ISO)</label><input id="bcountry" type="text" name="buyer_country" required maxlength="2" value="DE">
-<label for="btype">Sie bestellen als</label><select id="btype" name="buyer_type"><option value="B2B">Unternehmen (B2B)</option><option value="B2C">Verbraucher (B2C)</option></select>
-<label for="vat">USt-IdNr. (optional)</label><input id="vat" type="text" name="vat_id" maxlength="20">
-<fieldset><legend><strong>Nur für Verbraucher (B2C) – Pflicht:</strong></legend>
-<label><input type="checkbox" name="waiver_immediate" value="1"> Ich verlange ausdrücklich, dass mit der Bereitstellung der digitalen Inhalte vor Ablauf der Widerrufsfrist begonnen wird.</label>
-<label><input type="checkbox" name="waiver_loss" value="1"> Mir ist bekannt, dass ich mit Beginn der Bereitstellung mein Widerrufsrecht verliere.</label>
-<p class="muted">Entwurfstext – rechtliche Prüfung vor Livebetrieb (LA-07). Verkauf nur an Kunden mit Sitz in der EU.</p></fieldset>
-<label><input type="checkbox" name="terms" value="1" required> Ich nehme dieses Angebot an (Testmodus – keine echte Zahlung).</label>
-<p><button>Angebot annehmen und bezahlen</button></p><p class="muted">Sie werden zum Zahlungsanbieter weitergeleitet. Gearbeitet wird erst nach dessen Bestätigung.</p></form>` : ''}`,
-    { testMode: true },
+<label for="bname">${t('Rechnungsname')}</label><input id="bname" type="text" name="buyer_name" required maxlength="200" autocomplete="organization">
+<label for="baddr">${t('Rechnungsadresse')}</label><input id="baddr" type="text" name="buyer_address" required maxlength="300" autocomplete="street-address">
+<label for="bcountry">${t('Land (ISO)')}</label><input id="bcountry" type="text" name="buyer_country" required maxlength="2" value="${lang === 'it' ? 'IT' : 'DE'}">
+<label for="btype">${t('Sie bestellen als')}</label><select id="btype" name="buyer_type"><option value="B2B">${t('Unternehmen (B2B)')}</option><option value="B2C">${t('Verbraucher (B2C)')}</option></select>
+<label for="vat">${t('USt-IdNr. (optional)')}</label><input id="vat" type="text" name="vat_id" maxlength="20">
+<fieldset><legend><strong>${t('Nur für Verbraucher (B2C) – Pflicht:')}</strong></legend>
+<label><input type="checkbox" name="waiver_immediate" value="1"> ${t('Ich verlange ausdrücklich, dass mit der Bereitstellung der digitalen Inhalte vor Ablauf der Widerrufsfrist begonnen wird.')}</label>
+<label><input type="checkbox" name="waiver_loss" value="1"> ${t('Mir ist bekannt, dass ich mit Beginn der Bereitstellung mein Widerrufsrecht verliere.')}</label>
+<p class="muted">${t('Entwurfstext – rechtliche Prüfung vor Livebetrieb (LA-07). Verkauf nur an Kunden mit Sitz in der EU.')}</p></fieldset>
+<label><input type="checkbox" name="terms" value="1" required> ${t('Ich nehme dieses Angebot an (Testmodus – keine echte Zahlung).')}</label>
+<p><button>${t('Angebot annehmen und bezahlen')}</button></p><p class="muted">${t('Sie werden zum Zahlungsanbieter weitergeleitet. Gearbeitet wird erst nach dessen Bestätigung.')}</p></form>` : ''}`,
+    { testMode: true, ...frame(lang) },
   );
 }
 
-export function renderMockCheckout(order: OrderRow): string {
+export function renderMockCheckout(order: OrderRow, lang: Lang = 'de'): string {
+  const t = (s: string): string => tr(lang, s);
   return page(
-    'Testzahlung – INFINITY EARN',
-    `${progress(1)}<h1>Testzahlung</h1><div class="card"><p>Auftrag <span class="mono">${e(order.order_id)}</span> · Betrag <strong>${e(money(order.amount_minor, order.currency))}</strong></p>
-<p class="err">Dies ist KEIN echter Zahlungsvorgang. Es fließt kein Geld. Der Test-Zahlungsanbieter sendet eine signierte Testbestätigung.</p>
+    t('Testzahlung – INFINITY EARN'),
+    `${progress(1, lang)}<h1>${t('Testzahlung')}</h1><div class="card"><p>${t('Auftrag')} <span class="mono">${e(order.order_id)}</span> · ${t('Betrag')} <strong>${e(money(order.amount_minor, order.currency))}</strong></p>
+<p class="err">${t('Dies ist KEIN echter Zahlungsvorgang. Es fließt kein Geld. Der Test-Zahlungsanbieter sendet eine signierte Testbestätigung.')}</p>
 <form method="post" action="/checkout/mock/${e(order.checkout_session_id ?? '')}/pay" class="row">
-<button name="outcome" value="paid">Testzahlung erfolgreich</button>
-<button name="outcome" value="pending" class="secondary">Asynchron (ausstehend)</button>
-<button name="outcome" value="failed" class="secondary">Zahlung fehlgeschlagen</button></form></div>`,
-    { testMode: true },
+<button name="outcome" value="paid">${t('Testzahlung erfolgreich')}</button>
+<button name="outcome" value="pending" class="secondary">${t('Asynchron (ausstehend)')}</button>
+<button name="outcome" value="failed" class="secondary">${t('Zahlung fehlgeschlagen')}</button></form></div>`,
+    { testMode: true, ...frame(lang) },
   );
 }
 
-export function renderCheckoutReturn(order: OrderRow | undefined): string {
+export function renderCheckoutReturn(order: OrderRow | undefined, lang: Lang = 'de'): string {
+  const t = (s: string): string => tr(lang, s);
   const p = paymentLabel(order?.payment_state ?? 'UNPAID');
   return page(
-    'Zahlungsstatus – INFINITY EARN',
-    `${progress(order?.payment_state === 'CONFIRMED' ? 3 : 2)}<h1>Danke für Ihre Bestellung</h1>
-<div class="card"><p>Aktueller Zahlungsstatus: <span class="tag ${tone(p.tone)}">${e(p.text)}</span></p>
-<p class="muted">Die Zahlung wird ausschließlich über eine signierte Bestätigung des Zahlungsanbieters bestätigt – nicht über diese Seite. Das kann einen Moment dauern.</p>
-${order ? `<div class="docs"><a href="/portal/vertrag/${e(order.order_id)}">${icon('doc', 'sm')}Vertragsbestätigung herunterladen (PDF)</a></div><p class="muted">Bitte speichern Sie die Vertragsbestätigung – sie ist Ihr Vertragsnachweis.</p>` : ''}
-<p><a class="btn" href="/portal">Zum Kundenportal</a></p></div>`,
-    { testMode: true, active: 'portal' },
+    t('Zahlungsstatus – INFINITY EARN'),
+    `${progress(order?.payment_state === 'CONFIRMED' ? 3 : 2, lang)}<h1>${t('Danke für Ihre Bestellung')}</h1>
+<div class="card"><p>${t('Aktueller Zahlungsstatus:')} <span class="tag ${tone(p.tone)}">${e(t(p.text))}</span></p>
+<p class="muted">${t('Die Zahlung wird ausschließlich über eine signierte Bestätigung des Zahlungsanbieters bestätigt – nicht über diese Seite. Das kann einen Moment dauern.')}</p>
+${order ? `<div class="docs"><a href="/portal/vertrag/${e(order.order_id)}">${icon('doc', 'sm')}${t('Vertragsbestätigung herunterladen (PDF)')}</a></div><p class="muted">${t('Bitte speichern Sie die Vertragsbestätigung – sie ist Ihr Vertragsnachweis.')}</p>` : ''}
+<p><a class="btn" href="/portal">${t('Zum Kundenportal')}</a></p></div>`,
+    { testMode: true, ...frame(lang, 'portal') },
   );
 }
 
 /** 084/047 Abnahme und 120/034 Rückmeldung – nur nach Lieferung, je Auftrag einmal, freiwillig. */
-function renderAftercare(ctx: AppContext, orderId: string): string {
+function renderAftercare(ctx: AppContext, orderId: string, lang: Lang = 'de'): string {
+  const t = (s: string): string => tr(lang, s);
   const acc = getAcceptance(ctx, orderId);
   const fb = getFeedback(ctx, orderId);
   const accBlock = acc
-    ? `<p style="margin:16px 0 0">${acc.decision === 'ACCEPTED' ? '<span class="tag ok">Abgenommen</span> Sie haben die Lieferung bestätigt.' : '<span class="tag">Mangel gemeldet</span> Wir kümmern uns um eine Nachbesserung oder Erstattung.'}</p>`
-    : `<form method="post" action="/portal/abnahme" style="margin-top:18px"><h3>Passt die Lieferung?</h3><input type="hidden" name="order_id" value="${e(orderId)}">
-<p class="muted" style="margin:0 0 8px">Bitte prüfen Sie die Datei. Wenn etwas nicht stimmt, beschreiben Sie es kurz – wir bessern nach oder erstatten.</p>
-<label for="note-${e(orderId)}">Hinweis (bei Mangel bitte ausfüllen)</label><textarea id="note-${e(orderId)}" name="note" maxlength="2000" style="min-height:80px"></textarea>
-<p class="row"><button name="decision" value="ok">Ja, alles in Ordnung</button><button name="decision" value="defect" class="secondary">Mangel melden</button></p></form>`;
+    ? `<p style="margin:16px 0 0">${acc.decision === 'ACCEPTED' ? `<span class="tag ok">${t('Abgenommen')}</span> ${t('Sie haben die Lieferung bestätigt.')}` : `<span class="tag">${t('Mangel gemeldet')}</span> ${t('Wir kümmern uns um eine Nachbesserung oder Erstattung.')}`}</p>`
+    : `<form method="post" action="/portal/abnahme" style="margin-top:18px"><h3>${t('Passt die Lieferung?')}</h3><input type="hidden" name="order_id" value="${e(orderId)}">
+<p class="muted" style="margin:0 0 8px">${t('Bitte prüfen Sie die Datei. Wenn etwas nicht stimmt, beschreiben Sie es kurz – wir bessern nach oder erstatten.')}</p>
+<label for="note-${e(orderId)}">${t('Hinweis (bei Mangel bitte ausfüllen)')}</label><textarea id="note-${e(orderId)}" name="note" maxlength="2000" style="min-height:80px"></textarea>
+<p class="row"><button name="decision" value="ok">${t('Ja, alles in Ordnung')}</button><button name="decision" value="defect" class="secondary">${t('Mangel melden')}</button></p></form>`;
   const fbBlock = fb
-    ? `<p class="muted" style="margin:10px 0 0">Ihre Bewertung: ${'★'.repeat(fb.rating)}${'☆'.repeat(5 - fb.rating)} – danke!</p>`
+    ? `<p class="muted" style="margin:10px 0 0">${t('Ihre Bewertung:')} ${'★'.repeat(fb.rating)}${'☆'.repeat(5 - fb.rating)} – ${t('danke!')}</p>`
     : acc?.decision === 'ACCEPTED'
-      ? `<form method="post" action="/portal/rueckmeldung" style="margin-top:18px"><h3>Wie zufrieden sind Sie? (freiwillig)</h3><input type="hidden" name="order_id" value="${e(orderId)}">
-<fieldset><legend>Bewertung</legend><div class="row">${[5, 4, 3, 2, 1].map((n) => `<label><input type="radio" name="rating" value="${n}" required> ${n} ${n === 1 ? 'Stern' : 'Sterne'}</label>`).join('')}</div></fieldset>
-<label for="out-${e(orderId)}">Nutzen Sie die Kalkulation?</label><select id="out-${e(orderId)}" name="outcome"><option value="IN_USE">Ja, im Einsatz</option><option value="NOT_YET">Noch nicht</option><option value="NOT_USEFUL">Nein, hilft mir nicht</option></select>
-<label for="com-${e(orderId)}">Kommentar (optional)</label><textarea id="com-${e(orderId)}" name="comment" maxlength="2000" style="min-height:80px"></textarea>
-<label><input type="checkbox" name="consent_publish" value="1"> Mein Kommentar darf ohne Namen als Kundenstimme gezeigt werden (jederzeit widerrufbar).</label>
-<p><button>Rückmeldung senden</button></p></form>`
+      ? `<form method="post" action="/portal/rueckmeldung" style="margin-top:18px"><h3>${t('Wie zufrieden sind Sie? (freiwillig)')}</h3><input type="hidden" name="order_id" value="${e(orderId)}">
+<fieldset><legend>${t('Bewertung')}</legend><div class="row">${[5, 4, 3, 2, 1].map((n) => `<label><input type="radio" name="rating" value="${n}" required> ${n} ${t(n === 1 ? 'Stern' : 'Sterne')}</label>`).join('')}</div></fieldset>
+<label for="out-${e(orderId)}">${t('Nutzen Sie die Kalkulation?')}</label><select id="out-${e(orderId)}" name="outcome"><option value="IN_USE">${t('Ja, im Einsatz')}</option><option value="NOT_YET">${t('Noch nicht')}</option><option value="NOT_USEFUL">${t('Nein, hilft mir nicht')}</option></select>
+<label for="com-${e(orderId)}">${t('Kommentar (optional)')}</label><textarea id="com-${e(orderId)}" name="comment" maxlength="2000" style="min-height:80px"></textarea>
+<label><input type="checkbox" name="consent_publish" value="1"> ${t('Mein Kommentar darf ohne Namen als Kundenstimme gezeigt werden (jederzeit widerrufbar).')}</label>
+<p><button>${t('Rückmeldung senden')}</button></p></form>`
       : '';
-  const changeBlock = `<details style="margin-top:16px"><summary style="cursor:pointer;font-weight:600;min-height:32px">Erweiterung anfragen (Nachtrag)</summary>
+  const changeBlock = `<details style="margin-top:16px"><summary style="cursor:pointer;font-weight:600;min-height:32px">${t('Erweiterung anfragen (Nachtrag)')}</summary>
 <form method="post" action="/portal/nachtrag"><input type="hidden" name="order_id" value="${e(orderId)}">
-<p class="muted" style="margin:6px 0 0">Zusätzliche Positionen werden als eigenes Angebot kalkuliert – mit demselben Aufschlag. Erst wenn Sie dieses Angebot annehmen und bezahlen, wird es beauftragt.</p>
-<label for="ch-${e(orderId)}">Zusätzliche Positionen – eine pro Zeile: <span class="mono">Bezeichnung;Menge;Einzelpreis</span></label><textarea id="ch-${e(orderId)}" name="items" required maxlength="20000" style="min-height:90px"></textarea>
-<label for="chn-${e(orderId)}">Hinweis (optional)</label><input id="chn-${e(orderId)}" type="text" name="note" maxlength="1000">
-<p><button class="secondary">Nachtragsangebot erstellen</button></p></form></details>`;
+<p class="muted" style="margin:6px 0 0">${t('Zusätzliche Positionen werden als eigenes Angebot kalkuliert – mit demselben Aufschlag. Erst wenn Sie dieses Angebot annehmen und bezahlen, wird es beauftragt.')}</p>
+<label for="ch-${e(orderId)}">${t('Zusätzliche Positionen – eine pro Zeile:')} <span class="mono">${t('Bezeichnung;Menge;Einzelpreis')}</span></label><textarea id="ch-${e(orderId)}" name="items" required maxlength="20000" style="min-height:90px"></textarea>
+<label for="chn-${e(orderId)}">${t('Hinweis (optional)')}</label><input id="chn-${e(orderId)}" type="text" name="note" maxlength="1000">
+<p><button class="secondary">${t('Nachtragsangebot erstellen')}</button></p></form></details>`;
   return accBlock + fbBlock + changeBlock;
 }
 
@@ -391,9 +401,11 @@ ${sha ? '<div class="card err" role="alert">Zu dieser Prüfsumme ist keine von I
 ${p.warnings.length ? `<ul class="err">${p.warnings.map((w) => `<li>${e(w)}</li>`).join('')}</ul>` : ''}</div>${form}`, { testMode: true });
 }
 
-export function renderPortal(ctx: AppContext, customer: CustomerRow | undefined, flash?: string): string {
+export function renderPortal(ctx: AppContext, customer: CustomerRow | undefined, flash?: string, lang: Lang = 'de'): string {
+  const t = (s: string): string => tr(lang, s);
+  const title = (d: string): string => (lang === 'de' ? friendlyTitle(d) : productTitle(d, lang));
   if (!customer) {
-    return page('Kundenportal – INFINITY EARN', `<h1>Kundenportal</h1><div class="card"><p>In diesem Browser ist noch kein Kundenzugang gespeichert.</p><p class="muted">Der Zugang entsteht automatisch, wenn Sie ein Angebot annehmen. Verwenden Sie denselben Browser, um Vertragsbestätigung, Beleg und Datei abzurufen.</p><p><a class="btn" href="/anfrage">Angebot anfordern</a></p></div>`, { testMode: true, active: 'portal' });
+    return page(t('Kundenportal – INFINITY EARN'), `<h1>${t('Kundenportal')}</h1><div class="card"><p>${t('In diesem Browser ist noch kein Kundenzugang gespeichert.')}</p><p class="muted">${t('Der Zugang entsteht automatisch, wenn Sie ein Angebot annehmen. Verwenden Sie denselben Browser, um Vertragsbestätigung, Beleg und Datei abzurufen.')}</p><p><a class="btn" href="/anfrage">${t('Angebot anfordern')}</a></p></div>`, { testMode: true, ...frame(lang, 'portal') });
   }
   const orders = ctx.db.all<OrderRow & { description: string; pipeline_state: string }>(
     `SELECT o.*, q.description, op.pipeline_state FROM orders o JOIN quotes q ON q.quote_id = o.quote_id JOIN opportunities op ON op.opportunity_id = o.opportunity_id WHERE o.customer_id = ? ORDER BY o.created_at DESC`,
@@ -405,37 +417,37 @@ export function renderPortal(ctx: AppContext, customer: CustomerRow | undefined,
     const stage = pipelineLabel(o.pipeline_state);
     const phase = o.fulfillment_state === 'DELIVERED' ? 4 : o.fulfillment_state === 'IN_PRODUCTION' || o.fulfillment_state === 'QUEUED' || o.fulfillment_state === 'QA_PASSED' ? 3 : o.payment_state === 'CONFIRMED' ? 3 : 1;
     const docs: string[] = [];
-    if (ctx.db.get('SELECT 1 AS x FROM contract_confirmations WHERE order_id = ?', o.order_id)) docs.push(`<a href="/portal/vertrag/${e(o.order_id)}">${icon('doc', 'sm')}Vertragsbestätigung (PDF)</a>`);
-    for (const inv of customerInvoices(ctx, o.order_id)) docs.push(`<a href="/portal/beleg/${e(inv.invoice_id)}">${icon('receipt', 'sm')}${inv.kind === 'CREDIT_NOTE' ? 'Gutschrift' : 'Beleg'} ${e(inv.invoice_number)} (PDF)</a>`);
+    if (ctx.db.get('SELECT 1 AS x FROM contract_confirmations WHERE order_id = ?', o.order_id)) docs.push(`<a href="/portal/vertrag/${e(o.order_id)}">${icon('doc', 'sm')}${t('Vertragsbestätigung (PDF)')}</a>`);
+    for (const inv of customerInvoices(ctx, o.order_id)) docs.push(`<a href="/portal/beleg/${e(inv.invoice_id)}">${icon('receipt', 'sm')}${t(inv.kind === 'CREDIT_NOTE' ? 'Gutschrift' : 'Beleg')} ${e(inv.invoice_number)} (PDF)</a>`);
     let aftercare = '';
     if (o.payment_state === 'UNPAID' || o.payment_state === 'FAILED') {
       aftercare += `<form method="post" action="/portal/zahlung" style="margin-top:14px"><input type="hidden" name="order_id" value="${e(o.order_id)}">
-<p class="muted" style="margin:0 0 8px">${o.payment_state === 'FAILED' ? 'Die letzte Zahlung ist nicht zustande gekommen.' : 'Die Zahlung für diesen Auftrag ist noch offen.'} Sie können sie jederzeit hier fortsetzen.</p><button>Zahlung fortsetzen</button></form>`;
+<p class="muted" style="margin:0 0 8px">${t(o.payment_state === 'FAILED' ? 'Die letzte Zahlung ist nicht zustande gekommen.' : 'Die Zahlung für diesen Auftrag ist noch offen.')} ${t('Sie können sie jederzeit hier fortsetzen.')}</p><button>${t('Zahlung fortsetzen')}</button></form>`;
     }
     if (d && !d.revoked_at && o.payment_state === 'CONFIRMED') {
       const art = ctx.db.get<{ m: string; sha: string }>('SELECT media_type AS m, sha256 AS sha FROM artifacts WHERE artifact_id = ?', d.artifact_id);
-      docs.push(`<a href="/download/${e(issueDownloadToken(ctx, d.delivery_id, customer.customer_id))}">${icon('download', 'sm')}Download: Ihre Kalkulation (${art?.m === 'application/pdf' ? 'PDF' : art?.m === 'application/zip' ? 'ZIP: Tabelle + PDF' : 'CSV'})</a>`);
-      if (art) docs.push(`<a href="/pruefen/${e(art.sha)}">${icon('shield', 'sm')}Echtheit der Datei prüfen</a>`);
+      docs.push(`<a href="/download/${e(issueDownloadToken(ctx, d.delivery_id, customer.customer_id))}">${icon('download', 'sm')}${t('Download: Ihre Kalkulation')} (${art?.m === 'application/pdf' ? 'PDF' : art?.m === 'application/zip' ? t('ZIP: Tabelle + PDF') : 'CSV'})</a>`);
+      if (art) docs.push(`<a href="/pruefen/${e(art.sha)}">${icon('shield', 'sm')}${t('Echtheit der Datei prüfen')}</a>`);
       const product = ctx.db.get<{ c: string }>('SELECT capability_id AS c FROM opportunities WHERE opportunity_id = ?', o.opportunity_id)?.c ?? '';
-      if (HELP[product]) docs.push(`<a href="/hilfe/${e(product)}">${icon('info', 'sm')}Anleitung: So nutzen Sie die Datei</a>`);
-      aftercare += renderAftercare(ctx, o.order_id);
+      if (HELP[product]) docs.push(`<a href="/hilfe/${e(product)}">${icon('info', 'sm')}${t('Anleitung: So nutzen Sie die Datei')}</a>`);
+      aftercare += renderAftercare(ctx, o.order_id, lang);
     }
-    return `<article class="card" aria-labelledby="o-${e(o.order_id)}"><div class="row" style="justify-content:space-between"><h2 id="o-${e(o.order_id)}" style="margin:0">${e(friendlyTitle(o.description))}</h2><strong>${e(money(o.amount_minor, o.currency))}</strong></div>
-<p class="muted" style="margin:4px 0 10px">Auftrag <span class="mono">${e(o.order_id)}</span> · ${e(o.created_at.slice(0, 10))}</p>
-${progress(phase)}<p><span class="tag ${tone(pay.tone)}">${e(pay.text)}</span> <span class="tag ${tone(stage.tone)}">${e(stage.text)}</span></p>
-<h3>Ihre Dokumente</h3>${docs.length ? `<div class="docs">${docs.join('')}</div>` : '<p class="muted">Noch keine Dokumente – sie erscheinen hier automatisch.</p>'}${aftercare}</article>`;
+    return `<article class="card" aria-labelledby="o-${e(o.order_id)}"><div class="row" style="justify-content:space-between"><h2 id="o-${e(o.order_id)}" style="margin:0">${e(title(o.description))}</h2><strong>${e(money(o.amount_minor, o.currency))}</strong></div>
+<p class="muted" style="margin:4px 0 10px">${t('Auftrag')} <span class="mono">${e(o.order_id)}</span> · ${e(o.created_at.slice(0, 10))}</p>
+${progress(phase, lang)}<p><span class="tag ${tone(pay.tone)}">${e(t(pay.text))}</span> <span class="tag ${tone(stage.tone)}">${e(t(stage.text))}</span></p>
+<h3>${t('Ihre Dokumente')}</h3>${docs.length ? `<div class="docs">${docs.join('')}</div>` : `<p class="muted">${t('Noch keine Dokumente – sie erscheinen hier automatisch.')}</p>`}${aftercare}</article>`;
   });
   return page(
-    'Kundenportal – INFINITY EARN',
-    `<h1>Kundenportal</h1><p class="lead">Alle Ihre Aufträge mit Vertragsbestätigung, Beleg und Datei – ohne Anmeldung in diesem Browser.</p>
-${flash ? `<div class="card" role="status">${e(flash)}</div>` : ''}
-${cards.join('') || '<div class="card"><p class="muted">Noch keine Aufträge.</p></div>'}
-<div class="card"><h2>Ihre Daten</h2><p class="muted">Sie können jederzeit eine Kopie aller gespeicherten Daten abrufen.</p><div class="docs"><a href="/portal/datenexport">${icon('download', 'sm')}Meine Daten exportieren (JSON)</a></div></div>
-${orders[0] ? `<form class="card" method="post" action="/portal/support"><h2>Frage, Reklamation oder Widerruf</h2>
-<label for="order">Auftrag</label><select id="order" name="order_id">${orders.map((o) => `<option value="${e(o.order_id)}">${e(friendlyTitle(o.description))} · ${e(o.order_id)}</option>`).join('')}</select>
-<label for="kind">Anliegen</label><select id="kind" name="kind"><option value="question">Frage</option><option value="complaint">Reklamation</option><option value="withdrawal">Widerruf</option></select>
-<label for="msg">Nachricht</label><textarea id="msg" name="message" required maxlength="5000"></textarea><p><button>Senden</button></p>
-<p class="muted">Ihre Nachricht geht direkt an uns. Erstattungen werden nach Prüfung über den Zahlungsanbieter ausgeführt.</p></form>` : ''}`,
-    { testMode: true, active: 'portal' },
+    t('Kundenportal – INFINITY EARN'),
+    `<h1>${t('Kundenportal')}</h1><p class="lead">${t('Alle Ihre Aufträge mit Vertragsbestätigung, Beleg und Datei – ohne Anmeldung in diesem Browser.')}</p>
+${flash ? `<div class="card" role="status">${e(t(flash))}</div>` : ''}
+${cards.join('') || `<div class="card"><p class="muted">${t('Noch keine Aufträge.')}</p></div>`}
+<div class="card"><h2>${t('Ihre Daten')}</h2><p class="muted">${t('Sie können jederzeit eine Kopie aller gespeicherten Daten abrufen.')}</p><div class="docs"><a href="/portal/datenexport">${icon('download', 'sm')}${t('Meine Daten exportieren (JSON)')}</a></div></div>
+${orders[0] ? `<form class="card" method="post" action="/portal/support"><h2>${t('Frage, Reklamation oder Widerruf')}</h2>
+<label for="order">${t('Auftrag')}</label><select id="order" name="order_id">${orders.map((o) => `<option value="${e(o.order_id)}">${e(title(o.description))} · ${e(o.order_id)}</option>`).join('')}</select>
+<label for="kind">${t('Anliegen')}</label><select id="kind" name="kind"><option value="question">${t('Frage')}</option><option value="complaint">${t('Reklamation')}</option><option value="withdrawal">${t('Widerruf')}</option></select>
+<label for="msg">${t('Nachricht')}</label><textarea id="msg" name="message" required maxlength="5000"></textarea><p><button>${t('Senden')}</button></p>
+<p class="muted">${t('Ihre Nachricht geht direkt an uns. Erstattungen werden nach Prüfung über den Zahlungsanbieter ausgeführt.')}</p></form>` : ''}`,
+    { testMode: true, ...frame(lang, 'portal') },
   );
 }

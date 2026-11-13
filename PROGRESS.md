@@ -29,7 +29,12 @@ Grundlage: das 15.0-Paket (`docs/spec/v15/`, Prüfsummen laut Manifest geprüft)
   - **Kostenlos:** Er arbeitet regelbasiert, ohne kostenpflichtige KI-API.
 - **GitHub Pages:** Startseite in allen drei Sprachen (`/`, `/it/`, `/en/`); der Sprachwechsel bleibt innerhalb von Pages.
 - **Tests:** 4 neue Tests in `advisor.test.ts`, 2 in `landing.test.ts`, 1 in `security.test.ts`. `npm run verify` → **258/258**.
-- **Noch nicht übersetzt:** Anfrage, Angebot, Kundenportal und Beraterseite sind deutsch. Der Berater versteht italienische und englische Eingaben trotzdem.
+- **Kundenseiten auf DE/IT/EN (Nachtrag 2026-11-13):** Berater, Anfrage, Angebot, Testzahlung, Zahlungsstatus, Kundenportal mit Abnahme, Bewertung und Nachtrag sowie die Ergebnis- und Fehlerseiten sind übersetzt.
+  - **Sprachwahl:** `?lang=` vor Cookie `ie_lang` vor Browsersprache, sonst Deutsch. Das Cookie speichert nur die Sprache und ist kein Tracking. Jede Seite hat einen Umschalter.
+  - **Auch übersetzt:** Positionsfehler, Formularprüfung, Antworten des Beraters, Produkttitel und Status.
+  - **Bewusst deutsch:** die Rechtstexte im Angebot (Nutzungsrechte, Erstattung, Widerruf, Datenschutz). Sie sind als deutsch gekennzeichnet, mit dem Hinweis „maßgeblich ist die deutsche Fassung“, bis sie rechtlich geprüft und offiziell übersetzt sind.
+  - **Noch deutsch:** Produktanleitungen, `/vertrauen`, `/pruefen`, Vertrags- und Beleg-PDF, Kundennachrichten im Postausgang.
+  - **Tests:** 4 neue Tests in `tests/integration/i18n-pages.test.ts`, darunter einer, der für jeden verwendeten Text eine IT- und EN-Fassung verlangt. `npm run verify` → **262/262**.
 
 ---
 
