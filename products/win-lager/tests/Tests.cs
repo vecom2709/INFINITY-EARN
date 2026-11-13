@@ -317,6 +317,31 @@ namespace InfinityEarn.WinLager
                 Eq("FATTURAPA", Throws(() => FatturaPa.Document(de2.CreateInvoice("K", new[] { P("A", 1) }))), "nur Italien");
                 Eq("FATTURAPA", Throws(() => FatturaPa.Document(new Invoice { Number = "RE-2026-0001", Date = Now })), "alte Rechnung");
             });
+            T("FatturaPA: alle Varianten bestehen das amtliche Schema (FPR12 v1.2.3); Abweichungen werden erkannt", () =>
+            {
+                var s = Fresh("IT"); s.AddArticle("A-100", "Vite M6 × 40 – zincata „extra“ € …", 15, 2200, 0); s.AddArticle("B", "Libro", 3900, 400, 0); s.Book("A-100", 900, ""); s.Book("B", 9, "");
+                var firm = CustOk("Falegnameria «Esempio» – Società a responsabilità limitata con nome molto lungo oltre ottanta caratteri", "IT"); firm.TaxNumber = ""; firm.VatId = "12345678903"; firm.SdiCode = "ABC1234";
+                firm.Name = firm.Name.Substring(0, 80); s.SaveCustomer(firm, true);
+                var priv = CustOk("Mario Rossi", "IT"); priv.Pec = "mario@pec.example.it"; s.SaveCustomer(priv, true);
+                var de = CustOk("Kunde DE", "IT"); de.Country = "DE"; de.Zip = "54321"; de.City = "Beispielstadt"; de.Province = ""; de.TaxNumber = ""; de.VatId = "DE123456789"; s.SaveCustomer(de, true);
+                var ch = CustOk("Privatkunde CH", "IT"); ch.Country = "CH"; ch.Zip = "8001"; ch.City = "Zürich"; ch.Province = ""; ch.TaxNumber = ""; s.SaveCustomer(ch, true);
+                var docs = new List<KeyValuePair<string, XDocument>>();
+                docs.Add(new KeyValuePair<string, XDocument>("Firma", FatturaPa.Document(s.CreateInvoice(firm.Name, new[] { P("A-100", 500), P("B", 1) }, Now.AddDays(-2)))));
+                docs.Add(new KeyValuePair<string, XDocument>("Privat PEC", FatturaPa.Document(s.CreateInvoice("Mario Rossi", new[] { P("B", 1) }))));
+                docs.Add(new KeyValuePair<string, XDocument>("Ausland EU", FatturaPa.Document(s.CreateInvoice("Kunde DE", new[] { P("B", 1) }))));
+                docs.Add(new KeyValuePair<string, XDocument>("Ausland privat", FatturaPa.Document(s.CreateInvoice("Privatkunde CH", new[] { P("B", 1) }))));
+                var sel = SellerOk("IT"); sel.Exempt = true; sel.TaxNumber = "RSSMRA85T10A562S"; s.UpdateSeller(sel);
+                docs.Add(new KeyValuePair<string, XDocument>("forfettario Bollo", FatturaPa.Document(s.CreateInvoice("Mario Rossi", new[] { P("B", 3) }))));
+                docs.Add(new KeyValuePair<string, XDocument>("forfettario klein", FatturaPa.Document(s.CreateInvoice("Mario Rossi", new[] { P("A-100", 1) }))));
+                foreach (var d in docs) { var errs = FatturaPa.SchemaErrors(d.Value); True(errs.Count == 0, d.Key + ": " + string.Join(" | ", errs)); }
+                True(FatturaPa.Bytes(s.Invoices[0]).Length > 1000, "Datei wird erzeugt");
+                var broken = new XDocument(docs[0].Value);
+                broken.Root.Element("FatturaElettronicaHeader").Element("DatiTrasmissione").Element("CodiceDestinatario").Remove();
+                True(FatturaPa.SchemaErrors(broken).Count > 0, "fehlender Codice destinatario wird erkannt");
+                var badCap = new XDocument(docs[0].Value);
+                badCap.Root.Element("FatturaElettronicaHeader").Element("CedentePrestatore").Element("Sede").Element("CAP").Value = "1234";
+                True(FatturaPa.SchemaErrors(badCap).Count > 0, "CAP mit 4 Ziffern wird erkannt");
+            });
             T("Speichern/Laden Schema 2: Firma, Kunden und eingefrorene Rechnungsdaten; Schema 1 wird weiter gelesen", () =>
             {
                 var s = Fresh("DE"); s.AddArticle("A", "A", 100, 1900, 0); s.Book("A", 2, "");

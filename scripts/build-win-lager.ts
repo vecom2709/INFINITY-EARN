@@ -42,6 +42,9 @@ export function findCsc(): string | null {
   return null;
 }
 
+/** Amtliches FatturaPA-Schema (FPR12 v1.2.3, fatturapa.gov.it), unverändert und per Prüfsumme festgehalten. */
+export const FPR12_XSD = join(SRC, 'schema', 'Schema_VFPR12_v1.2.3.xsd');
+export const FPR12_XSD_SHA256 = '152944f6eef9f5d69ef6e955ee173b32142b00a8c1c5222fc97dfab5910e8a8c';
 const cs = (s: string): string => `"${s.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`;
 const sha = (p: string): string => createHash('sha256').update(readFileSync(p)).digest('hex');
 
@@ -60,6 +63,7 @@ export function buildWinLager(o: WinBuildOptions): WinBuildResult {
   if (process.platform !== 'win32') throw new Error('PLATFORM_TEST_BLOCKED: Windows-Programme werden auf Windows gebaut und getestet (nicht auf diesem System).');
   const errors = validateOptions(o);
   if (errors.length) throw new Error(`UNGUELTIG: ${errors.join('; ')}`);
+  if (sha(FPR12_XSD) !== FPR12_XSD_SHA256) throw new Error('SCHEMA_VERAENDERT: Das amtliche FatturaPA-Schema weicht von der heruntergeladenen Fassung ab.');
   const csc = findCsc();
   if (!csc) throw new Error('TOOLCHAIN_MISSING: C#-Compiler des .NET Framework 4.x nicht gefunden.');
   const out = o.outDir ?? join(SRC, 'dist', o.productId);
@@ -115,7 +119,8 @@ namespace InfinityEarn.WinLagerSetup {
   };
   // 1. Fachtests
   const testsExe = join(work, 'tests.exe');
-  compile(['/target:exe', `/out:${testsExe}`, ...refs, ...core, join(gen, 'BrandData.g.cs'), join(work, 'tests', 'Tests.cs')]);
+  const xsdRes = `/resource:${FPR12_XSD},fpr12.xsd`;
+  compile(['/target:exe', `/out:${testsExe}`, xsdRes, ...refs, ...core, join(gen, 'BrandData.g.cs'), join(work, 'tests', 'Tests.cs')]);
   const t = spawnSync(testsExe, [], { encoding: 'utf8', env: { ...process.env } });
   const testOutput = `${t.stdout}${t.stderr}`;
   const m = /passed=(\d+) failed=(\d+)/.exec(testOutput);
@@ -123,7 +128,7 @@ namespace InfinityEarn.WinLagerSetup {
   if (t.status !== 0 || unitTests.failed > 0 || unitTests.passed === 0) throw new Error(`UNIT_TESTS_FAILED:\n${testOutput}`);
   // 2. Programm
   const appW = join(work, exeName);
-  compile(['/target:winexe', `/out:${appW}`, `/win32manifest:${join(work, 'src', 'app.manifest')}`, ...refs, ...ui, ...core, ...['MainForm.cs', 'Program.cs'].map((f) => join(work, 'src', f)), join(gen, 'BrandData.g.cs')]);
+  compile(['/target:winexe', `/out:${appW}`, `/win32manifest:${join(work, 'src', 'app.manifest')}`, xsdRes, ...refs, ...ui, ...core, ...['MainForm.cs', 'Program.cs'].map((f) => join(work, 'src', f)), join(gen, 'BrandData.g.cs')]);
   // 3. Installer mit eingebettetem Programm
   const setupName = `${o.productId}-setup-${o.version}.exe`;
   compile(['/target:winexe', `/out:${join(work, setupName)}`, `/win32manifest:${join(work, 'src', 'app.manifest')}`, `/resource:${appW},app.exe`, ...refs, '/r:System.Windows.Forms.dll', join(work, 'setup', 'Setup.cs'), join(gen, 'SetupData.g.cs')]);

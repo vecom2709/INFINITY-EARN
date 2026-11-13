@@ -38,9 +38,9 @@ Stand: 2026-11-13. Ein Eintrag gilt nur mit echtem Nachweis. Nicht getestet hei�
 - **Anleitung:** Jede Kundenfassung erhält eine bebilderte Anleitung (PDF, DE/IT/EN) mit echten Bildschirmfotos des gebauten Programms.
   - Die Fotos entstehen mit `node scripts/build-win-lager-assets.ts`, nur auf Windows.
   - `tests/products/win-lager/manual.test.ts` prüft auf jedem System, dass Fotos und Texte zum aktuellen Programm gehören.
-- **Rechnungen:** Pflichtangaben nach § 14 Abs. 4 UStG (AT § 11 UStG) sind umgesetzt und getestet. Die italienische Fassung erzeugt zusätzlich die FatturaPA (XML) zum Hochladen im SdI.
+- **Rechnungen:** Pflichtangaben nach § 14 Abs. 4 UStG (AT § 11 UStG) sind umgesetzt und getestet. Die italienische Fassung erzeugt zusätzlich die FatturaPA (XML) zum Hochladen im SdI, geprüft gegen das eingebettete amtliche Schema (`products/win-lager/schema/`, FPR12 v1.2.3).
 - **Freigabe:** Die Admin-Seite `/dashboard/produkte/win-lager` zeigt die Freigabe-Akte. Den Verkauf sperren noch zwei Punkte:
-  - die amtliche Prüfung der FatturaPA (XSD und SdI-Annahme) – sperrt die italienische Fassung;
+  - die echte Annahme der FatturaPA im SdI – sperrt die italienische Fassung;
   - der Bau je Auftrag.
 
 ## Werkzeug- und Kostenlage

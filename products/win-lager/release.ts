@@ -41,15 +41,17 @@ export function winReleaseGates(): ReleaseGate[] {
   const manual = manualCheck();
   const texts = textsCheck();
   return [
-    { id: 'build', title: 'Programm und Installer gebaut, 23 Fachtests', status: 'PASS', live: false, evidence: 'Windows-eigener C#-Compiler, ohne Downloads. Ohne bestandene Fachtests entsteht kein Installer. Nachweis: GitHub-Prüflauf, Job „windows-program“.' },
+    { id: 'build', title: 'Programm und Installer gebaut, 24 Fachtests', status: 'PASS', live: false, evidence: 'Windows-eigener C#-Compiler, ohne Downloads. Ohne bestandene Fachtests entsteht kein Installer. Nachweis: GitHub-Prüflauf, Job „windows-program“.' },
     { id: 'install', title: 'Echter Installationstest auf Windows', status: 'PASS', live: false, evidence: 'Windows 11 (dieser Rechner) und Windows Server (GitHub CI): Installation, Start, Daten über Neustart, gleichzeitige Zugriffe, Update mit Daten, laufendes Programm, Deinstallation ohne fremde Dateien.' },
     { id: 'manual', title: 'Bebilderte Anleitung DE/IT/EN', status: manual.ok ? 'PASS' : 'BLOCKED', live: true, evidence: manual.detail, next: manual.ok ? undefined : 'Anleitung neu erzeugen: node scripts/build-win-lager-assets.ts' },
     { id: 'texts', title: 'Oberfläche, Meldungen und Installer in DE/IT/EN', status: texts.ok ? 'PASS' : 'BLOCKED', live: true, evidence: texts.detail },
     { id: 'legal-invoice', title: 'Rechnungen mit Pflichtangaben (Deutschland § 14 Abs. 4 UStG, Österreich § 11 UStG)', status: 'PASS', live: false,
       evidence: 'Ohne vollständige Firmendaten und angelegten Kunden mit Anschrift entsteht keine Rechnung. Jede Rechnung enthält Name und Anschrift beider Seiten, Steuernummer bzw. USt-IdNr. (geprüftes Format), Rechnungsdatum, fortlaufende Nummer, Menge und Bezeichnung, Leistungsdatum, Netto und Steuer je Steuersatz oder den Hinweis für Kleinunternehmer. Angaben werden beim Erstellen eingefroren. Belegt durch Fachtests, die jede Angabe in der fertigen Rechnung suchen. Technische Umsetzung, keine Rechtsberatung.' },
-    { id: 'fatturapa', title: 'FatturaPA (Italien) amtlich geprüft', status: 'BLOCKED', live: false,
-      evidence: 'Die italienische Fassung erzeugt die elektronische Rechnung als XML (FPR12, Schema 1.2): P.IVA und Codice fiscale mit Prüfziffer, Codice destinatario/PEC, Riepilogo je Aliquota, regime forfettario mit Natura N2.2 und Bollo. Unsere Fachtests prüfen Aufbau, Reihenfolge, Beträge und Zeichensatz. UNVERIFIED: noch nicht gegen das amtliche XSD und nicht durch eine echte Annahme im SdI geprüft. Sperrt nur die italienische Fassung.',
-      next: 'Amtliches XSD von fatturapa.gov.it laden (braucht deine Freigabe zum Download) und eine Musterrechnung im Portal „Fatture e Corrispettivi“ prüfen lassen (dein Zugang).' },
+    { id: 'fatturapa-schema', title: 'FatturaPA gegen amtliches Schema geprüft (FPR12 v1.2.3)', status: 'PASS', live: false,
+      evidence: 'Das amtliche Schema von fatturapa.gov.it ist unverändert im Projekt (Prüfsumme festgehalten) und in das Programm eingebettet. Das Programm erzeugt nur schemagültige Dateien. Fachtest: 6 Varianten gültig (Firma, Privatperson mit PEC, EU-Ausland, Ausland privat, forfettario mit und ohne Bollo); absichtlich fehlerhafte Dateien werden erkannt.' },
+    { id: 'fatturapa', title: 'FatturaPA vom SdI angenommen', status: 'BLOCKED', live: false,
+      evidence: 'Das SdI prüft über das Schema hinaus Inhalte (z. B. Existenz der P.IVA, Summen). Unsere Fachtests decken Summen und Prüfziffern ab, eine echte Annahme durch das SdI ist aber noch nicht nachgewiesen (UNVERIFIED). Sperrt nur die italienische Fassung.',
+      next: 'Mit deinem Zugang eine Musterrechnung im Portal „Fatture e Corrispettivi“ der Agenzia delle Entrate hochladen und die Annahme prüfen.' },
     { id: 'erechnung-de', title: 'E-Rechnung Deutschland (XRechnung/ZUGFeRD)', status: 'OPEN', live: false,
       evidence: 'Für Rechnungen an Unternehmen in Deutschland gilt die Pflicht zur E-Rechnung ab 2027 (Vorjahresumsatz über 800.000 €) bzw. ab 2028. Das Programm erstellt noch keine E-Rechnung; die Anleitung der deutschen Fassung sagt das offen.' },
     { id: 'delivery', title: 'Lieferweg je Auftrag', status: 'BLOCKED', live: false,

@@ -89,7 +89,8 @@ test('Freigabe-Akte: Anleitung, Texte und Pflichtangaben belegt; FatturaPA-Prüf
   assert.equal(by.manual?.live, true);
   assert.equal(by.texts?.status, 'PASS');
   assert.equal(by['legal-invoice']?.status, 'PASS');
-  assert.equal(by.fatturapa?.status, 'BLOCKED', 'ohne amtliches Schema und SdI-Annahme nicht freigegeben');
+  assert.equal(by['fatturapa-schema']?.status, 'PASS');
+  assert.equal(by.fatturapa?.status, 'BLOCKED', 'ohne echte SdI-Annahme nicht freigegeben');
   assert.match(by.fatturapa?.evidence ?? '', /UNVERIFIED/);
   assert.equal(by['erechnung-de']?.status, 'OPEN');
   assert.equal(by.delivery?.status, 'BLOCKED');

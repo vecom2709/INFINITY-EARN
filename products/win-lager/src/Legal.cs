@@ -10,6 +10,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
+using System.Xml.Schema;
 
 namespace InfinityEarn.WinLager
 {
@@ -294,10 +295,40 @@ namespace InfinityEarn.WinLager
                     header, body));
         }
 
-        /// <summary>Datei-Inhalt: UTF-8 ohne BOM, mit XML-Deklaration.</summary>
+        // Amtliches Schema (Schema_VFPR12_v1.2.3.xsd von fatturapa.gov.it) ist als Ressource „fpr12.xsd“ eingebettet.
+        // Das W3C-Signaturschema wird nicht geladen (kein Netzzugriff): ds:Signature ist bei FPR12 optional und wird nie erzeugt.
+        const string SignatureStub = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema' targetNamespace='http://www.w3.org/2000/09/xmldsig#'><xs:element name='Signature'/></xs:schema>";
+        static XmlSchemaSet schema;
+
+        public static XmlSchemaSet Schema()
+        {
+            if (schema != null) return schema;
+            using (var s = typeof(FatturaPa).Assembly.GetManifestResourceStream("fpr12.xsd"))
+            {
+                if (s == null) throw DomainException.Of("FATTURAPA", "e_fpa_schema");
+                var set = new XmlSchemaSet { XmlResolver = null };
+                set.Add(XmlSchema.Read(new StringReader(SignatureStub), null));
+                using (var r = XmlReader.Create(s, new XmlReaderSettings { DtdProcessing = DtdProcessing.Prohibit, XmlResolver = null })) set.Add(null, r);
+                set.Compile();
+                schema = set;
+            }
+            return schema;
+        }
+
+        /// <summary>Abweichungen vom amtlichen Schema (leer = gültig).</summary>
+        public static List<string> SchemaErrors(XDocument doc)
+        {
+            var errors = new List<string>();
+            doc.Validate(Schema(), (o, e) => errors.Add(e.Message));
+            return errors;
+        }
+
+        /// <summary>Datei-Inhalt: UTF-8 ohne BOM, mit XML-Deklaration. Nur schemagültige Dateien werden erzeugt.</summary>
         public static byte[] Bytes(Invoice inv)
         {
             var doc = Document(inv);
+            var errors = SchemaErrors(doc);
+            if (errors.Count > 0) throw DomainException.Of("FATTURAPA", "e_fpa_invalid", errors[0]);
             using (var ms = new MemoryStream())
             {
                 using (var w = XmlWriter.Create(ms, new XmlWriterSettings { Encoding = new UTF8Encoding(false), Indent = true }))

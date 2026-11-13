@@ -54,7 +54,7 @@ Grundlage: das 15.0-Paket (`docs/spec/v15/`, Prüfsummen laut Manifest geprüft)
   - Italien: FatturaPA-Export (XML, FPR12, Schema 1.2) mit P.IVA- und Codice-fiscale-Prüfziffer, Codice destinatario/PEC, Riepilogo je Aliquota, forfettario mit Natura N2.2 und Bollo, Dateiname nach SdI. Übermittlung macht der Anwender kostenlos im Portal „Fatture e Corrispettivi“ oder per PEC. Steuersatz 0 % ohne forfettario wird mit klarer Meldung abgelehnt statt geraten.
   - 23 Fachtests im Build (vorher 12), Anleitung mit 10 Kapiteln und 5 echten Bildschirmfotos.
 - **Offen (sperrt den Verkauf, kein Freigabeknopf):**
-  - **FatturaPA amtlich ungeprüft (sperrt die italienische Fassung):** noch nicht gegen das amtliche XSD und nicht durch eine echte Annahme im SdI geprüft (UNVERIFIED). Der Download des XSD braucht deine Freigabe; die Prüfung im Portal braucht deinen Zugang.
+  - **FatturaPA vom SdI noch nicht angenommen (sperrt die italienische Fassung):** Gegen das amtliche Schema (FPR12 v1.2.3, mit deiner Freigabe von fatturapa.gov.it geladen, ins Programm eingebettet) ist sie geprüft: 6 Varianten gültig, das Programm erzeugt nur schemagültige Dateien. Die echte Annahme im SdI ist UNVERIFIED und braucht deinen Zugang zum Portal „Fatture e Corrispettivi“.
   - **Bau je Auftrag aus der Cloud-Produktion:** Der Cloudflare-Worker kann keine Windows-Programme bauen, dafür braucht es einen Windows-Build-Rechner.
 - **Offen (sperrt nicht):** E-Rechnung Deutschland (XRechnung/ZUGFeRD, Pflicht für B2B ab 2027/2028 – die Anleitung sagt das offen); Code-Signatur (Kosten, deine Entscheidung); Festpreis; Windows 10 ungeprüft. Keine Rechtsberatung: Prüfung durch einen Steuerberater empfohlen.
 
