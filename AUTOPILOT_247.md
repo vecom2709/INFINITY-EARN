@@ -49,6 +49,7 @@ Zugesagt wird nur, was `assess()` als machbar meldet. Gestoppte Produktion → k
 | # | Szenario | Ergebnis | Nachweis |
 |---|---|---|---|
 | 1–4, 16 | Bestellung bei ausgeschaltetem PC → gespeichert → Takt produziert → Abnahme → Download | bestanden | autopilot-247 „1–4, 16“ |
+| 16 (echt) | Vollständiger Testauftrag mit **echtem Stripe-Testmodus**: Angebot → Stripe-Checkout → Zahlung mit Stripe-Testkarte → signierter Webhook über die Stripe-CLI → Produktion → Abnahme → Lieferung → Download → Beleg | bestanden am 13.11.2026 (57,15 €, Stripe-Sandbox, `payment_status: paid`, `livemode: false`) | `node --env-file=.env scripts/stripe-e2e-local.ts` (lokal; Testzahlungen auf Staging löse ich nicht selbst aus) |
 | 5–6 | KI fehlt → Job pausiert sichtbar; Freigabe 1/Tag → genau ein Job läuft | bestanden | autopilot-247 „5–6“ |
 | 7 | Doppelter Webhook → eine Zahlung, ein Auftrag, eine Lieferung | bestanden | autopilot-247 „7“, payments.test.ts |
 | 8 | Fehlerhafte Produktion wird nicht geliefert | bestanden | autopilot-247 „8“, quality-standard.test.ts |
