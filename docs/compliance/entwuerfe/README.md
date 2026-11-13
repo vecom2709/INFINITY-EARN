@@ -5,8 +5,9 @@
 | Datei | Zweck | Freigabepunkt |
 |---|---|---|
 | `impressum.md` | Anbieterkennzeichnung | LA-07 |
-| `agb.md` | Vertragsbedingungen B2B + B2C inkl. Nutzungsrechte, Haftung, Erstattung | LA-07, LA-09 |
+| `agb.md` | Vertragsbedingungen B2B + B2C für alle Produktarten (Fassung 2, 13.11.2026) | LA-07, LA-09 |
 | `widerruf.md` | Widerrufsbelehrung, Muster-Widerrufsformular, Verzichtstext digitale Inhalte (identisch zur technischen Fassung `v1-entwurf-2026-11-12`) | LA-07 |
-| `datenschutz.md` | Datenschutzerklärung (Anfrage, Bestellung, Zahlung über Stripe, Logs, Rechte) | LA-08 |
+| `produktbedingungen.md` | Leistung, Nutzungsrechte und Erstattung je Produkt: Kalkulationen, Mini-Warenwirtschaft, Windows-Programm, KI-Texte (nur geprüfte Zusagen) | LA-09 |
+| `datenschutz.md` | Datenschutzerklärung (Fassung 2): Cloudflare, Stripe, GitHub, Anthropic/Claude, Sicherungen; **Hinweis zur Auftragsverarbeitung bei KI-Texten über das Claude-Abo** | LA-08 |
 
 Bei Änderungen am Verzichtstext: `CONSUMER_WAIVER_VERSION` in `services/core-api/src/workflow.ts` und den Text im Annahmeformular (`apps/customer-portal/src/pages.ts`) gemeinsam ändern.
