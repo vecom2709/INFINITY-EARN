@@ -43,6 +43,8 @@ export interface AppConfig {
   downloadSigningKey: string;
   /** Schlüssel des Windows-Bau-Agenten (Funktion 157/158); null = Bau-Schnittstelle abgeschaltet. */
   buildAgentToken: string | null;
+  /** Sofort-Auslöser für GitHub-Workflows (Token des Eigentümers, nur „Actions: schreiben“ für dieses Repository); null = nur Zeitplan. */
+  githubDispatch: { token: string; repository: string } | null;
   downloadTtlMinutes: number;
   payment: { provider: 'mock' | 'stripe'; webhookSecret: string; stripeKeyMode: 'unset' | 'test'; stripeSecretKey: string | null; stripeApiBase: string };
   seller: SellerConfig;
@@ -128,6 +130,10 @@ export function loadConfig(env: Env = process.env): AppConfig {
   const rawAgent = (env.BUILD_AGENT_TOKEN ?? '').trim();
   const buildAgentToken = rawAgent.length >= 32 && /^[A-Za-z0-9_-]+$/.test(rawAgent) ? rawAgent : null;
   if (rawAgent && !buildAgentToken) warnings.push('BUILD_AGENT_TOKEN ungültig (mind. 32 Zeichen A–Z, 0–9, _ oder -) – Bau-Schnittstelle abgeschaltet.');
+  const ghToken = (env.GITHUB_DISPATCH_TOKEN ?? '').trim();
+  const ghRepo = (env.GITHUB_REPOSITORY ?? '').trim();
+  const githubDispatch = ghToken.length >= 20 && /^[\w.-]+\/[\w.-]+$/.test(ghRepo) ? { token: ghToken, repository: ghRepo } : null;
+  if ((ghToken || ghRepo) && !githubDispatch) warnings.push('GITHUB_DISPATCH_TOKEN/GITHUB_REPOSITORY unvollständig – Sofort-Auslöser abgeschaltet.');
   let downloadSigningKey = (env.DOWNLOAD_SIGNING_KEY ?? '').trim();
   if (unset(downloadSigningKey) || downloadSigningKey.length < 32) {
     if (strict) throw new ConfigError('DOWNLOAD_SIGNING_KEY fehlt oder ist kürzer als 32 Zeichen.');
@@ -164,6 +170,7 @@ export function loadConfig(env: Env = process.env): AppConfig {
     sessionTtlMinutes: intEnv(env, 'SESSION_TTL_MINUTES', 480, 5, 1440, warnings),
     downloadSigningKey,
     buildAgentToken,
+    githubDispatch,
     downloadTtlMinutes: intEnv(env, 'DOWNLOAD_TTL_MINUTES', 1440, 1, 10080, warnings),
     payment: { provider, webhookSecret, stripeKeyMode, stripeSecretKey, stripeApiBase: unset(env.STRIPE_API_BASE) ? 'https://api.stripe.com' : (env.STRIPE_API_BASE as string).trim() },
     seller: {

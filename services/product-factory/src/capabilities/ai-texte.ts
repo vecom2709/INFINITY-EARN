@@ -65,7 +65,7 @@ export const aiTexte: ProductCapability = {
   output_schema: { media_type: 'application/zip', extension: 'zip' },
   licensing_requirements: 'Texte entstehen neu nach dem Briefing; der Kunde erhält die Nutzungsrechte. Keine fremden Texte, keine erfundenen Fakten.',
   required_tools: ['claude-code-action (Claude-Abo des Eigentümers)'],
-  estimated_duration_minutes: 30,
+  estimated_duration_minutes: 480, // GitHub-Zeitplan gemessen bis ~7 h; mit Sofort-Auslöser Minuten
   max_complexity: 1,
   qa_suite: ['zip_structure', 'text_structure', 'text_length', 'text_language', 'text_brief', 'text_claims', 'text_safety', 'text_render', 'checksum'],
   supported_languages: ['de', 'it', 'en'],

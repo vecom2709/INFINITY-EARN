@@ -42,7 +42,7 @@ export interface ProbeStatus { state: string; qa_passed: number | null; runner_r
 
 function deliveryGate(probe: ProbeStatus | null | undefined): ReleaseGate {
   const base = { id: 'delivery', title: 'Bau je Auftrag (GitHub-Windows-Server)', live: true };
-  const how = 'Bezahlte Aufträge legen einen Bauauftrag an. Der GitHub-Windows-Server fragt alle 15 Minuten nach, baut mit den 24 Fachtests und lädt das Paket hoch; der Worker prüft es selbst und gibt erst dann die Lieferung frei. Höchstens 3 Versuche, danach „nicht lieferfähig“. Kundendaten erscheinen nie in den öffentlichen GitHub-Protokollen.';
+  const how = 'Bezahlte Aufträge legen einen Bauauftrag an. Der GitHub-Windows-Server holt ihn ab (laut Messung startet GitHubs Zeitplan nur alle 4–7 Stunden; mit Sofort-Auslöser in Minuten), baut mit den 24 Fachtests und lädt das Paket hoch; der Worker prüft es selbst und gibt erst dann die Lieferung frei. Höchstens 3 Versuche, danach „nicht lieferfähig“. Kundendaten erscheinen nie in den öffentlichen GitHub-Protokollen.';
   if (probe?.state === 'DONE' && probe.qa_passed === 1) {
     return { ...base, status: 'PASS', evidence: `${how} Letzter Probebau bestanden am ${probe.updated_at.slice(0, 16).replace('T', ' ')} UTC (${probe.runner_ref ?? 'unbekannt'}).` };
   }
@@ -68,7 +68,7 @@ export function winReleaseGates(probe?: ProbeStatus | null): ReleaseGate[] {
     { id: 'erechnung-de', title: 'E-Rechnung Deutschland (XRechnung/ZUGFeRD)', status: 'OPEN', live: false,
       evidence: 'Für Rechnungen an Unternehmen in Deutschland gilt die Pflicht zur E-Rechnung ab 2027 (Vorjahresumsatz über 800.000 €) bzw. ab 2028. Das Programm erstellt noch keine E-Rechnung; die Anleitung der deutschen Fassung sagt das offen.' },
     deliveryGate(probe),
-    { id: 'schedule', title: 'Zeitplan bei GitHub dauerhaft aktiv', status: 'OPEN', live: false, evidence: 'GitHub pausiert Zeitpläne in öffentlichen Repositories nach 60 Tagen ohne Änderungen. Lieferzeit bis ca. 30 Minuten; ein Sofort-Auslöser braucht ein GitHub-Token (deine Entscheidung).' },
+    { id: 'schedule', title: 'Startzeit externer Läufe', status: 'OPEN', live: false, evidence: 'Gemessen 14.–15.11.2026: GitHub startet den 15-Minuten-Zeitplan tatsächlich nur alle 3,7–7,3 Stunden (Median 6,4 h) und pausiert ihn nach 60 Tagen ohne Änderungen. Ein Windows- oder KI-Auftrag kann also mehrere Stunden auf den Start warten. Abhilfe: Sofort-Auslöser mit einem GitHub-Token von dir (Recht „Actions: schreiben“, nur dieses Repository) als GITHUB_DISPATCH_TOKEN – der Code dafür ist fertig und getestet.' },
     { id: 'win10', title: 'Windows 10 geprüft', status: 'OPEN', live: false, evidence: 'Gleiche Laufzeit wie Windows 11, aber ohne eigenen Test. Die Anleitung sagt daher nur „vorgesehen“.' },
     { id: 'signing', title: 'Code-Signatur', status: 'OWNER', live: false, evidence: 'Nicht signiert (Windows meldet „NotSigned“). Beim Download warnt SmartScreen; die Anleitung erklärt das. Ein Zertifikat kostet Geld und braucht deine Freigabe.' },
     { id: 'price', title: 'Festpreis', status: 'OWNER', live: false, evidence: 'Legst du bei der Freigabe fest, innerhalb der Preisgrenzen der Policy.' },

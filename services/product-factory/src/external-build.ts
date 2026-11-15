@@ -186,7 +186,12 @@ export function submitBuild(ctx: AppContext, buildId: string, raw: Uint8Array, p
     const checks = [...cap.runQa(bytes, spec), { check: 'checksum', passed: sha256Hex(bytes) === sha, detail: sha.slice(0, 16) }];
     checks.push(acceptanceGate(cap.capability_id, checks));
     const passed = checks.every((c) => c.passed);
-    const path = ctx.blobs.put(`${ctx.config.testMode ? 'test' : 'live'}/probe/${cap.capability_id}.zip`, bytes);
+    // Eindeutiger Pfad je Probe (der Cloudflare-Speicher überschreibt nicht); die vorherige Probedatei wird entfernt.
+    for (const old of ctx.db.all<{ build_id: string; result_path: string }>(`SELECT build_id, result_path FROM external_builds WHERE kind = 'PROBE' AND capability_id = ? AND result_path IS NOT NULL AND build_id <> ?`, cap.capability_id, buildId)) {
+      ctx.blobs.delete?.(old.result_path);
+      setBuild(ctx, old.build_id, { result_path: null });
+    }
+    const path = ctx.blobs.put(`${ctx.config.testMode ? 'test' : 'live'}/probe/${cap.capability_id}-${buildId}.zip`, bytes);
     setBuild(ctx, buildId, { state: passed ? 'DONE' : b.state, lease_until: null, result_path: path, result_sha256: sha, qa_json: JSON.stringify(checks), qa_passed: passed ? 1 : 0 });
     if (!passed) retryOrGiveUp(ctx, b, `QA_FAILED: ${checks.filter((c) => !c.passed).map((c) => c.check).join(', ')}`);
     ctx.audit.record({ type: passed ? 'build.probe_passed' : 'build.probe_failed', actor: 'system', subjectType: 'build', subjectId: buildId, data: { sha256: sha, runner: b.runner_ref }, testMode: ctx.config.testMode });

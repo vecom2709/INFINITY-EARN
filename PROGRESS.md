@@ -533,3 +533,10 @@ Laufend aktuell in der Konsole unter **Berichte → Funktionsstand**. Jede Funkt
 - Tests: `tests/integration/autopilot-247.test.ts` (9 Szenarien, bestanden).
 - **KI-Produktion über das Claude-Abo (Nachtrag):** offizielle Claude-Code-Action mit Abo-Token (`.github/workflows/ai-job.yml`, `scripts/ai-agent.ts`), erstes KI-Produkt `ai-texte` mit 8 Abnahmeprüfungen, Tageslimit 3 auf Staging. Echter Claude-Lauf UNVERIFIED, bis der Eigentümer `CLAUDE_CODE_OAUTH_TOKEN` hinterlegt. Tests: `tests/products/ai-texte/ai-texte.test.ts` (6).
 - **Zweiter Faktor per Passkey (13.11.2026):** Admin-Login in zwei Stufen (Passwort → Passkey per Windows Hello/Handy oder Wiederherstellungscode), ohne Authenticator-App. WebAuthn serverseitig geprüft (Herkunft, Dienst, Benutzerprüfung, Signatur ES256/RS256, Zähler), 8 Wiederherstellungscodes als Hash. Einschalten: Admin → Einstellungen → Sicherheit. Test `tests/security/passkey.test.ts` (6).
+
+## INFINITY EARN 17.0 – Fable-5.2-Audit (16.11.2026)
+
+- Teilprüfung mit Reparaturen; Ergebnisse in `FABLE_52_*.md` (Gesamtaudit, Matrix, Architektur, Sicherheit, Autopilot, Produktfabrik, Oberfläche, Ende-zu-Ende, Reparaturprotokoll, Produktionsreife).
+- Behoben: Flutschutz, Herkunftsprüfung für POSTs, falsche Lieferzeit-Zusage (gemessen 3,7–7,3 h) samt Sofort-Auslöser, noindex im Testbetrieb, zweiter Probebau auf Cloudflare.
+- Neue Prüfwerkzeuge: No-Prototype-Crawler, Mandantentrennung, Funktionsmatrix (`scripts/fable-feature-matrix.ts`), Lastmessung (`scripts/perf-check.ts`).
+- Keine globale Produktionsreife: 26 VERIFIED, 86 IMPLEMENTED, 42 SPECIFIED, 3 BLOCKED; 0 von 12 Live-Freigaben.

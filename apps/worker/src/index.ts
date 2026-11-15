@@ -9,6 +9,7 @@ import { ConfigError, loadConfig } from '../../../services/core-api/src/config.t
 import { buildContext, type AppContext } from '../../../services/core-api/src/context.ts';
 import { createHandler, isUploadRequest, MAX_BODY, MAX_UPLOAD_BODY, SECURITY_HEADERS, type HttpRequest, type Res } from '../../../services/core-api/src/http-core.ts';
 import { runFeeSync } from '../../../services/finance/src/fee-sync.ts';
+import { dispatchPending } from '../../../services/product-factory/src/dispatch.ts';
 import { providerFor } from '../../../services/finance/src/providers/index.ts';
 
 /**
@@ -125,6 +126,9 @@ export class InfinityCore {
       const ctx = this.#init(null);
       const t = autopilotTick(ctx, TICK_MS);
       const fees = await runFeeSync(ctx, providerFor(ctx));
+      // Wartende Bau-/KI-Aufträge sofort anstoßen, falls der Eigentümer den Sofort-Auslöser eingerichtet hat.
+      const dispatched = await dispatchPending(ctx, (url, init) => fetch(url, init));
+      if (dispatched.some((d) => d.outcome === 'DISPATCHED' || d.outcome === 'FAILED')) log('info', 'build_dispatch', { results: dispatched.map((d) => `${d.platform}:${d.outcome}`) });
       const ted = ctx.db.get<{ status: string }>(`SELECT status FROM sources WHERE source_id = 'src_ted_eu'`);
       if (ted?.status === 'APPROVED' && cronTick(ctx, 'acquire:ted', 86_400_000).created) {
         const r = await acquireFromTed(ctx, { mode: 'PERSIST', actor: 'system' });

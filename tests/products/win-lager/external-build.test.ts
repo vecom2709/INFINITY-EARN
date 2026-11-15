@@ -168,6 +168,29 @@ test('Probebau mit Musterfirma: über den Agenten oder den Admin anstoßbar, Erg
   assert.equal(z.headers.get('content-type'), 'application/zip');
 });
 
+test('Zweiter Probebau mit dem Cloudflare-Speicher (überschreibt nicht): gelingt, alte Probedatei wird entfernt', async () => {
+  const { DoBlobStore } = await import('../../../packages/storage/src/do-db.ts');
+  const { ctx: c } = makeCtx({ env: { BUILD_AGENT_TOKEN: TOKEN } });
+  (c as { blobs: unknown }).blobs = new DoBlobStore(c.db);
+  const s = await serve(c);
+  try {
+    const paths: string[] = [];
+    for (let i = 0; i < 2; i++) {
+      const res = await fetch(`${s.base}/agent/win-builds/abholen?probe=1`, { method: 'POST', headers: { authorization: `Bearer ${TOKEN}` } });
+      const job = (await res.json()) as { build_id: string; spec: WinSpec };
+      const up = await fetch(`${s.base}/agent/win-builds/${job.build_id}/ergebnis`, { method: 'POST', headers: { authorization: `Bearer ${TOKEN}`, 'content-type': 'application/zip' }, body: fakePackage(job.spec) });
+      assert.equal(up.status, 200, `Probe ${i + 1}: ${await up.clone().text()}`);
+      assert.equal(((await up.json()) as { passed: boolean }).passed, true);
+      paths.push(latestProbe(c)?.result_path ?? '');
+    }
+    assert.notEqual(paths[0], paths[1]);
+    assert.equal(c.blobs.get(paths[0] ?? ''), null, 'alte Probedatei entfernt');
+    assert.ok(c.blobs.get(paths[1] ?? ''), 'neue Probedatei vorhanden');
+  } finally {
+    s.server.close();
+  }
+});
+
 test('Ohne eingerichteten Schlüssel ist die Bau-Schnittstelle abgeschaltet', async () => {
   const other = makeCtx().ctx;
   const s = await serve(other);

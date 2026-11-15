@@ -108,7 +108,7 @@ export const winLager: ProductCapability = {
   output_schema: { media_type: 'application/zip', extension: 'zip' },
   licensing_requirements: 'Eigenentwicklung, gebaut mit dem in Windows enthaltenen .NET-Framework-Compiler; amtliches FatturaPA-Schema unverändert eingebettet.',
   required_tools: ['windows-build-agent'],
-  estimated_duration_minutes: 30,
+  estimated_duration_minutes: 480, // GitHub-Zeitplan gemessen bis ~7 h; mit Sofort-Auslöser Minuten
   max_complexity: 1,
   qa_suite: ['zip_structure', 'build_manifest', 'unit_tests', 'installer', 'branding', 'manual_pdf', 'readme', 'checksum'],
   supported_languages: ['de', 'it', 'en'],

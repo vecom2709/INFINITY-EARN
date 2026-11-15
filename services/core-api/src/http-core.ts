@@ -792,7 +792,7 @@ export function createHandler(ctx: AppContext): (r: HttpRequest) => Promise<Res>
   }));
   route('POST', '/admin/produkte/ai-texte/probe', ownerGuard((req) => {
     const r = requestProbe(ctx, 'ai-texte');
-    return back(req, r.created ? 'KI-Probe angestoßen. Der GitHub-Lauf holt sie beim nächsten Durchlauf ab (bis ca. 30 Minuten), sofern dein Abo-Token hinterlegt ist.' : 'Eine KI-Probe wartet bereits.');
+    return back(req, r.created ? 'KI-Probe angestoßen. Der GitHub-Lauf holt sie beim nächsten Durchlauf ab (GitHub-Zeitplan: gemessen alle 4–7 Stunden; über GitHub → Actions → Run workflow sofort), sofern dein Abo-Token hinterlegt ist.' : 'Eine KI-Probe wartet bereits.');
   }, { csrf: true }));
   route('GET', '/admin/muster/ai-texte/probe.zip', ownerGuard(() => {
     const p = latestProbe(ctx, 'ai-texte');
@@ -831,7 +831,7 @@ export function createHandler(ctx: AppContext): (r: HttpRequest) => Promise<Res>
   route('GET', '/admin/autopilot.json', ownerGuard(() => json(autopilotStatus(ctx))));
   route('POST', '/admin/produkte/win-lager/probebau', ownerGuard((req) => {
     const r = requestProbe(ctx);
-    return back(req, r.created ? 'Probebau angestoßen. Der Windows-Server holt ihn beim nächsten Durchlauf ab (bis ca. 30 Minuten).' : 'Ein Probebau wartet bereits auf den Windows-Server.');
+    return back(req, r.created ? 'Probebau angestoßen. Der Windows-Server holt ihn beim nächsten Durchlauf ab (GitHub-Zeitplan: gemessen alle 4–7 Stunden; über GitHub → Actions → Run workflow sofort).' : 'Ein Probebau wartet bereits auf den Windows-Server.');
   }, { csrf: true }));
   route('GET', '/admin/muster/win-lager/probebau.zip', ownerGuard(() => {
     const p = latestProbe(ctx);
@@ -1227,6 +1227,7 @@ export function createHandler(ctx: AppContext): (r: HttpRequest) => Promise<Res>
       const prev = res.headers?.['set-cookie'];
       res = { ...res, headers: { ...(res.headers ?? {}), 'set-cookie': prev === undefined ? c : [...(Array.isArray(prev) ? prev : [prev]), c] } };
     }
-    return { ...res, headers: { ...SECURITY_HEADERS, ...(res.headers ?? {}) } };
+    // Testbetrieb: Suchmaschinen sollen die Seite nicht aufnehmen (keine Verkäufe, Anbieterangaben folgen erst mit den Live-Freigaben).
+    return { ...res, headers: { ...SECURITY_HEADERS, ...(ctx.config.testMode ? { 'x-robots-tag': 'noindex, nofollow' } : {}), ...(res.headers ?? {}) } };
   };
 }

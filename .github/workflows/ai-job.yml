@@ -1,5 +1,5 @@
 # KI-Aufträge über das Claude-Abo des Eigentümers (16.0) – offizielle Claude-Code-Action.
-# Ein kurzer Lauf fragt alle 15 Minuten nach offenen KI-Aufträgen; nur dann arbeitet Claude (ein Auftrag je Lauf).
+# Ein kurzer Lauf fragt laut Zeitplan alle 15 Minuten (GitHub startet ihn gemessen nur alle 4–7 Stunden; der Worker kann per workflow_dispatch sofort anstoßen) nach offenen KI-Aufträgen; nur dann arbeitet Claude (ein Auftrag je Lauf).
 # Sicherheit:
 #   - Claude bekommt nur work/AUFGABE.md und darf nur Dateien lesen/schreiben (keine Shell, kein Internet).
 #   - Der Agent-Schlüssel steht nur in den Schritten „abholen“ und „hochladen“, nie im Claude-Schritt.

@@ -1,5 +1,5 @@
 # Windows-Bau je Auftrag (Funktion 157/158).
-# Ein kurzer Linux-Lauf fragt alle 15 Minuten beim Worker nach offenen Bauaufträgen; nur wenn welche warten,
+# Ein kurzer Linux-Lauf fragt laut Zeitplan alle 15 Minuten (GitHub startet ihn gemessen nur alle 4–7 Stunden; der Worker kann per workflow_dispatch sofort anstoßen) beim Worker nach offenen Bauaufträgen; nur wenn welche warten,
 # startet der Windows-Server und baut sie (scripts/win-build-agent.ts).
 # Datenschutz: Dieses Repository ist öffentlich. Kundenangaben gelangen nie in Eingaben, Protokolle oder Artefakte
 # von GitHub – der Agent holt sie verschlüsselt beim Worker ab und lädt das Ergebnis direkt dorthin zurück.

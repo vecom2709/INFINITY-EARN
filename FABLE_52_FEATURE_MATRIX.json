@@ -1,0 +1,4790 @@
+{
+ "meta": {
+  "generated_at": "2026-11-15T23:31:04.387Z",
+  "node": "v24.19.0",
+  "platform": "win32",
+  "features": 157,
+  "counts": {
+   "IMPLEMENTED": 86,
+   "VERIFIED": 26,
+   "SPECIFIED": 42,
+   "BLOCKED": 3
+  },
+  "evidence_files": 41,
+  "evidence_tests_passed": 305,
+  "evidence_tests_failed": 0,
+  "evidence_tests_skipped": 0,
+  "rejected": [
+   {
+    "id": "048",
+    "approved": false,
+    "note": "NEIN – darf nicht als Zusatzmodul eingeführt werden"
+   },
+   {
+    "id": "049",
+    "approved": false,
+    "note": "NEIN – darf nicht als Zusatzmodul eingeführt werden"
+   },
+   {
+    "id": "110",
+    "approved": false,
+    "note": "NEIN – darf nicht als Zusatzmodul eingeführt werden"
+   }
+  ],
+  "not_approved": [
+   {
+    "id": "141",
+    "approved": false,
+    "note": "nicht freigegeben (früherer Vorschlag)"
+   },
+   {
+    "id": "142",
+    "approved": false,
+    "note": "nicht freigegeben (früherer Vorschlag)"
+   },
+   {
+    "id": "143",
+    "approved": false,
+    "note": "nicht freigegeben (früherer Vorschlag)"
+   },
+   {
+    "id": "144",
+    "approved": false,
+    "note": "nicht freigegeben (früherer Vorschlag)"
+   },
+   {
+    "id": "145",
+    "approved": false,
+    "note": "nicht freigegeben (früherer Vorschlag)"
+   }
+  ],
+  "production_ready_rule": "Nicht vergeben: 0 von 12 Live-Freigaben (LA-01..LA-12) erteilt."
+ },
+ "features": [
+  {
+   "id": 1,
+   "name": "Tagessteuerung des Unternehmens",
+   "name_en": "AI CEO – Autonomous Business Director",
+   "milestone": "M4",
+   "expected": "Autopilot-Takt unter deterministischer Policy, Notstopps und täglicher Eigentümerbericht aus echten Ereignissen (Konsole und /api/bericht/tag).",
+   "implementation_files": [
+    "apps/console/src/index.ts",
+    "apps/console/src/model.ts",
+    "packages/policies/src/policy.ts",
+    "packages/shared/src/crypto.ts",
+    "packages/storage/src/db.ts",
+    "packages/storage/src/migrate.ts",
+    "services/acquisition/src/leads.ts",
+    "services/ai-orchestrator/src/queue.ts",
+    "services/ai-orchestrator/src/quota.ts",
+    "services/ai-orchestrator/src/untrusted.ts",
+    "services/core-api/src/aftercare.ts",
+    "services/core-api/src/autopilot.ts",
+    "services/core-api/src/daily-report.ts",
+    "services/core-api/src/offers.ts",
+    "services/core-api/src/policy-store.ts",
+    "services/core-api/src/workflow.ts",
+    "services/finance/src/insights.ts",
+    "services/product-factory/src/production.ts"
+   ],
+   "evidence": [
+    "tests/integration/governance.test.ts",
+    "tests/integration/ops.test.ts",
+    "tests/integration/completion.test.ts"
+   ],
+   "tests": {
+    "files": 3,
+    "passed": 18,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/governance.test.ts tests/integration/ops.test.ts tests/integration/completion.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "KI-gestützte Tagesplanung und Priorisierung (freigegebener KI-Zugang nötig).",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 2,
+   "name": "Marktbeobachtung",
+   "name_en": "Global Market Intelligence",
+   "milestone": "M4",
+   "expected": "Öffentliche EU-Ausschreibungen (TED) als freigegebene Quelle mit Lizenzprüfung.",
+   "implementation_files": [
+    "apps/dashboard/src/render.ts",
+    "packages/contracts/src/schemas.ts",
+    "services/acquisition/src/connectors/ted.ts",
+    "services/acquisition/src/consent.ts",
+    "services/acquisition/src/leads.ts",
+    "services/acquisition/src/ranking.ts",
+    "services/acquisition/src/scoring.ts",
+    "services/acquisition/src/sources.ts",
+    "services/core-api/src/offers.ts",
+    "services/core-api/src/policy-store.ts",
+    "services/core-api/src/workflow.ts"
+   ],
+   "evidence": [
+    "tests/integration/acquisition.test.ts",
+    "tests/integration/m1-acquisition.test.ts"
+   ],
+   "tests": {
+    "files": 2,
+    "passed": 23,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/acquisition.test.ts tests/integration/m1-acquisition.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Weitere legale Marktquellen.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 3,
+   "name": "Bewertung von Geschäftschancen",
+   "name_en": "Opportunity Scoring",
+   "milestone": "M1",
+   "expected": "Bewertung nach Passung, Nachweis und Risiko; Pflicht-Produktbezug; Rangliste.",
+   "implementation_files": [
+    "apps/dashboard/src/render.ts",
+    "packages/contracts/src/money.ts",
+    "packages/contracts/src/schemas.ts",
+    "services/acquisition/src/connectors/ted.ts",
+    "services/acquisition/src/consent.ts",
+    "services/acquisition/src/leads.ts",
+    "services/acquisition/src/ranking.ts",
+    "services/acquisition/src/scoring.ts",
+    "services/acquisition/src/sources.ts",
+    "services/core-api/src/offers.ts",
+    "services/core-api/src/policy-store.ts",
+    "services/core-api/src/workflow.ts"
+   ],
+   "evidence": [
+    "tests/integration/m1-acquisition.test.ts",
+    "tests/integration/opportunity.test.ts"
+   ],
+   "tests": {
+    "files": 2,
+    "passed": 24,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/m1-acquisition.test.ts tests/integration/opportunity.test.ts",
+   "previous_status": "TESTED (full)",
+   "problems": [],
+   "remaining": null,
+   "status": "VERIFIED"
+  },
+  {
+   "id": 4,
+   "name": "Kundengewinnung",
+   "name_en": "Autonomous Customer Acquisition",
+   "milestone": "M4",
+   "expected": "Inbound-Anfragen mit Einwilligung, Ausschreibungs-Leads, Angebotsentwürfe nur zur manuellen Einreichung. Automatischer Postausgang: Auftragsnachrichten (Angebot, Zahlung, Lieferung) und Folgeangebote nur mit Einwilligung, Abmeldelink, Sperrliste, Mengenlimit.",
+   "implementation_files": [
+    "apps/console/src/model.ts",
+    "apps/console/src/pages/customers.ts",
+    "apps/dashboard/src/render.ts",
+    "packages/contracts/src/schemas.ts",
+    "services/acquisition/src/connectors/ted.ts",
+    "services/acquisition/src/consent.ts",
+    "services/acquisition/src/leads.ts",
+    "services/acquisition/src/ranking.ts",
+    "services/acquisition/src/scoring.ts",
+    "services/acquisition/src/sources.ts",
+    "services/core-api/src/aftercare.ts",
+    "services/core-api/src/autopilot.ts",
+    "services/core-api/src/offers.ts",
+    "services/core-api/src/outbox.ts",
+    "services/core-api/src/policy-store.ts",
+    "services/core-api/src/workflow.ts"
+   ],
+   "evidence": [
+    "tests/integration/acquisition.test.ts",
+    "tests/integration/m1-acquisition.test.ts",
+    "tests/integration/outbox.test.ts"
+   ],
+   "tests": {
+    "files": 3,
+    "passed": 28,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/acquisition.test.ts tests/integration/m1-acquisition.test.ts tests/integration/outbox.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Echter Versand erst mit E-Mail-Dienst des Eigentümers und Anbieterangaben (LA-02); Kaltakquise bleibt gesperrt.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 5,
+   "name": "Angebot und Verhandlung",
+   "name_en": "AI Sales & Negotiation",
+   "milestone": "M4",
+   "expected": "Automatische Angebotskalkulation mit Mindestmarge und Preisgrenzen; Produktberater versteht Wünsche in eigenen Worten (DE/IT/EN), fragt Fehlendes nach und lehnt Nicht-Lieferbares ehrlich ab.",
+   "implementation_files": [
+    "packages/contracts/src/money.ts",
+    "packages/contracts/src/schemas.ts",
+    "packages/contracts/src/states.ts",
+    "packages/events/src/logger.ts",
+    "packages/events/src/redact.ts",
+    "services/acquisition/src/leads.ts",
+    "services/core-api/src/advisor.ts",
+    "services/core-api/src/config.ts",
+    "services/core-api/src/http-core.ts",
+    "services/core-api/src/workflow.ts",
+    "services/finance/src/tax.ts",
+    "services/finance/src/webhook.ts",
+    "services/product-factory/src/capabilities/b2b-calc-csv.ts",
+    "services/product-factory/src/csv.ts"
+   ],
+   "evidence": [
+    "tests/integration/opportunity.test.ts",
+    "tests/unit/core.test.ts",
+    "tests/integration/advisor.test.ts"
+   ],
+   "tests": {
+    "files": 3,
+    "passed": 27,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/opportunity.test.ts tests/unit/core.test.ts tests/integration/advisor.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Verhandlung/Gegenangebote.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 6,
+   "name": "Produktherstellung",
+   "name_en": "Universal Product Factory",
+   "milestone": "M2",
+   "expected": "Versionierte Produktionsadapter mit eigener QA: Kalkulation als CSV (freigegeben), als PDF und als Paket (technisch fertig, Verkauf nach Policy-Freigabe).",
+   "implementation_files": [
+    "apps/customer-portal/src/pages.ts",
+    "packages/shared/src/crypto.ts",
+    "services/acquisition/src/leads.ts",
+    "services/ai-orchestrator/src/queue.ts",
+    "services/ai-orchestrator/src/untrusted.ts",
+    "services/core-api/src/customers.ts",
+    "services/core-api/src/orders.ts",
+    "services/core-api/src/workflow.ts",
+    "services/product-factory/src/artifacts.ts",
+    "services/product-factory/src/capabilities/b2b-calc-pdf.ts",
+    "services/product-factory/src/delivery.ts",
+    "services/product-factory/src/production.ts",
+    "services/product-factory/src/registry.ts"
+   ],
+   "evidence": [
+    "tests/integration/production.test.ts",
+    "tests/integration/m2-product-pdf.test.ts"
+   ],
+   "tests": {
+    "files": 2,
+    "passed": 23,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/production.test.ts tests/integration/m2-product-pdf.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Weitere Produktklassen erst nach Herstellbarkeitsnachweis.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 7,
+   "name": "Software, Web und Schnittstellen",
+   "name_en": "Software, Web & API Builder",
+   "milestone": "M5",
+   "expected": null,
+   "implementation_files": [],
+   "evidence": [],
+   "tests": {
+    "files": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": null,
+   "previous_status": "SPECIFIED",
+   "problems": [],
+   "remaining": "Software-/Web-/API-Produkte.",
+   "status": "SPECIFIED"
+  },
+  {
+   "id": 8,
+   "name": "Medienproduktion (Video, 3D, Audio)",
+   "name_en": "Creative & Media Factory",
+   "milestone": "M5",
+   "expected": null,
+   "implementation_files": [],
+   "evidence": [],
+   "tests": {
+    "files": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": null,
+   "previous_status": "BLOCKED",
+   "problems": [],
+   "remaining": "Video/3D/Audio: keine kostenlose, dauerhaft verfügbare Rechenleistung nachgewiesen; Lizenzfragen.",
+   "status": "BLOCKED"
+  },
+  {
+   "id": 9,
+   "name": "Qualitätsprüfung",
+   "name_en": "AI Quality Director",
+   "milestone": "M2",
+   "expected": "Automatische Qualitätsprüfung (Kodierung, Format, Summen, Formel-Injektion, Gestaltung, Prüfsumme) vor jeder Lieferung; Premium-Produktstandard: Standard-Akte je Produkt (Zweck, Referenzen, Gestaltung, Zusagen mit Prüfung, Anleitung), Abnahme-Gate je Lieferung, „nicht lieferfähig“ mit Erstattungsvorschlag an den Eigentümer.",
+   "implementation_files": [
+    "apps/console/src/pages/products.ts",
+    "apps/customer-portal/src/pages.ts",
+    "packages/shared/src/crypto.ts",
+    "services/acquisition/src/leads.ts",
+    "services/ai-orchestrator/src/queue.ts",
+    "services/ai-orchestrator/src/untrusted.ts",
+    "services/core-api/src/customers.ts",
+    "services/core-api/src/orders.ts",
+    "services/core-api/src/releases.ts",
+    "services/core-api/src/workflow.ts",
+    "services/product-factory/src/artifacts.ts",
+    "services/product-factory/src/capabilities/b2b-calc-pdf.ts",
+    "services/product-factory/src/delivery.ts",
+    "services/product-factory/src/production.ts",
+    "services/product-factory/src/quality-standard.ts",
+    "services/product-factory/src/registry.ts"
+   ],
+   "evidence": [
+    "tests/integration/production.test.ts",
+    "tests/integration/quality-standard.test.ts"
+   ],
+   "tests": {
+    "files": 2,
+    "passed": 24,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/production.test.ts tests/integration/quality-standard.test.ts",
+   "previous_status": "TESTED (full)",
+   "problems": [],
+   "remaining": null,
+   "status": "VERIFIED"
+  },
+  {
+   "id": 10,
+   "name": "Auftragsführung",
+   "name_en": "Autonomous Order Management",
+   "milestone": "M1",
+   "expected": "Auftragsführung mit Zustandsmaschine von Anfrage bis Abschluss, Idempotenz.",
+   "implementation_files": [
+    "packages/contracts/src/money.ts",
+    "packages/contracts/src/schemas.ts",
+    "packages/shared/src/crypto.ts",
+    "services/acquisition/src/leads.ts",
+    "services/core-api/src/context.ts",
+    "services/core-api/src/workflow.ts"
+   ],
+   "evidence": [
+    "tests/e2e/pilot.test.ts",
+    "tests/integration/opportunity.test.ts"
+   ],
+   "tests": {
+    "files": 2,
+    "passed": 12,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/e2e/pilot.test.ts tests/integration/opportunity.test.ts",
+   "previous_status": "TESTED (full)",
+   "problems": [],
+   "remaining": null,
+   "status": "VERIFIED"
+  },
+  {
+   "id": 11,
+   "name": "Abonnements",
+   "name_en": "Subscription Management",
+   "milestone": "M5",
+   "expected": null,
+   "implementation_files": [],
+   "evidence": [],
+   "tests": {
+    "files": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": null,
+   "previous_status": "SPECIFIED",
+   "problems": [],
+   "remaining": "Abonnements.",
+   "status": "SPECIFIED"
+  },
+  {
+   "id": 12,
+   "name": "Kundenservice und Rückgaben",
+   "name_en": "AI Customer Support & Returns",
+   "milestone": "M1",
+   "expected": "Kundenportal: Support, Reklamation, Widerruf; Erstattung nur nach Eigentümerfreigabe.",
+   "implementation_files": [
+    "apps/customer-portal/src/pages.ts",
+    "scripts/lib/stripe-check.ts",
+    "services/core-api/src/autopilot.ts",
+    "services/core-api/src/config.ts",
+    "services/core-api/src/http-core.ts",
+    "services/core-api/src/orders.ts",
+    "services/core-api/src/workflow.ts",
+    "services/finance/src/checkout.ts",
+    "services/finance/src/fee-sync.ts",
+    "services/finance/src/payments.ts",
+    "services/finance/src/providers/index.ts",
+    "services/finance/src/providers/stripe.ts",
+    "services/finance/src/providers/types.ts",
+    "services/finance/src/reconciliation.ts",
+    "services/finance/src/refunds.ts",
+    "services/finance/src/webhook.ts",
+    "services/product-factory/src/delivery.ts",
+    "services/product-factory/src/production.ts"
+   ],
+   "evidence": [
+    "tests/integration/m2-payments.test.ts",
+    "tests/unit/inquiry-form.test.ts"
+   ],
+   "tests": {
+    "files": 2,
+    "passed": 13,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/m2-payments.test.ts tests/unit/inquiry-form.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Automatische Antwortvorschläge.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 13,
+   "name": "Marketing-Auswertung",
+   "name_en": "Marketing Intelligence",
+   "milestone": "M4",
+   "expected": "Wirkung der erlaubten Kanäle auf echte bezahlte Verkäufe (Herkunft, Umwandlung, Messunsicherheit).",
+   "implementation_files": [
+    "apps/console/src/index.ts",
+    "services/core-api/src/autopilot.ts",
+    "services/core-api/src/orders.ts",
+    "services/finance/src/bank-statement.ts",
+    "services/finance/src/insights.ts",
+    "services/finance/src/mock-provider.ts",
+    "services/finance/src/refunds.ts"
+   ],
+   "evidence": [
+    "tests/integration/insights.test.ts"
+   ],
+   "tests": {
+    "files": 1,
+    "passed": 6,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/insights.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Auswertung von SEO- und Marketingmaßnahmen, sobald solche freigegeben sind.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 14,
+   "name": "Umsatzoptimierung",
+   "name_en": "Revenue Optimizer",
+   "milestone": "M4",
+   "expected": "Annahme- und Kaufquote je Preisspanne aus echten Angeboten; Hinweis erst ab 30 Angeboten je Spanne, keine automatische Preisänderung.",
+   "implementation_files": [
+    "apps/console/src/index.ts",
+    "scripts/lib/tech-debt.ts",
+    "services/core-api/src/aftercare.ts",
+    "services/finance/src/insights.ts",
+    "services/product-factory/src/registry.ts"
+   ],
+   "evidence": [
+    "tests/integration/pricing-lifecycle.test.ts"
+   ],
+   "tests": {
+    "files": 1,
+    "passed": 3,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/pricing-lifecycle.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Begrenzte, dokumentierte Preisexperimente (nach Freigabe).",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 15,
+   "name": "Finanzübersicht und Abgleich",
+   "name_en": "Financial Controller",
+   "milestone": "M1",
+   "expected": "Hauptbuch, Kennzahlen LIVE/TEST getrennt, Abgleich mit Anbieter und Kontoauszug, Monatsexport.",
+   "implementation_files": [
+    "apps/console/src/index.ts",
+    "apps/console/src/model.ts",
+    "packages/contracts/src/schemas.ts",
+    "packages/shared/src/crypto.ts",
+    "scripts/lib/stripe-check.ts",
+    "services/core-api/src/autopilot.ts",
+    "services/core-api/src/config.ts",
+    "services/core-api/src/context.ts",
+    "services/core-api/src/orders.ts",
+    "services/core-api/src/workflow.ts",
+    "services/finance/src/bank-statement.ts",
+    "services/finance/src/checkout.ts",
+    "services/finance/src/fee-sync.ts",
+    "services/finance/src/invoice.ts",
+    "services/finance/src/kpis.ts",
+    "services/finance/src/ledger.ts",
+    "services/finance/src/mock-provider.ts",
+    "services/finance/src/monthly-export-fs.ts",
+    "services/finance/src/monthly-export.ts",
+    "services/finance/src/payments.ts",
+    "services/finance/src/providers/index.ts",
+    "services/finance/src/providers/stripe.ts",
+    "services/finance/src/providers/types.ts",
+    "services/finance/src/reconciliation.ts",
+    "services/finance/src/refunds.ts",
+    "services/finance/src/webhook.ts",
+    "services/product-factory/src/delivery.ts",
+    "services/product-factory/src/production.ts"
+   ],
+   "evidence": [
+    "tests/integration/finance.test.ts",
+    "tests/integration/m2-payments.test.ts",
+    "tests/integration/bank-statement.test.ts"
+   ],
+   "tests": {
+    "files": 3,
+    "passed": 32,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/finance.test.ts tests/integration/m2-payments.test.ts tests/integration/bank-statement.test.ts",
+   "previous_status": "TESTED (full)",
+   "problems": [],
+   "remaining": null,
+   "status": "VERIFIED"
+  },
+  {
+   "id": 16,
+   "name": "Belege und Steuer",
+   "name_en": "Tax & Invoice Engine",
+   "milestone": "M1",
+   "expected": "Testbelege mit fortlaufender Nummer, unveränderlich, als PDF im Portal; FatturaPA-XML (FPR12) für Sitz Italien mit strenger Prüfung, ohne Platzhalter.",
+   "implementation_files": [
+    "apps/customer-portal/src/pages.ts",
+    "packages/contracts/src/schemas.ts",
+    "packages/shared/src/crypto.ts",
+    "services/core-api/src/autopilot.ts",
+    "services/core-api/src/customers.ts",
+    "services/core-api/src/orders.ts",
+    "services/core-api/src/readiness.ts",
+    "services/core-api/src/workflow.ts",
+    "services/finance/src/fatturapa.ts",
+    "services/finance/src/invoice-pdf.ts",
+    "services/finance/src/invoice.ts",
+    "services/finance/src/kpis.ts",
+    "services/finance/src/ledger.ts",
+    "services/finance/src/mock-provider.ts",
+    "services/finance/src/monthly-export-fs.ts",
+    "services/finance/src/monthly-export.ts",
+    "services/finance/src/reconciliation.ts"
+   ],
+   "evidence": [
+    "tests/integration/finance.test.ts",
+    "tests/integration/portal-documents.test.ts",
+    "tests/integration/italy.test.ts"
+   ],
+   "tests": {
+    "files": 3,
+    "passed": 24,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/finance.test.ts tests/integration/portal-documents.test.ts tests/integration/italy.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Freigegebene Steuerregeln (LA-06), Registrierungsdaten (LA-02) und Übermittlungsweg ans SdI.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 17,
+   "name": "Rechtliche Absicherung",
+   "name_en": "Legal Compliance Guard",
+   "milestone": "M3",
+   "expected": "Live-Sperre, EU-Marktregel, Verbraucherverzicht mit Nachweis, Freigabeliste LA-01…12.",
+   "implementation_files": [
+    "apps/dashboard/src/render.ts",
+    "packages/policies/src/policy.ts",
+    "services/acquisition/src/leads.ts",
+    "services/ai-orchestrator/src/queue.ts",
+    "services/ai-orchestrator/src/untrusted.ts",
+    "services/core-api/src/policy-store.ts",
+    "services/core-api/src/readiness.ts",
+    "services/core-api/src/workflow.ts",
+    "services/product-factory/src/production.ts"
+   ],
+   "evidence": [
+    "tests/integration/m3-readiness.test.ts",
+    "tests/integration/governance.test.ts"
+   ],
+   "tests": {
+    "files": 2,
+    "passed": 13,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/m3-readiness.test.ts tests/integration/governance.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Rechtsprüfung der Texte (LA-07…09).",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 18,
+   "name": "Erweiterung in neue Bereiche",
+   "name_en": "Business Expansion AI",
+   "milestone": "M6",
+   "expected": null,
+   "implementation_files": [],
+   "evidence": [],
+   "tests": {
+    "files": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": null,
+   "previous_status": "SPECIFIED",
+   "problems": [],
+   "remaining": "Erweiterung in neue Geschäftsbereiche.",
+   "status": "SPECIFIED"
+  },
+  {
+   "id": 19,
+   "name": "Betriebssicherheit",
+   "name_en": "Operational Reliability Director",
+   "milestone": "M1",
+   "expected": "Warteschlange mit Backoff und Dead-Letter, Cron-Idempotenz, tägliche verschlüsselte Sicherung.",
+   "implementation_files": [
+    "packages/shared/src/crypto.ts",
+    "packages/storage/src/db.ts",
+    "packages/storage/src/migrate.ts",
+    "scripts/restore-backup.ts",
+    "services/ai-orchestrator/src/queue.ts",
+    "services/ai-orchestrator/src/quota.ts",
+    "services/core-api/src/backup-offsite.ts",
+    "services/core-api/src/backup.ts",
+    "services/core-api/src/http-core.ts"
+   ],
+   "evidence": [
+    "tests/integration/ops.test.ts",
+    "tests/integration/backup-offsite.test.ts"
+   ],
+   "tests": {
+    "files": 2,
+    "passed": 11,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/ops.test.ts tests/integration/backup-offsite.test.ts",
+   "previous_status": "TESTED (full)",
+   "problems": [],
+   "remaining": null,
+   "status": "VERIFIED"
+  },
+  {
+   "id": 20,
+   "name": "Kontrollierte Verbesserung",
+   "name_en": "Controlled Self-Improvement",
+   "milestone": "M6",
+   "expected": null,
+   "implementation_files": [],
+   "evidence": [],
+   "tests": {
+    "files": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": null,
+   "previous_status": "SPECIFIED",
+   "problems": [],
+   "remaining": "Kontrollierte Selbstverbesserung.",
+   "status": "SPECIFIED"
+  },
+  {
+   "id": 21,
+   "name": "Nachfragesuche",
+   "name_en": "Autonomous Demand Hunter",
+   "milestone": "M4",
+   "expected": "Nachfragesuche in öffentlichen Ausschreibungen.",
+   "implementation_files": [
+    "apps/dashboard/src/render.ts",
+    "services/acquisition/src/connectors/ted.ts",
+    "services/acquisition/src/consent.ts",
+    "services/acquisition/src/ranking.ts",
+    "services/acquisition/src/scoring.ts",
+    "services/acquisition/src/sources.ts",
+    "services/core-api/src/offers.ts",
+    "services/core-api/src/policy-store.ts",
+    "services/core-api/src/workflow.ts"
+   ],
+   "evidence": [
+    "tests/integration/m1-acquisition.test.ts"
+   ],
+   "tests": {
+    "files": 1,
+    "passed": 13,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/m1-acquisition.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Weitere Nachfragequellen.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 22,
+   "name": "Produktion erst nach Bezahlung",
+   "name_en": "Customer-First Production",
+   "milestone": "M1",
+   "expected": "Produktion startet ausschließlich nach bestätigter Zahlung.",
+   "implementation_files": [
+    "packages/policies/src/policy.ts",
+    "packages/shared/src/crypto.ts",
+    "services/acquisition/src/leads.ts",
+    "services/ai-orchestrator/src/queue.ts",
+    "services/ai-orchestrator/src/untrusted.ts",
+    "services/core-api/src/customers.ts",
+    "services/core-api/src/orders.ts",
+    "services/core-api/src/policy-store.ts",
+    "services/core-api/src/workflow.ts",
+    "services/product-factory/src/artifacts.ts",
+    "services/product-factory/src/delivery.ts",
+    "services/product-factory/src/production.ts"
+   ],
+   "evidence": [
+    "tests/integration/production.test.ts",
+    "tests/integration/governance.test.ts"
+   ],
+   "tests": {
+    "files": 2,
+    "passed": 25,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/production.test.ts tests/integration/governance.test.ts",
+   "previous_status": "TESTED (full)",
+   "problems": [],
+   "remaining": null,
+   "status": "VERIFIED"
+  },
+  {
+   "id": 23,
+   "name": "Prognose von Geschäftschancen",
+   "name_en": "AI Business Opportunity Predictor",
+   "milestone": "M6",
+   "expected": null,
+   "implementation_files": [],
+   "evidence": [],
+   "tests": {
+    "files": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": null,
+   "previous_status": "SPECIFIED",
+   "problems": [],
+   "remaining": "Prognose von Geschäftschancen.",
+   "status": "SPECIFIED"
+  },
+  {
+   "id": 24,
+   "name": "Partnernetzwerk",
+   "name_en": "Autonomous Acquisition Network",
+   "milestone": "M4",
+   "expected": null,
+   "implementation_files": [],
+   "evidence": [],
+   "tests": {
+    "files": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": null,
+   "previous_status": "SPECIFIED",
+   "problems": [],
+   "remaining": "Partner-/Akquisenetzwerk.",
+   "status": "SPECIFIED"
+  },
+  {
+   "id": 25,
+   "name": "Handel zwischen Systemen",
+   "name_en": "AI-to-AI Commerce",
+   "milestone": "M6",
+   "expected": null,
+   "implementation_files": [],
+   "evidence": [],
+   "tests": {
+    "files": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": null,
+   "previous_status": "SPECIFIED",
+   "problems": [],
+   "remaining": "Handel zwischen Agenten.",
+   "status": "SPECIFIED"
+  },
+  {
+   "id": 26,
+   "name": "Kleine eigenständige Geschäftsbereiche",
+   "name_en": "Self-Building Microbusinesses",
+   "milestone": "M6",
+   "expected": null,
+   "implementation_files": [],
+   "evidence": [],
+   "tests": {
+    "files": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": null,
+   "previous_status": "SPECIFIED",
+   "problems": [],
+   "remaining": "Kleine eigenständige Geschäftsbereiche.",
+   "status": "SPECIFIED"
+  },
+  {
+   "id": 27,
+   "name": "Marktplatz-Anbindung",
+   "name_en": "Intelligent Marketplace Integration",
+   "milestone": "M5",
+   "expected": null,
+   "implementation_files": [],
+   "evidence": [],
+   "tests": {
+    "files": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": null,
+   "previous_status": "SPECIFIED",
+   "problems": [],
+   "remaining": "Marktplatz-Anbindungen.",
+   "status": "SPECIFIED"
+  },
+  {
+   "id": 28,
+   "name": "Erweiterte Verhandlung",
+   "name_en": "Autonomous Negotiation Pro",
+   "milestone": "M4",
+   "expected": null,
+   "implementation_files": [],
+   "evidence": [],
+   "tests": {
+    "files": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": null,
+   "previous_status": "SPECIFIED",
+   "problems": [],
+   "remaining": "Erweiterte Verhandlung.",
+   "status": "SPECIFIED"
+  },
+  {
+   "id": 29,
+   "name": "Produktkombinationen",
+   "name_en": "Universal Product Fusion",
+   "milestone": "M6",
+   "expected": "Zwei Produktverfahren (Tabelle, PDF) als ein testbares Paket kombiniert; jede Datei mit eigener QA geprüft.",
+   "implementation_files": [
+    "apps/console/src/index.ts",
+    "apps/customer-portal/src/pages.ts",
+    "packages/shared/src/crypto.ts",
+    "packages/shared/src/zip.ts",
+    "services/acquisition/src/leads.ts",
+    "services/core-api/src/change-requests.ts",
+    "services/core-api/src/orders.ts",
+    "services/core-api/src/workflow.ts",
+    "services/finance/src/mock-provider.ts",
+    "services/product-factory/src/capabilities/b2b-calc-bundle.ts",
+    "services/product-factory/src/capabilities/b2b-calc-csv.ts",
+    "services/product-factory/src/delivery.ts"
+   ],
+   "evidence": [
+    "tests/integration/bundle-change-help.test.ts"
+   ],
+   "tests": {
+    "files": 1,
+    "passed": 6,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/bundle-change-help.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Kombinationen weiterer Verfahren, sobald belegt.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 30,
+   "name": "Verkauf in mehreren Ländern",
+   "name_en": "Global Sales & Localization",
+   "milestone": "M3",
+   "expected": "Verkauf nur an Kunden mit Sitz in der EU (technisch erzwungen); Startseite auf Deutsch, Italienisch und Englisch mit hreflang und Sitemap.",
+   "implementation_files": [
+    "apps/customer-portal/src/pages.ts",
+    "apps/dashboard/src/render.ts",
+    "services/core-api/src/readiness.ts",
+    "services/core-api/src/workflow.ts",
+    "services/product-factory/src/capabilities/b2b-calc-csv.ts"
+   ],
+   "evidence": [
+    "tests/integration/m3-readiness.test.ts",
+    "tests/integration/landing.test.ts"
+   ],
+   "tests": {
+    "files": 2,
+    "passed": 11,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/m3-readiness.test.ts tests/integration/landing.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Übersetzung von Anfrage, Angebot und Portal; Länderspezifika.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 31,
+   "name": "Wiederverwendung und Lizenzen",
+   "name_en": "Product Recycling & Licensing",
+   "milestone": "M5",
+   "expected": null,
+   "implementation_files": [],
+   "evidence": [],
+   "tests": {
+    "files": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": null,
+   "previous_status": "SPECIFIED",
+   "problems": [],
+   "remaining": "Wiederverwertung und Lizenzierung.",
+   "status": "SPECIFIED"
+  },
+  {
+   "id": 32,
+   "name": "Abo-Aufbau",
+   "name_en": "Autonomous Subscription Builder",
+   "milestone": "M5",
+   "expected": null,
+   "implementation_files": [],
+   "evidence": [],
+   "tests": {
+    "files": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": null,
+   "previous_status": "SPECIFIED",
+   "problems": [],
+   "remaining": "Abonnement-Aufbau.",
+   "status": "SPECIFIED"
+  },
+  {
+   "id": 33,
+   "name": "Verkaufsweg verbessern",
+   "name_en": "Self-Optimizing Sales Funnel",
+   "milestone": "M4",
+   "expected": "Trichter und Umwandlung je Stufe aus echten Käufen (Anfrage → Lieferung, je Preisspanne); kein Gewinner aus kleinen Stichproben.",
+   "implementation_files": [
+    "apps/console/src/index.ts",
+    "scripts/lib/tech-debt.ts",
+    "services/core-api/src/aftercare.ts",
+    "services/core-api/src/autopilot.ts",
+    "services/core-api/src/orders.ts",
+    "services/finance/src/bank-statement.ts",
+    "services/finance/src/insights.ts",
+    "services/finance/src/mock-provider.ts",
+    "services/finance/src/refunds.ts",
+    "services/product-factory/src/registry.ts"
+   ],
+   "evidence": [
+    "tests/integration/insights.test.ts",
+    "tests/integration/pricing-lifecycle.test.ts"
+   ],
+   "tests": {
+    "files": 2,
+    "passed": 9,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/insights.test.ts tests/integration/pricing-lifecycle.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Verbesserungen am Verkaufsweg als begrenzte Versuche.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 34,
+   "name": "Vertrauen und echte Bewertungen",
+   "name_en": "Customer Trust & Reputation Engine",
+   "milestone": "M4",
+   "expected": "Echte Bewertungen nur vom Kunden selbst, nur nach Lieferung, eine je Auftrag, unveränderlich; ehrliche Zusammenfassung.",
+   "implementation_files": [
+    "apps/console/src/index.ts",
+    "apps/customer-portal/src/pages.ts",
+    "packages/shared/src/crypto.ts",
+    "services/core-api/src/aftercare.ts",
+    "services/core-api/src/workflow.ts",
+    "services/finance/src/insights.ts",
+    "services/finance/src/refunds.ts",
+    "services/product-factory/src/provenance.ts"
+   ],
+   "evidence": [
+    "tests/integration/aftercare.test.ts"
+   ],
+   "tests": {
+    "files": 1,
+    "passed": 8,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/aftercare.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Veröffentlichung von Kundenstimmen (nur mit Einwilligung).",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 35,
+   "name": "Schutz vor Betrug",
+   "name_en": "Autonomous Fraud & Risk Shield",
+   "milestone": "M1",
+   "expected": "Webhook-Signatur, Replay-Schutz, gefälschte Ereignisse abgelehnt, Eingaben als nicht vertrauenswürdig behandelt.",
+   "implementation_files": [
+    "apps/dashboard/src/render.ts",
+    "packages/contracts/src/schemas.ts",
+    "packages/events/src/redact.ts",
+    "packages/shared/src/crypto.ts",
+    "packages/shared/src/html.ts",
+    "services/acquisition/src/leads.ts",
+    "services/core-api/src/context.ts",
+    "services/core-api/src/customers.ts",
+    "services/core-api/src/orders.ts",
+    "services/finance/src/invoice.ts",
+    "services/finance/src/mock-provider.ts",
+    "services/finance/src/payments.ts",
+    "services/finance/src/webhook.ts",
+    "services/product-factory/src/delivery.ts",
+    "services/product-factory/src/production.ts"
+   ],
+   "evidence": [
+    "tests/security/security.test.ts",
+    "tests/integration/payments.test.ts"
+   ],
+   "tests": {
+    "files": 2,
+    "passed": 23,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/security/security.test.ts tests/integration/payments.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Betrugsmuster-Erkennung.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 36,
+   "name": "Zahlungsschutz und Rückgewinnung",
+   "name_en": "Revenue Protection & Recovery",
+   "milestone": "M2",
+   "expected": "Erstattungen und Disputes korrekt gebucht (kumulierte Deltas).",
+   "implementation_files": [
+    "scripts/lib/stripe-check.ts",
+    "services/core-api/src/autopilot.ts",
+    "services/core-api/src/config.ts",
+    "services/core-api/src/orders.ts",
+    "services/core-api/src/workflow.ts",
+    "services/finance/src/checkout.ts",
+    "services/finance/src/fee-sync.ts",
+    "services/finance/src/payments.ts",
+    "services/finance/src/providers/index.ts",
+    "services/finance/src/providers/stripe.ts",
+    "services/finance/src/providers/types.ts",
+    "services/finance/src/reconciliation.ts",
+    "services/finance/src/refunds.ts",
+    "services/finance/src/webhook.ts",
+    "services/product-factory/src/delivery.ts",
+    "services/product-factory/src/production.ts"
+   ],
+   "evidence": [
+    "tests/integration/m2-payments.test.ts"
+   ],
+   "tests": {
+    "files": 1,
+    "passed": 10,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/m2-payments.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Zahlungsrückgewinnung.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 37,
+   "name": "Kostenfreie Ressourcen nutzen",
+   "name_en": "Zero-Cost Resource Intelligence",
+   "milestone": "M0",
+   "expected": "Kostengate 0 €: bezahlte Dienste, Upgrades, Werbung technisch gesperrt; Free-Tier-Drossel.",
+   "implementation_files": [
+    "packages/policies/src/engine.ts",
+    "packages/policies/src/policy.ts",
+    "services/acquisition/src/leads.ts",
+    "services/ai-orchestrator/src/queue.ts",
+    "services/ai-orchestrator/src/untrusted.ts",
+    "services/core-api/src/policy-store.ts",
+    "services/core-api/src/workflow.ts",
+    "services/product-factory/src/production.ts"
+   ],
+   "evidence": [
+    "tests/integration/governance.test.ts",
+    "tests/unit/policy.test.ts"
+   ],
+   "tests": {
+    "files": 2,
+    "passed": 22,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/governance.test.ts tests/unit/policy.test.ts",
+   "previous_status": "TESTED (full)",
+   "problems": [],
+   "remaining": null,
+   "status": "VERIFIED"
+  },
+  {
+   "id": 38,
+   "name": "Wiederanlauf nach Störungen",
+   "name_en": "Autonomous Business Recovery",
+   "milestone": "M1",
+   "expected": "Sicherung und Wiederherstellungstest.",
+   "implementation_files": [
+    "packages/shared/src/crypto.ts",
+    "packages/storage/src/db.ts",
+    "packages/storage/src/migrate.ts",
+    "scripts/restore-backup.ts",
+    "services/ai-orchestrator/src/queue.ts",
+    "services/ai-orchestrator/src/quota.ts",
+    "services/core-api/src/backup-offsite.ts",
+    "services/core-api/src/backup.ts",
+    "services/core-api/src/http-core.ts"
+   ],
+   "evidence": [
+    "tests/integration/backup-offsite.test.ts",
+    "tests/integration/ops.test.ts"
+   ],
+   "tests": {
+    "files": 2,
+    "passed": 11,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/backup-offsite.test.ts tests/integration/ops.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Automatischer Wiederanlauf-Plan.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 39,
+   "name": "Belegarchiv",
+   "name_en": "Financial & Tax Evidence Vault",
+   "milestone": "M1",
+   "expected": "Unveränderliches Audit-Log, Belege, Vertragsbestätigungen mit Prüfsumme, unveränderliche Bankbuchungen, Monatsexport.",
+   "implementation_files": [
+    "apps/console/src/index.ts",
+    "apps/console/src/model.ts",
+    "packages/contracts/src/schemas.ts",
+    "packages/shared/src/crypto.ts",
+    "packages/shared/src/pdf.ts",
+    "services/core-api/src/autopilot.ts",
+    "services/core-api/src/context.ts",
+    "services/core-api/src/contract-confirmation.ts",
+    "services/core-api/src/orders.ts",
+    "services/core-api/src/workflow.ts",
+    "services/finance/src/bank-statement.ts",
+    "services/finance/src/invoice.ts",
+    "services/finance/src/kpis.ts",
+    "services/finance/src/ledger.ts",
+    "services/finance/src/mock-provider.ts",
+    "services/finance/src/monthly-export-fs.ts",
+    "services/finance/src/monthly-export.ts",
+    "services/finance/src/reconciliation.ts",
+    "services/product-factory/src/production.ts"
+   ],
+   "evidence": [
+    "tests/integration/finance.test.ts",
+    "tests/integration/contract-confirmation.test.ts",
+    "tests/integration/bank-statement.test.ts"
+   ],
+   "tests": {
+    "files": 3,
+    "passed": 27,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/finance.test.ts tests/integration/contract-confirmation.test.ts tests/integration/bank-statement.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Steuerliche Aufbewahrungsregeln (LA-08).",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 40,
+   "name": "Ehrliche Gewinnübersicht",
+   "name_en": "Verified Profit Autopilot",
+   "milestone": "M1",
+   "expected": "Trennung bezahlt / Gebühren / Auszahlung / Bankeingang; Bankeingang nur mit Kontoauszug-Nachweis.",
+   "implementation_files": [
+    "apps/console/src/index.ts",
+    "apps/console/src/model.ts",
+    "packages/contracts/src/schemas.ts",
+    "packages/shared/src/crypto.ts",
+    "services/core-api/src/autopilot.ts",
+    "services/core-api/src/context.ts",
+    "services/core-api/src/orders.ts",
+    "services/finance/src/bank-statement.ts",
+    "services/finance/src/invoice.ts",
+    "services/finance/src/kpis.ts",
+    "services/finance/src/ledger.ts",
+    "services/finance/src/mock-provider.ts",
+    "services/finance/src/monthly-export-fs.ts",
+    "services/finance/src/monthly-export.ts",
+    "services/finance/src/reconciliation.ts"
+   ],
+   "evidence": [
+    "tests/integration/finance.test.ts",
+    "tests/integration/bank-statement.test.ts"
+   ],
+   "tests": {
+    "files": 2,
+    "passed": 22,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/finance.test.ts tests/integration/bank-statement.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Echte Bankabstimmung erst im Live-Pilot.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 41,
+   "name": "Käufernetzwerk",
+   "name_en": "Autonomous Buyer Network",
+   "milestone": "M4",
+   "expected": null,
+   "implementation_files": [],
+   "evidence": [],
+   "tests": {
+    "files": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": null,
+   "previous_status": "SPECIFIED",
+   "problems": [],
+   "remaining": "Käufernetzwerk.",
+   "status": "SPECIFIED"
+  },
+  {
+   "id": 42,
+   "name": "Vertragsabschluss",
+   "name_en": "AI Contract & Deal Closer",
+   "milestone": "M3",
+   "expected": "Verbindliche Annahme mit Nachweis und PDF-Vertragsbestätigung.",
+   "implementation_files": [
+    "apps/dashboard/src/render.ts",
+    "packages/shared/src/pdf.ts",
+    "services/core-api/src/contract-confirmation.ts",
+    "services/core-api/src/orders.ts",
+    "services/core-api/src/readiness.ts",
+    "services/core-api/src/workflow.ts",
+    "services/finance/src/mock-provider.ts",
+    "services/product-factory/src/production.ts"
+   ],
+   "evidence": [
+    "tests/integration/contract-confirmation.test.ts",
+    "tests/integration/m3-readiness.test.ts"
+   ],
+   "tests": {
+    "files": 2,
+    "passed": 11,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/contract-confirmation.test.ts tests/integration/m3-readiness.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Rechtsprüfung (LA-07).",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 43,
+   "name": "Produktvorschau",
+   "name_en": "Instant Product Preview Engine",
+   "milestone": "M5",
+   "expected": "Vorschau der Kalkulation im Angebot aus den eigenen Daten des Kunden (max. 8 Positionen), Datei erst nach bestätigter Zahlung.",
+   "implementation_files": [
+    "apps/console/src/index.ts",
+    "apps/customer-portal/src/pages.ts",
+    "packages/shared/src/crypto.ts",
+    "services/core-api/src/aftercare.ts",
+    "services/core-api/src/workflow.ts",
+    "services/finance/src/insights.ts",
+    "services/finance/src/refunds.ts",
+    "services/product-factory/src/provenance.ts"
+   ],
+   "evidence": [
+    "tests/integration/aftercare.test.ts"
+   ],
+   "tests": {
+    "files": 1,
+    "passed": 8,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/aftercare.test.ts",
+   "previous_status": "TESTED (full)",
+   "problems": [],
+   "remaining": null,
+   "status": "VERIFIED"
+  },
+  {
+   "id": 44,
+   "name": "Produktionsplanung",
+   "name_en": "Autonomous Production Intelligence",
+   "milestone": "M2",
+   "expected": "Komplexitäts- und Kapazitätsgrenzen, „keine Kapazität“ statt Risiko.",
+   "implementation_files": [
+    "packages/shared/src/crypto.ts",
+    "services/acquisition/src/leads.ts",
+    "services/ai-orchestrator/src/queue.ts",
+    "services/ai-orchestrator/src/untrusted.ts",
+    "services/core-api/src/customers.ts",
+    "services/core-api/src/orders.ts",
+    "services/core-api/src/workflow.ts",
+    "services/product-factory/src/artifacts.ts",
+    "services/product-factory/src/delivery.ts",
+    "services/product-factory/src/production.ts"
+   ],
+   "evidence": [
+    "tests/integration/production.test.ts"
+   ],
+   "tests": {
+    "files": 1,
+    "passed": 18,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/production.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Lernende Produktionsplanung.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 45,
+   "name": "Abgestimmte Entscheidungen",
+   "name_en": "Multi-Agent Decision Council",
+   "milestone": "M6",
+   "expected": null,
+   "implementation_files": [],
+   "evidence": [],
+   "tests": {
+    "files": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": null,
+   "previous_status": "SPECIFIED",
+   "problems": [],
+   "remaining": "Entscheidungsrat mehrerer Agenten.",
+   "status": "SPECIFIED"
+  },
+  {
+   "id": 46,
+   "name": "Schutz von Nutzungsrechten",
+   "name_en": "Universal Intellectual Property Guardian",
+   "milestone": "M2",
+   "expected": "Rechtenachweis je Artefakt (Herkunft, Generator, Lizenz).",
+   "implementation_files": [
+    "packages/shared/src/crypto.ts",
+    "services/acquisition/src/leads.ts",
+    "services/ai-orchestrator/src/queue.ts",
+    "services/ai-orchestrator/src/untrusted.ts",
+    "services/core-api/src/customers.ts",
+    "services/core-api/src/orders.ts",
+    "services/core-api/src/workflow.ts",
+    "services/product-factory/src/artifacts.ts",
+    "services/product-factory/src/delivery.ts",
+    "services/product-factory/src/production.ts"
+   ],
+   "evidence": [
+    "tests/integration/production.test.ts"
+   ],
+   "tests": {
+    "files": 1,
+    "passed": 18,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/production.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Prüfung fremder Inhalte.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 47,
+   "name": "Kundenerfolg",
+   "name_en": "Autonomous Customer Success Engine",
+   "milestone": "M4",
+   "expected": "Abnahme durch den Kunden; Mangelmeldung wird zur Reklamation mit Nachbesserung/Erstattung durch den Eigentümer.",
+   "implementation_files": [
+    "apps/console/src/index.ts",
+    "apps/customer-portal/src/pages.ts",
+    "packages/shared/src/crypto.ts",
+    "services/core-api/src/aftercare.ts",
+    "services/core-api/src/workflow.ts",
+    "services/finance/src/insights.ts",
+    "services/finance/src/refunds.ts",
+    "services/product-factory/src/provenance.ts"
+   ],
+   "evidence": [
+    "tests/integration/aftercare.test.ts"
+   ],
+   "tests": {
+    "files": 1,
+    "passed": 8,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/aftercare.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Automatische Nachbesserungsläufe.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 50,
+   "name": "Portfolio-Steuerung",
+   "name_en": "Autonomous Portfolio Director",
+   "milestone": "M6",
+   "expected": "Deckungsbeitrag je Produktart aus dem Hauptbuch (Zahlungen − Gebühren − Erstattungen) mit Aufwandsindikator.",
+   "implementation_files": [
+    "apps/console/src/index.ts",
+    "services/core-api/src/aftercare.ts",
+    "services/core-api/src/trust.ts",
+    "services/finance/src/insights.ts"
+   ],
+   "evidence": [
+    "tests/integration/portfolio-buyers.test.ts"
+   ],
+   "tests": {
+    "files": 1,
+    "passed": 4,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/portfolio-buyers.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Ressourcenbedarf je Bereich und Priorisierungsvorschläge.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 51,
+   "name": "Käuferanalyse",
+   "name_en": "Verified Buyer Intelligence",
+   "milestone": "M4",
+   "expected": "Trennt nachweisbar zahlende Käufer von Interessenten ausschließlich aus eigenen Vorgängen (Anfrage → Angebot → Annahme → Zahlung).",
+   "implementation_files": [
+    "apps/console/src/index.ts",
+    "services/core-api/src/aftercare.ts",
+    "services/core-api/src/trust.ts",
+    "services/finance/src/insights.ts"
+   ],
+   "evidence": [
+    "tests/integration/portfolio-buyers.test.ts"
+   ],
+   "tests": {
+    "files": 1,
+    "passed": 4,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/portfolio-buyers.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Zahlungssignale externer, freigegebener Quellen.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 52,
+   "name": "Kundengespräche auswerten",
+   "name_en": "Autonomous Customer Interview AI",
+   "milestone": "M4",
+   "expected": null,
+   "implementation_files": [],
+   "evidence": [],
+   "tests": {
+    "files": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": null,
+   "previous_status": "SPECIFIED",
+   "problems": [],
+   "remaining": "Kundeninterviews.",
+   "status": "SPECIFIED"
+  },
+  {
+   "id": 53,
+   "name": "Umsetzung von Geschäftsplänen",
+   "name_en": "Instant Business Execution Compiler",
+   "milestone": "M6",
+   "expected": null,
+   "implementation_files": [],
+   "evidence": [],
+   "tests": {
+    "files": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": null,
+   "previous_status": "SPECIFIED",
+   "problems": [],
+   "remaining": "Ausführungs-Compiler.",
+   "status": "SPECIFIED"
+  },
+  {
+   "id": 54,
+   "name": "Geldfluss-Hauptbuch",
+   "name_en": "Verified Money Flow Ledger",
+   "milestone": "M1",
+   "expected": "Geldfluss-Hauptbuch aus provider-bestätigten Ereignissen, LIVE/TEST getrennt.",
+   "implementation_files": [
+    "packages/contracts/src/schemas.ts",
+    "scripts/lib/stripe-check.ts",
+    "services/core-api/src/autopilot.ts",
+    "services/core-api/src/config.ts",
+    "services/core-api/src/orders.ts",
+    "services/core-api/src/workflow.ts",
+    "services/finance/src/checkout.ts",
+    "services/finance/src/fee-sync.ts",
+    "services/finance/src/invoice.ts",
+    "services/finance/src/kpis.ts",
+    "services/finance/src/ledger.ts",
+    "services/finance/src/mock-provider.ts",
+    "services/finance/src/monthly-export-fs.ts",
+    "services/finance/src/monthly-export.ts",
+    "services/finance/src/payments.ts",
+    "services/finance/src/providers/index.ts",
+    "services/finance/src/providers/stripe.ts",
+    "services/finance/src/providers/types.ts",
+    "services/finance/src/reconciliation.ts",
+    "services/finance/src/refunds.ts",
+    "services/finance/src/webhook.ts",
+    "services/product-factory/src/delivery.ts",
+    "services/product-factory/src/production.ts"
+   ],
+   "evidence": [
+    "tests/integration/finance.test.ts",
+    "tests/integration/m2-payments.test.ts"
+   ],
+   "tests": {
+    "files": 2,
+    "passed": 24,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/finance.test.ts tests/integration/m2-payments.test.ts",
+   "previous_status": "TESTED (full)",
+   "problems": [],
+   "remaining": null,
+   "status": "VERIFIED"
+  },
+  {
+   "id": 55,
+   "name": "Fähigkeiten erkennen",
+   "name_en": "Universal Capability Discovery",
+   "milestone": "M2",
+   "expected": "Fähigkeitsmatrix mit Freischaltgrund; Freigabe zum Verkauf nur über die Policy.",
+   "implementation_files": [
+    "apps/customer-portal/src/pages.ts",
+    "packages/shared/src/crypto.ts",
+    "services/acquisition/src/leads.ts",
+    "services/ai-orchestrator/src/queue.ts",
+    "services/ai-orchestrator/src/untrusted.ts",
+    "services/core-api/src/customers.ts",
+    "services/core-api/src/orders.ts",
+    "services/core-api/src/workflow.ts",
+    "services/product-factory/src/artifacts.ts",
+    "services/product-factory/src/capabilities/b2b-calc-pdf.ts",
+    "services/product-factory/src/delivery.ts",
+    "services/product-factory/src/production.ts",
+    "services/product-factory/src/registry.ts"
+   ],
+   "evidence": [
+    "tests/integration/production.test.ts",
+    "tests/integration/m2-product-pdf.test.ts"
+   ],
+   "tests": {
+    "files": 2,
+    "passed": 23,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/production.test.ts tests/integration/m2-product-pdf.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Automatische Werkzeugsuche mit Lizenzprüfung.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 56,
+   "name": "Preis- und Erlösmodelle",
+   "name_en": "Smart Monetization Architect",
+   "milestone": "M5",
+   "expected": null,
+   "implementation_files": [],
+   "evidence": [],
+   "tests": {
+    "files": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": null,
+   "previous_status": "SPECIFIED",
+   "problems": [],
+   "remaining": "Monetarisierungsmodelle.",
+   "status": "SPECIFIED"
+  },
+  {
+   "id": 57,
+   "name": "Liefergarantie",
+   "name_en": "Autonomous Delivery Warranty",
+   "milestone": "M2",
+   "expected": "Lieferkriterien im Angebot, Rückerstattung bei Mangel nach Freigabe.",
+   "implementation_files": [
+    "scripts/lib/stripe-check.ts",
+    "services/core-api/src/autopilot.ts",
+    "services/core-api/src/config.ts",
+    "services/core-api/src/orders.ts",
+    "services/core-api/src/workflow.ts",
+    "services/finance/src/checkout.ts",
+    "services/finance/src/fee-sync.ts",
+    "services/finance/src/payments.ts",
+    "services/finance/src/providers/index.ts",
+    "services/finance/src/providers/stripe.ts",
+    "services/finance/src/providers/types.ts",
+    "services/finance/src/reconciliation.ts",
+    "services/finance/src/refunds.ts",
+    "services/finance/src/webhook.ts",
+    "services/product-factory/src/delivery.ts",
+    "services/product-factory/src/production.ts"
+   ],
+   "evidence": [
+    "tests/integration/m2-payments.test.ts"
+   ],
+   "tests": {
+    "files": 1,
+    "passed": 10,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/m2-payments.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Gewährleistungsablauf.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 58,
+   "name": "Folgeaufträge",
+   "name_en": "Intelligent Customer Expansion",
+   "milestone": "M4",
+   "expected": "Erkennt zufriedene Kunden (abgenommen, ≥ 4 Sterne) mit passender freigegebener Ergänzung; Kontakt nur mit Einwilligung markiert. Zusatzangebote werden automatisch fertig formuliert (Einwilligung per DB erzwungen, max. 1 je 90 Tage, Abmeldelink).",
+   "implementation_files": [
+    "apps/console/src/index.ts",
+    "apps/console/src/model.ts",
+    "apps/console/src/pages/customers.ts",
+    "services/core-api/src/aftercare.ts",
+    "services/core-api/src/autopilot.ts",
+    "services/core-api/src/outbox.ts",
+    "services/core-api/src/trust.ts",
+    "services/finance/src/insights.ts"
+   ],
+   "evidence": [
+    "tests/integration/portfolio-buyers.test.ts",
+    "tests/integration/outbox.test.ts"
+   ],
+   "tests": {
+    "files": 2,
+    "passed": 9,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/portfolio-buyers.test.ts tests/integration/outbox.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Versand nach Freigabe des Kanals und AUTO_MARKETING_OUTREACH=true durch den Eigentümer.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 59,
+   "name": "Kapazität nach Rentabilität",
+   "name_en": "Profit-Aware Capacity Shield",
+   "milestone": "M1",
+   "expected": "Mindestmarge und Kapazitätsprüfung vor Annahme.",
+   "implementation_files": [
+    "packages/contracts/src/money.ts",
+    "packages/contracts/src/schemas.ts",
+    "packages/shared/src/crypto.ts",
+    "services/acquisition/src/leads.ts",
+    "services/ai-orchestrator/src/queue.ts",
+    "services/ai-orchestrator/src/untrusted.ts",
+    "services/core-api/src/customers.ts",
+    "services/core-api/src/orders.ts",
+    "services/core-api/src/workflow.ts",
+    "services/product-factory/src/artifacts.ts",
+    "services/product-factory/src/delivery.ts",
+    "services/product-factory/src/production.ts"
+   ],
+   "evidence": [
+    "tests/integration/opportunity.test.ts",
+    "tests/integration/production.test.ts"
+   ],
+   "tests": {
+    "files": 2,
+    "passed": 29,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/opportunity.test.ts tests/integration/production.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Gewinnorientierte Kapazitätsplanung.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 60,
+   "name": "Unabhängige Prüfung",
+   "name_en": "Independent AI Business Auditor",
+   "milestone": "M1",
+   "expected": "Vollständige Prüfspur aller Entscheidungen.",
+   "implementation_files": [
+    "packages/policies/src/policy.ts",
+    "services/acquisition/src/leads.ts",
+    "services/ai-orchestrator/src/queue.ts",
+    "services/ai-orchestrator/src/untrusted.ts",
+    "services/core-api/src/policy-store.ts",
+    "services/core-api/src/workflow.ts",
+    "services/product-factory/src/production.ts"
+   ],
+   "evidence": [
+    "tests/integration/governance.test.ts"
+   ],
+   "tests": {
+    "files": 1,
+    "passed": 7,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/governance.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Unabhängiger Prüfbericht.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 61,
+   "name": "Bezahlte Aufträge finden",
+   "name_en": "Global Paid Opportunity Hunter",
+   "milestone": "M4",
+   "expected": "Bezahlte Ausschreibungen aus TED.",
+   "implementation_files": [
+    "apps/dashboard/src/render.ts",
+    "services/acquisition/src/connectors/ted.ts",
+    "services/acquisition/src/consent.ts",
+    "services/acquisition/src/ranking.ts",
+    "services/acquisition/src/scoring.ts",
+    "services/acquisition/src/sources.ts",
+    "services/core-api/src/offers.ts",
+    "services/core-api/src/policy-store.ts",
+    "services/core-api/src/workflow.ts"
+   ],
+   "evidence": [
+    "tests/integration/m1-acquisition.test.ts"
+   ],
+   "tests": {
+    "files": 1,
+    "passed": 13,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/m1-acquisition.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Weitere Quellen.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 62,
+   "name": "Ausschreibungen und Angebote",
+   "name_en": "Autonomous Tender & Proposal Engine",
+   "milestone": "M4",
+   "expected": "Angebotsentwürfe zu Ausschreibungen, nie automatisch versendet.",
+   "implementation_files": [
+    "apps/dashboard/src/render.ts",
+    "services/acquisition/src/connectors/ted.ts",
+    "services/acquisition/src/consent.ts",
+    "services/acquisition/src/ranking.ts",
+    "services/acquisition/src/scoring.ts",
+    "services/acquisition/src/sources.ts",
+    "services/core-api/src/offers.ts",
+    "services/core-api/src/policy-store.ts",
+    "services/core-api/src/workflow.ts"
+   ],
+   "evidence": [
+    "tests/integration/m1-acquisition.test.ts"
+   ],
+   "tests": {
+    "files": 1,
+    "passed": 13,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/m1-acquisition.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Vollständige Angebotsunterlagen.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 63,
+   "name": "Gebündelte Nachfrage",
+   "name_en": "Collective Buyer Demand Engine",
+   "milestone": "M6",
+   "expected": null,
+   "implementation_files": [],
+   "evidence": [],
+   "tests": {
+    "files": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": null,
+   "previous_status": "SPECIFIED",
+   "problems": [],
+   "remaining": "Gebündelte Nachfrage.",
+   "status": "SPECIFIED"
+  },
+  {
+   "id": 64,
+   "name": "Vom Einzelauftrag zum Produkt",
+   "name_en": "Custom-to-SaaS Transformation",
+   "milestone": "M6",
+   "expected": null,
+   "implementation_files": [],
+   "evidence": [],
+   "tests": {
+    "files": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": null,
+   "previous_status": "SPECIFIED",
+   "problems": [],
+   "remaining": "Individual zu SaaS.",
+   "status": "SPECIFIED"
+  },
+  {
+   "id": 65,
+   "name": "Weiterverkauf unter fremder Marke",
+   "name_en": "White-Label Revenue Network",
+   "milestone": "M6",
+   "expected": null,
+   "implementation_files": [],
+   "evidence": [],
+   "tests": {
+    "files": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": null,
+   "previous_status": "SPECIFIED",
+   "problems": [],
+   "remaining": "White-Label.",
+   "status": "SPECIFIED"
+  },
+  {
+   "id": 66,
+   "name": "Integrationen",
+   "name_en": "Autonomous Integration Factory",
+   "milestone": "M5",
+   "expected": null,
+   "implementation_files": [],
+   "evidence": [],
+   "tests": {
+    "files": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": null,
+   "previous_status": "SPECIFIED",
+   "problems": [],
+   "remaining": "Integrationen.",
+   "status": "SPECIFIED"
+  },
+  {
+   "id": 67,
+   "name": "Nutzungsabhängige Abrechnung",
+   "name_en": "Precision Usage Billing Engine",
+   "milestone": "M5",
+   "expected": null,
+   "implementation_files": [],
+   "evidence": [],
+   "tests": {
+    "files": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": null,
+   "previous_status": "SPECIFIED",
+   "problems": [],
+   "remaining": "Nutzungsabrechnung.",
+   "status": "SPECIFIED"
+  },
+  {
+   "id": 68,
+   "name": "Lieferplanung",
+   "name_en": "Autonomous Delivery Scheduler",
+   "milestone": "M1",
+   "expected": "Lieferfrist im Angebot, Jobwarteschlange.",
+   "implementation_files": [
+    "packages/storage/src/db.ts",
+    "packages/storage/src/migrate.ts",
+    "services/ai-orchestrator/src/queue.ts",
+    "services/ai-orchestrator/src/quota.ts"
+   ],
+   "evidence": [
+    "tests/integration/ops.test.ts"
+   ],
+   "tests": {
+    "files": 1,
+    "passed": 7,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/ops.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Terminplanung.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 69,
+   "name": "Steuer- und Länderprüfung",
+   "name_en": "International Tax & Sales Eligibility Router",
+   "milestone": "M3",
+   "expected": "EU-Marktprüfung, B2B/B2C-Unterscheidung; Steuervorschläge für Sitz Italien (forfettario, ordinario, EU-B2B Reverse Charge), OSS-Fälle ohne Vorschlag.",
+   "implementation_files": [
+    "apps/dashboard/src/render.ts",
+    "packages/shared/src/crypto.ts",
+    "services/core-api/src/autopilot.ts",
+    "services/core-api/src/readiness.ts",
+    "services/core-api/src/workflow.ts",
+    "services/finance/src/fatturapa.ts"
+   ],
+   "evidence": [
+    "tests/integration/m3-readiness.test.ts",
+    "tests/integration/italy.test.ts"
+   ],
+   "tests": {
+    "files": 2,
+    "passed": 12,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/m3-readiness.test.ts tests/integration/italy.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Freigabe der Steuerregeln durch die Steuerberatung (LA-06).",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 70,
+   "name": "Wachstumsversuche",
+   "name_en": "Autonomous Growth Experiment Director",
+   "milestone": "M6",
+   "expected": null,
+   "implementation_files": [],
+   "evidence": [],
+   "tests": {
+    "files": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": null,
+   "previous_status": "SPECIFIED",
+   "problems": [],
+   "remaining": "Wachstumsexperimente.",
+   "status": "SPECIFIED"
+  },
+  {
+   "id": 71,
+   "name": "Bestellschnittstelle für Systeme",
+   "name_en": "Universal Agent Commerce Gateway",
+   "milestone": "M6",
+   "expected": "Maschinenlesbarer Angebotskatalog unter /api/katalog (Produkte, Eingabeschema, Preisregeln, Bestellweg über /api/leads), Testbetrieb gekennzeichnet.",
+   "implementation_files": [
+    "apps/console/src/index.ts",
+    "services/core-api/src/aftercare.ts",
+    "services/core-api/src/trust.ts",
+    "services/finance/src/insights.ts"
+   ],
+   "evidence": [
+    "tests/integration/portfolio-buyers.test.ts"
+   ],
+   "tests": {
+    "files": 1,
+    "passed": 4,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/portfolio-buyers.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Eigene Testzugänge für Einkaufssysteme.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 72,
+   "name": "Durchgehender Bestellablauf",
+   "name_en": "Atomic Order-to-Cash Engine",
+   "milestone": "M1",
+   "expected": "Durchgehende Kette Anfrage → Zahlung → Produktion → Lieferung → Beleg → Abgleich → Auszahlung → Bank-Testbeleg → Abschluss.",
+   "implementation_files": [
+    "apps/console/src/index.ts",
+    "apps/console/src/model.ts",
+    "packages/shared/src/crypto.ts",
+    "services/core-api/src/autopilot.ts",
+    "services/core-api/src/context.ts",
+    "services/core-api/src/orders.ts",
+    "services/finance/src/bank-statement.ts",
+    "services/finance/src/mock-provider.ts"
+   ],
+   "evidence": [
+    "tests/e2e/pilot.test.ts",
+    "tests/integration/bank-statement.test.ts"
+   ],
+   "tests": {
+    "files": 2,
+    "passed": 9,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/e2e/pilot.test.ts tests/integration/bank-statement.test.ts",
+   "previous_status": "TESTED (full)",
+   "problems": [],
+   "remaining": null,
+   "status": "VERIFIED"
+  },
+  {
+   "id": 73,
+   "name": "Vorkasse und Teilzahlungen",
+   "name_en": "Verified Prepayment & Milestone Controller",
+   "milestone": "M1",
+   "expected": "Vorkasse vor Produktion.",
+   "implementation_files": [
+    "packages/policies/src/policy.ts",
+    "services/acquisition/src/leads.ts",
+    "services/ai-orchestrator/src/queue.ts",
+    "services/ai-orchestrator/src/untrusted.ts",
+    "services/core-api/src/policy-store.ts",
+    "services/core-api/src/workflow.ts",
+    "services/product-factory/src/production.ts"
+   ],
+   "evidence": [
+    "tests/integration/governance.test.ts"
+   ],
+   "tests": {
+    "files": 1,
+    "passed": 7,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/governance.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Meilensteinzahlungen.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 74,
+   "name": "Kundenbereiche einrichten",
+   "name_en": "Autonomous Customer Workspace Provisioner",
+   "milestone": "M5",
+   "expected": null,
+   "implementation_files": [],
+   "evidence": [],
+   "tests": {
+    "files": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": null,
+   "previous_status": "SPECIFIED",
+   "problems": [],
+   "remaining": "Kundenarbeitsbereiche.",
+   "status": "SPECIFIED"
+  },
+  {
+   "id": 75,
+   "name": "Lizenzen und Zugänge",
+   "name_en": "Universal License & Entitlement Director",
+   "milestone": "M1",
+   "expected": "Signierte, kundengebundene Download-Berechtigungen, Lizenztext.",
+   "implementation_files": [
+    "apps/dashboard/src/render.ts",
+    "packages/events/src/redact.ts",
+    "packages/shared/src/crypto.ts",
+    "packages/shared/src/html.ts",
+    "services/acquisition/src/leads.ts",
+    "services/ai-orchestrator/src/queue.ts",
+    "services/ai-orchestrator/src/untrusted.ts",
+    "services/core-api/src/context.ts",
+    "services/core-api/src/customers.ts",
+    "services/core-api/src/orders.ts",
+    "services/core-api/src/workflow.ts",
+    "services/finance/src/invoice.ts",
+    "services/product-factory/src/artifacts.ts",
+    "services/product-factory/src/delivery.ts",
+    "services/product-factory/src/production.ts"
+   ],
+   "evidence": [
+    "tests/integration/production.test.ts",
+    "tests/security/security.test.ts"
+   ],
+   "tests": {
+    "files": 2,
+    "passed": 29,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/production.test.ts tests/security/security.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Lizenzverwaltung.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 76,
+   "name": "Empfehlungsprogramm",
+   "name_en": "Autonomous Referral Revenue Alliance",
+   "milestone": "M6",
+   "expected": null,
+   "implementation_files": [],
+   "evidence": [],
+   "tests": {
+    "files": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": null,
+   "previous_status": "SPECIFIED",
+   "problems": [],
+   "remaining": "Empfehlungsprogramm.",
+   "status": "SPECIFIED"
+  },
+  {
+   "id": 77,
+   "name": "Klärung von Streitfällen",
+   "name_en": "AI Dispute Resolution Desk",
+   "milestone": "M2",
+   "expected": "Dispute-Status und Buchung.",
+   "implementation_files": [
+    "scripts/lib/stripe-check.ts",
+    "services/core-api/src/autopilot.ts",
+    "services/core-api/src/config.ts",
+    "services/core-api/src/orders.ts",
+    "services/core-api/src/workflow.ts",
+    "services/finance/src/checkout.ts",
+    "services/finance/src/fee-sync.ts",
+    "services/finance/src/payments.ts",
+    "services/finance/src/providers/index.ts",
+    "services/finance/src/providers/stripe.ts",
+    "services/finance/src/providers/types.ts",
+    "services/finance/src/reconciliation.ts",
+    "services/finance/src/refunds.ts",
+    "services/finance/src/webhook.ts",
+    "services/product-factory/src/delivery.ts",
+    "services/product-factory/src/production.ts"
+   ],
+   "evidence": [
+    "tests/integration/m2-payments.test.ts"
+   ],
+   "tests": {
+    "files": 1,
+    "passed": 10,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/m2-payments.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Klärungsablauf.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 78,
+   "name": "Ausnahmen sicher behandeln",
+   "name_en": "Autonomous Exception Recovery Director",
+   "milestone": "M1",
+   "expected": "Ausnahmen gehen zur Eigentümerprüfung statt abzustürzen (blockierte Lieferung, Dead-Letter).",
+   "implementation_files": [
+    "packages/shared/src/crypto.ts",
+    "packages/shared/src/pdf.ts",
+    "services/acquisition/src/leads.ts",
+    "services/ai-orchestrator/src/queue.ts",
+    "services/ai-orchestrator/src/untrusted.ts",
+    "services/core-api/src/contract-confirmation.ts",
+    "services/core-api/src/customers.ts",
+    "services/core-api/src/orders.ts",
+    "services/core-api/src/workflow.ts",
+    "services/finance/src/mock-provider.ts",
+    "services/product-factory/src/artifacts.ts",
+    "services/product-factory/src/delivery.ts",
+    "services/product-factory/src/production.ts"
+   ],
+   "evidence": [
+    "tests/integration/production.test.ts",
+    "tests/integration/contract-confirmation.test.ts"
+   ],
+   "tests": {
+    "files": 2,
+    "passed": 23,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/production.test.ts tests/integration/contract-confirmation.test.ts",
+   "previous_status": "TESTED (full)",
+   "problems": [],
+   "remaining": null,
+   "status": "VERIFIED"
+  },
+  {
+   "id": 79,
+   "name": "Gewinnschutz",
+   "name_en": "Real-Time True Profit Shield",
+   "milestone": "M1",
+   "expected": "Deckungsbeitrag nach Erstattungen, Gebühren, Disputes.",
+   "implementation_files": [
+    "packages/contracts/src/schemas.ts",
+    "services/core-api/src/autopilot.ts",
+    "services/core-api/src/orders.ts",
+    "services/finance/src/invoice.ts",
+    "services/finance/src/kpis.ts",
+    "services/finance/src/ledger.ts",
+    "services/finance/src/mock-provider.ts",
+    "services/finance/src/monthly-export-fs.ts",
+    "services/finance/src/monthly-export.ts",
+    "services/finance/src/reconciliation.ts"
+   ],
+   "evidence": [
+    "tests/integration/finance.test.ts"
+   ],
+   "tests": {
+    "files": 1,
+    "passed": 14,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/finance.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Echtzeit-Gewinnschutz.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 80,
+   "name": "Nachweis des ersten Bankeingangs",
+   "name_en": "First-Euro-to-Bank Verification Lab",
+   "milestone": "M1",
+   "expected": "Bankeingang nur mit gesondertem Kontoauszug (CSV/camt.053), feste Abgleichregeln, Abschluss erst danach – im Testbetrieb nachgewiesen.",
+   "implementation_files": [
+    "apps/console/src/index.ts",
+    "apps/console/src/model.ts",
+    "packages/contracts/src/schemas.ts",
+    "packages/shared/src/crypto.ts",
+    "services/core-api/src/autopilot.ts",
+    "services/core-api/src/context.ts",
+    "services/core-api/src/orders.ts",
+    "services/finance/src/bank-statement.ts",
+    "services/finance/src/invoice.ts",
+    "services/finance/src/kpis.ts",
+    "services/finance/src/ledger.ts",
+    "services/finance/src/mock-provider.ts",
+    "services/finance/src/monthly-export-fs.ts",
+    "services/finance/src/monthly-export.ts",
+    "services/finance/src/reconciliation.ts"
+   ],
+   "evidence": [
+    "tests/integration/finance.test.ts",
+    "tests/integration/bank-statement.test.ts"
+   ],
+   "tests": {
+    "files": 2,
+    "passed": 22,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/finance.test.ts tests/integration/bank-statement.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Echter erster Euro erst im freigegebenen Live-Pilot (LA-03/LA-04).",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 81,
+   "name": "Wissen über Nachfrage",
+   "name_en": "Autonomous Demand Knowledge Graph",
+   "milestone": "M6",
+   "expected": null,
+   "implementation_files": [],
+   "evidence": [],
+   "tests": {
+    "files": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": null,
+   "previous_status": "SPECIFIED",
+   "problems": [],
+   "remaining": "Nachfrage-Wissensgraph.",
+   "status": "SPECIFIED"
+  },
+  {
+   "id": 82,
+   "name": "Wiederverwendbare Bausteine",
+   "name_en": "Self-Reusing Product Component Factory",
+   "milestone": "M5",
+   "expected": "Eigene getestete Bausteine werden wiederverwendet: PDF-Erzeugung, ZIP, CSV mit Formelschutz, Design-System der Oberflächen.",
+   "implementation_files": [
+    "apps/console/src/index.ts",
+    "apps/console/src/model.ts",
+    "apps/console/src/tokens.ts",
+    "apps/console/src/ui.ts",
+    "apps/customer-portal/src/pages.ts",
+    "packages/shared/src/crypto.ts",
+    "packages/shared/src/pdf.ts",
+    "packages/shared/src/zip.ts",
+    "services/acquisition/src/leads.ts",
+    "services/core-api/src/change-requests.ts",
+    "services/core-api/src/context.ts",
+    "services/core-api/src/contract-confirmation.ts",
+    "services/core-api/src/orders.ts",
+    "services/core-api/src/workflow.ts",
+    "services/finance/src/mock-provider.ts",
+    "services/product-factory/src/capabilities/b2b-calc-bundle.ts",
+    "services/product-factory/src/capabilities/b2b-calc-csv.ts",
+    "services/product-factory/src/delivery.ts",
+    "services/product-factory/src/production.ts"
+   ],
+   "evidence": [
+    "tests/integration/contract-confirmation.test.ts",
+    "tests/integration/bundle-change-help.test.ts",
+    "tests/unit/console-ui.test.ts"
+   ],
+   "tests": {
+    "files": 3,
+    "passed": 21,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/contract-confirmation.test.ts tests/integration/bundle-change-help.test.ts tests/unit/console-ui.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Katalog der Bausteine mit Versionierung.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 83,
+   "name": "Bedienbarkeit testen",
+   "name_en": "Autonomous Product Usability Laboratory",
+   "milestone": "M5",
+   "expected": "Reproduzierbare Prüfungen: Kontrast, Beschriftungen, Struktur, keine internen Kennungen im Text, Breiten 320–1440 px.",
+   "implementation_files": [
+    "apps/console/src/index.ts",
+    "apps/console/src/model.ts",
+    "apps/console/src/tokens.ts",
+    "apps/console/src/ui.ts",
+    "apps/customer-portal/src/pages.ts",
+    "packages/shared/src/crypto.ts",
+    "services/core-api/src/autopilot.ts",
+    "services/core-api/src/context.ts",
+    "services/core-api/src/customers.ts",
+    "services/core-api/src/orders.ts",
+    "services/core-api/src/workflow.ts",
+    "services/finance/src/invoice-pdf.ts",
+    "services/finance/src/invoice.ts"
+   ],
+   "evidence": [
+    "tests/unit/console-ui.test.ts",
+    "tests/integration/portal-documents.test.ts"
+   ],
+   "tests": {
+    "files": 2,
+    "passed": 14,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/unit/console-ui.test.ts tests/integration/portal-documents.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Nutzungstests mit echten Personen.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 84,
+   "name": "Vom Vertrag zur Abnahme",
+   "name_en": "Contract-to-Acceptance Compiler",
+   "milestone": "M1",
+   "expected": "Lieferkriterien aus dem Angebot werden zu automatischen Prüfungen; Abnahme oder Mangel durch den Kunden; vollständige Nachweiskette (QA, Prüfsumme, Herkunftsnachweis). Keine automatische Abnahme.",
+   "implementation_files": [
+    "apps/console/src/index.ts",
+    "apps/customer-portal/src/pages.ts",
+    "packages/contracts/src/money.ts",
+    "packages/contracts/src/schemas.ts",
+    "packages/shared/src/crypto.ts",
+    "services/acquisition/src/leads.ts",
+    "services/core-api/src/aftercare.ts",
+    "services/core-api/src/workflow.ts",
+    "services/finance/src/insights.ts",
+    "services/finance/src/refunds.ts",
+    "services/product-factory/src/provenance.ts"
+   ],
+   "evidence": [
+    "tests/integration/opportunity.test.ts",
+    "tests/integration/aftercare.test.ts"
+   ],
+   "tests": {
+    "files": 2,
+    "passed": 19,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/opportunity.test.ts tests/integration/aftercare.test.ts",
+   "previous_status": "TESTED (full)",
+   "problems": [],
+   "remaining": null,
+   "status": "VERIFIED"
+  },
+  {
+   "id": 85,
+   "name": "Ehrliche Werbeaussagen",
+   "name_en": "Autonomous Sales Claims & Transparency Guard",
+   "milestone": "M0",
+   "expected": "Oberfläche zeigt keine fiktiven Umsätze; Test/Live getrennt, per Test geprüft.",
+   "implementation_files": [
+    "apps/console/src/index.ts",
+    "apps/console/src/model.ts",
+    "apps/console/src/tokens.ts",
+    "apps/console/src/ui.ts",
+    "packages/shared/src/crypto.ts",
+    "services/core-api/src/context.ts"
+   ],
+   "evidence": [
+    "tests/unit/console-ui.test.ts"
+   ],
+   "tests": {
+    "files": 1,
+    "passed": 10,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/unit/console-ui.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Prüfung von Werbeaussagen.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 86,
+   "name": "Kundenportal",
+   "name_en": "Self-Service Customer Command Portal",
+   "milestone": "M1",
+   "expected": "Kundenportal: Aufträge mit Fortschritt, Vertragsbestätigung, Beleg-PDF, Download, Datenexport, Support.",
+   "implementation_files": [
+    "apps/customer-portal/src/pages.ts",
+    "packages/shared/src/crypto.ts",
+    "packages/shared/src/pdf.ts",
+    "services/core-api/src/autopilot.ts",
+    "services/core-api/src/context.ts",
+    "services/core-api/src/contract-confirmation.ts",
+    "services/core-api/src/customers.ts",
+    "services/core-api/src/orders.ts",
+    "services/core-api/src/workflow.ts",
+    "services/finance/src/invoice-pdf.ts",
+    "services/finance/src/invoice.ts",
+    "services/finance/src/mock-provider.ts",
+    "services/product-factory/src/production.ts"
+   ],
+   "evidence": [
+    "tests/e2e/pilot.test.ts",
+    "tests/integration/contract-confirmation.test.ts",
+    "tests/integration/portal-documents.test.ts"
+   ],
+   "tests": {
+    "files": 3,
+    "passed": 10,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/e2e/pilot.test.ts tests/integration/contract-confirmation.test.ts tests/integration/portal-documents.test.ts",
+   "previous_status": "TESTED (full)",
+   "problems": [],
+   "remaining": null,
+   "status": "VERIFIED"
+  },
+  {
+   "id": 87,
+   "name": "Produktlebenszyklus",
+   "name_en": "Autonomous Product Lifecycle Director",
+   "milestone": "M5",
+   "expected": "Lebenszyklus je Produktart aus Lieferungen, Prüffehlern und Mängeln mit Einschätzung neu/stabil/prüfen; Version sichtbar.",
+   "implementation_files": [
+    "apps/console/src/index.ts",
+    "scripts/lib/tech-debt.ts",
+    "services/core-api/src/aftercare.ts",
+    "services/finance/src/insights.ts",
+    "services/product-factory/src/registry.ts"
+   ],
+   "evidence": [
+    "tests/integration/pricing-lifecycle.test.ts"
+   ],
+   "tests": {
+    "files": 1,
+    "passed": 3,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/pricing-lifecycle.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Geplante Versionspflege und Ablösung mit Migrationsprüfung.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 88,
+   "name": "Ursachen fehlender Verkäufe",
+   "name_en": "Zero-Sales Diagnostic Intelligence",
+   "milestone": "M4",
+   "expected": "Trichter aus echten Datensätzen und technischen Fehlerdaten (Zahlungsabbrüche, abgelehnte Annahmen, QA, angehaltene Aufgaben); benennt Engpass und nächsten Schritt; Null-Umsatz ehrlich.",
+   "implementation_files": [
+    "apps/console/src/index.ts",
+    "services/core-api/src/autopilot.ts",
+    "services/core-api/src/orders.ts",
+    "services/finance/src/bank-statement.ts",
+    "services/finance/src/insights.ts",
+    "services/finance/src/mock-provider.ts",
+    "services/finance/src/refunds.ts"
+   ],
+   "evidence": [
+    "tests/integration/insights.test.ts"
+   ],
+   "tests": {
+    "files": 1,
+    "passed": 6,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/insights.test.ts",
+   "previous_status": "TESTED (full)",
+   "problems": [],
+   "remaining": null,
+   "status": "VERIFIED"
+  },
+  {
+   "id": 89,
+   "name": "Rechtsänderungen beobachten",
+   "name_en": "Official Regulation Change Watcher",
+   "milestone": "M6",
+   "expected": null,
+   "implementation_files": [],
+   "evidence": [],
+   "tests": {
+    "files": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": null,
+   "previous_status": "SPECIFIED",
+   "problems": [],
+   "remaining": "Beobachtung von Rechtsänderungen.",
+   "status": "SPECIFIED"
+  },
+  {
+   "id": 90,
+   "name": "Deine Grenzen und Freigaben",
+   "name_en": "Zero-Touch Owner Governance",
+   "milestone": "M0",
+   "expected": "Eigentümer-Grenzen einmalig: Policy, Notstopps, Freigaben mit Nachweis.",
+   "implementation_files": [
+    "apps/dashboard/src/render.ts",
+    "packages/policies/src/policy.ts",
+    "services/acquisition/src/leads.ts",
+    "services/ai-orchestrator/src/queue.ts",
+    "services/ai-orchestrator/src/untrusted.ts",
+    "services/core-api/src/policy-store.ts",
+    "services/core-api/src/readiness.ts",
+    "services/core-api/src/workflow.ts",
+    "services/product-factory/src/production.ts"
+   ],
+   "evidence": [
+    "tests/integration/governance.test.ts",
+    "tests/integration/m3-readiness.test.ts"
+   ],
+   "tests": {
+    "files": 2,
+    "passed": 13,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/governance.test.ts tests/integration/m3-readiness.test.ts",
+   "previous_status": "TESTED (full)",
+   "problems": [],
+   "remaining": null,
+   "status": "VERIFIED"
+  },
+  {
+   "id": 91,
+   "name": "Beschaffung für Unternehmen",
+   "name_en": "Autonomous Enterprise Procurement Desk",
+   "milestone": "M6",
+   "expected": null,
+   "implementation_files": [],
+   "evidence": [],
+   "tests": {
+    "files": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": null,
+   "previous_status": "SPECIFIED",
+   "problems": [],
+   "remaining": "Unternehmensbeschaffung.",
+   "status": "SPECIFIED"
+  },
+  {
+   "id": 92,
+   "name": "Änderungs- und Zusatzaufträge",
+   "name_en": "Smart Scope Change & Paid Upgrade Engine",
+   "milestone": "M5",
+   "expected": "Erweiterungswunsch im Portal wird zum eigenen Nachtragsangebot (gleiche Produktart und Aufschlag, nur neue Positionen); beauftragt erst nach Annahme und Zahlung, Original unverändert.",
+   "implementation_files": [
+    "apps/console/src/index.ts",
+    "apps/customer-portal/src/pages.ts",
+    "packages/shared/src/crypto.ts",
+    "packages/shared/src/zip.ts",
+    "services/acquisition/src/leads.ts",
+    "services/core-api/src/change-requests.ts",
+    "services/core-api/src/orders.ts",
+    "services/core-api/src/workflow.ts",
+    "services/finance/src/mock-provider.ts",
+    "services/product-factory/src/capabilities/b2b-calc-bundle.ts",
+    "services/product-factory/src/capabilities/b2b-calc-csv.ts",
+    "services/product-factory/src/delivery.ts"
+   ],
+   "evidence": [
+    "tests/integration/bundle-change-help.test.ts"
+   ],
+   "tests": {
+    "files": 1,
+    "passed": 6,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/bundle-change-help.test.ts",
+   "previous_status": "TESTED (full)",
+   "problems": [],
+   "remaining": null,
+   "status": "VERIFIED"
+  },
+  {
+   "id": 93,
+   "name": "Produktpakete",
+   "name_en": "Autonomous Product Bundling Intelligence",
+   "milestone": "M5",
+   "expected": "Paket Tabelle + PDF (ZIP) mit Prüfung jeder enthaltenen Datei; Preis aus tatsächlichem Mehraufwand, kein Scheinrabatt; Verkauf nach Policy-Freigabe.",
+   "implementation_files": [
+    "apps/console/src/index.ts",
+    "apps/customer-portal/src/pages.ts",
+    "packages/shared/src/crypto.ts",
+    "packages/shared/src/zip.ts",
+    "services/acquisition/src/leads.ts",
+    "services/core-api/src/change-requests.ts",
+    "services/core-api/src/orders.ts",
+    "services/core-api/src/workflow.ts",
+    "services/finance/src/mock-provider.ts",
+    "services/product-factory/src/capabilities/b2b-calc-bundle.ts",
+    "services/product-factory/src/capabilities/b2b-calc-csv.ts",
+    "services/product-factory/src/delivery.ts"
+   ],
+   "evidence": [
+    "tests/integration/bundle-change-help.test.ts"
+   ],
+   "tests": {
+    "files": 1,
+    "passed": 6,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/bundle-change-help.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Weitere Pakete, sobald weitere Produktarten belegt sind.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 94,
+   "name": "Liefernachweis",
+   "name_en": "Evidence-Based Delivery Certification",
+   "milestone": "M2",
+   "expected": "Lieferung nur mit bestandenem Prüfprotokoll und Prüfsumme – für jede Produktart eigene Prüfungen.",
+   "implementation_files": [
+    "apps/customer-portal/src/pages.ts",
+    "packages/shared/src/crypto.ts",
+    "services/acquisition/src/leads.ts",
+    "services/ai-orchestrator/src/queue.ts",
+    "services/ai-orchestrator/src/untrusted.ts",
+    "services/core-api/src/customers.ts",
+    "services/core-api/src/orders.ts",
+    "services/core-api/src/workflow.ts",
+    "services/product-factory/src/artifacts.ts",
+    "services/product-factory/src/capabilities/b2b-calc-pdf.ts",
+    "services/product-factory/src/delivery.ts",
+    "services/product-factory/src/production.ts",
+    "services/product-factory/src/registry.ts"
+   ],
+   "evidence": [
+    "tests/integration/production.test.ts",
+    "tests/integration/m2-product-pdf.test.ts"
+   ],
+   "tests": {
+    "files": 2,
+    "passed": 23,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/production.test.ts tests/integration/m2-product-pdf.test.ts",
+   "previous_status": "TESTED (full)",
+   "problems": [],
+   "remaining": null,
+   "status": "VERIFIED"
+  },
+  {
+   "id": 95,
+   "name": "Woher kamen die Käufer?",
+   "name_en": "AI Revenue Attribution Intelligence",
+   "milestone": "M4",
+   "expected": "Bezahlter Umsatz je erlaubter Herkunft (eigenes Formular, freigegebene Ausschreibungen) ohne Tracking, mit Hinweis auf Messunsicherheit.",
+   "implementation_files": [
+    "apps/console/src/index.ts",
+    "services/core-api/src/autopilot.ts",
+    "services/core-api/src/orders.ts",
+    "services/finance/src/bank-statement.ts",
+    "services/finance/src/insights.ts",
+    "services/finance/src/mock-provider.ts",
+    "services/finance/src/refunds.ts"
+   ],
+   "evidence": [
+    "tests/integration/insights.test.ts"
+   ],
+   "tests": {
+    "files": 1,
+    "passed": 6,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/insights.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Kosten je Kanal, sobald bezahlte Kanäle freigegeben sind.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 96,
+   "name": "Barrierefreiheit und Sprache",
+   "name_en": "Universal Accessibility & Localization QA",
+   "milestone": "M0",
+   "expected": "Zeichenkodierung im Produkt geprüft; Kontrast/Struktur von Konsole und Kundenseiten per Test.",
+   "implementation_files": [
+    "apps/console/src/index.ts",
+    "apps/console/src/model.ts",
+    "apps/console/src/tokens.ts",
+    "apps/console/src/ui.ts",
+    "apps/customer-portal/src/pages.ts",
+    "packages/shared/src/crypto.ts",
+    "services/acquisition/src/leads.ts",
+    "services/ai-orchestrator/src/queue.ts",
+    "services/ai-orchestrator/src/untrusted.ts",
+    "services/core-api/src/autopilot.ts",
+    "services/core-api/src/context.ts",
+    "services/core-api/src/customers.ts",
+    "services/core-api/src/orders.ts",
+    "services/core-api/src/workflow.ts",
+    "services/finance/src/invoice-pdf.ts",
+    "services/finance/src/invoice.ts",
+    "services/product-factory/src/artifacts.ts",
+    "services/product-factory/src/delivery.ts",
+    "services/product-factory/src/production.ts"
+   ],
+   "evidence": [
+    "tests/integration/production.test.ts",
+    "tests/unit/console-ui.test.ts",
+    "tests/integration/portal-documents.test.ts"
+   ],
+   "tests": {
+    "files": 3,
+    "passed": 32,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/production.test.ts tests/unit/console-ui.test.ts tests/integration/portal-documents.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Lokalisierung.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 97,
+   "name": "Einwilligungen",
+   "name_en": "Autonomous Customer Consent Director",
+   "milestone": "M1",
+   "expected": "Einwilligungen mit Zweck und Widerruf; ohne Einwilligung keine Werbenachricht; Ein-Klick-Abmeldung /abmelden mit signiertem Link.",
+   "implementation_files": [
+    "apps/console/src/model.ts",
+    "apps/console/src/pages/customers.ts",
+    "packages/contracts/src/schemas.ts",
+    "services/acquisition/src/consent.ts",
+    "services/acquisition/src/leads.ts",
+    "services/acquisition/src/sources.ts",
+    "services/core-api/src/aftercare.ts",
+    "services/core-api/src/autopilot.ts",
+    "services/core-api/src/outbox.ts",
+    "services/core-api/src/workflow.ts"
+   ],
+   "evidence": [
+    "tests/integration/acquisition.test.ts",
+    "tests/integration/outbox.test.ts"
+   ],
+   "tests": {
+    "files": 2,
+    "passed": 15,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/acquisition.test.ts tests/integration/outbox.test.ts",
+   "previous_status": "TESTED (full)",
+   "problems": [],
+   "remaining": null,
+   "status": "VERIFIED"
+  },
+  {
+   "id": 98,
+   "name": "Liquiditäts- und Auszahlungsprognose",
+   "name_en": "Cash Flow & Payout Forecast Intelligence",
+   "milestone": "M4",
+   "expected": "Erwartbarer Bankeingang aus bekannten Beträgen abzüglich offener Erstattungen, Erstattungs- und Steuerrücklage; Auszahlungsdatum nur mit eingetragener Anbieterfrist; Auszahlung nie als Bankguthaben.",
+   "implementation_files": [
+    "apps/console/src/index.ts",
+    "apps/console/src/model.ts",
+    "packages/shared/src/crypto.ts",
+    "services/core-api/src/aftercare.ts",
+    "services/core-api/src/autopilot.ts",
+    "services/core-api/src/daily-report.ts",
+    "services/core-api/src/offers.ts",
+    "services/core-api/src/orders.ts",
+    "services/finance/src/bank-statement.ts",
+    "services/finance/src/insights.ts",
+    "services/finance/src/mock-provider.ts",
+    "services/finance/src/refunds.ts"
+   ],
+   "evidence": [
+    "tests/integration/insights.test.ts",
+    "tests/integration/completion.test.ts"
+   ],
+   "tests": {
+    "files": 2,
+    "passed": 10,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/insights.test.ts tests/integration/completion.test.ts",
+   "previous_status": "TESTED (full)",
+   "problems": [],
+   "remaining": null,
+   "status": "VERIFIED"
+  },
+  {
+   "id": 99,
+   "name": "Abhängigkeit von Großkunden",
+   "name_en": "Autonomous Customer Concentration Risk Monitor",
+   "milestone": "M4",
+   "expected": "Abhängigkeit von einzelnen Kunden (anonymisiert) und Produktarten am bezahlten Umsatz mit Einstufung; Marktplätze: keine angebunden.",
+   "implementation_files": [
+    "apps/console/src/index.ts",
+    "apps/console/src/model.ts",
+    "packages/shared/src/crypto.ts",
+    "services/core-api/src/aftercare.ts",
+    "services/core-api/src/autopilot.ts",
+    "services/core-api/src/daily-report.ts",
+    "services/core-api/src/offers.ts",
+    "services/core-api/src/orders.ts",
+    "services/finance/src/bank-statement.ts",
+    "services/finance/src/insights.ts",
+    "services/finance/src/mock-provider.ts",
+    "services/finance/src/refunds.ts"
+   ],
+   "evidence": [
+    "tests/integration/insights.test.ts",
+    "tests/integration/completion.test.ts"
+   ],
+   "tests": {
+    "files": 2,
+    "passed": 10,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/insights.test.ts tests/integration/completion.test.ts",
+   "previous_status": "TESTED (full)",
+   "problems": [],
+   "remaining": null,
+   "status": "VERIFIED"
+  },
+  {
+   "id": 100,
+   "name": "Meilensteine",
+   "name_en": "Autonomous Business Milestone Director",
+   "milestone": "M3",
+   "expected": "Meilenstein-Freigaben LA-01…12 mit Nachweispflicht.",
+   "implementation_files": [
+    "apps/dashboard/src/render.ts",
+    "services/core-api/src/readiness.ts",
+    "services/core-api/src/workflow.ts"
+   ],
+   "evidence": [
+    "tests/integration/m3-readiness.test.ts"
+   ],
+   "tests": {
+    "files": 1,
+    "passed": 6,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/m3-readiness.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Automatische Meilensteinsteuerung.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 101,
+   "name": "Kaufweg der Kunden",
+   "name_en": "Autonomous Buyer Journey Intelligence",
+   "milestone": "M4",
+   "expected": "Typische Wartezeit zwischen Anfrage, Angebot, Annahme, Zahlung und Lieferung aus echten Zeitstempeln, ohne Tracking.",
+   "implementation_files": [
+    "apps/console/src/index.ts",
+    "services/core-api/src/autopilot.ts",
+    "services/core-api/src/orders.ts",
+    "services/finance/src/bank-statement.ts",
+    "services/finance/src/insights.ts",
+    "services/finance/src/mock-provider.ts",
+    "services/finance/src/refunds.ts"
+   ],
+   "evidence": [
+    "tests/integration/insights.test.ts"
+   ],
+   "tests": {
+    "files": 1,
+    "passed": 6,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/insights.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Priorisierte Verbesserungsvorschläge je Hindernis.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 102,
+   "name": "Kundenanliegen verstehen",
+   "name_en": "Multimodal Customer Understanding Engine",
+   "milestone": "M6",
+   "expected": null,
+   "implementation_files": [],
+   "evidence": [],
+   "tests": {
+    "files": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": null,
+   "previous_status": "SPECIFIED",
+   "problems": [],
+   "remaining": "Multimodales Verständnis.",
+   "status": "SPECIFIED"
+  },
+  {
+   "id": 103,
+   "name": "Machbarkeit vor dem Verkauf",
+   "name_en": "Pre-Sale Feasibility Proof Lab",
+   "milestone": "M1",
+   "expected": "Machbarkeitsprüfung der Produktklasse vor dem Angebot.",
+   "implementation_files": [
+    "packages/contracts/src/money.ts",
+    "packages/contracts/src/schemas.ts",
+    "services/acquisition/src/leads.ts",
+    "services/core-api/src/workflow.ts"
+   ],
+   "evidence": [
+    "tests/integration/opportunity.test.ts"
+   ],
+   "tests": {
+    "files": 1,
+    "passed": 11,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/opportunity.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Vorab-Prototyp.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 104,
+   "name": "Produktvergleich",
+   "name_en": "Competitive Product Benchmark Arena",
+   "milestone": "M6",
+   "expected": null,
+   "implementation_files": [],
+   "evidence": [],
+   "tests": {
+    "files": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": null,
+   "previous_status": "SPECIFIED",
+   "problems": [],
+   "remaining": "Produktvergleich.",
+   "status": "SPECIFIED"
+  },
+  {
+   "id": 105,
+   "name": "Konfigurierbare Produkte",
+   "name_en": "Autonomous Product Configuration Marketplace",
+   "milestone": "M6",
+   "expected": "Kunde wählt Lieferformat (Tabelle, PDF, Paket – soweit freigegeben); Preis und Umfang werden automatisch berechnet.",
+   "implementation_files": [
+    "apps/console/src/index.ts",
+    "apps/customer-portal/src/pages.ts",
+    "packages/shared/src/crypto.ts",
+    "packages/shared/src/zip.ts",
+    "services/acquisition/src/leads.ts",
+    "services/core-api/src/change-requests.ts",
+    "services/core-api/src/orders.ts",
+    "services/core-api/src/workflow.ts",
+    "services/finance/src/mock-provider.ts",
+    "services/product-factory/src/capabilities/b2b-calc-bundle.ts",
+    "services/product-factory/src/capabilities/b2b-calc-csv.ts",
+    "services/product-factory/src/capabilities/b2b-calc-pdf.ts",
+    "services/product-factory/src/delivery.ts",
+    "services/product-factory/src/registry.ts"
+   ],
+   "evidence": [
+    "tests/integration/m2-product-pdf.test.ts",
+    "tests/integration/bundle-change-help.test.ts"
+   ],
+   "tests": {
+    "files": 2,
+    "passed": 11,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/m2-product-pdf.test.ts tests/integration/bundle-change-help.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Weitere kombinierbare Funktionsbausteine.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 106,
+   "name": "Risiken vor Vertragsschluss",
+   "name_en": "Pre-Contract Risk & Liability Simulator",
+   "milestone": "M5",
+   "expected": "Erklärte Risikohinweise je Auftrag (Verbraucher, Auftragswert, Land, Umfang, frühere Erstattungen), ausdrücklich keine Rechtsbewertung.",
+   "implementation_files": [
+    "apps/console/src/index.ts",
+    "apps/customer-portal/src/pages.ts",
+    "packages/shared/src/crypto.ts",
+    "services/core-api/src/aftercare.ts",
+    "services/core-api/src/workflow.ts",
+    "services/finance/src/insights.ts",
+    "services/finance/src/refunds.ts",
+    "services/product-factory/src/provenance.ts"
+   ],
+   "evidence": [
+    "tests/integration/aftercare.test.ts"
+   ],
+   "tests": {
+    "files": 1,
+    "passed": 8,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/aftercare.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Szenarien für Verspätung und Haftung.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 107,
+   "name": "Aktualität der Daten",
+   "name_en": "Autonomous Data Freshness & Reliability Engine",
+   "milestone": "M5",
+   "expected": "Aktualität der Quellen und abgelaufene Ausschreibungen werden gemeldet; abgelaufene Daten sind im Ablauf gesperrt (Qualifizierung, Angebot, Annahme, Angebotsentwurf).",
+   "implementation_files": [
+    "apps/console/src/index.ts",
+    "apps/console/src/model.ts",
+    "apps/customer-portal/src/pages.ts",
+    "packages/shared/src/crypto.ts",
+    "services/core-api/src/aftercare.ts",
+    "services/core-api/src/autopilot.ts",
+    "services/core-api/src/daily-report.ts",
+    "services/core-api/src/offers.ts",
+    "services/core-api/src/workflow.ts",
+    "services/finance/src/insights.ts",
+    "services/finance/src/refunds.ts",
+    "services/product-factory/src/provenance.ts"
+   ],
+   "evidence": [
+    "tests/integration/aftercare.test.ts",
+    "tests/integration/completion.test.ts"
+   ],
+   "tests": {
+    "files": 2,
+    "passed": 12,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/aftercare.test.ts tests/integration/completion.test.ts",
+   "previous_status": "TESTED (full)",
+   "problems": [],
+   "remaining": null,
+   "status": "VERIFIED"
+  },
+  {
+   "id": 108,
+   "name": "Herkunftsnachweis für Produkte",
+   "name_en": "Digital Product Provenance Passport",
+   "milestone": "M2",
+   "expected": "Öffentlicher Herkunftsnachweis je Datei über die Prüfsumme: Produktart, Version, Prüfprotokoll, Rechte, KI-Werkzeuge (keine); Warnungen bei unvollständigem Nachweis; ohne Kundendaten.",
+   "implementation_files": [
+    "apps/console/src/index.ts",
+    "apps/customer-portal/src/pages.ts",
+    "packages/shared/src/crypto.ts",
+    "services/acquisition/src/leads.ts",
+    "services/ai-orchestrator/src/queue.ts",
+    "services/ai-orchestrator/src/untrusted.ts",
+    "services/core-api/src/aftercare.ts",
+    "services/core-api/src/customers.ts",
+    "services/core-api/src/orders.ts",
+    "services/core-api/src/workflow.ts",
+    "services/finance/src/insights.ts",
+    "services/finance/src/refunds.ts",
+    "services/product-factory/src/artifacts.ts",
+    "services/product-factory/src/delivery.ts",
+    "services/product-factory/src/production.ts",
+    "services/product-factory/src/provenance.ts"
+   ],
+   "evidence": [
+    "tests/integration/production.test.ts",
+    "tests/integration/aftercare.test.ts"
+   ],
+   "tests": {
+    "files": 2,
+    "passed": 26,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/production.test.ts tests/integration/aftercare.test.ts",
+   "previous_status": "TESTED (full)",
+   "problems": [],
+   "remaining": null,
+   "status": "VERIFIED"
+  },
+  {
+   "id": 109,
+   "name": "Ursachen von Wachstum",
+   "name_en": "Causal Growth Intelligence Lab",
+   "milestone": "M6",
+   "expected": null,
+   "implementation_files": [],
+   "evidence": [],
+   "tests": {
+    "files": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": null,
+   "previous_status": "SPECIFIED",
+   "problems": [],
+   "remaining": "Ursachenanalyse Wachstum.",
+   "status": "SPECIFIED"
+  },
+  {
+   "id": 111,
+   "name": "Anlässe für Nachfrage",
+   "name_en": "Business Demand Event Radar",
+   "milestone": "M6",
+   "expected": null,
+   "implementation_files": [],
+   "evidence": [],
+   "tests": {
+    "files": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": null,
+   "previous_status": "SPECIFIED",
+   "problems": [],
+   "remaining": "Nachfrage-Ereignisse.",
+   "status": "SPECIFIED"
+  },
+  {
+   "id": 112,
+   "name": "Bezahlter Pilotauftrag",
+   "name_en": "Verified Paid Pilot Negotiator",
+   "milestone": "M3",
+   "expected": null,
+   "implementation_files": [],
+   "evidence": [],
+   "tests": {
+    "files": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": null,
+   "previous_status": "SPECIFIED",
+   "problems": [],
+   "remaining": "Bezahlter Pilot.",
+   "status": "SPECIFIED"
+  },
+  {
+   "id": 113,
+   "name": "Bereitstellung beim Kunden",
+   "name_en": "Automatic Customer Deployment Engine",
+   "milestone": "M5",
+   "expected": null,
+   "implementation_files": [],
+   "evidence": [],
+   "tests": {
+    "files": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": null,
+   "previous_status": "SPECIFIED",
+   "problems": [],
+   "remaining": "Bereitstellung beim Kunden.",
+   "status": "SPECIFIED"
+  },
+  {
+   "id": 114,
+   "name": "Rücklage für Erstattungen",
+   "name_en": "Dynamic Refund Reserve Manager",
+   "milestone": "M4",
+   "expected": "Rücklage aus der tatsächlichen Erstattungsquote (bei wenig Daten mindestens 10 %) plus offene Anträge; als Empfehlung, nie als auszahlbarer Gewinn.",
+   "implementation_files": [
+    "apps/console/src/index.ts",
+    "apps/customer-portal/src/pages.ts",
+    "packages/shared/src/crypto.ts",
+    "services/core-api/src/aftercare.ts",
+    "services/core-api/src/workflow.ts",
+    "services/finance/src/insights.ts",
+    "services/finance/src/refunds.ts",
+    "services/product-factory/src/provenance.ts"
+   ],
+   "evidence": [
+    "tests/integration/aftercare.test.ts"
+   ],
+   "tests": {
+    "files": 1,
+    "passed": 8,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/aftercare.test.ts",
+   "previous_status": "TESTED (full)",
+   "problems": [],
+   "remaining": null,
+   "status": "VERIFIED"
+  },
+  {
+   "id": 115,
+   "name": "Bearbeitbare Lieferergebnisse",
+   "name_en": "Professional Editable Deliverables Factory",
+   "milestone": "M2",
+   "expected": "Bearbeitbare CSV-Kalkulation (Excel-kompatibel).",
+   "implementation_files": [
+    "packages/shared/src/crypto.ts",
+    "services/acquisition/src/leads.ts",
+    "services/ai-orchestrator/src/queue.ts",
+    "services/ai-orchestrator/src/untrusted.ts",
+    "services/core-api/src/customers.ts",
+    "services/core-api/src/orders.ts",
+    "services/core-api/src/workflow.ts",
+    "services/product-factory/src/artifacts.ts",
+    "services/product-factory/src/delivery.ts",
+    "services/product-factory/src/production.ts"
+   ],
+   "evidence": [
+    "tests/integration/production.test.ts"
+   ],
+   "tests": {
+    "files": 1,
+    "passed": 18,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/production.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Weitere bearbeitbare Formate.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 116,
+   "name": "Branchenausgaben",
+   "name_en": "Autonomous Industry Edition Generator",
+   "milestone": "M6",
+   "expected": null,
+   "implementation_files": [],
+   "evidence": [],
+   "tests": {
+    "files": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": null,
+   "previous_status": "SPECIFIED",
+   "problems": [],
+   "remaining": "Branchen-Editionen.",
+   "status": "SPECIFIED"
+  },
+  {
+   "id": 117,
+   "name": "Umzug von Altsystemen",
+   "name_en": "Intelligent Legacy Migration Concierge",
+   "milestone": "M6",
+   "expected": null,
+   "implementation_files": [],
+   "evidence": [],
+   "tests": {
+    "files": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": null,
+   "previous_status": "SPECIFIED",
+   "problems": [],
+   "remaining": "Migration von Altsystemen.",
+   "status": "SPECIFIED"
+  },
+  {
+   "id": 118,
+   "name": "Vertrauensbereich für Käufer",
+   "name_en": "Autonomous Buyer Trust Room",
+   "milestone": "M5",
+   "expected": "Öffentliche Seite „Vertrauen & Fakten“ nur mit überprüfbaren Systemdaten: Anbieterstatus, Bezahlung, Qualität, Echtheitsprüfung, Anleitungen, echte Bewertungen (nie aus dem Testbetrieb).",
+   "implementation_files": [
+    "apps/console/src/index.ts",
+    "apps/customer-portal/src/pages.ts",
+    "services/core-api/src/aftercare.ts",
+    "services/core-api/src/orders.ts",
+    "services/core-api/src/trust.ts",
+    "services/finance/src/mock-provider.ts"
+   ],
+   "evidence": [
+    "tests/integration/trust-recovery.test.ts"
+   ],
+   "tests": {
+    "files": 1,
+    "passed": 4,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/trust-recovery.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Verifizierte Anbieterangaben und geprüfte Rechtstexte (LA-02, LA-07).",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 119,
+   "name": "Abgebrochene Käufe (nur mit Einwilligung)",
+   "name_en": "Consent-Based Checkout Recovery",
+   "milestone": "M4",
+   "expected": "Abgebrochene/fehlgeschlagene Zahlungen werden erkannt; der Kunde setzt sie im Portal selbst fort (neue Zahlungssitzung, Besitzprüfung). Keine Werbeerinnerungen.",
+   "implementation_files": [
+    "apps/console/src/index.ts",
+    "apps/customer-portal/src/pages.ts",
+    "services/core-api/src/aftercare.ts",
+    "services/core-api/src/orders.ts",
+    "services/core-api/src/trust.ts",
+    "services/finance/src/mock-provider.ts"
+   ],
+   "evidence": [
+    "tests/integration/trust-recovery.test.ts"
+   ],
+   "tests": {
+    "files": 1,
+    "passed": 4,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/trust-recovery.test.ts",
+   "previous_status": "TESTED (full)",
+   "problems": [],
+   "remaining": null,
+   "status": "VERIFIED"
+  },
+  {
+   "id": 120,
+   "name": "Ergebnisnachweise",
+   "name_en": "Customer Outcome Evidence Engine",
+   "milestone": "M5",
+   "expected": "Freiwillige Nutzenrückmeldung nach Lieferung; schlechte Ergebnisse erzeugen eine Qualitätsmaßnahme zur Entscheidung; Einwilligung zur Veröffentlichung getrennt.",
+   "implementation_files": [
+    "apps/console/src/index.ts",
+    "apps/console/src/model.ts",
+    "apps/customer-portal/src/pages.ts",
+    "packages/shared/src/crypto.ts",
+    "services/core-api/src/aftercare.ts",
+    "services/core-api/src/autopilot.ts",
+    "services/core-api/src/daily-report.ts",
+    "services/core-api/src/offers.ts",
+    "services/core-api/src/workflow.ts",
+    "services/finance/src/insights.ts",
+    "services/finance/src/refunds.ts",
+    "services/product-factory/src/provenance.ts"
+   ],
+   "evidence": [
+    "tests/integration/aftercare.test.ts",
+    "tests/integration/completion.test.ts"
+   ],
+   "tests": {
+    "files": 2,
+    "passed": 12,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/aftercare.test.ts tests/integration/completion.test.ts",
+   "previous_status": "TESTED (full)",
+   "problems": [],
+   "remaining": null,
+   "status": "VERIFIED"
+  },
+  {
+   "id": 121,
+   "name": "Ergebnisbasierte Verträge",
+   "name_en": "Verified Outcome Contracting",
+   "milestone": "M6",
+   "expected": null,
+   "implementation_files": [],
+   "evidence": [],
+   "tests": {
+    "files": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": null,
+   "previous_status": "SPECIFIED",
+   "problems": [],
+   "remaining": "Ergebnisbasierte Verträge.",
+   "status": "SPECIFIED"
+  },
+  {
+   "id": 122,
+   "name": "Kostenlose Kontingente steuern",
+   "name_en": "Autonomous Free-Tier Capacity Orchestrator",
+   "milestone": "M1",
+   "expected": "Free-Tier-Tageslimit mit Drossel, „keine Kapazität“ statt Upgrade.",
+   "implementation_files": [
+    "packages/policies/src/policy.ts",
+    "packages/storage/src/db.ts",
+    "packages/storage/src/migrate.ts",
+    "services/acquisition/src/leads.ts",
+    "services/ai-orchestrator/src/queue.ts",
+    "services/ai-orchestrator/src/quota.ts",
+    "services/ai-orchestrator/src/untrusted.ts",
+    "services/core-api/src/policy-store.ts",
+    "services/core-api/src/workflow.ts",
+    "services/product-factory/src/production.ts"
+   ],
+   "evidence": [
+    "tests/integration/governance.test.ts",
+    "tests/integration/ops.test.ts"
+   ],
+   "tests": {
+    "files": 2,
+    "passed": 14,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/governance.test.ts tests/integration/ops.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Übergreifende Kontingentsteuerung.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 123,
+   "name": "Grenzen bei regulierten Tätigkeiten",
+   "name_en": "Regulated Work & Expert Boundary Director",
+   "milestone": "M1",
+   "expected": "Nur freigegebene Produktklassen; regulierte Tätigkeiten nicht freischaltbar.",
+   "implementation_files": [
+    "packages/policies/src/policy.ts",
+    "services/acquisition/src/leads.ts",
+    "services/ai-orchestrator/src/queue.ts",
+    "services/ai-orchestrator/src/untrusted.ts",
+    "services/core-api/src/policy-store.ts",
+    "services/core-api/src/workflow.ts",
+    "services/product-factory/src/production.ts"
+   ],
+   "evidence": [
+    "tests/integration/governance.test.ts"
+   ],
+   "tests": {
+    "files": 1,
+    "passed": 7,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/governance.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Expertenfreigaben.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 124,
+   "name": "Einführung für neue Nutzer",
+   "name_en": "Autonomous Customer Onboarding Tutor",
+   "milestone": "M0",
+   "expected": "Anleitung je gelieferter Produktart (Inhalt, Schritte, ehrliche Grenzen – geprüft gegen die echte Datei) und Erste Schritte für den Eigentümer.",
+   "implementation_files": [
+    "apps/console/src/index.ts",
+    "apps/console/src/model.ts",
+    "apps/console/src/tokens.ts",
+    "apps/console/src/ui.ts",
+    "apps/customer-portal/src/pages.ts",
+    "packages/shared/src/crypto.ts",
+    "packages/shared/src/zip.ts",
+    "services/acquisition/src/leads.ts",
+    "services/core-api/src/change-requests.ts",
+    "services/core-api/src/context.ts",
+    "services/core-api/src/orders.ts",
+    "services/core-api/src/workflow.ts",
+    "services/finance/src/mock-provider.ts",
+    "services/product-factory/src/capabilities/b2b-calc-bundle.ts",
+    "services/product-factory/src/capabilities/b2b-calc-csv.ts",
+    "services/product-factory/src/delivery.ts"
+   ],
+   "evidence": [
+    "tests/unit/console-ui.test.ts",
+    "tests/integration/bundle-change-help.test.ts"
+   ],
+   "tests": {
+    "files": 2,
+    "passed": 16,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/unit/console-ui.test.ts tests/integration/bundle-change-help.test.ts",
+   "previous_status": "TESTED (full)",
+   "problems": [],
+   "remaining": null,
+   "status": "VERIFIED"
+  },
+  {
+   "id": 125,
+   "name": "Maschinenlesbarer Vertrauensnachweis",
+   "name_en": "Machine-Readable Business Trust Passport",
+   "milestone": "M6",
+   "expected": "Maschinenlesbarer Pass unter /.well-known/infinity-earn.json mit denselben überprüfbaren Fakten; Anbieterdaten ehrlich als unverifiziert.",
+   "implementation_files": [
+    "apps/console/src/index.ts",
+    "apps/customer-portal/src/pages.ts",
+    "services/core-api/src/aftercare.ts",
+    "services/core-api/src/orders.ts",
+    "services/core-api/src/trust.ts",
+    "services/finance/src/mock-provider.ts"
+   ],
+   "evidence": [
+    "tests/integration/trust-recovery.test.ts"
+   ],
+   "tests": {
+    "files": 1,
+    "passed": 4,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/trust-recovery.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Verifizierte Anbieterangaben und Vertragsunterlagen (LA-02, LA-07).",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 126,
+   "name": "Übertragbare Bewertungen",
+   "name_en": "Autonomous Marketplace Reputation Portability",
+   "milestone": "M6",
+   "expected": null,
+   "implementation_files": [],
+   "evidence": [],
+   "tests": {
+    "files": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": null,
+   "previous_status": "SPECIFIED",
+   "problems": [],
+   "remaining": "Übertragbare Reputation.",
+   "status": "SPECIFIED"
+  },
+  {
+   "id": 127,
+   "name": "Preisversuche mit Belegen",
+   "name_en": "Evidence-Based Dynamic Pricing Laboratory",
+   "milestone": "M5",
+   "expected": null,
+   "implementation_files": [],
+   "evidence": [],
+   "tests": {
+    "files": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": null,
+   "previous_status": "SPECIFIED",
+   "problems": [],
+   "remaining": "Preisexperimente.",
+   "status": "SPECIFIED"
+  },
+  {
+   "id": 128,
+   "name": "Technische Altlasten",
+   "name_en": "Autonomous Technical Debt Director",
+   "milestone": "M6",
+   "expected": "Bericht docs/tech-debt.md (npm run tech-debt): priorisiert nach Dateigröße, offenen Markierungen und fehlendem Testbezug; Releases nur nach npm run verify.",
+   "implementation_files": [
+    "apps/console/src/index.ts",
+    "scripts/lib/tech-debt.ts",
+    "services/core-api/src/aftercare.ts",
+    "services/finance/src/insights.ts",
+    "services/product-factory/src/registry.ts"
+   ],
+   "evidence": [
+    "tests/integration/pricing-lifecycle.test.ts"
+   ],
+   "tests": {
+    "files": 1,
+    "passed": 3,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/pricing-lifecycle.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Defekt- und Änderungskosten in die Priorisierung einbeziehen.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 129,
+   "name": "Abo-Wert und Kündigungen",
+   "name_en": "Subscription Value & Churn Intelligence",
+   "milestone": "M5",
+   "expected": null,
+   "implementation_files": [],
+   "evidence": [],
+   "tests": {
+    "files": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": null,
+   "previous_status": "SPECIFIED",
+   "problems": [],
+   "remaining": "Abo-Wert und Kündigungen.",
+   "status": "SPECIFIED"
+  },
+  {
+   "id": 130,
+   "name": "Ungenutzte Produkte wiederbeleben",
+   "name_en": "Autonomous Dormant Asset Revival",
+   "milestone": "M6",
+   "expected": null,
+   "implementation_files": [],
+   "evidence": [],
+   "tests": {
+    "files": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": null,
+   "previous_status": "SPECIFIED",
+   "problems": [],
+   "remaining": "Ungenutzte Produkte wiederbeleben.",
+   "status": "SPECIFIED"
+  },
+  {
+   "id": 131,
+   "name": "Nachfrage-Radar",
+   "name_en": "Global Real Buyer Radar",
+   "milestone": "M4",
+   "expected": "Quellenregister mit Nutzungsbedingungen-Freigabe; öffentliche EU-Ausschreibungen (TED) täglich mit Original-URL, Frist und Bewertung; nicht freigegebene Quellen bleiben aus.",
+   "implementation_files": [
+    "apps/dashboard/src/render.ts",
+    "packages/contracts/src/schemas.ts",
+    "services/acquisition/src/connectors/ted.ts",
+    "services/acquisition/src/consent.ts",
+    "services/acquisition/src/leads.ts",
+    "services/acquisition/src/ranking.ts",
+    "services/acquisition/src/scoring.ts",
+    "services/acquisition/src/sources.ts",
+    "services/core-api/src/offers.ts",
+    "services/core-api/src/policy-store.ts",
+    "services/core-api/src/workflow.ts"
+   ],
+   "evidence": [
+    "tests/integration/m1-acquisition.test.ts",
+    "tests/integration/acquisition.test.ts"
+   ],
+   "tests": {
+    "files": 2,
+    "passed": 23,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/m1-acquisition.test.ts tests/integration/acquisition.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Weitere lizenzierte Quellen und Plattform-Adapter; Duplikat-Zusammenführung über Quellen hinweg.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 132,
+   "name": "Richtiger Zeitpunkt",
+   "name_en": "Perfect Buyer Timing Intelligence",
+   "milestone": "M6",
+   "expected": "Zeitpunkt-Signale aus Ausschreibungsfristen: bestes Zeitfenster, Gründe, Belege, Sicherheitsband; ohne Frist TIMING_UNCERTAIN, kein Prozentwert (Admin → Wachstum).",
+   "implementation_files": [
+    "services/acquisition/src/leads.ts",
+    "services/core-api/src/http-core.ts",
+    "services/core-api/src/releases.ts",
+    "services/core-api/src/workflow.ts",
+    "services/growth/src/sales-growth.ts",
+    "services/growth/src/visibility.ts"
+   ],
+   "evidence": [
+    "tests/integration/growth.test.ts"
+   ],
+   "tests": {
+    "files": 1,
+    "passed": 10,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/growth.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Weitere belegte Ereignisarten (Standorteröffnung, Migration) aus lizenzierten Quellen.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 133,
+   "name": "Käufer prüfen",
+   "name_en": "Verified Buyer Qualification",
+   "milestone": "M1",
+   "expected": "Qualifizierung und Machbarkeitsprüfung je Anfrage (Quelle, Kontaktgrundlage, Produktklasse, Umfang) mit Gründen.",
+   "implementation_files": [
+    "apps/dashboard/src/render.ts",
+    "packages/contracts/src/money.ts",
+    "packages/contracts/src/schemas.ts",
+    "services/acquisition/src/connectors/ted.ts",
+    "services/acquisition/src/consent.ts",
+    "services/acquisition/src/leads.ts",
+    "services/acquisition/src/ranking.ts",
+    "services/acquisition/src/scoring.ts",
+    "services/acquisition/src/sources.ts",
+    "services/core-api/src/offers.ts",
+    "services/core-api/src/policy-store.ts",
+    "services/core-api/src/workflow.ts"
+   ],
+   "evidence": [
+    "tests/integration/opportunity.test.ts",
+    "tests/integration/m1-acquisition.test.ts"
+   ],
+   "tests": {
+    "files": 2,
+    "passed": 24,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/opportunity.test.ts tests/integration/m1-acquisition.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Budget-/Betrugs-/Wirtschaftlichkeitsprüfung als eigene Entscheidung mit Belegen.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 134,
+   "name": "Präzise Angebote",
+   "name_en": "Autonomous Precision Proposal Engine",
+   "milestone": "M4",
+   "expected": "Automatisches Festpreis-Angebot mit Lieferkriterien; Angebotsentwürfe für Ausschreibungen nur zur manuellen Einreichung.",
+   "implementation_files": [
+    "apps/dashboard/src/render.ts",
+    "packages/contracts/src/money.ts",
+    "packages/contracts/src/schemas.ts",
+    "services/acquisition/src/connectors/ted.ts",
+    "services/acquisition/src/consent.ts",
+    "services/acquisition/src/leads.ts",
+    "services/acquisition/src/ranking.ts",
+    "services/acquisition/src/scoring.ts",
+    "services/acquisition/src/sources.ts",
+    "services/core-api/src/advisor.ts",
+    "services/core-api/src/http-core.ts",
+    "services/core-api/src/offers.ts",
+    "services/core-api/src/policy-store.ts",
+    "services/core-api/src/workflow.ts"
+   ],
+   "evidence": [
+    "tests/integration/opportunity.test.ts",
+    "tests/integration/m1-acquisition.test.ts",
+    "tests/integration/advisor.test.ts"
+   ],
+   "tests": {
+    "files": 3,
+    "passed": 28,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/opportunity.test.ts tests/integration/m1-acquisition.test.ts tests/integration/advisor.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Versionierte Angebotseinreichung mit Versandquittung über erlaubte Plattformen.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 135,
+   "name": "Nachfrage-Seiten",
+   "name_en": "Demand-Driven Landingpage Factory",
+   "milestone": "M6",
+   "expected": "Bedarfsseiten /loesungen/… nur für echte Leistungen: inhaltliche QA (echtes Angebot, keine Duplikate, keine Fake-Claims, DE/IT/EN), Zustände QA_BLOCKED/PUBLISHED/UNDER_REVIEW, Sitemap nur veröffentlichte.",
+   "implementation_files": [
+    "services/acquisition/src/leads.ts",
+    "services/core-api/src/http-core.ts",
+    "services/core-api/src/releases.ts",
+    "services/core-api/src/workflow.ts",
+    "services/growth/src/sales-growth.ts",
+    "services/growth/src/visibility.ts"
+   ],
+   "evidence": [
+    "tests/integration/growth.test.ts"
+   ],
+   "tests": {
+    "files": 1,
+    "passed": 10,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/growth.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Ansichten/Anfragen je Seite aus Search Console; weitere Cluster erst bei belegtem Bedarf.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 136,
+   "name": "Lösung sofort zeigen",
+   "name_en": "Instant Customer Solution Experience",
+   "milestone": "M4",
+   "expected": "Produktberater (DE/IT/EN) mit Rückfragen und ehrlicher Ablehnung; Angebotsvorschau aus den eigenen Positionen; bedienbare Demo der Mini-Warenwirtschaft mit Beispieldaten unter /demo/warenwirtschaft.",
+   "implementation_files": [
+    "packages/shared/src/zip.ts",
+    "products/mini-ww/build.ts",
+    "products/mini-ww/ui/actions.ts",
+    "products/mini-ww/ui/brand.ts",
+    "products/mini-ww/ui/i18n.ts",
+    "products/mini-ww/ui/view.ts",
+    "services/acquisition/src/leads.ts",
+    "services/core-api/src/advisor.ts",
+    "services/core-api/src/http-core.ts",
+    "services/core-api/src/orders.ts",
+    "services/core-api/src/releases.ts",
+    "services/core-api/src/workflow.ts",
+    "services/finance/src/mock-provider.ts",
+    "services/product-factory/src/capabilities/mini-ww.ts",
+    "services/product-factory/src/production.ts"
+   ],
+   "evidence": [
+    "tests/integration/advisor.test.ts",
+    "tests/products/mini-ww/ui.test.ts",
+    "tests/integration/p4-release.test.ts"
+   ],
+   "tests": {
+    "files": 3,
+    "passed": 17,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/advisor.test.ts tests/products/mini-ww/ui.test.ts tests/integration/p4-release.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Automatische Mini-Vorschau je Anfrage in isolierter Sandbox.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 137,
+   "name": "Kontakt nur erlaubt",
+   "name_en": "Autonomous Legal Contact Router",
+   "milestone": "M1",
+   "expected": "Jede Kundennachricht läuft durch die Kontaktentscheidung (Einwilligung, Opt-out, Werbeschalter); Kanalstatus ehrlich; Ausschreibungs-Kontakte werden nie angeschrieben.",
+   "implementation_files": [
+    "apps/console/src/model.ts",
+    "apps/console/src/pages/customers.ts",
+    "apps/customer-portal/src/pages.ts",
+    "packages/contracts/src/schemas.ts",
+    "packages/registry/src/export.ts",
+    "services/acquisition/src/consent.ts",
+    "services/acquisition/src/leads.ts",
+    "services/acquisition/src/sources.ts",
+    "services/core-api/src/aftercare.ts",
+    "services/core-api/src/autopilot.ts",
+    "services/core-api/src/channels.ts",
+    "services/core-api/src/http-core.ts",
+    "services/core-api/src/outbox.ts",
+    "services/core-api/src/workflow.ts"
+   ],
+   "evidence": [
+    "tests/integration/outbox.test.ts",
+    "tests/integration/acquisition.test.ts",
+    "tests/integration/gesamtprompt.test.ts"
+   ],
+   "tests": {
+    "files": 3,
+    "passed": 20,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/outbox.test.ts tests/integration/acquisition.test.ts tests/integration/gesamtprompt.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Kanal-/Rechtsraum-Policies je Plattform mit Versandquittung.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 138,
+   "name": "Schnelle Erstantwort",
+   "name_en": "First-Response Speed Director",
+   "milestone": "M6",
+   "expected": "Antwort-Warteschlange aus echten Zeitstempeln (Eingang → Angebot → Nachricht) mit Priorität nach Frist, Zuständen QUEUED/PREPARED/SENT/POLICY_BLOCKED/QUOTA_BLOCKED/EXPIRED und Kontaktregel vor Versand.",
+   "implementation_files": [
+    "apps/console/src/model.ts",
+    "apps/console/src/pages/customers.ts",
+    "services/acquisition/src/leads.ts",
+    "services/core-api/src/aftercare.ts",
+    "services/core-api/src/autopilot.ts",
+    "services/core-api/src/http-core.ts",
+    "services/core-api/src/outbox.ts",
+    "services/core-api/src/releases.ts",
+    "services/core-api/src/workflow.ts",
+    "services/growth/src/sales-growth.ts",
+    "services/growth/src/visibility.ts"
+   ],
+   "evidence": [
+    "tests/integration/growth.test.ts",
+    "tests/integration/outbox.test.ts"
+   ],
+   "tests": {
+    "files": 2,
+    "passed": 15,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/growth.test.ts tests/integration/outbox.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Versand über echten Adapter mit Retry/Backoff, sobald ein E-Mail-Anbieter verbunden ist.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 139,
+   "name": "Partner und Empfehlungen",
+   "name_en": "Autonomous Business Matchmaking",
+   "milestone": "M6",
+   "expected": "Partner nur mit Zustimmung und Vertrag, Empfehlungscode (First-Touch), Provision nur aus bestätigtem Zahlungsereignis, Verfall bei Erstattung, Freigabe durch den Eigentümer.",
+   "implementation_files": [
+    "services/acquisition/src/leads.ts",
+    "services/core-api/src/http-core.ts",
+    "services/core-api/src/releases.ts",
+    "services/core-api/src/workflow.ts",
+    "services/growth/src/sales-growth.ts",
+    "services/growth/src/visibility.ts"
+   ],
+   "evidence": [
+    "tests/integration/growth.test.ts"
+   ],
+   "tests": {
+    "files": 1,
+    "passed": 10,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/growth.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Partneransicht mit eigenem Zugang; Auszahlung bleibt außerhalb des Systems.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 140,
+   "name": "Erste Kunden gewinnen",
+   "name_en": "Zero-to-First-Customer Accelerator",
+   "milestone": "M6",
+   "expected": "Erste-Kunden-Experimente mit festem Budget 0 € (Datenbankregel), 1–3 eigenen Kanälen, Entscheidung nur aus echten bezahlten Aufträgen; Testzahlungen zählen nicht.",
+   "implementation_files": [
+    "services/acquisition/src/leads.ts",
+    "services/core-api/src/http-core.ts",
+    "services/core-api/src/releases.ts",
+    "services/core-api/src/workflow.ts",
+    "services/growth/src/sales-growth.ts",
+    "services/growth/src/visibility.ts"
+   ],
+   "evidence": [
+    "tests/integration/growth.test.ts"
+   ],
+   "tests": {
+    "files": 1,
+    "passed": 10,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/growth.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Erster echter Live-Auftrag (erst nach LA-Freigaben möglich).",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 146,
+   "name": "Google-Sichtbarkeit",
+   "name_en": "Google Visibility Commander",
+   "milestone": "M5",
+   "expected": "robots.txt (interne Bereiche gesperrt), sitemap.xml, Canonical und hreflang für DE/IT/EN.",
+   "implementation_files": [
+    "apps/customer-portal/src/pages.ts",
+    "packages/registry/src/export.ts",
+    "services/core-api/src/channels.ts",
+    "services/core-api/src/http-core.ts",
+    "services/product-factory/src/capabilities/b2b-calc-csv.ts"
+   ],
+   "evidence": [
+    "tests/integration/landing.test.ts",
+    "tests/integration/gesamtprompt.test.ts"
+   ],
+   "tests": {
+    "files": 2,
+    "passed": 10,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/landing.test.ts tests/integration/gesamtprompt.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Eigene Domain und Search Console (Eigentümerverifikation), technischer Prüfbericht im Admin.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 147,
+   "name": "Kaufabsicht in der Suche",
+   "name_en": "High-Intent Search Intelligence",
+   "milestone": "M6",
+   "expected": "Suchabsichten aus echten Anfragen (ohne Kontaktdaten): Kauf/Vergleich/Information, Zuordnung zu existierender Leistung oder Machbarkeitsprüfung, Quelle und Datum je Eintrag, kein Suchvolumen.",
+   "implementation_files": [
+    "services/acquisition/src/leads.ts",
+    "services/core-api/src/http-core.ts",
+    "services/core-api/src/releases.ts",
+    "services/core-api/src/workflow.ts",
+    "services/growth/src/sales-growth.ts",
+    "services/growth/src/visibility.ts"
+   ],
+   "evidence": [
+    "tests/integration/growth.test.ts"
+   ],
+   "tests": {
+    "files": 1,
+    "passed": 10,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/growth.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Search-Console-Daten nach Domain-Verifikation durch den Eigentümer.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 148,
+   "name": "Fachinhalte veröffentlichen",
+   "name_en": "Autonomous Expert Content Publisher",
+   "milestone": "M6",
+   "expected": "Ratgeber /ratgeber/angebot-bis-rechnung (DE/IT/EN) aus der Anleitung des gelieferten Programms; Prüfung auf echte Funktion, erfundene Berichte, Nutzen, Aktualität; Wiedervorlage bei Programmänderung.",
+   "implementation_files": [
+    "services/acquisition/src/leads.ts",
+    "services/core-api/src/http-core.ts",
+    "services/core-api/src/releases.ts",
+    "services/core-api/src/workflow.ts",
+    "services/growth/src/sales-growth.ts",
+    "services/growth/src/visibility.ts"
+   ],
+   "evidence": [
+    "tests/integration/growth.test.ts"
+   ],
+   "tests": {
+    "files": 1,
+    "passed": 10,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/growth.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Weitere Artikel erst mit neuen getesteten Funktionen.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 149,
+   "name": "Organische Verbreitung",
+   "name_en": "Organic Traffic Distribution Network",
+   "milestone": "M6",
+   "expected": "Verbreitungsplan mit datensparsamen Kampagnenlinks; nicht verbundene Kanäle NOT_CONNECTED, Direktnachrichten gesperrt, „veröffentlicht“ nur mit Kanalquittung, idempotent.",
+   "implementation_files": [
+    "services/acquisition/src/leads.ts",
+    "services/core-api/src/http-core.ts",
+    "services/core-api/src/releases.ts",
+    "services/core-api/src/workflow.ts",
+    "services/growth/src/sales-growth.ts",
+    "services/growth/src/visibility.ts"
+   ],
+   "evidence": [
+    "tests/integration/growth.test.ts"
+   ],
+   "tests": {
+    "files": 1,
+    "passed": 10,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/growth.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Kanäle (LinkedIn, Instagram, YouTube, Newsletter) verbindet der Eigentümer mit eigenem Konto.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 150,
+   "name": "Auffindbar für Suche und KI",
+   "name_en": "AI & Search Discoverability Engine",
+   "milestone": "M5",
+   "expected": "Serverseitig lesbare Seiten mit Titeln, Beschreibungen, Canonical/hreflang; maschinenlesbarer Katalog (/api/katalog) und Vertrauenspass (/.well-known/infinity-earn.json).",
+   "implementation_files": [
+    "apps/console/src/index.ts",
+    "apps/customer-portal/src/pages.ts",
+    "services/core-api/src/aftercare.ts",
+    "services/core-api/src/orders.ts",
+    "services/core-api/src/trust.ts",
+    "services/finance/src/mock-provider.ts",
+    "services/product-factory/src/capabilities/b2b-calc-csv.ts"
+   ],
+   "evidence": [
+    "tests/integration/landing.test.ts",
+    "tests/integration/trust-recovery.test.ts"
+   ],
+   "tests": {
+    "files": 2,
+    "passed": 9,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/landing.test.ts tests/integration/trust-recovery.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "JSON-LD (Organization/Service) nach Validierung, Open Graph.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 151,
+   "name": "Passende Landingpage",
+   "name_en": "Intent-Matched Landing Experience",
+   "milestone": "M6",
+   "expected": "Bedarfsseite Lagerverwaltung führt nur nach Freigabe zur echten Produktseite, sonst ehrlich zum Berater; Sprache und Ziel bleiben beim Sprachwechsel gleich; keine Personalisierung, keine Fake-Knappheit.",
+   "implementation_files": [
+    "packages/shared/src/zip.ts",
+    "services/acquisition/src/leads.ts",
+    "services/core-api/src/http-core.ts",
+    "services/core-api/src/orders.ts",
+    "services/core-api/src/releases.ts",
+    "services/core-api/src/workflow.ts",
+    "services/finance/src/mock-provider.ts",
+    "services/growth/src/sales-growth.ts",
+    "services/growth/src/visibility.ts",
+    "services/product-factory/src/capabilities/mini-ww.ts",
+    "services/product-factory/src/production.ts"
+   ],
+   "evidence": [
+    "tests/integration/growth.test.ts",
+    "tests/integration/p4-release.test.ts"
+   ],
+   "tests": {
+    "files": 2,
+    "passed": 15,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/growth.test.ts tests/integration/p4-release.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Weitere Bedarfsseiten nur mit eigenständigem Angebot.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 152,
+   "name": "Produkt ausprobieren",
+   "name_en": "Interactive Product Value Demonstrator",
+   "milestone": "M3",
+   "expected": "Demo der Mini-Warenwirtschaft mit Beispieldaten (eigene CSP, kein Netzwerk, noindex), Produktseite mit echten Screenshots als Bilder gekennzeichnet, gleicher Funktionsumfang wie die Standard-Akte, Kaufweg nach Freigabe.",
+   "implementation_files": [
+    "packages/shared/src/zip.ts",
+    "products/mini-ww/build.ts",
+    "products/mini-ww/ui/actions.ts",
+    "products/mini-ww/ui/brand.ts",
+    "products/mini-ww/ui/i18n.ts",
+    "products/mini-ww/ui/view.ts",
+    "services/acquisition/src/leads.ts",
+    "services/core-api/src/http-core.ts",
+    "services/core-api/src/orders.ts",
+    "services/core-api/src/releases.ts",
+    "services/core-api/src/workflow.ts",
+    "services/finance/src/mock-provider.ts",
+    "services/product-factory/src/capabilities/mini-ww.ts",
+    "services/product-factory/src/production.ts"
+   ],
+   "evidence": [
+    "tests/products/mini-ww/ui.test.ts",
+    "tests/integration/p4-release.test.ts"
+   ],
+   "tests": {
+    "files": 2,
+    "passed": 13,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/products/mini-ww/ui.test.ts tests/integration/p4-release.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Ressourcenlimit je Sitzung ist durch reine Browser-Ausführung gegeben; weitere Produkte folgen.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 153,
+   "name": "Vertrauenszentrum",
+   "name_en": "Verified Trust & Buyer Confidence Center",
+   "milestone": "M5",
+   "expected": "Seite „Vertrauen & Fakten“ nur mit überprüfbaren Daten, Echtheitsprüfung je Datei, ehrliche Pflichtangaben.",
+   "implementation_files": [
+    "apps/console/src/index.ts",
+    "apps/customer-portal/src/pages.ts",
+    "packages/registry/src/export.ts",
+    "services/core-api/src/aftercare.ts",
+    "services/core-api/src/channels.ts",
+    "services/core-api/src/http-core.ts",
+    "services/core-api/src/orders.ts",
+    "services/core-api/src/trust.ts",
+    "services/finance/src/mock-provider.ts"
+   ],
+   "evidence": [
+    "tests/integration/trust-recovery.test.ts",
+    "tests/integration/gesamtprompt.test.ts"
+   ],
+   "tests": {
+    "files": 2,
+    "passed": 9,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/trust-recovery.test.ts tests/integration/gesamtprompt.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Verifizierte Anbieterangaben (LA-02) und freigegebene echte Bewertungen.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 154,
+   "name": "Vom Angebot zur Zahlung",
+   "name_en": "Frictionless AI Quote-to-Checkout",
+   "milestone": "M2",
+   "expected": "Berater → Angebot → Annahme → Stripe Checkout (Sandbox) → signierter Webhook → Auftrag; Zahlung fortsetzen im Portal.",
+   "implementation_files": [
+    "apps/console/src/index.ts",
+    "apps/customer-portal/src/pages.ts",
+    "packages/shared/src/crypto.ts",
+    "services/core-api/src/advisor.ts",
+    "services/core-api/src/aftercare.ts",
+    "services/core-api/src/context.ts",
+    "services/core-api/src/http-core.ts",
+    "services/core-api/src/orders.ts",
+    "services/core-api/src/trust.ts",
+    "services/finance/src/mock-provider.ts"
+   ],
+   "evidence": [
+    "tests/e2e/pilot.test.ts",
+    "tests/integration/advisor.test.ts",
+    "tests/integration/trust-recovery.test.ts"
+   ],
+   "tests": {
+    "files": 3,
+    "passed": 9,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/e2e/pilot.test.ts tests/integration/advisor.test.ts tests/integration/trust-recovery.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Stripe LIVE nach LA-Freigaben.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 155,
+   "name": "Von der Suche bis zur Bank",
+   "name_en": "Search-to-Bank Revenue Optimizer",
+   "milestone": "M6",
+   "expected": "Funnel je Kanal: Anfragen → Angebote → bezahlte Aufträge (nur mit Zahlungsereignis) → Lieferungen → Netto (Zahlung − Gebühren − Erstattung); Auszahlung und bankbestätigt getrennt; „nicht zuordenbar“ erlaubt; Optimierung pausiert bei zu wenig Daten.",
+   "implementation_files": [
+    "services/acquisition/src/leads.ts",
+    "services/core-api/src/http-core.ts",
+    "services/core-api/src/releases.ts",
+    "services/core-api/src/workflow.ts",
+    "services/growth/src/sales-growth.ts",
+    "services/growth/src/visibility.ts"
+   ],
+   "evidence": [
+    "tests/integration/growth.test.ts"
+   ],
+   "tests": {
+    "files": 1,
+    "passed": 10,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/growth.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Impressionen/Klicks erst mit verbundener Search Console.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 156,
+   "name": "Auftragsanforderung verstehen",
+   "name_en": "Universal Assignment Intelligence",
+   "milestone": "M6",
+   "expected": "Auftragsanforderung aus dem Kundentext (DE/IT/EN): Fachbereich, Lieferumfang je Produktart (z. B. Windows-ERP → Datenmodell, Rollen, Installer, Tests; Excel → Zell-/Formel-/Dateiprüfung), Zielplattform, Formate, MUSS/SOLL/OPTIONAL, Abnahmekriterien; Rückfrage bei fehlender Plattform, Konflikte bei Widersprüchen, REVIEW bei Unbekanntem; Anhänge nur als Daten; Duplikate idempotent; Scope-Versionen mit Originaltext und Kundenbestätigung (Admin → Aufträge → Anforderungen).",
+   "implementation_files": [
+    "packages/shared/src/crypto.ts",
+    "services/acquisition/src/leads.ts",
+    "services/core-api/src/assignments.ts",
+    "services/core-api/src/customers.ts",
+    "services/core-api/src/errors.ts",
+    "services/core-api/src/http-core.ts"
+   ],
+   "evidence": [
+    "tests/integration/assignment.test.ts"
+   ],
+   "tests": {
+    "files": 1,
+    "passed": 11,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/assignment.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Sprach- und Dokumentanalyse (braucht KI-Zugang mit Kostenfreigabe); automatische Übernahme in Angebot 134/162.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 157,
+   "name": "Programme mit Installer",
+   "name_en": "Native Software & Installer Factory",
+   "milestone": "M6",
+   "expected": "Echtes Windows-Programm „Lager & Rechnung“ (C#/WinForms, .NET Framework 4.x aus Windows, 59 KB) mit Artikeln, Lagerbewegungen ohne negativen Bestand, Rechnungen mit lückenlosen Nummern und Steuer, CSV-/HTML-Export, atomarer Speicherung mit Sicherung, DE/IT/EN, Firmenname/-farbe/Steuersätze je Kunde; Installer pro Benutzer ohne Adminrechte mit Startmenü, Apps-&-Features-Eintrag, Update und Deinstallation, die nur eigene Dateien entfernt und Kundendaten behält; ehrlich als unsigniert gekennzeichnet (Windows meldet NotSigned); Meldungen und Installer in DE/IT/EN; bebilderte Anleitung DE/IT/EN mit echten Bildschirmfotos je Kundenfassung; Freigabe-Akte im Admin.",
+   "implementation_files": [
+    "packages/shared/src/crypto.ts",
+    "packages/shared/src/pdf-doc.ts",
+    "packages/shared/src/pdf.ts",
+    "products/win-lager/generated/manual-assets.ts",
+    "products/win-lager/manual.ts",
+    "products/win-lager/release.ts",
+    "scripts/build-win-lager-assets.ts",
+    "scripts/build-win-lager.ts",
+    "services/core-api/src/context.ts"
+   ],
+   "evidence": [
+    "tests/products/win-lager/install.test.ts",
+    "tests/products/win-lager/manual.test.ts"
+   ],
+   "tests": {
+    "files": 2,
+    "passed": 9,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/products/win-lager/install.test.ts tests/products/win-lager/manual.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Rechnungen mit Pflichtangaben (§ 14 UStG / AT § 11), Kunden- und Firmenstamm, FatturaPA-Export für Italien. FatturaPA gegen amtliches XSD (FPR12 v1.2.3) geprüft. Verkauf gesperrt: FatturaPA-Annahme im SdI UNVERIFIED und Bau je Auftrag über den GitHub-Windows-Server eingerichtet und per Probebau auf Staging belegt; Code-Signatur (kostenpflichtig); Festpreis. macOS/iOS BLOCKED (Mac + Apple-Konto, Kostenfreigabe).",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 158,
+   "name": "Plattform-Testlabor",
+   "name_en": "Cross-Platform Compatibility Laboratory",
+   "milestone": "M6",
+   "expected": "Echter Windows-Test je Build (lokal Windows 11 und in der GitHub-CI auf Windows Server): Installation, Start mit aufgebauter Oberfläche und Bildschirmfoto, Daten über Neustart, gleichzeitige Zugriffe ohne Datenverlust, Update mit erhaltenen Daten, laufendes Programm blockiert Update/Deinstallation, fehlende Voraussetzung, Deinstallation ohne fremde Dateien; Signaturstatus von Windows abgefragt; auf anderen Systemen ehrlich übersprungen.",
+   "implementation_files": [
+    "scripts/build-win-lager.ts"
+   ],
+   "evidence": [
+    "tests/products/win-lager/install.test.ts"
+   ],
+   "tests": {
+    "files": 1,
+    "passed": 2,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/products/win-lager/install.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "macOS UNVERIFIED (keine Hardware), Linux nicht unterstützt; Tests für hohe Bildschirmskalierung und Tastaturbedienung; Ressourcen-Grenzwerte je Vertrag.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 159,
+   "name": "Office- und Dokumentproduktion",
+   "name_en": "Ultimate Office & Document Production",
+   "milestone": "M6",
+   "expected": "Kalkulationen als Tabelle (CSV) und PDF mit automatischer Prüfung von Summen, Rundung, Sonderzeichen und Layout gegen die echte Datei; PDF zusätzlich zur bearbeitbaren Tabelle.",
+   "implementation_files": [
+    "apps/console/src/pages/products.ts",
+    "apps/customer-portal/src/pages.ts",
+    "packages/shared/src/crypto.ts",
+    "services/acquisition/src/leads.ts",
+    "services/ai-orchestrator/src/queue.ts",
+    "services/core-api/src/releases.ts",
+    "services/core-api/src/workflow.ts",
+    "services/product-factory/src/capabilities/b2b-calc-pdf.ts",
+    "services/product-factory/src/delivery.ts",
+    "services/product-factory/src/production.ts",
+    "services/product-factory/src/quality-standard.ts",
+    "services/product-factory/src/registry.ts"
+   ],
+   "evidence": [
+    "tests/integration/quality-standard.test.ts",
+    "tests/integration/m2-product-pdf.test.ts"
+   ],
+   "tests": {
+    "files": 2,
+    "passed": 11,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/quality-standard.test.ts tests/integration/m2-product-pdf.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Bearbeitbare .xlsx/.docx/.pptx mit Formeln, Diagrammen und Metadaten-Bereinigung.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 160,
+   "name": "Grafik, 3D, Audio und Video",
+   "name_en": "Cinematic & Creative Quality Factory",
+   "milestone": "M6",
+   "expected": null,
+   "implementation_files": [],
+   "evidence": [],
+   "tests": {
+    "files": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": null,
+   "previous_status": "BLOCKED",
+   "problems": [],
+   "remaining": "Grafik, 3D, Audio und Video sind auf kostenloser Infrastruktur nicht zuverlässig herstellbar und prüfbar; gesperrt bis zum echten Fähigkeitsnachweis (keine kostenpflichtigen Render-Dienste ohne Freigabe).",
+   "status": "BLOCKED"
+  },
+  {
+   "id": 161,
+   "name": "Kundendateien und Zugänge",
+   "name_en": "Secure Client Asset & Access Concierge",
+   "milestone": "M6",
+   "expected": "Datei-/Zugangsanfrage nur beim Kunden des Auftrags (Admin → Auftrag → Dateien); sicherer Upload im Portal ohne JavaScript (Größe, erlaubte Endung, Magic Bytes, keine ausführbaren Dateien, Makros, PDF-Skripte, EICAR, Zugangsdaten); abgelehnte Dateien werden nicht gespeichert; Nutzungsrechte-Pflicht; befristete, widerrufbare, auftragsbezogene Freigabe an die Produktion mit Protokoll; Mandantentrennung; Dubletten versioniert; Zugänge nur per Einladung (keine Passwörter); Produktion pausiert bei fehlender Datei; Löschantrag löscht Dateien.",
+   "implementation_files": [
+    "apps/customer-portal/src/pages.ts",
+    "packages/shared/src/multipart.ts",
+    "services/core-api/src/client-assets.ts",
+    "services/core-api/src/customers.ts",
+    "services/core-api/src/errors.ts",
+    "services/core-api/src/http-core.ts",
+    "services/core-api/src/orders.ts",
+    "services/finance/src/mock-provider.ts",
+    "services/product-factory/src/production.ts"
+   ],
+   "evidence": [
+    "tests/integration/client-assets.test.ts"
+   ],
+   "tests": {
+    "files": 1,
+    "passed": 10,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/client-assets.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Vollständiger Virenscanner (kostenlos im Worker nicht verfügbar); E-Mail-Benachrichtigung erst mit verbundenem Versandkanal; Verwendung der Dateien in den Generatoren (z. B. Logo im Programm).",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 162,
+   "name": "Angebote für Freelancer-Aufträge",
+   "name_en": "Winning Freelancer Proposal Studio",
+   "milestone": "M6",
+   "expected": null,
+   "implementation_files": [],
+   "evidence": [],
+   "tests": {
+    "files": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": null,
+   "previous_status": "SPECIFIED",
+   "problems": [],
+   "remaining": "Freelancer-Angebote nur auf Plattformen mit Konto des Eigentümers und erlaubter Schnittstelle; baut auf 134 (Angebote) und 137 (Kontaktregeln) auf; kein automatischer Versand, wo Bots untersagt sind.",
+   "status": "SPECIFIED"
+  },
+  {
+   "id": 163,
+   "name": "Abgestimmte Fachteams",
+   "name_en": "Autonomous Specialist Production Teams",
+   "milestone": "M6",
+   "expected": null,
+   "implementation_files": [],
+   "evidence": [],
+   "tests": {
+    "files": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": null,
+   "previous_status": "BLOCKED",
+   "problems": [],
+   "remaining": "Autonome KI-Fachrollen brauchen eine KI-API (kostenpflichtig, Eigentümer-Entscheidung L11); ohne Freigabe arbeitet nur der deterministische Kern mit Warteschlange.",
+   "status": "BLOCKED"
+  },
+  {
+   "id": 164,
+   "name": "Abnahme durch den Kunden",
+   "name_en": "Interactive Customer Acceptance Studio",
+   "milestone": "M6",
+   "expected": "Admin-Vorschau des echten Produkts (Warenwirtschaft interaktiv), Kundenportal mit Besitzprüfung, Änderungswünsche nach Lieferung als eigener Zusatzauftrag mit Preis und Zahlung.",
+   "implementation_files": [
+    "apps/console/src/index.ts",
+    "apps/customer-portal/src/pages.ts",
+    "packages/shared/src/crypto.ts",
+    "packages/shared/src/zip.ts",
+    "services/acquisition/src/leads.ts",
+    "services/core-api/src/autopilot.ts",
+    "services/core-api/src/change-requests.ts",
+    "services/core-api/src/customers.ts",
+    "services/core-api/src/http-core.ts",
+    "services/core-api/src/orders.ts",
+    "services/core-api/src/releases.ts",
+    "services/core-api/src/workflow.ts",
+    "services/finance/src/invoice-pdf.ts",
+    "services/finance/src/invoice.ts",
+    "services/finance/src/mock-provider.ts",
+    "services/product-factory/src/capabilities/b2b-calc-bundle.ts",
+    "services/product-factory/src/capabilities/b2b-calc-csv.ts",
+    "services/product-factory/src/capabilities/mini-ww.ts",
+    "services/product-factory/src/delivery.ts",
+    "services/product-factory/src/production.ts"
+   ],
+   "evidence": [
+    "tests/integration/p4-release.test.ts",
+    "tests/integration/bundle-change-help.test.ts",
+    "tests/integration/portal-documents.test.ts"
+   ],
+   "tests": {
+    "files": 3,
+    "passed": 15,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/p4-release.test.ts tests/integration/bundle-change-help.test.ts tests/integration/portal-documents.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Abnahmesitzung vor der Übergabe mit Feedback je Version und dokumentierter Abnahme.",
+   "status": "IMPLEMENTED"
+  },
+  {
+   "id": 165,
+   "name": "Übergabe und Rechte",
+   "name_en": "Professional Release & Ownership Transfer",
+   "milestone": "M6",
+   "expected": "Lieferung erst nach Zahlung und bestandener Prüfung, Prüfsumme und Version je Artefakt, Download nur für den berechtigten Kunden mit Ablaufzeit, Anleitung je Produktart; Bankeingang nur mit Bankbeleg, nie aus Stripe-Auszahlung allein.",
+   "implementation_files": [
+    "apps/console/src/index.ts",
+    "apps/console/src/model.ts",
+    "apps/customer-portal/src/pages.ts",
+    "packages/shared/src/crypto.ts",
+    "services/acquisition/src/leads.ts",
+    "services/ai-orchestrator/src/queue.ts",
+    "services/ai-orchestrator/src/untrusted.ts",
+    "services/core-api/src/autopilot.ts",
+    "services/core-api/src/context.ts",
+    "services/core-api/src/customers.ts",
+    "services/core-api/src/orders.ts",
+    "services/core-api/src/workflow.ts",
+    "services/finance/src/bank-statement.ts",
+    "services/finance/src/invoice-pdf.ts",
+    "services/finance/src/invoice.ts",
+    "services/finance/src/mock-provider.ts",
+    "services/product-factory/src/artifacts.ts",
+    "services/product-factory/src/delivery.ts",
+    "services/product-factory/src/production.ts"
+   ],
+   "evidence": [
+    "tests/integration/production.test.ts",
+    "tests/integration/portal-documents.test.ts",
+    "tests/integration/bank-statement.test.ts"
+   ],
+   "tests": {
+    "files": 3,
+    "passed": 30,
+    "failed": 0,
+    "skipped": 0
+   },
+   "test_command": "node --test tests/integration/production.test.ts tests/integration/portal-documents.test.ts tests/integration/bank-statement.test.ts",
+   "previous_status": "TESTED (partial)",
+   "problems": [],
+   "remaining": "Installer-Nachweis, Lizenz-/Rechteübertragung als Vertragsdokument, Supportfenster.",
+   "status": "IMPLEMENTED"
+  }
+ ]
+}
