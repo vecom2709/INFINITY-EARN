@@ -43,4 +43,12 @@ Jede Zeile: Ursache → Nachweis des Fehlers → Änderung → Regressionstest �
 - **Lehre:** Tests laufen lokal mit einem anderen Speicheradapter als Staging; weitere Unterschiede sind möglich (Architektur-Review, Punkt 3).
 
 ## Nicht repariert (bewusst)
-- XLSX mit Formeln, JSON-LD/Open Graph, individuelle Web-App-Produktion – siehe `FABLE_52_PRODUCTION_READINESS.md`.
+- JSON-LD/Open Graph, individuelle Web-App-Produktion – siehe `FABLE_52_PRODUCTION_READINESS.md`.
+
+## Nachtrag 16.11.2026 – Excel-Kalkulation mit Formeln (Szenario A)
+- **Lücke:** Geliefert wurde nur CSV/PDF, keine Arbeitsmappe mit Formeln.
+- **Änderung:** Produktart `b2b-calc-xlsx` (`services/product-factory/src/capabilities/b2b-calc-xlsx.ts`), erzeugt ohne Fremdbibliothek und ohne installierte Programme. Eigene Rechenmaschine `services/product-factory/src/sheet-eval.ts` rechnet in der Abnahme die tatsächlichen Formeln der Datei nach und vergleicht mit der Fachberechnung.
+- **Test:** `tests/products/b2b-calc-xlsx/xlsx.test.ts` (6 Tests): Aufbau, Formeln, Rundungsfälle, Manipulation fällt durch, Kundentext wird nie Formel, ganzer Ablauf bis Download.
+- **Einmalige Fremdprüfung:** Dieselbe Musterdatei wurde am 16.11.2026 einmal in Microsoft Excel 16 geöffnet (ohne Reparaturhinweis; Gesamt 954,09, nach Menge 10→20: 1482,84). Diese Werte stehen als feste Vergleichswerte im Test. Excel ist kein Teil des Ablaufs; das Hilfsskript wurde wieder entfernt.
+- **Nicht geprüft:** LibreOffice, Excel für Mac/Web, Numbers. Keine Diagramme.
+- **Offen (Eigentümer):** Produktart freigeben und Preis festlegen – bis dahin nicht bestellbar.

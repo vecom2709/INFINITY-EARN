@@ -839,6 +839,13 @@ export function createHandler(ctx: AppContext): (r: HttpRequest) => Promise<Res>
     if (!p || !bytes) return json({ error: 'NO_PROBE' }, 404);
     return { status: 200, headers: { 'content-type': 'application/zip', 'content-disposition': 'attachment; filename="probebau-win-lager.zip"' }, body: bytes };
   }));
+  /** Muster der Excel-Kalkulation für den Eigentümer – zum Öffnen in Excel vor der Freigabe. */
+  route('GET', '/admin/muster/b2b-calc-xlsx/muster.xlsx', ownerGuard(() => {
+    const cap = getCapability('b2b-calc-xlsx');
+    if (!cap) return json({ error: 'NOT_FOUND' }, 404);
+    const bytes = cap.generate({ title: 'Musterkalkulation Montage', currency: 'EUR', margin_bps: 1750, language: 'de', items: [{ name: 'Montage vor Ort', quantity: 10, unit_cost_minor: 4500 }, { name: 'Material', quantity: 3, unit_cost_minor: 12050 }, { name: 'Anfahrt', quantity: 1, unit_cost_minor: 3900 }] });
+    return { status: 200, headers: { 'content-type': cap.output_schema.media_type, 'content-disposition': 'attachment; filename="musterkalkulation.xlsx"' }, body: bytes };
+  }));
   route('GET', '/admin/muster/mini-ww/paket.zip', ownerGuard((req) => ({ status: 200, headers: { 'content-type': 'application/zip', 'content-disposition': 'attachment; filename="mini-ww-muster.zip"' }, body: musterPaket(req.query.get('lang') ?? 'de') })));
   route('POST', '/admin/vorschau/:id/sperren', ownerGuard((req) => {
     try {

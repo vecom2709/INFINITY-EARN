@@ -17,6 +17,7 @@ export const SAMPLE_INPUTS: Record<string, unknown> = {
   'mini-ww': { company: 'Musterfirma', primary: '#1F5FA8', language: 'de' },
   'b2b-calc-csv': { title: 'Muster', currency: 'EUR', margin_bps: 1500, language: 'de', items: [{ name: 'Montage', quantity: 2, unit_cost_minor: 4500 }] },
   'b2b-calc-pdf': { title: 'Muster', currency: 'EUR', margin_bps: 1500, language: 'de', items: [{ name: 'Montage', quantity: 2, unit_cost_minor: 4500 }] },
+  'b2b-calc-xlsx': { title: 'Muster', currency: 'EUR', margin_bps: 1500, language: 'de', items: [{ name: 'Montage', quantity: 2, unit_cost_minor: 4500 }] },
   'b2b-calc-bundle': { title: 'Muster', currency: 'EUR', margin_bps: 1500, language: 'de', items: [{ name: 'Montage', quantity: 2, unit_cost_minor: 4500 }] },
 };
 

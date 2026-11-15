@@ -22,13 +22,17 @@ export function crc32(bytes: Uint8Array): number {
 const DOS_TIME = 0; // 00:00:00
 const DOS_DATE = ((2026 - 1980) << 9) | (1 << 5) | 1; // 2026-01-01
 
-export function createZip(files: { name: string; bytes: Uint8Array }[]): Uint8Array {
+/** Erlaubte Namen in Office-Dateien (XLSX): der feste Name [Content_Types].xml und Unterordner aus sicheren Teilen – nie „..“, nie absolut. */
+const OOXML_NAME = /^(?:\[Content_Types\]\.xml|(?:[A-Za-z0-9_][A-Za-z0-9._-]{0,60}\/){0,3}[A-Za-z0-9_.][A-Za-z0-9._-]{0,60})$/;
+
+export function createZip(files: { name: string; bytes: Uint8Array }[], opts: { ooxml?: boolean } = {}): Uint8Array {
   const enc = new TextEncoder();
   const parts: Uint8Array[] = [];
   const central: Uint8Array[] = [];
   let offset = 0;
   for (const f of files) {
-    if (!/^[A-Za-z0-9._-]{1,100}$/.test(f.name)) throw new Error(`ZIP_NAME_INVALID:${f.name}`);
+    const nameOk = opts.ooxml ? OOXML_NAME.test(f.name) && !f.name.includes('..') : /^[A-Za-z0-9._-]{1,100}$/.test(f.name);
+    if (!nameOk) throw new Error(`ZIP_NAME_INVALID:${f.name}`);
     const name = enc.encode(f.name);
     const crc = crc32(f.bytes);
     const local = new DataView(new ArrayBuffer(30));

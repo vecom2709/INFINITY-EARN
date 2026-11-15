@@ -12,7 +12,7 @@ Stand 16.11.2026 · **Keine globale Produktionsreife.** Diese Übersicht beruht 
 | Kundengewinnung | Eingangsformular, TED-Anbindung (nur nach Freigabe), Flutschutz | **Nein** | kein freigegebener Versandkanal; keine Freelancer-Plattform angebunden; in dieser Sitzung nicht tief geprüft |
 | Landingpage | alle Links und Formulare, Antwortzeit, Grundgerüst, Mehrsprachigkeit | Technisch ja | Rechtstexte ungeprüft; kein Browser-Durchgang; JSON-LD fehlt |
 | B2B/B2C-Vertrieb | Angebot, Annahme, Verbraucher-Widerrufsverzicht (bestehende Tests) | **Nein** | LA-06, LA-07 |
-| Freelancer-Aufträge | Szenario A | **Nein** | keine XLSX mit Formeln, keine Plattformanbindung |
+| Freelancer-Aufträge | Szenario A | **Nein** | XLSX mit Formeln gebaut und lokal geprüft, aber Produktart nicht freigegeben; keine Plattformanbindung |
 | Kundenkommunikation | Postausgang erzeugt Nachrichten, versendet nicht | **Nein** | Versandkanal nicht freigegeben |
 | Stripe LIVE | Testmodus vollständig (echte Sandbox) | **Nein** | LA-03, LA-04: Live-Konto mit Verifizierung fehlt |
 | Desktopsoftware | Windows 11 real, Bau je Auftrag | Windows: technisch ja, nicht freigegeben | Festpreis und Freigabe-Weg; unsigniert; Windows 10, macOS, Linux ungeprüft |
@@ -52,7 +52,7 @@ Stand 16.11.2026 · **Keine globale Produktionsreife.** Diese Übersicht beruht 
 5. Festpreise und Verkaufsfreigaben.
 
 ## Was als Nächstes gebaut werden kann (ohne Kosten, ohne Freigabe)
-1. XLSX-Kalkulation mit echten Formeln (schließt Szenario A).
+1. ~~XLSX-Kalkulation mit echten Formeln~~ – gebaut am 16.11.2026 (`b2b-calc-xlsx`), wartet auf Freigabe der Produktart.
 2. Freigabe-Weg für extern gebaute Produkte (Windows, KI-Texte) über den bestandenen Probebau.
 3. JSON-LD und Open-Graph-Angaben.
 4. Bereichsweise Tiefenprüfung der 86 teilweise umgesetzten Funktionen.

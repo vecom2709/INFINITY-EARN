@@ -1,5 +1,6 @@
 import { b2bCalcCsv } from './capabilities/b2b-calc-csv.ts';
 import { b2bCalcPdf } from './capabilities/b2b-calc-pdf.ts';
+import { b2bCalcXlsx } from './capabilities/b2b-calc-xlsx.ts';
 import { b2bCalcBundle } from './capabilities/b2b-calc-bundle.ts';
 import { miniWw } from './capabilities/mini-ww.ts';
 import { winLager } from './capabilities/win-lager.ts';
@@ -39,6 +40,7 @@ const REGISTRY: ReadonlyMap<string, ProductCapability> = new Map(
     b2bCalcCsv,
     b2bCalcPdf,
     b2bCalcBundle,
+    b2bCalcXlsx, // 17.0: echte Excel-Arbeitsmappe mit lebenden Formeln
     miniWw, // Pilot-Fachsoftware: gebaut und abgenommen, Verkauf erst nach Eigentümer-Freigabe (P4)
     winLager, // Windows-Programm (157/158): Bau je Auftrag über den Bau-Agenten, Verkauf erst nach Freigabe
     aiTexte, // 16.0: KI-Texte über das Claude-Abo (Claude-Code-Action), Verkauf erst nach Freigabe

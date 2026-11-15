@@ -278,6 +278,7 @@ export function tr(lang: Lang, de: string): string {
 /** Produktbezeichnung im Angebot: „b2b-calc-pdf gemäß Anfrage“ → sprachrichtiger Titel. */
 const PRODUCT: Record<string, Record<Lang, string>> = {
   'b2b-calc-csv': { de: 'Kalkulationstabelle', it: 'Tabella di calcolo', en: 'Calculation spreadsheet' },
+  'b2b-calc-xlsx': { de: 'Kalkulation als Excel-Datei', it: 'Calcolo in file Excel', en: 'Calculation as Excel file' },
   'b2b-calc-pdf': { de: 'Kalkulation als PDF', it: 'Calcolo in PDF', en: 'Calculation as PDF' },
   'b2b-calc-bundle': { de: 'Kalkulationspaket (Tabelle + PDF)', it: 'Pacchetto di calcolo (tabella + PDF)', en: 'Calculation bundle (spreadsheet + PDF)' },
   'mini-ww': { de: 'Warenwirtschaft (Programm + Anleitung)', it: 'Gestionale (programma + manuale)', en: 'Inventory management (program + manual)' },

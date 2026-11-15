@@ -29,3 +29,7 @@ Alle Tests laufen mit `npm run verify` (lokal) und in der GitHub-CI. Stand 2026-
 ## 16.0 – 24/7-Autopilot
 
 `tests/integration/autopilot-247.test.ts`: Bestellung bei ausgeschaltetem PC bis Download; KI fehlt → sicher pausiert, Freigabe 1/Tag → genau ein Job; doppelter Webhook; fehlerhafte Produktion nicht geliefert; Free-Tier erschöpft → gespeichert, keine Kosten; Neustart mit Wiederanlauf; Testdaten nie Echtumsatz; LIVE gesperrt; Autopilot-Status und Router; Leitstand nur für den Eigentümer. Zuordnung aller 16 Szenarien: `AUTOPILOT_247.md`.
+
+## 17.0 – Excel-Kalkulation (XLSX)
+
+`tests/products/b2b-calc-xlsx/xlsx.test.ts`: Aufbau der Arbeitsmappe; Formeln; eigene Rechenmaschine gegen Referenzwerte (954,09 / 1482,84); Rundung, große Beträge, Währung ohne Nachkommastellen; manipulierte Datei fällt durch; Kundentext nie Formel; bezahlter Auftrag bis Download.

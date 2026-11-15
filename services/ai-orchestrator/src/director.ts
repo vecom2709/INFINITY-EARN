@@ -21,8 +21,8 @@ export type WorkType =
 
 /** Arbeitstyp → Umgebung. Deterministische Abläufe laufen im Worker; kreative/individuelle Arbeit braucht KI. */
 export const WORK_ROUTES: Record<WorkType, { env: EnvironmentId; capabilities: string[]; note: string }> = {
-  kalkulation: { env: 'worker', capabilities: ['b2b-calc-csv', 'b2b-calc-pdf', 'b2b-calc-bundle'], note: 'Kalkulation als CSV/PDF/Paket – vollautomatisch' },
-  office: { env: 'worker', capabilities: ['b2b-calc-csv', 'b2b-calc-bundle'], note: 'Nur die freigegebenen Office-Formate (Kalkulationen); freie Office-Dokumente brauchen KI' },
+  kalkulation: { env: 'worker', capabilities: ['b2b-calc-csv', 'b2b-calc-xlsx', 'b2b-calc-pdf', 'b2b-calc-bundle'], note: 'Kalkulation als CSV, Excel mit Formeln, PDF oder Paket – vollautomatisch' },
+  office: { env: 'worker', capabilities: ['b2b-calc-xlsx', 'b2b-calc-csv', 'b2b-calc-bundle'], note: 'Excel-Kalkulation mit Formeln, CSV, Paket; Word, PowerPoint und freie Dokumente sind nicht herstellbar' },
   'web-software': { env: 'worker', capabilities: ['mini-ww'], note: 'Mini-Warenwirtschaft (Browser-Programm) – vollautomatisch' },
   'windows-exe': { env: 'github-windows', capabilities: ['win-lager'], note: 'Echtes Windows-Programm, gebaut auf dem GitHub-Windows-Server' },
   'macos-linux': { env: 'macos', capabilities: [], note: 'Kein Mac/Linux-Desktop-Build eingerichtet' },

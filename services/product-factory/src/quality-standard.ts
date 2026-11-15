@@ -90,6 +90,26 @@ const STANDARDS: ProductStandard[] = [
     userFlowTests: ['tests/integration/bundle-change-help.test.ts', 'tests/integration/quality-standard.test.ts'],
   },
   {
+    capabilityId: 'b2b-calc-xlsx',
+    purpose: 'Eine Kalkulation als echte Excel-Arbeitsmappe, die weiterrechnet: Ändert der Kunde Mengen, Preise oder den Aufschlag, stimmen die Summen sofort wieder.',
+    ...calcCommon,
+    references: [
+      { name: 'Office Open XML (ISO/IEC 29500), SpreadsheetML', requirement: 'Gültige Arbeitsmappe ohne Makros und ohne externe Verweise, öffnet ohne Reparaturhinweis' },
+      { name: 'Eigene Rechenmaschine (bei jeder Herstellung); Microsoft Excel 16 einmalig am 16.11.2026 geöffnet; LibreOffice Calc nicht geprüft', requirement: 'Formeln rechnen beim Öffnen und nach Änderungen neu; Ergebnisse auch ohne Neuberechnung sichtbar' },
+    ],
+    design: [{ text: 'Titel, farbige Kopfzeile, je Position eine Zeile, hervorgehobener Summenblock, fixierte Kopfzeile, Zahlenformate', verifiedBy: 'format' }],
+    features: [
+      { text: 'Lebende Formeln: Zeilensumme, Zwischensumme, Aufschlag (aufgerundet), Gesamt', verifiedBy: 'xlsx_formulas' },
+      { text: 'Gespeicherte Ergebnisse stimmen mit der Nachrechnung überein', verifiedBy: 'totals' },
+      { text: 'Alle Positionen, Titel, Währung und Aufschlag wie bestellt', verifiedBy: 'format' },
+      { text: 'Gültiger Aufbau der Arbeitsmappe', verifiedBy: 'xlsx_structure' },
+      { text: 'Unverändert ausgeliefert (Prüfsumme)', verifiedBy: 'checksum' },
+    ],
+    accessibilityAndSecurity: [{ text: 'Keine Makros; Kundentexte nie als Formel; Eingabeprüfung gegen negative Mengen und Preise', verifiedBy: 'formula_injection' }],
+    deliverables: { formats: ['xlsx'], manualPath: '/hilfe/b2b-calc-xlsx', documentation: ['Anleitung im Kundenportal', 'Hinweiszeile in der Arbeitsmappe', 'Herkunftsnachweis /pruefen/<sha>', 'Rechnung'] },
+    userFlowTests: ['tests/products/b2b-calc-xlsx/xlsx.test.ts'],
+  },
+  {
     capabilityId: 'mini-ww',
     purpose: 'Eine sofort nutzbare, offline laufende Warenwirtschaft im Design des Kunden: Artikel, Lager, Kunden, Angebote, Aufträge, Lieferungen, Rechnungen, Zahlungen, Gutschriften, Berichte und Datensicherung.',
     audience: 'Kleine Handels- und Handwerksbetriebe (1–5 Arbeitsplätze, ein Gerät je Bestand), die heute mit Tabellen oder Papier arbeiten.',

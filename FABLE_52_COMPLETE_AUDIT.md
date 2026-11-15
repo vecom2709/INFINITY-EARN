@@ -12,7 +12,7 @@ Der deterministische Kern (Anfrage → Angebot → Zahlung im Testmodus → Prod
 |---|---|---|
 | Repository | `main` sauber, ein Zweig, 4985b8c vor dem Audit | `git status`, `git log` |
 | Tests vor dem Audit | 381 + 1 E2E bestanden | `npm run verify` |
-| Tests nach dem Audit | **396 + 1 E2E bestanden**, 0 übersprungen (Windows 11) | `npm run verify`, 16.11.2026 |
+| Tests nach dem Audit | **402 + 1 E2E bestanden**, 0 übersprungen (Windows 11) | `npm run verify`, 16.11.2026 |
 | CI | Linux + Windows grün für 4985b8c | GitHub Actions |
 | Staging | erreichbar, Testbetrieb, Stripe-Sandbox, Rauchtest 27/27 | `scripts/smoke-http.ts` |
 | Funktionen | 26 VERIFIED · 86 IMPLEMENTED · 42 SPECIFIED · 3 BLOCKED | `FABLE_52_FEATURE_MATRIX.json` (305 Nachweistests ausgeführt) |
@@ -30,7 +30,7 @@ Der deterministische Kern (Anfrage → Angebot → Zahlung im Testmodus → Prod
 | 3 | P1 | Falsche Zusage „Windows-Bau/KI-Text startet in bis zu 30 Minuten“ – gemessen 3,7–7,3 Stunden | **korrigiert**, Sofort-Auslöser gebaut (braucht Token des Eigentümers) |
 | 4 | P1 | Test-Seite ohne Impressum war für Suchmaschinen freigegeben | **behoben** (noindex im Testbetrieb) |
 | 5 | P2 | Kein systematischer Test auf tote Links/Knöpfe und auf Mandantentrennung über alle Wege | **behoben** (zwei neue Prüfwerkzeuge) |
-| 6 | P3 | Szenario A (Excel mit Formeln): es gibt nur CSV/PDF, keine XLSX-Erzeugung | **offen** |
+| 6 | P3 | Szenario A (Excel mit Formeln): es gab nur CSV/PDF | **behoben** (Nachtrag: `b2b-calc-xlsx`, 6 Tests) |
 | 7 | P3 | Szenario C (individuelle B2B-Web-App): keine Produktionsfähigkeit | **offen/BLOCKED** |
 | 8 | P4 | Startseite ohne strukturierte Daten (JSON-LD) und ohne Open-Graph-Angaben | **offen** |
 | 9 | P2 | Echter KI-Lauf (Claude-Abo) nie ausgeführt – Token fehlt | **BLOCKED** (Eigentümer) |

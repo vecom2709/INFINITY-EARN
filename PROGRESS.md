@@ -540,3 +540,4 @@ Laufend aktuell in der Konsole unter **Berichte → Funktionsstand**. Jede Funkt
 - Behoben: Flutschutz, Herkunftsprüfung für POSTs, falsche Lieferzeit-Zusage (gemessen 3,7–7,3 h) samt Sofort-Auslöser, noindex im Testbetrieb, zweiter Probebau auf Cloudflare.
 - Neue Prüfwerkzeuge: No-Prototype-Crawler, Mandantentrennung, Funktionsmatrix (`scripts/fable-feature-matrix.ts`), Lastmessung (`scripts/perf-check.ts`).
 - Keine globale Produktionsreife: 26 VERIFIED, 86 IMPLEMENTED, 42 SPECIFIED, 3 BLOCKED; 0 von 12 Live-Freigaben.
+- **Excel-Kalkulation (Nachtrag 16.11.2026):** Produktart `b2b-calc-xlsx` – Arbeitsmappe mit lebenden Formeln, ohne Fremdbibliothek; Abnahme mit eigener Rechenmaschine (`sheet-eval.ts`). 402 Tests + 1 E2E. Nicht freigegeben (Eigentümer-Entscheidung).

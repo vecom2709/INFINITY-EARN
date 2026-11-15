@@ -12,7 +12,7 @@ import { readinessSummary } from './readiness.ts';
  *
  * 119 Abgebrochene Zahlungen: technische Wiederaufnahme durch den Kunden selbst im Portal, keine Werbeerinnerung.
  */
-const PRODUCT_NAMES: Record<string, string> = { 'b2b-calc-csv': 'Kalkulationstabelle (CSV)', 'b2b-calc-pdf': 'Kalkulation als PDF', 'b2b-calc-bundle': 'Kalkulationspaket (Tabelle + PDF)' };
+const PRODUCT_NAMES: Record<string, string> = { 'b2b-calc-csv': 'Kalkulationstabelle (CSV)', 'b2b-calc-xlsx': 'Kalkulation als Excel-Datei (XLSX)', 'b2b-calc-pdf': 'Kalkulation als PDF', 'b2b-calc-bundle': 'Kalkulationspaket (Tabelle + PDF)' };
 
 export interface TrustFacts {
   schema: 'infinity-earn-trust/1';

@@ -8,7 +8,7 @@ import type { PageCtx } from './types.ts';
  * Admin → Produkte → Live-Vorschauen (Gesamtprompt §5). Echter Stand jedes produzierten Kundenprodukts mit Viewer.
  * Kein Screenshot-Ersatz: Tabelle wird aus der echten Datei gelesen, PDF öffnet im Browser-Viewer, ZIP zeigt den Inhalt.
  */
-const PRODUCT: Record<string, string> = { 'b2b-calc-csv': 'Kalkulationstabelle (CSV)', 'b2b-calc-pdf': 'Kalkulation als PDF', 'b2b-calc-bundle': 'Paket (Tabelle + PDF)' };
+const PRODUCT: Record<string, string> = { 'b2b-calc-csv': 'Kalkulationstabelle (CSV)', 'b2b-calc-xlsx': 'Kalkulation als Excel-Datei (XLSX)', 'b2b-calc-pdf': 'Kalkulation als PDF', 'b2b-calc-bundle': 'Paket (Tabelle + PDF)' };
 const VIEWER: Record<GalleryItem['viewer'], string> = { table: 'Tabellenansicht', pdf: 'PDF-Viewer', zip: 'Paketinhalt + Ansicht', none: 'Noch keine Live-Vorschau verfügbar' };
 
 function statusTag(i: GalleryItem): string {

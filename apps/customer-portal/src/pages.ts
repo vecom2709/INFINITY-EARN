@@ -108,8 +108,8 @@ background:linear-gradient(90deg,rgba(3,22,27,.55) 0%,rgba(3,22,27,.25) 38%,rgba
 .strip-in{grid-template-columns:1fr;padding-bottom:64px}.strip a{border-left:0;border-top:1px solid #C5DAD8;padding-top:20px}.strip a:first-child{border-top:0}}
 `;
 
-const HOME_ICON: Record<string, Parameters<typeof icon>[0]> = { 'b2b-calc-csv': 'grid', 'b2b-calc-pdf': 'doc', 'b2b-calc-bundle': 'package' };
-const HOME_FORMAT: Record<string, string> = { 'b2b-calc-csv': 'CSV', 'b2b-calc-pdf': 'PDF', 'b2b-calc-bundle': 'ZIP · CSV · PDF' };
+const HOME_ICON: Record<string, Parameters<typeof icon>[0]> = { 'b2b-calc-csv': 'grid', 'b2b-calc-xlsx': 'grid', 'b2b-calc-pdf': 'doc', 'b2b-calc-bundle': 'package' };
+const HOME_FORMAT: Record<string, string> = { 'b2b-calc-csv': 'CSV', 'b2b-calc-xlsx': 'XLSX', 'b2b-calc-pdf': 'PDF', 'b2b-calc-bundle': 'ZIP · CSV · PDF' };
 
 const STRIP_WAVE = '<svg class="swave" viewBox="0 0 1600 60" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path d="M0 34C260 8 520 52 800 34S1340 6 1600 30V60H0Z" fill="#BFE6E2" opacity=".55"/><path d="M0 46C300 22 560 60 860 44S1380 20 1600 42V60H0Z" fill="#9ED9D3" opacity=".5"/></svg>';
 
@@ -192,6 +192,7 @@ export type InquiryValues = Partial<Record<'name' | 'email' | 'company' | 'count
 /** Lieferformate, die der Kunde wählen kann – nur was die Policy freigegeben hat (Freischaltung durch den Eigentümer). */
 export const FORMATS: { id: string; label: string; text: string }[] = [
   { id: 'b2b-calc-csv', label: 'Tabelle (CSV, in Excel bearbeitbar)', text: 'Zum Weiterrechnen in Excel oder LibreOffice.' },
+  { id: 'b2b-calc-xlsx', label: 'Excel-Datei mit Formeln (XLSX)', text: 'Rechnet in Excel weiter, wenn Sie Mengen, Preise oder den Aufschlag ändern.' },
   { id: 'b2b-calc-pdf', label: 'Druckfertiges PDF', text: 'Zum Weitergeben, Drucken oder Ablegen.' },
   { id: 'b2b-calc-bundle', label: 'Paket: Tabelle und PDF (ZIP)', text: 'Beide Dateien; Preis aus dem tatsächlichen Mehraufwand, kein Rabatt-Versprechen.' },
 ];
@@ -409,6 +410,12 @@ export const HELP: Record<string, { title: string; steps: string[]; contents: st
     steps: ['ZIP-Datei speichern und entpacken (Rechtsklick → „Alle extrahieren“ bzw. Doppelklick auf dem Mac).', 'warenwirtschaft.html per Doppelklick im Browser öffnen (Edge, Chrome, Firefox oder Safari). Keine Installation, kein Internet nötig.', 'Die Datei immer auf demselben Computer und im selben Browser öffnen – dort liegen Ihre Daten.', 'Unter „Daten“ regelmäßig eine Sicherung herunterladen und extern aufbewahren.', 'Alle Abläufe erklärt die beiliegende Bedienungsanleitung mit Bildern.'],
     limits: ['Kein Mehrplatz-Server, keine Synchronisation zwischen Geräten.', 'Keine elektronische Rechnungsübermittlung (z. B. SdI/XRechnung).', 'Rechnungen und Steuersätze vor der Verwendung von Ihrer Steuerberatung prüfen lassen.'],
   },
+  'b2b-calc-xlsx': {
+    title: 'Kalkulation als Excel-Datei (XLSX)',
+    contents: ['Zeile 1: Titel und Währung', 'Zeile 2: Spalten Position, Menge, Einzelpreis, Summe', 'Je Position eine Zeile mit Formel für die Zeilensumme', 'Zwischensumme, Aufschlag in Prozent und Gesamt als Formeln', 'Hinweiszeile zur Bedienung'],
+    steps: ['Datei speichern und per Doppelklick in Excel öffnen.', 'Falls Excel „Geschützte Ansicht“ zeigt: „Bearbeitung aktivieren“ wählen.', 'Mengen, Einzelpreise oder den Aufschlag in Prozent ändern – alle Summen rechnen sofort neu.', 'Negative Mengen und Preise nimmt die Datei nicht an.'],
+    limits: ['Keine Makros, keine Diagramme, ein Tabellenblatt.', 'Die Formeln rechnen wir bei jeder Herstellung selbst nach. Einmalig in Microsoft Excel 16 geöffnet; andere Tabellenprogramme sind nicht geprüft.', 'Wir prüfen nicht, ob Ihre Mengen und Preise fachlich stimmen.'],
+  },
   'ai-texte': {
     title: 'KI-Texte für Webseite und Shop',
     contents: ['texte.md – alle Texte als Markdown für Baukasten oder CMS', 'texte.html – zum Ansehen im Browser und Kopieren', 'inhalt.json – dieselben Texte maschinenlesbar', 'LIESMICH.txt – Hinweise zum Gegenlesen'],
@@ -450,7 +457,7 @@ export function renderProvenance(p: ProvenancePassport | null, sha: string): str
     return page('Echtheit prüfen – INFINITY EARN', `<h1>Echtheit einer Datei prüfen</h1><p class="lead">Prüfen Sie, ob eine Datei von INFINITY EARN erstellt und geprüft wurde.</p>
 ${sha ? '<div class="card err" role="alert">Zu dieser Prüfsumme ist keine von INFINITY EARN erstellte Datei bekannt.</div>' : ''}${form}`, { testMode: true });
   }
-  const names: Record<string, string> = { 'b2b-calc-csv': 'Kalkulationstabelle (CSV)', 'b2b-calc-pdf': 'Kalkulation als PDF' };
+  const names: Record<string, string> = { 'b2b-calc-csv': 'Kalkulationstabelle (CSV)', 'b2b-calc-xlsx': 'Kalkulation als Excel-Datei', 'b2b-calc-pdf': 'Kalkulation als PDF' };
   return page('Herkunftsnachweis – INFINITY EARN', `<h1>Herkunftsnachweis</h1>
 <div class="card"><p>${p.complete ? '<span class="tag ok">Vollständig nachgewiesen</span>' : '<span class="tag">Nachweis unvollständig</span>'}${p.testMode ? ' <span class="tag neutral">Testbetrieb</span>' : ''}</p>
 <table><caption class="sr-only">Herkunftsnachweis</caption><tbody>

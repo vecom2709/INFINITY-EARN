@@ -69,6 +69,7 @@ export const HOME: Record<Lang, HomeText> = {
     },
     products: {
       'b2b-calc-csv': { label: 'Tabelle (CSV, in Excel bearbeitbar)', text: 'Zum Weiterrechnen in Excel oder LibreOffice.' },
+      'b2b-calc-xlsx': { label: 'Excel-Datei mit Formeln (XLSX)', text: 'Rechnet in Excel weiter, wenn Sie Mengen, Preise oder den Aufschlag ändern.' },
       'b2b-calc-pdf': { label: 'Druckfertiges PDF', text: 'Zum Weitergeben, Drucken oder Ablegen.' },
       'b2b-calc-bundle': { label: 'Paket: Tabelle und PDF (ZIP)', text: 'Beide Dateien; Preis aus dem tatsächlichen Mehraufwand, kein Rabatt-Versprechen.' },
     },
@@ -119,6 +120,7 @@ export const HOME: Record<Lang, HomeText> = {
     },
     products: {
       'b2b-calc-csv': { label: 'Tabella (CSV, modificabile in Excel)', text: 'Per continuare a calcolare in Excel o LibreOffice.' },
+      'b2b-calc-xlsx': { label: 'File Excel con formule (XLSX)', text: 'Ricalcola in Excel quando modificate quantità, prezzi o ricarico.' },
       'b2b-calc-pdf': { label: 'PDF pronto per la stampa', text: 'Da inoltrare, stampare o archiviare.' },
       'b2b-calc-bundle': { label: 'Pacchetto: tabella e PDF (ZIP)', text: 'Entrambi i file; prezzo dal lavoro aggiuntivo effettivo, nessuna promessa di sconto.' },
     },
@@ -169,6 +171,7 @@ export const HOME: Record<Lang, HomeText> = {
     },
     products: {
       'b2b-calc-csv': { label: 'Spreadsheet (CSV, editable in Excel)', text: 'For further calculation in Excel or LibreOffice.' },
+      'b2b-calc-xlsx': { label: 'Excel file with formulas (XLSX)', text: 'Recalculates in Excel when you change quantities, prices or the markup.' },
       'b2b-calc-pdf': { label: 'Print-ready PDF', text: 'For sharing, printing or filing.' },
       'b2b-calc-bundle': { label: 'Bundle: spreadsheet and PDF (ZIP)', text: 'Both files; price from the actual extra effort, no discount promise.' },
     },

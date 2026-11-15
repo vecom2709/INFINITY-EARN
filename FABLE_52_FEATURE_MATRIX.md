@@ -1,6 +1,6 @@
 # FABLE 5.2 – Funktionsprüfmatrix (157 bestätigte Funktionen)
 
-Erzeugt von `node scripts/fable-feature-matrix.ts` am 2026-11-15T23:31:04.387Z (win32, Node v24.19.0). Maschinenlesbar: `FABLE_52_FEATURE_MATRIX.json`.
+Erzeugt von `node scripts/fable-feature-matrix.ts` am 2026-11-15T23:53:30.705Z (win32, Node v24.19.0). Maschinenlesbar: `FABLE_52_FEATURE_MATRIX.json`.
 
 **Was diese Matrix belegt:** Für jede Funktion wurden die im Register genannten Nachweistests in diesem Lauf ausgeführt (41 Testdateien, 305 Tests bestanden, 0 fehlgeschlagen, 0 übersprungen). Der Status folgt streng daraus.
 **Was sie nicht belegt:** eine neue, vollständige fachliche Tiefenprüfung jeder einzelnen Funktion. Tiefenprüfungen dieser Sitzung stehen in `FABLE_52_COMPLETE_AUDIT.md`.

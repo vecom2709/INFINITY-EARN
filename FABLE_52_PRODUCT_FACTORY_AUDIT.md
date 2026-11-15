@@ -17,7 +17,7 @@ Stand 16.11.2026. Maßstab: Als lieferbar gilt nur, was tatsächlich hergestellt
 
 | Gewünscht (Auftrag 17.0, Abschnitt 6–8) | Stand | Grund |
 |---|---|---|
-| Excel (XLSX) mit Formeln, Validierung, Diagrammen | **nicht vorhanden** | nur CSV; XLSX-Erzeugung ist ohne Zusatzkosten machbar (ZIP + XML), aber nicht gebaut |
+| Excel (XLSX) mit Formeln, Validierung, Diagrammen | **Formeln und Eingabeprüfung vorhanden, Diagramme nicht** | `b2b-calc-xlsx` (Nachtrag 16.11.2026): ohne Fremdbibliothek erzeugt (ZIP + XML), ohne Makros; Abnahme rechnet die Formeln mit eigener Rechenmaschine nach. Nicht freigegeben, daher nicht bestellbar. |
 | Word (DOCX), PowerPoint (PPTX) | nicht vorhanden | keine Erzeugung gebaut |
 | Individuelle Software nach Kundenwunsch (ERP, CRM, Portal, API) | **BLOCKED** | bräuchte KI-Programmierung mit isolierter Test- und Ausführungsumgebung; nicht vorhanden |
 | Individuelle Websites, Shops, Webdesign | BLOCKED | wie oben |

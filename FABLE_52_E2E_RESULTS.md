@@ -2,15 +2,15 @@
 
 Stand 16.11.2026. Alle Zahlungen sind Testzahlungen. Kein Szenario wurde durch eine Demo ersetzt; was nicht geht, steht als nicht bestanden oder blockiert da.
 
-## Szenario A – Freelancer-Auftrag „Excel-Kalkulation“ · **TEILWEISE / NICHT ERFÜLLT**
+## Szenario A – Freelancer-Auftrag „Excel-Kalkulation“ · **TEILWEISE ERFÜLLT** (Nachtrag 16.11.2026: Excel-Datei gebaut)
 
 | Schritt | Ergebnis |
 |---|---|
 | Erlaubte Anfrage entdecken | nur eingehende Anfragen über das eigene Formular und freigegebene Quellen (TED); keine Freelancer-Plattform angebunden |
 | Anforderungen verstehen, Machbarkeit, Angebot | bestanden (deterministisch, feste Preisregeln) |
 | Testauftrag, Zahlung, Beleg | bestanden |
-| **Excel-Datei mit Formeln** | **nicht bestanden** – geliefert wird CSV (und PDF), keine XLSX-Datei, keine Formeln |
-| Datei im Admin ansehen, sichere Lieferung | bestanden (für CSV/PDF) |
+| **Excel-Datei mit Formeln** | **bestanden (lokal)** – Produktart `b2b-calc-xlsx`: echte Arbeitsmappe mit Formeln für Zeilensumme, Zwischensumme, Aufschlag, Gesamt; Eingabeprüfung, fixierte Kopfzeile. Formeln werden bei jeder Herstellung von der eigenen Rechenmaschine nachgerechnet (`sheet-eval.ts`). Keine Diagramme. Verkaufbar erst nach Eigentümer-Freigabe der Produktart. |
+| Datei im Admin ansehen, sichere Lieferung | bestanden (CSV/PDF/XLSX; Muster unter Admin → Produkte) |
 
 Nachweis: `tests/integration/production.test.ts`, `m2-product-pdf.test.ts`, `autopilot-247.test.ts`. Negativtests: falsche Summen und leere Positionen werden nicht geliefert.
 
@@ -57,4 +57,4 @@ Durchlauf am 13.11.2026 mit `scripts/stripe-e2e-local.ts`: Angebot 57,15 € →
 Negativtests: gefälschte Signatur, doppelter und veralteter Webhook, falscher Betrag (`payments.test.ts`, `m2-payments.test.ts`, `security.test.ts`).
 
 ## Gesamtlauf
-`npm run verify` am 16.11.2026: 396 Tests und 1 E2E bestanden, 0 übersprungen. Lasttest lokal: 60 Aufträge, 60 Lieferungen, 60 Belege, 0 doppelt, 0 Fehler.
+`npm run verify` am 16.11.2026: 402 Tests und 1 E2E bestanden, 0 übersprungen. Lasttest lokal: 60 Aufträge, 60 Lieferungen, 60 Belege, 0 doppelt, 0 Fehler.
