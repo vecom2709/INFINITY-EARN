@@ -104,6 +104,49 @@ export interface Res {
 
 type Handler = (req: Req) => Res | Promise<Res>;
 
+/**
+ * POST von einer fremden Website? Browser senden bei Formularen und fetch den Origin-Kopf mit. Stimmt dessen Host nicht
+ * mit dem aufgerufenen Host überein, wird die Anfrage abgelehnt. Server-zu-Server-Aufrufe (Stripe-Webhook, Bau-Agent)
+ * senden keinen Origin-Kopf und sind über Signatur bzw. Schlüssel geschützt.
+ */
+export function crossSitePost(req: { method: string; headers: Record<string, string | undefined> }): boolean {
+  if (req.method !== 'POST') return false;
+  const origin = req.headers.origin;
+  if (!origin) return false;
+  if (origin === 'null') return true;
+  try {
+    return new URL(origin).host !== (req.headers.host ?? '');
+  } catch {
+    return true;
+  }
+}
+
+/**
+ * Flutschutz für öffentliche Schreibzugriffe (ohne Anmeldung erreichbar): höchstens N POSTs je IP und Zeitfenster.
+ * Zähler liegen im Arbeitsspeicher des Prozesses bzw. Durable Objects – genügt gegen Fluten, kostet keine Datenbankzeilen.
+ */
+export const PUBLIC_POST_WINDOW_MS = 10 * 60_000;
+export const PUBLIC_POST_LIMITS: [RegExp, string, number][] = [
+  [/^\/(anfrage|api\/leads|berater)$/, 'anfrage', 12],
+  [/^\/(angebot\/|portal\/|checkout\/|loesungen\/)/, 'kunde', 40],
+];
+const postCounters = new WeakMap<object, Map<string, { count: number; resetAt: number }>>();
+export function publicPostLimited(owner: object, path: string, ip: string, now: number): boolean {
+  const rule = PUBLIC_POST_LIMITS.find(([re]) => re.test(path));
+  if (!rule) return false;
+  let m = postCounters.get(owner);
+  if (!m) postCounters.set(owner, (m = new Map()));
+  if (m.size > 5000) for (const [k, v] of m) if (v.resetAt < now) m.delete(k);
+  const key = `${rule[1]}:${ip}`;
+  const c = m.get(key);
+  if (!c || c.resetAt < now) {
+    m.set(key, { count: 1, resetAt: now + PUBLIC_POST_WINDOW_MS });
+    return false;
+  }
+  c.count++;
+  return c.count > rule[2];
+}
+
 export const MAX_BODY = 64 * 1024;
 /** Upload-Grenze inkl. Formular-Overhead (Funktion 161). */
 export const MAX_UPLOAD_BODY = UPLOAD_MAX_BYTES + 64 * 1024;
@@ -1159,7 +1202,14 @@ export function createHandler(ctx: AppContext): (r: HttpRequest) => Promise<Res>
         incrementUsage(ctx, 'platform_requests');
         const match = routes.find((x) => x.method === req.method && x.pattern.test(req.path));
         if (!match) res = json({ error: 'NOT_FOUND' }, 404);
-        else {
+        else if (crossSitePost(req)) {
+          // Zweite Sicherung gegen fremdgesteuerte Formulare (CSRF) zusätzlich zu SameSite-Cookies und Owner-CSRF-Token.
+          ctx.audit.record({ type: 'security.cross_site_post_blocked', actor: 'anonymous', subjectType: 'route', subjectId: req.path.slice(0, 80), testMode: ctx.config.testMode });
+          res = json({ error: 'CROSS_SITE_REQUEST' }, 403);
+        } else if (req.method === 'POST' && publicPostLimited(ctx, req.path, req.ip, ctx.clock().getTime())) {
+          ctx.audit.record({ type: 'security.public_post_rate_limited', actor: 'anonymous', subjectType: 'route', subjectId: req.path.slice(0, 80), testMode: ctx.config.testMode });
+          res = { status: 429, headers: { 'content-type': 'application/json; charset=utf-8', 'retry-after': '600' }, body: JSON.stringify({ error: 'RATE_LIMITED', detail: 'Zu viele Anfragen – bitte in einigen Minuten erneut versuchen.' }) };
+        } else {
           const m = match.pattern.exec(req.path) as RegExpExecArray;
           match.keys.forEach((k, i) => (req.params[k] = decodeURIComponent(m[i + 1] ?? '')));
           res = await match.handler(req);
