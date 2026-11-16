@@ -2,6 +2,8 @@ import { newId, sha256Hex } from '../../../packages/shared/src/crypto.ts';
 import { acceptanceGate } from '../../product-factory/src/quality-standard.ts';
 import { getCapability, routeCapability } from '../../product-factory/src/registry.ts';
 import type { QaCheckResult } from '../../product-factory/src/types.ts';
+import { latestProbe } from '../../product-factory/src/external-build.ts';
+import { releaseSummary, winReleaseGates } from '../../../products/win-lager/release.ts';
 import type { AppContext } from './context.ts';
 import { WorkflowError } from './errors.ts';
 import { activeDbPolicy, approvePolicy, effectivePolicy, proposePolicy } from './policy-store.ts';
@@ -34,6 +36,36 @@ export function sampleQa(capabilityId: string): SampleQa {
   const gate = acceptanceGate(capabilityId, checks);
   const all = [...checks, gate];
   return { capabilityId, version: cap.version, sha256: sha, bytes: bytes.length, checks: all, passed: all.every((c) => c.passed) };
+}
+
+/** Ein Probebau gilt höchstens so lange als Nachweis für eine Freigabe. */
+export const RELEASE_PROBE_MAX_AGE_MS = 14 * 86_400_000;
+
+/**
+ * Nachweis für die Freigabe. Produktarten, die im Shop selbst entstehen, werden jetzt neu erzeugt und geprüft.
+ * Extern gebaute Produktarten (Windows-Server, KI-Lauf) kann der Shop nicht selbst erzeugen – dort gilt der letzte
+ * Probebau: Er muss abgeschlossen, von der Abnahme bestanden und höchstens 14 Tage alt sein.
+ */
+export function releaseEvidence(ctx: AppContext, capabilityId: string): SampleQa {
+  const cap = getCapability(capabilityId);
+  if (!cap) throw new WorkflowError('CAPABILITY_UNKNOWN');
+  if (!cap.externalBuild) return sampleQa(capabilityId);
+  const probe = latestProbe(ctx, capabilityId);
+  if (!probe) throw new WorkflowError('NO_PASSED_PROBE', 'Noch kein Probebau – zuerst einen Probebau anstoßen und das Ergebnis abwarten.');
+  if (probe.state !== 'DONE' || probe.qa_passed !== 1 || !probe.result_sha256) throw new WorkflowError('NO_PASSED_PROBE', `Letzter Probebau: ${probe.state}${probe.qa_passed === 0 ? ', Abnahme nicht bestanden' : ''}.`);
+  if (ctx.clock().getTime() - Date.parse(probe.updated_at) > RELEASE_PROBE_MAX_AGE_MS) throw new WorkflowError('NO_PASSED_PROBE', 'Letzter bestandener Probebau ist älter als 14 Tage – bitte neu anstoßen.');
+  if (capabilityId === 'win-lager') {
+    const sum = releaseSummary(winReleaseGates(probe));
+    if (!sum.sellable) throw new WorkflowError('RELEASE_GATES_OPEN', `${sum.blocked} Punkt(e) der Freigabe-Akte sperren den Verkauf.`);
+  }
+  let checks: QaCheckResult[];
+  try {
+    checks = JSON.parse(probe.qa_json ?? '[]') as QaCheckResult[];
+  } catch {
+    throw new WorkflowError('NO_PASSED_PROBE', 'Prüfprotokoll des Probebaus ist unlesbar.');
+  }
+  if (!checks.length || !checks.every((c) => c.passed)) throw new WorkflowError('NO_PASSED_PROBE', 'Prüfprotokoll des Probebaus ist leer oder enthält Fehler.');
+  return { capabilityId, version: cap.version, sha256: probe.result_sha256, bytes: 0, checks: [...checks, { check: 'probe_build', passed: true, detail: `${probe.build_id} vom ${probe.updated_at.slice(0, 10)}` }], passed: true };
 }
 
 export interface ReleaseRow { release_id: string; capability_id: string; capability_version: number; action: 'RELEASED' | 'REVOKED'; price_minor: number | null; currency: string | null; sample_qa_json: string | null; reason: string | null; actor: string; created_at: string }
@@ -69,7 +101,7 @@ export function releaseProduct(ctx: AppContext, capabilityId: string, priceMinor
   if (!Number.isSafeInteger(priceMinor) || priceMinor < policy.quote.minMinor || priceMinor > policy.quote.maxMinor) {
     throw new WorkflowError('PRICE_OUT_OF_POLICY', `Preis muss zwischen ${policy.quote.minMinor / 100} und ${policy.quote.maxMinor / 100} ${policy.quote.currency} liegen.`);
   }
-  const qa = sampleQa(capabilityId);
+  const qa = releaseEvidence(ctx, capabilityId);
   if (!qa.passed) throw new WorkflowError('SAMPLE_QA_FAILED', qa.checks.filter((c) => !c.passed).map((c) => c.check).join(', '));
   const id = newId('rel');
   ctx.db.run(

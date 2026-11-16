@@ -3,7 +3,7 @@ import { modulesWithStatus } from '../../../../packages/registry/src/status.ts';
 import { activeRelease } from '../../../../services/core-api/src/releases.ts';
 import { getCapability, listCapabilities } from '../../../../services/product-factory/src/registry.ts';
 import { acceptanceChecks, getStandard, standardGaps } from '../../../../services/product-factory/src/quality-standard.ts';
-import { KIND_INFO, listRebuildRequests } from '../../../../services/core-api/src/rebuild-requests.ts';
+import { KIND_INFO, listRebuildRequests, type RebuildRequestRow } from '../../../../services/core-api/src/rebuild-requests.ts';
 import { productLifecycle } from '../../../../services/finance/src/insights.ts';
 import { e, explain, metric, modeSwitch, panel, shell, table, tag, withMode } from '../ui.ts';
 import { statusTag } from './reports.ts';
@@ -18,6 +18,38 @@ const CAPABILITY_TEXT: Record<string, { name: string; text: string }> = {
 };
 
 /** Anfragen „Programm nach Vorlage“: jede wartet auf die Entscheidung des Eigentümers. Hergestellt wird auf dem eigenen PC mit REA. */
+/**
+ * Vorbereitete Nachricht zur Entscheidung. Der Shop hat keinen E-Mail-Versanddienst (Auswahl und Konto sind Sache des
+ * Eigentümers) – deshalb öffnet der Link das eigene Mailprogramm mit fertigem Text. Der geheime Statuslink des Kunden
+ * ist nur als Hash gespeichert und kann nicht eingefügt werden.
+ */
+export function decisionMailto(r: Pick<RebuildRequestRow, 'contact_email' | 'program_name' | 'state' | 'owner_note'>): string {
+  const accepted = r.state === 'ACCEPTED';
+  const subject = `Ihre Anfrage „${r.program_name}“ – ${accepted ? 'angenommen' : 'abgelehnt'}`;
+  const body = accepted
+    ? `Guten Tag,
+
+wir haben Ihre Anfrage zum Programm „${r.program_name}“ geprüft und nehmen sie an.${r.owner_note ? `
+
+Hinweis: ${r.owner_note}` : ''}
+
+Als Nächstes erhalten Sie von uns ein Angebot mit Preis, Umfang und Termin. Bitte übergeben Sie die Vorlage erst nach Annahme des Angebots.
+
+Den Stand sehen Sie weiterhin über Ihren persönlichen Link.
+
+Freundliche Grüße
+INFINITY EARN`
+    : `Guten Tag,
+
+wir haben Ihre Anfrage zum Programm „${r.program_name}“ geprüft und können sie leider nicht annehmen.${r.owner_note ? `
+
+Grund: ${r.owner_note}` : ''}
+
+Freundliche Grüße
+INFINITY EARN`;
+  return `mailto:${encodeURIComponent(r.contact_email)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}
+
 function rebuildPanel(pc: PageCtx): string {
   const rows = listRebuildRequests(pc.ctx, pc.mode === 'test');
   const back = withMode('/dashboard/produkte', pc.mode) + '#programm-nach-vorlage';
@@ -29,7 +61,7 @@ function rebuildPanel(pc: PageCtx): string {
       `<strong>${e(r.program_name)}</strong><span class="sub">${e(r.company)} · ${e(r.contact_email)} · ${e(r.created_at.slice(0, 10))}</span><span class="sub">${e(KIND_INFO[r.program_kind].label)}${KIND_INFO[r.program_kind].analysable ? '' : ' – derzeit nicht analysierbar'}</span><span class="sub">${e(r.description.slice(0, 300))}</span>`,
       `${e(r.rights_basis === 'OWN_SOFTWARE' ? 'Eigene Software' : 'Lizenz erlaubt Analyse')}<span class="sub">${e(r.rights_detail)}</span><span class="sub">Erklärung vom ${e(r.rights_confirmed_at.slice(0, 10))}, Fassung ${e(r.rights_text_version)}</span>`,
       tag(STATE[r.state]?.[0] ?? r.state, STATE[r.state]?.[1] ?? 'neutral'),
-      r.state === 'OWNER_APPROVAL_REQUIRED' ? decide(r.request_id) : `${e(r.decided_at?.slice(0, 10) ?? '')}${r.owner_note ? `<span class="sub">${e(r.owner_note)}</span>` : ''}`,
+      r.state === 'OWNER_APPROVAL_REQUIRED' ? decide(r.request_id) : `${e(r.decided_at?.slice(0, 10) ?? '')}${r.owner_note ? `<span class="sub">${e(r.owner_note)}</span>` : ''}<span class="sub"><a href="${e(decisionMailto(r))}">E-Mail an den Kunden vorbereiten</a> – öffnet dein eigenes Mailprogramm; der Shop versendet selbst keine E-Mails.</span>`,
     ]),
     'Noch keine Anfragen', 'Programm nach Vorlage')}` });
 }

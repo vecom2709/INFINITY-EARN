@@ -53,7 +53,7 @@ Stand 16.11.2026 · **Keine globale Produktionsreife.** Diese Übersicht beruht 
 
 ## Was als Nächstes gebaut werden kann (ohne Kosten, ohne Freigabe)
 1. ~~XLSX-Kalkulation mit echten Formeln~~ – gebaut am 16.11.2026 (`b2b-calc-xlsx`), wartet auf Freigabe der Produktart.
-2. Freigabe-Weg für extern gebaute Produkte (Windows, KI-Texte) über den bestandenen Probebau.
+2. ~~Freigabe-Weg für extern gebaute Produkte~~ – gebaut am 16.11.2026 (`releaseEvidence`); KI-Texte brauchen dafür weiterhin das Abo-Token, das Windows-Programm die offenen Punkte der Akte.
 3. ~~JSON-LD und Open-Graph-Angaben~~ – gebaut am 16.11.2026.
 4. Bereichsweise Tiefenprüfung der 86 teilweise umgesetzten Funktionen.
 5. Aufteilung von `http-core.ts`.

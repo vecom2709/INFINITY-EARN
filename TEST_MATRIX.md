@@ -37,3 +37,7 @@ Alle Tests laufen mit `npm run verify` (lokal) und in der GitHub-CI. Stand 2026-
 ## Programm nach Vorlage (REA)
 
 `tests/integration/rebuild-requests.test.ts`: ohne Rechte-Erklärung nichts gespeichert; Statuslink nur als Hash; Entscheidung genau einmal, Ablehnung mit Grund; Router nie automatisch machbar; HTTP mit CSRF und Eigentümer-Schutz; Stopp-Schalter. `tests/unit/rea-audit.test.ts`: Auswertung der REA-Prüfung eigener Programme.
+
+## Freigabe extern gebauter Produktarten
+
+`tests/integration/external-release.test.ts`: KI-Texte nur mit bestandenem, höchstens 14 Tage altem Probebau; Windows-Programm bleibt gesperrt, solange Akte offene Punkte hat; im Shop erzeugte Produktarten unverändert.

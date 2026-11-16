@@ -4,6 +4,7 @@ import { hashPassword } from '../../packages/shared/src/crypto.ts';
 import { assess, environments } from '../../services/ai-orchestrator/src/director.ts';
 import { setStop } from '../../services/core-api/src/policy-store.ts';
 import { createRebuildRequest, decideRebuildRequest, listRebuildRequests, rebuildByToken, RIGHTS_TEXT_VERSION, validateRebuild } from '../../services/core-api/src/rebuild-requests.ts';
+import { decisionMailto } from '../../apps/console/src/pages/products.ts';
 import { count, makeCtx } from '../helpers.ts';
 import { Client, csrfFrom, serve } from '../http.ts';
 
@@ -133,4 +134,18 @@ test('Stopp-Schalter „Akquise pausieren“ nimmt keine neuen Anfragen an', asy
   } finally {
     s.server.close();
   }
+});
+
+test('Vorbereitete E-Mail zur Entscheidung: richtiger Empfänger, Text je Entscheidung, sicher kodiert', () => {
+  const ok = decisionMailto({ contact_email: 'einkauf@muster.example', program_name: 'Lager & Liste?', state: 'ACCEPTED', owner_note: null });
+  assert.ok(ok.startsWith('mailto:einkauf%40muster.example?subject='));
+  assert.match(decodeURIComponent(ok), /nehmen sie an/);
+  assert.match(decodeURIComponent(ok), /Vorlage erst nach Annahme des Angebots/);
+  assert.ok(!/[\s"<>]/.test(ok), 'Text vollständig kodiert (keine Leerzeichen, Umbrüche oder Sonderzeichen im Link)');
+  assert.equal(ok.split('?').length, 2, 'genau ein Fragezeichen – „?“ im Programmnamen ist kodiert');
+  const no = decodeURIComponent(decisionMailto({ contact_email: 'a@b.example', program_name: 'X', state: 'DECLINED', owner_note: 'Berechtigung nicht belegt.' }));
+  assert.match(no, /leider nicht annehmen/);
+  assert.match(no, /Grund: Berechtigung nicht belegt./);
+  const inj = decisionMailto({ contact_email: 'a@b.example?bcc=fremd@boese.example', program_name: 'X', state: 'ACCEPTED', owner_note: null });
+  assert.ok(!inj.includes('?bcc='), 'kein eingeschleuster Empfänger');
 });
