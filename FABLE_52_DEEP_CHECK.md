@@ -14,7 +14,7 @@ Funktionsmatrix ändert sich nur, wenn der offene Rest einer Funktion wegfällt.
 | M0 Grundlagen | 2 | **Durchgang 3 erledigt (16.11.2026)** – 1 im Browser begangen, 1 nur über automatische Tests |
 | M2 Produktherstellung | 9 | **Durchgang 2 erledigt (16.11.2026)** – 3 an echten Dateien geprüft, 6 nur über automatische Tests |
 | M3 Recht und Freigaben | 6 | **Durchgang 3 erledigt (16.11.2026)** – 5 mit Grenzfällen und im Browser geprüft, 1 nur über automatische Tests |
-| M4 Steuerung, Markt, Marketing | 19 | offen |
+| M4 Steuerung, Markt, Marketing | 19 | **Durchgang 4 erledigt (16.11.2026)** – 5 mit Grenzfällen und im Browser geprüft, 14 nur über automatische Tests |
 | M5 | 9 | offen |
 | M6 | 23 | offen |
 
@@ -122,3 +122,40 @@ Regressionstests: `tests/integration/deepcheck-legal.test.ts`.
 - Steuervorschläge für den Sitz Italien und die FatturaPA im Browser.
 - Barrierefreiheit mit Tastatur und Screenreader.
 - Die Bedienung der Warenwirtschafts-Demo im Einzelnen.
+
+## Durchgang 4 – M4 Steuerung, Markt, Marketing (16.11.2026)
+
+**Methode:** Produktberater mit 18 frei formulierten Wünschen in drei Sprachen befragt (mehrere Positionen in einem
+Satz, Tausenderpunkte, negative Mengen, Rabatte, Rechts- und Steuerwünsche, Unsinn, eingeschleuste Anweisungen).
+Bewertungen mit 9 Grenzfällen angegriffen (vor Zahlung, vor Lieferung, ungültige Sterne, fremder Auftrag, zweite
+Bewertung, Veröffentlichung ohne Freigabe). Tagesbericht ohne Anmeldung abgerufen. Berater im Browser bedient.
+
+| Nr. | Funktion | Geprüft | Ergebnis |
+|---|---|---|---|
+| 5 | Angebot und Verhandlung | Berater mit 18 Wünschen | bestanden nach Reparatur (siehe Funde) |
+| 136 | Lösung sofort zeigen | Berater im Browser, ehrliche Ablehnung | bestanden nach Reparatur |
+| 34 | Vertrauen und echte Bewertungen | 9 Grenzfälle | bestanden – keine Bewertung vor Lieferung, eine je Auftrag, nichts öffentlich ohne Freigabe |
+| 47 | Kundenerfolg | Abnahme und Reklamation im Browser (Durchgang 1) | bestanden; Nachbesserung und Erstattung nicht begangen |
+| 1 | Tagessteuerung | Tagesbericht nur mit Anmeldung; Takt im Prüfserver; Stopp-Schalter per Test | bestanden; Stopp-Schalter nicht im Browser betätigt |
+| 2, 4, 13, 14, 21, 33, 51, 58, 61, 62, 95, 101, 131, 134 | Marktbeobachtung, Kundengewinnung, Auswertungen, Ausschreibungen, Folgeaufträge | nein | nur durch automatische Tests belegt; die Auswertungsseiten wurden in Durchgang 1 mit einem einzigen Auftrag ohne Darstellungsfehler geöffnet |
+
+### Funde und Reparaturen
+
+| Fund | Schwere | Stand |
+|---|---|---|
+| Berater kombinierte bei mehreren Positionen in einem Satz falsche Zahlen („10 Std Montage zu 45,- und 3 Rollen Kabel für je 12.50“ wurde zu 10 × 12,50) oder ließ Positionen weg | P2 | behoben – Positionen werden getrennt; eine Position entsteht nur bei genau einer Menge und einem Preis |
+| Mehrdeutige Angaben wurden geraten oder stillschweigend verworfen | P3 | behoben – sie werden dem Kunden wörtlich zur Prüfung genannt |
+| Rechts- und Steuerwünsche („Vertrag“, „Steuererklärung“) wurden nicht abgelehnt | P2 | behoben – ehrliche Ablehnung mit Verweis auf Kanzlei, in drei Sprachen |
+| „Excel“ führte zur CSV-Datei, obwohl es die Excel-Datei mit Formeln gibt | P3 | behoben |
+| Tausenderpunkte („1.234,56“), englische Schreibweise („1,250.50“) und Einzahl-Einheiten („1 Stunde“) wurden nicht verstanden | P3 | behoben |
+| Einleitungen landeten in der Bezeichnung („Kalkulation für Montage,“) | P4 | behoben |
+
+Der Berater bleibt regelbasiert: Er versteht Mengen, Preise, Aufschlag und Format in üblichen Formulierungen, keine
+beliebige freie Sprache. Regressionstests: `tests/integration/deepcheck-advisor.test.ts`.
+
+### Nicht geprüft in diesem Durchgang
+
+- Abruf echter Ausschreibungen von TED (läuft nur gegen Testdaten; kein Zugriff auf den echten Dienst in dieser Prüfung).
+- Auswertungen mit vielen Aufträgen (Trichter, Preisspannen, Herkunft) – nur mit einem Auftrag angesehen.
+- Postausgang: Es wird ohnehin nichts versendet, weil kein E-Mail-Dienst eingerichtet ist.
+- Stopp-Schalter und Folgeangebote im Browser.
