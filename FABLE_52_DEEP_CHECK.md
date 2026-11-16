@@ -12,7 +12,7 @@ Funktionsmatrix ändert sich nur, wenn der offene Rest einer Funktion wegfällt.
 |---|---|---|
 | M1 Kunde, Auftrag, Abrechnung | 18 | **Durchgang 1 erledigt (16.11.2026)** – 7 im Browser begangen, 11 nur über automatische Tests |
 | M0 Grundlagen | 2 | offen |
-| M2 Produktherstellung | 9 | offen |
+| M2 Produktherstellung | 9 | **Durchgang 2 erledigt (16.11.2026)** – 3 an echten Dateien geprüft, 6 nur über automatische Tests |
 | M3 Recht und Freigaben | 6 | offen |
 | M4 Steuerung, Markt, Marketing | 19 | offen |
 | M5 | 9 | offen |
@@ -55,3 +55,35 @@ Regressionstests: `tests/integration/deepcheck-customer.test.ts`, `tests/securit
 - Italienische und englische Fassung des ganzen Wegs (nur die Angebotsseite auf Englisch per Test).
 - Verwaltungsformulare (Freigaben, Stopps, Entscheidungen) im Browser.
 - Staging: dort wurde nur das Berater-Formular im Browser abgeschickt; Zahlungen löse ich auf Staging nicht aus.
+
+## Durchgang 2 – M2 Produktherstellung (16.11.2026)
+
+**Methode:** Alle vier Kalkulationsformate (CSV, Excel, PDF, Paket) mit schwierigen Eingaben hergestellt – Umlaute,
+Anführungszeichen, Semikolon, Formel-Anfänge (=, +, -, @), Zeilenumbruch und Tabulator in der Bezeichnung, Höchstbetrag,
+griechische und japanische Zeichen, Emoji, 95 Positionen über zwei Seiten – und die Dateien angesehen (PDF als Bild).
+
+| Nr. | Funktion | Geprüft | Ergebnis |
+|---|---|---|---|
+| 6 | Produktherstellung | alle vier Formate mit harten Eingaben | bestanden nach Reparatur (siehe Funde) |
+| 115 | Bearbeitbare Lieferergebnisse | CSV-Inhalt Zeile für Zeile, Excel-Formeln | bestanden; neben CSV gibt es jetzt die Excel-Datei |
+| 57 | Liefergarantie | Lieferkriterien im Angebot (jetzt verständlich benannt) | bestanden; Gewährleistungsablauf nicht begangen |
+| 36, 44, 46, 55, 77, 154 | Erstattungen/Disputes, Produktionsplanung, Rechtenachweis, Fähigkeitsmatrix, Streitfälle, Stripe-Sandbox | nein | nur durch automatische Tests belegt |
+
+### Funde und Reparaturen
+
+| Fund | Schwere | Stand |
+|---|---|---|
+| PDF ersetzte nicht darstellbare Zeichen (Griechisch, Japanisch, Emoji) stillschweigend durch „?“; die Abnahme meldete „bestanden“ | P2 | behoben – solche Eingaben werden vor dem Angebot als offener Punkt gemeldet, PDF und Paket lehnen sie ab; Excel und CSV liefern sie unverändert |
+| Beträge im deutschen und italienischen PDF mit Punkt statt Komma (45.00 statt 45,00), ohne Tausendertrennung | P3 | behoben – Schreibweise folgt der Dokumentsprache |
+| Seitenangabe im italienischen und englischen PDF auf Deutsch („Seite 1 von 2“) | P3 | behoben |
+| Bezeichnung mit Zeilenumbruch wurde im PDF mitten in der Position umbrochen | P4 | behoben |
+| PDF ist eine einfache Zeilenliste, keine Tabelle mit Spalten | P3 | **offen** – Gestaltung, kein Fehler |
+| CSV öffnet sich in deutschem Excel per Doppelklick nicht in Spalten (Komma als Trennzeichen) | P3 | **offen** – in der Anleitung beschrieben; die Excel-Datei ist die Antwort darauf |
+
+PDF und Paket tragen wegen der geänderten Ausgabe die Version 2. Regressionstests: `tests/products/deepcheck-production.test.ts`.
+
+### Nicht geprüft in diesem Durchgang
+
+- Dateien in den echten Programmen geöffnet (Excel, Adobe Reader, LibreOffice) – das PDF wurde nur als Bild angesehen.
+- Warenwirtschaft, Windows-Programm und KI-Texte (eigene Produktarten mit eigenen Prüfungen).
+- Erstattung, Dispute und Stripe-Sandbox im Browser.

@@ -32,6 +32,21 @@ export function pdfString(text: string): string {
 }
 
 /** Grober Zeilenumbruch nach Durchschnittsbreite von Helvetica (~0,5 em). */
+/**
+ * Zeichen, die die Standard-PDF-Schrift nicht darstellen kann (alles außerhalb des westeuropäischen Zeichensatzes,
+ * z. B. Griechisch, Kyrillisch, Chinesisch, Emojis). pdfString würde sie stillschweigend durch „?“ ersetzen –
+ * deshalb wird solche Eingabe vorher abgelehnt statt verfälscht geliefert.
+ */
+export function pdfUnsupported(text: string): string[] {
+  const bad = new Set<string>();
+  const extra = Object.values(WINANSI_EXTRA);
+  for (const ch of text) {
+    const code = WINANSI_EXTRA[ch] ?? ch.codePointAt(0) ?? 63;
+    if (code > 0xff || (code >= 0x80 && code <= 0x9f && !extra.includes(code))) bad.add(ch);
+  }
+  return [...bad];
+}
+
 export function wrap(text: string, size: number, maxWidthPt = 495): string[] {
   const maxChars = Math.max(20, Math.floor(maxWidthPt / (size * 0.5)));
   const out: string[] = [];
@@ -53,7 +68,7 @@ export function wrap(text: string, size: number, maxWidthPt = 495): string[] {
   return out;
 }
 
-export function createTextPdf(opts: { title: string; lines: PdfLine[]; footer?: string; created?: Date }): Uint8Array {
+export function createTextPdf(opts: { title: string; lines: PdfLine[]; footer?: string; created?: Date; pageLabel?: (page: number, total: number) => string }): Uint8Array {
   const pageH = 842;
   const top = 790;
   const bottom = 60;
@@ -87,7 +102,7 @@ export function createTextPdf(opts: { title: string; lines: PdfLine[]; footer?: 
   const d = (opts.created ?? new Date()).toISOString().replace(/[-:T]/g, '').slice(0, 14);
   objects[5] = `<< /Title (${pdfString(opts.title)}) /Producer (INFINITY EARN) /CreationDate (D:${d}Z) >>`;
   pages.forEach((cmds, i) => {
-    const footer = `BT /F1 8 Tf ${left} 30 Td (${pdfString(`${opts.footer ?? opts.title} · Seite ${i + 1} von ${total}`)}) Tj ET`;
+    const footer = `BT /F1 8 Tf ${left} 30 Td (${pdfString(`${opts.footer ?? opts.title} · ${(opts.pageLabel ?? ((n: number, t: number) => `Seite ${n} von ${t}`))(i + 1, total)}`)}) Tj ET`;
     const stream = [...cmds, footer].join('\n');
     const pid = pageIds[i] as number;
     objects[pid] = `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 ${pageH}] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents ${pid + 1} 0 R >>`;

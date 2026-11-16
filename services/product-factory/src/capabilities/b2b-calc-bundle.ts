@@ -47,7 +47,7 @@ function runQa(bytes: Uint8Array, raw: unknown): QaCheckResult[] {
 
 export const b2bCalcBundle: ProductCapability = {
   capability_id: 'b2b-calc-bundle',
-  version: 1,
+  version: 2,
   inputs_schema: calcInputSchema,
   output_schema: { media_type: 'application/zip', extension: 'zip' },
   licensing_requirements: 'Wie Einzelprodukte: nur kundeneigene Positionsdaten, Eigenarbeit, keine Fremd-Assets.',
@@ -68,6 +68,7 @@ export const b2bCalcBundle: ProductCapability = {
   complexity(input: unknown): number {
     return (input as Partial<CalcInput>)?.items?.length ?? 0;
   },
+  inputIssues: (input) => b2bCalcPdf.inputIssues?.(input) ?? [],
   generate,
   runQa,
 };

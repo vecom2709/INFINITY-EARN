@@ -74,7 +74,8 @@ export function assessFeasibility(ctx: AppContext, opportunityId: string, actor:
   const legal = legalGate((scope ?? {}) as LegalScope);
   if (!legal.ok) return reject('LICENCE_RISK', legal.reason);
   const cap = route.capability;
-  const openPoints = scope === null ? ['Leistungsumfang fehlt'] : validate(cap.inputs_schema, scope);
+  const schemaPoints = scope === null ? ['Leistungsumfang fehlt'] : validate(cap.inputs_schema, scope);
+  const openPoints = schemaPoints.length > 0 ? schemaPoints : (cap.inputIssues?.(scope) ?? []);
   if (openPoints.length > 0) {
     ctx.db.run('UPDATE opportunities SET open_points_json = ?, updated_at = ? WHERE opportunity_id = ?', JSON.stringify(openPoints), ctx.clock().toISOString(), opportunityId);
     ctx.audit.record({ type: 'feasibility.open_points', actor, subjectType: 'opportunity', subjectId: opportunityId, data: { openPoints }, testMode: ctx.config.testMode });

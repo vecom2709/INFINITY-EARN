@@ -11,6 +11,8 @@ export interface ProductCapability {
   capability_id: string;
   version: number;
   inputs_schema: JsonSchema;
+  /** Fachliche Einwände gegen eine formal gültige Eingabe (z. B. nicht darstellbare Zeichen) – als offene Punkte vor dem Angebot. */
+  inputIssues?(input: unknown): string[];
   output_schema: { media_type: string; extension: string };
   licensing_requirements: string;
   required_tools: readonly string[];
