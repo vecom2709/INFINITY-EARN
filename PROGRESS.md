@@ -548,3 +548,4 @@ Laufend aktuell in der Konsole unter **Berichte → Funktionsstand**. Jede Funkt
 - **Tiefenprüfung, Durchgang 2 (16.11.2026):** Produktherstellung mit harten Eingaben; PDF lehnt nicht darstellbare Zeichen ab statt „?“ zu liefern, Zahlen und Seitenangabe folgen der Sprache; PDF und Paket Version 2.
 - **Tiefenprüfung, Durchgang 3 (16.11.2026):** Recht und Freigaben; unbekannter Käufertyp wird abgelehnt, USt-ID auf Format geprüft, abgelehnte Annahmen mit verständlicher Meldung und Rückweg.
 - **Tiefenprüfung, Durchgang 4 (16.11.2026):** Produktberater ordnet mehrere Positionen in einem Satz richtig zu, fragt bei Mehrdeutigem nach, lehnt Rechts- und Steuerwünsche ab, versteht „Excel“, Tausenderpunkte und Einzahl-Einheiten.
+- **Tiefenprüfung, Durchgang 5 (16.11.2026):** Katalog, Vertrauenspass und Vertrauensseite listen nur wirklich bestellbare Produkte mit Namen; robots.txt erlaubt den Katalog und sperrt Zahlungs-, Download- und Statusseiten.

@@ -4,6 +4,7 @@ import { customerByKey } from './customers.ts';
 import { WorkflowError } from './errors.ts';
 import { effectivePolicy } from './policy-store.ts';
 import { readinessSummary } from './readiness.ts';
+import { isSellable } from './releases.ts';
 
 /**
  * 118 Vertrauensseite und 125 maschinenlesbarer Vertrauenspass: ausschließlich überprüfbare Fakten aus dem System.
@@ -12,7 +13,7 @@ import { readinessSummary } from './readiness.ts';
  *
  * 119 Abgebrochene Zahlungen: technische Wiederaufnahme durch den Kunden selbst im Portal, keine Werbeerinnerung.
  */
-const PRODUCT_NAMES: Record<string, string> = { 'b2b-calc-csv': 'Kalkulationstabelle (CSV)', 'b2b-calc-xlsx': 'Kalkulation als Excel-Datei (XLSX)', 'b2b-calc-pdf': 'Kalkulation als PDF', 'b2b-calc-bundle': 'Kalkulationspaket (Tabelle + PDF)' };
+const PRODUCT_NAMES: Record<string, string> = { 'b2b-calc-csv': 'Kalkulationstabelle (CSV)', 'b2b-calc-xlsx': 'Kalkulation als Excel-Datei (XLSX)', 'b2b-calc-pdf': 'Kalkulation als PDF', 'b2b-calc-bundle': 'Kalkulationspaket (Tabelle + PDF)', 'mini-ww': 'Warenwirtschaft für kleine Betriebe', 'win-lager': 'Windows-Programm: Lager & Rechnung', 'ai-texte': 'Texte für Webseite und Shop' };
 
 export interface TrustFacts {
   schema: 'infinity-earn-trust/1';
@@ -45,7 +46,7 @@ export function trustFacts(ctx: AppContext): TrustFacts {
       : { legal_name: null, registration: null, verified: false, note: 'Anbieterangaben folgen nach der Unternehmensregistrierung (Live-Freigabe LA-02). Bis dahin nur Testbetrieb, keine Verkäufe.' },
     live_approvals: { done: rs.done, total: rs.total },
     payments: { processor: ctx.config.payment.provider === 'stripe' ? 'Stripe' : 'Testzahlung (kein Geld)', card_data_stored_by_us: false, confirmation: 'Zahlungen gelten nur nach signierter Bestätigung des Zahlungsanbieters.' },
-    products: listCapabilities().filter((c) => c.enabled && allowed.includes(c.id)).map((c) => ({ id: c.id, name: PRODUCT_NAMES[c.id] ?? c.id, help_url: `/hilfe/${c.id}`, quality_checks: getCapability(c.id)?.qa_suite.length ?? 0 })),
+    products: listCapabilities().filter((c) => c.enabled && allowed.includes(c.id) && isSellable(ctx, c.id)).map((c) => ({ id: c.id, name: PRODUCT_NAMES[c.id] ?? c.id, help_url: `/hilfe/${c.id}`, quality_checks: getCapability(c.id)?.qa_suite.length ?? 0 })),
     quality: 'Jede Datei wird vor der Lieferung automatisch geprüft (u. a. Format, Summen, Prüfsumme). Ohne bestandene Prüfung keine Lieferung.',
     provenance_check_url: '/pruefen',
     feedback: {
@@ -80,7 +81,7 @@ export function offerCatalog(ctx: AppContext): Record<string, unknown> {
       test_access: ctx.config.testMode ? 'Gesamter Dienst läuft im Testbetrieb – Bestellungen erzeugen keine echten Zahlungen.' : null,
     },
     pricing: p ? { currency: p.quote.currency, min_minor: p.quote.minMinor, max_minor: p.quote.maxMinor, rule: 'Preis = interner Aufwand + Marge, mindestens Mindestmarge; Umsatzsteuer noch nicht berechnet.' } : null,
-    products: listCapabilities().filter((c) => c.enabled && allowed.includes(c.id)).map((c) => {
+    products: listCapabilities().filter((c) => c.enabled && allowed.includes(c.id) && isSellable(ctx, c.id)).map((c) => {
       const cap = getCapability(c.id);
       return { id: c.id, name: PRODUCT_NAMES[c.id] ?? c.id, version: c.version, output: cap?.output_schema, input_schema: cap?.inputs_schema, max_items: cap?.max_complexity, quality_checks: cap?.qa_suite, help_url: `/hilfe/${c.id}` };
     }),

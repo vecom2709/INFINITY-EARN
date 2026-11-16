@@ -285,7 +285,7 @@ export function createHandler(ctx: AppContext): (r: HttpRequest) => Promise<Res>
   route('GET', '/it', () => html(renderHome(offeredFormats(), 'it', origin(), { minMinor: ctx.config.policy.quote.minMinor, maxMinor: ctx.config.policy.quote.maxMinor })));
   route('GET', '/en', () => html(renderHome(offeredFormats(), 'en', origin(), { minMinor: ctx.config.policy.quote.minMinor, maxMinor: ctx.config.policy.quote.maxMinor })));
   // Technische Suchmaschinen-Grundlagen: interne Bereiche werden nicht indexiert.
-  route('GET', '/robots.txt', () => ({ status: 200, headers: { 'content-type': 'text/plain; charset=utf-8' }, body: `User-agent: *\nAllow: /\nDisallow: /dashboard\nDisallow: /admin\nDisallow: /portal\nDisallow: /konto\nDisallow: /angebot/\nDisallow: /api/\nSitemap: ${origin()}/sitemap.xml\n` }));
+  route('GET', '/robots.txt', () => ({ status: 200, headers: { 'content-type': 'text/plain; charset=utf-8' }, body: `User-agent: *\nAllow: /\nDisallow: /dashboard\nDisallow: /admin\nDisallow: /portal\nDisallow: /konto\nDisallow: /angebot/\nDisallow: /checkout/\nDisallow: /download/\nDisallow: /programm-nach-vorlage/stand/\nAllow: /api/katalog\nDisallow: /api/\nSitemap: ${origin()}/sitemap.xml\n` }));
   // Hero-Bilder der Startseite (eingebettet, unveränderlich – der Dateiname ist in der Seite mit ?v=<sha> versioniert).
   route('GET', '/bilder/:name', (req): Res => {
     const img = HERO_IMAGES[req.params.name ?? ''];

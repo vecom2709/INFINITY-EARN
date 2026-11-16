@@ -15,7 +15,7 @@ Funktionsmatrix ändert sich nur, wenn der offene Rest einer Funktion wegfällt.
 | M2 Produktherstellung | 9 | **Durchgang 2 erledigt (16.11.2026)** – 3 an echten Dateien geprüft, 6 nur über automatische Tests |
 | M3 Recht und Freigaben | 6 | **Durchgang 3 erledigt (16.11.2026)** – 5 mit Grenzfällen und im Browser geprüft, 1 nur über automatische Tests |
 | M4 Steuerung, Markt, Marketing | 19 | **Durchgang 4 erledigt (16.11.2026)** – 5 mit Grenzfällen und im Browser geprüft, 14 nur über automatische Tests |
-| M5 | 9 | offen |
+| M5 Sichtbarkeit, Vertrauen, Bedienbarkeit | 9 | **Durchgang 5 erledigt (16.11.2026)** – 6 an echten Ausgaben und im Browser geprüft, 3 nur über automatische Tests |
 | M6 | 23 | offen |
 
 ## Durchgang 1 – M1 (16.11.2026)
@@ -159,3 +159,35 @@ beliebige freie Sprache. Regressionstests: `tests/integration/deepcheck-advisor.
 - Auswertungen mit vielen Aufträgen (Trichter, Preisspannen, Herkunft) – nur mit einem Auftrag angesehen.
 - Postausgang: Es wird ohnehin nichts versendet, weil kein E-Mail-Dienst eingerichtet ist.
 - Stopp-Schalter und Folgeangebote im Browser.
+
+## Durchgang 5 – M5 Sichtbarkeit, Vertrauen, Bedienbarkeit (16.11.2026)
+
+**Methode:** robots.txt, Sitemap, maschinenlesbaren Katalog und Vertrauenspass des laufenden Prüfservers gelesen und
+auf Stimmigkeit geprüft. Acht öffentliche Seiten im Browser bei 320 px Breite auf Überlauf und zu kleine Schaltflächen
+untersucht. Seite „Vertrauen & Fakten“ gelesen. Echtheitsprüfung mit unbekannten und unsinnigen Prüfsummen aufgerufen.
+
+| Nr. | Funktion | Geprüft | Ergebnis |
+|---|---|---|---|
+| 146 | Google-Sichtbarkeit | robots.txt, Sitemap, jede Sitemap-Adresse abgerufen | bestanden nach Reparatur (robots.txt) |
+| 150 | Auffindbar für Suche und KI | Katalog und Vertrauenspass gelesen | bestanden nach Reparatur (nur Bestellbares, Namen) |
+| 118, 153 | Vertrauensbereich, Vertrauenszentrum | Seite gelesen: Anbieter „nicht verifiziert“, 0 von 12, keine Testbewertungen | bestanden nach Reparatur (Produktliste) |
+| 83 | Bedienbarkeit testen | 8 Seiten bei 320 px im Browser | kein Überlauf, keine zu kleinen Schaltflächen; siehe offenen Punkt |
+| 93 | Produktpakete | Paket in Durchgang 2 hergestellt und geöffnet | bestanden |
+| 82, 87, 106 | Wiederverwendbare Bausteine, Produktlebenszyklus, Risikohinweise | nein | nur durch automatische Tests belegt |
+
+### Funde und Reparaturen
+
+| Fund | Schwere | Stand |
+|---|---|---|
+| Katalog, Vertrauenspass und Vertrauensseite nannten eine erlaubte, aber noch nicht mit Preis freigegebene Produktart als Produkt | P2 | behoben – gelistet wird nur, was wirklich bestellbar ist. Auf Staging trat der Fall nicht auf, weil die Warenwirtschaft dort in der Eigentümer-Policy fehlt |
+| Solche Produktarten erschienen nur mit ihrer Kennung („mini-ww“) statt mit Namen | P3 | behoben |
+| robots.txt sperrte `/api/` vollständig und damit den Katalog, der gefunden werden soll | P3 | behoben – Katalog erlaubt; zusätzlich Zahlungsseiten, Downloads und Statuslinks gesperrt |
+| Auf der Startseite liegt der Sprachumschalter am Handy weit rechts im wischbaren Menü | P4 | **offen** – erreichbar, aber leicht zu übersehen |
+
+Regressionstests: `tests/integration/deepcheck-visibility.test.ts`.
+
+### Nicht geprüft in diesem Durchgang
+
+- Ob Suchmaschinen die Seiten tatsächlich aufnehmen – im Testbetrieb sind sie bewusst gesperrt (noindex).
+- Bedienung nur mit Tastatur und mit Screenreader; Breiten zwischen 320 und 1440 px nur an den Rändern.
+- Verwaltungsseiten bei schmaler Breite.
