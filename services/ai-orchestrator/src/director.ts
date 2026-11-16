@@ -12,12 +12,12 @@ import { aiQuotaAvailable, freeTierThrottled, getUsage } from './quota.ts';
  * (Konfiguration, Datenbank, letzter Probebau) – nichts wird geschätzt oder vorgetäuscht.
  */
 
-export type EnvironmentId = 'worker' | 'github-windows' | 'ai-claude' | 'macos' | 'linux-desktop' | 'mobile' | 'media';
+export type EnvironmentId = 'worker' | 'github-windows' | 'ai-claude' | 'owner-pc' | 'macos' | 'linux-desktop' | 'mobile' | 'media';
 export interface EnvironmentStatus { id: EnvironmentId; label: string; available: boolean; reason: string; cost: string }
 
 export type WorkType =
   | 'kalkulation' | 'office' | 'web-software' | 'windows-exe' | 'macos-linux' | 'mobile-app' | 'webdesign' | 'text' | 'grafik-medien'
-  | 'kundengespraech' | 'angebot' | 'qualitaetssicherung' | 'auslieferung' | 'kundenbetreuung' | 'individuelle-software';
+  | 'programm-nach-vorlage' | 'kundengespraech' | 'angebot' | 'qualitaetssicherung' | 'auslieferung' | 'kundenbetreuung' | 'individuelle-software';
 
 /** Arbeitstyp → Umgebung. Deterministische Abläufe laufen im Worker; kreative/individuelle Arbeit braucht KI. */
 export const WORK_ROUTES: Record<WorkType, { env: EnvironmentId; capabilities: string[]; note: string }> = {
@@ -29,6 +29,7 @@ export const WORK_ROUTES: Record<WorkType, { env: EnvironmentId; capabilities: s
   'mobile-app': { env: 'mobile', capabilities: [], note: 'Kein Android/iOS-Build eingerichtet (Apple-Konto kostet Geld)' },
   webdesign: { env: 'ai-claude', capabilities: [], note: 'Individuelle Gestaltung braucht KI – noch keine geprüfte Produktart' },
   text: { env: 'ai-claude', capabilities: ['ai-texte'], note: 'Webseiten-/Produkttexte über das Claude-Abo, automatisch geprüft' },
+  'programm-nach-vorlage': { env: 'owner-pc', capabilities: [], note: 'Vorhandenes Programm untersuchen (REA) und neu bauen – nur mit Rechte-Erklärung des Kunden und Entscheidung des Eigentümers je Anfrage' },
   'grafik-medien': { env: 'media', capabilities: [], note: 'Keine lizenzierte Bild-/Video-Engine' },
   kundengespraech: { env: 'ai-claude', capabilities: [], note: 'Freie Antworten brauchen KI; Standardantworten (Berater, Status) laufen ohne' },
   angebot: { env: 'worker', capabilities: [], note: 'Angebote für freigegebene Produktarten werden deterministisch berechnet' },
@@ -65,6 +66,7 @@ export function environments(ctx: AppContext): EnvironmentStatus[] {
             ? { available: true, reason: `Probe bestanden (${aiProbe?.updated_at.slice(0, 10)}), heute ${getUsage(ctx, 'ai_tasks')} von ${aiLimit} KI-Läufen` }
             : { available: false, reason: aiProbe ? `Letzte KI-Probe: ${aiProbe.state}${aiProbe.last_error ? ` – ${aiProbe.last_error.slice(0, 80)}` : ''}` : 'Noch keine bestandene KI-Probe – Abo-Token (CLAUDE_CODE_OAUTH_TOKEN) bei GitHub hinterlegen und Probe starten' }),
     },
+    { id: 'owner-pc', label: 'Eigentümer-PC mit REA (Programm nach Vorlage)', available: false, reason: 'Läuft nur, wenn dein PC an ist und du die Anfrage angenommen hast – nie automatisch', cost: '0 € (REA ist kostenlos, MIT-Lizenz)' },
     { id: 'macos', label: 'macOS/Linux-Desktop', available: false, reason: 'Nicht eingerichtet', cost: '—' },
     { id: 'mobile', label: 'Android/iOS', available: false, reason: 'Nicht eingerichtet (Apple-Entwicklerkonto kostenpflichtig)', cost: '—' },
     { id: 'media', label: 'Grafik/Video', available: false, reason: 'Keine lizenzierte Engine', cost: '—' },
@@ -89,7 +91,7 @@ export function assess(ctx: AppContext, workType: WorkType, capabilityId?: strin
   const stops = activeStops(ctx);
   if (stops.has('STOP_ALL_JOBS') || stops.has('PAUSE_PRODUCTION')) blockers.push('Produktion per Stopp-Schalter angehalten');
   const stopped = blockers.some((x) => x.includes('Stopp-Schalter'));
-  const status: Assessment['status'] = blockers.length === 0 ? 'READY' : route.env === 'ai-claude' ? 'AI_QUOTA_BLOCKED' : stopped && blockers.length === 1 ? 'OWNER_APPROVAL_REQUIRED' : 'RESOURCE_BLOCKED';
+  const status: Assessment['status'] = blockers.length === 0 ? 'READY' : route.env === 'owner-pc' ? 'OWNER_APPROVAL_REQUIRED' : route.env === 'ai-claude' ? 'AI_QUOTA_BLOCKED' : stopped && blockers.length === 1 ? 'OWNER_APPROVAL_REQUIRED' : 'RESOURCE_BLOCKED';
   return { workType, env: route.env, feasible: blockers.length === 0, status, blockers, note: route.note };
 }
 

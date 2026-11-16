@@ -38,4 +38,15 @@ Stand: [Datum] · Fassung 1 (Entwurf 13.11.2026) · Bestandteil der AGB (`agb.md
 - **Nutzungsrecht:** Der Anbieter überträgt dem Kunden alle Rechte, die ihm an den Texten zustehen, zur uneingeschränkten Nutzung einschließlich Bearbeitung. [Hinweis: An rein KI-erzeugten Texten entsteht nach überwiegender Auffassung kein Urheberrecht; prüfen]
 - **Erstattung:** wenn nach drei Versuchen kein Ergebnis die Abnahmeprüfung besteht.
 
+## Programm nach Vorlage (Analyse eines vorhandenen Programms und Neubau)
+
+- **Gegenstand:** Der Anbieter untersucht ein vom Kunden benanntes Programm und entwickelt ein neues Programm mit den vereinbarten Funktionen. Geliefert wird neu geschriebener Code, keine Kopie der Vorlage.
+- **Berechtigung des Kunden:** Der Kunde versichert, dass er zur Untersuchung und zum Neubau berechtigt ist (eigene Software oder ausdrückliche Erlaubnis in der Lizenz). Die Erklärung wird mit Datum und Fassung gespeichert. Ohne sie wird die Anfrage nicht angenommen.
+- **Freistellung:** Der Kunde stellt den Anbieter von Ansprüchen Dritter frei, die auf einer unrichtigen Rechte-Erklärung beruhen. [Hinweis: Umfang und Wirksamkeit anwaltlich prüfen.]
+- **Ablehnungsrecht:** Der Anbieter kann jede Anfrage ohne Angabe weiterer Gründe ablehnen, insbesondere wenn die Berechtigung nicht glaubhaft ist. Programme anderer Hersteller werden ohne deren Erlaubnis nicht untersucht.
+- **Kein automatischer Vertragsschluss:** Die Anfrage ist unverbindlich. Ein Vertrag entsteht erst mit Annahme eines Angebots, das Preis, Umfang und Termin nennt.
+- **Ablauf:** Die Untersuchung findet auf einem Arbeitsplatz des Anbieters statt, nicht rund um die Uhr. Die Vorlage wird erst nach Vertragsschluss übergeben und nach Abschluss gelöscht. [Hinweis: Löschfrist festlegen.]
+- **Grenzen:** Kein Umgehen von Kopierschutz oder Lizenzprüfungen. Keine Übernahme fremder Marken, Namen, Grafiken oder Texte. Keine Zusage, dass jede Funktion der Vorlage rekonstruierbar ist.
+- **Vertraulichkeit:** Die Vorlage und daraus gewonnene Erkenntnisse werden nur für diesen Auftrag verwendet.
+
 _Vor Verwendung anwaltlich prüfen (LA-09)._

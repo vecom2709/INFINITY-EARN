@@ -3,6 +3,7 @@ import { modulesWithStatus } from '../../../../packages/registry/src/status.ts';
 import { activeRelease } from '../../../../services/core-api/src/releases.ts';
 import { getCapability, listCapabilities } from '../../../../services/product-factory/src/registry.ts';
 import { acceptanceChecks, getStandard, standardGaps } from '../../../../services/product-factory/src/quality-standard.ts';
+import { KIND_INFO, listRebuildRequests } from '../../../../services/core-api/src/rebuild-requests.ts';
 import { productLifecycle } from '../../../../services/finance/src/insights.ts';
 import { e, explain, metric, modeSwitch, panel, shell, table, tag, withMode } from '../ui.ts';
 import { statusTag } from './reports.ts';
@@ -15,6 +16,23 @@ const CAPABILITY_TEXT: Record<string, { name: string; text: string }> = {
   'mini-ww': { name: 'Mini-Warenwirtschaft (Offline-Programm)', text: 'Programm im Design des Kunden mit bebilderter Bedienungsanleitung (PDF) als ZIP. Vorschau und Verkaufsfreigabe: /dashboard/produkte/mini-ww' },
   'b2b-calc-pdf': { name: 'Kalkulation als PDF', text: 'Dieselbe Kalkulation als druckfertiges PDF. Geprüft werden Dateistruktur, Seitenzahl, Vollständigkeit aller Positionen und die nachgerechnete Summe.' },
 };
+
+/** Anfragen „Programm nach Vorlage“: jede wartet auf die Entscheidung des Eigentümers. Hergestellt wird auf dem eigenen PC mit REA. */
+function rebuildPanel(pc: PageCtx): string {
+  const rows = listRebuildRequests(pc.ctx, pc.mode === 'test');
+  const back = withMode('/dashboard/produkte', pc.mode) + '#programm-nach-vorlage';
+  const STATE: Record<string, [string, 'ok' | 'bad' | 'neutral']> = { OWNER_APPROVAL_REQUIRED: ['Wartet auf dich', 'neutral'], ACCEPTED: ['Angenommen', 'ok'], DECLINED: ['Abgelehnt', 'bad'] };
+  const decide = (id: string): string => `<form class="action" method="post" action="/admin/programm-nach-vorlage/${e(id)}/entscheiden" style="display:grid;gap:6px;max-width:520px"><input type="hidden" name="_csrf" value="${e(pc.csrf)}"><input type="hidden" name="_back" value="${e(back)}"><label for="n-${e(id)}">Hinweis an den Kunden (bei Ablehnung Pflicht)</label><input id="n-${e(id)}" type="text" name="notiz" maxlength="1000"><span><button class="btn" type="submit" name="entscheidung" value="annehmen">Annehmen</button> <button class="btn danger" type="submit" name="entscheidung" value="ablehnen">Ablehnen</button></span><span class="what">Annehmen ist keine Preiszusage und startet keine Herstellung. Der Kunde sieht nur den neuen Stand.</span></form>`;
+  return panel({ id: 'programm-nach-vorlage', title: 'Programm nach Vorlage (mit REA)', sub: 'Kunden lassen ein vorhandenes Programm untersuchen und neu bauen – nur mit Rechte-Erklärung und deiner Entscheidung je Anfrage', action: { href: '/programm-nach-vorlage', label: 'Kundenformular ansehen' }, flush: true, body: `<p style="margin:4px 16px 12px">Hergestellt wird nicht automatisch: Die Untersuchung läuft in einer Claude-Sitzung auf deinem PC mit dem Werkzeug REA. Prüfe bei jeder Anfrage, ob die Berechtigung glaubhaft ist – Programme fremder Hersteller ohne Erlaubnis lehnst du ab.</p>${table(
+    [{ label: 'Anfrage' }, { label: 'Berechtigung' }, { label: 'Stand' }, { label: 'Entscheidung', full: true }],
+    rows.map((r) => [
+      `<strong>${e(r.program_name)}</strong><span class="sub">${e(r.company)} · ${e(r.contact_email)} · ${e(r.created_at.slice(0, 10))}</span><span class="sub">${e(KIND_INFO[r.program_kind].label)}${KIND_INFO[r.program_kind].analysable ? '' : ' – derzeit nicht analysierbar'}</span><span class="sub">${e(r.description.slice(0, 300))}</span>`,
+      `${e(r.rights_basis === 'OWN_SOFTWARE' ? 'Eigene Software' : 'Lizenz erlaubt Analyse')}<span class="sub">${e(r.rights_detail)}</span><span class="sub">Erklärung vom ${e(r.rights_confirmed_at.slice(0, 10))}, Fassung ${e(r.rights_text_version)}</span>`,
+      tag(STATE[r.state]?.[0] ?? r.state, STATE[r.state]?.[1] ?? 'neutral'),
+      r.state === 'OWNER_APPROVAL_REQUIRED' ? decide(r.request_id) : `${e(r.decided_at?.slice(0, 10) ?? '')}${r.owner_note ? `<span class="sub">${e(r.owner_note)}</span>` : ''}`,
+    ]),
+    'Noch keine Anfragen', 'Programm nach Vorlage')}` });
+}
 
 export function renderProducts(pc: PageCtx): string {
   const t = pc.mode === 'test' ? 1 : 0;
@@ -43,6 +61,7 @@ ${panel({ title: 'Lebenszyklus deiner Produkte', sub: 'Aus echten Lieferungen, P
 ${panel({ id: 'fachsoftware', title: 'Fachsoftware: Warenwirtschaft', sub: activeRelease(pc.ctx, 'mini-ww') ? 'Zum Verkauf freigegeben' : 'Fertig gebaut und geprüft – Verkauf wartet auf deine Freigabe', action: { href: '/dashboard/produkte/mini-ww', label: 'Vorschau und Freigabe' }, body: '<p style="margin:4px 0 0">Programm ausprobieren, bebilderte Anleitung und Musterpaket ansehen, Abnahmeprüfung live ausführen und Festpreis festlegen.</p>' })}
 ${panel({ id: 'excel-muster', title: 'Excel-Kalkulation mit Formeln', sub: 'Echte Arbeitsmappe (XLSX) – Formeln bei jeder Herstellung nachgerechnet', action: { href: '/admin/muster/b2b-calc-xlsx/muster.xlsx', label: 'Muster herunterladen' }, body: '<p style="margin:4px 0 0">Zum Ausprobieren in Excel: Menge, Preis oder Aufschlag ändern – die Summen rechnen neu. Bestellbar wird die Produktart erst, wenn du sie in deinen erlaubten Produktarten freigibst.</p>' })}
 ${panel({ id: 'windows-programm', title: 'Windows-Programm: Lager & Rechnung', sub: 'Gebaut und auf Windows getestet – Verkauf gesperrt, bis die offenen Punkte erledigt sind', action: { href: '/dashboard/produkte/win-lager', label: 'Anleitung und Freigabe-Akte' }, body: '<p style="margin:4px 0 0">Bebilderte Anleitung in drei Sprachen ansehen und prüfen, was bis zur Verkaufsfreigabe noch fehlt.</p>' })}
+${rebuildPanel(pc)}
 ${panel({ id: 'live-vorschau', title: 'Live-Vorschauen', sub: 'Jedes produzierte Kundenprodukt mit echtem Stand und echter Ansicht', action: { href: withMode('/dashboard/produkte/vorschau', pc.mode), label: 'Alle ansehen' }, body: `<p style="margin:4px 0 0">${pc.ctx.db.get<{ n: number }>('SELECT COUNT(*) AS n FROM artifacts WHERE test_mode = ?', pc.mode === 'test' ? 1 : 0)?.n ?? 0} produzierte Datei(en) in dieser Ansicht. Tabellen, PDFs und Pakete lassen sich direkt öffnen; Version, Prüfprotokoll und Lieferstatus stehen daneben.</p>` })}
 ${panel({ id: 'standard', title: 'Premium-Produktstandard', sub: 'Verkauft und geliefert wird nur, was alle Abnahmekriterien erfüllt', flush: true, body: `${table(
     [{ label: 'Produkt' }, { label: 'Zweck' }, { label: 'Abnahmekriterien' }, { label: 'Stand', full: true }],

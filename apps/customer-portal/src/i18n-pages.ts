@@ -64,6 +64,7 @@ export const DICT: Record<string, { it: string; en: string }> = {
   'Anfrage erhalten – manuelle Prüfung': { it: 'Richiesta ricevuta – verifica manuale', en: 'Request received – manual review' },
   'Ihre Anfrage kann nicht automatisch angeboten werden und wird geprüft.': { it: 'Per la vostra richiesta non è possibile un’offerta automatica; verrà esaminata.', en: 'Your request cannot be quoted automatically and will be reviewed.' },
   'Vorübergehend pausiert': { it: 'Temporaneamente in pausa', en: 'Temporarily paused' },
+  'Zu diesem Link ist keine Anfrage bekannt.': { it: 'Nessuna richiesta nota per questo link.', en: 'No request is known for this link.' },
   'Neue Anfragen werden derzeit nicht angenommen.': { it: 'Al momento non accettiamo nuove richieste.', en: 'New requests are currently not being accepted.' },
   'Dieses Lieferformat ist derzeit nicht verfügbar.': { it: 'Questo formato di consegna non è attualmente disponibile.', en: 'This delivery format is currently not available.' },
   'Aufschlag: 0–90 %': { it: 'Ricarico: 0–90 %', en: 'Markup: 0–90 %' },

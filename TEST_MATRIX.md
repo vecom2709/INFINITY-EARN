@@ -33,3 +33,7 @@ Alle Tests laufen mit `npm run verify` (lokal) und in der GitHub-CI. Stand 2026-
 ## 17.0 – Excel-Kalkulation (XLSX)
 
 `tests/products/b2b-calc-xlsx/xlsx.test.ts`: Aufbau der Arbeitsmappe; Formeln; eigene Rechenmaschine gegen Referenzwerte (954,09 / 1482,84); Rundung, große Beträge, Währung ohne Nachkommastellen; manipulierte Datei fällt durch; Kundentext nie Formel; bezahlter Auftrag bis Download.
+
+## Programm nach Vorlage (REA)
+
+`tests/integration/rebuild-requests.test.ts`: ohne Rechte-Erklärung nichts gespeichert; Statuslink nur als Hash; Entscheidung genau einmal, Ablehnung mit Grund; Router nie automatisch machbar; HTTP mit CSRF und Eigentümer-Schutz; Stopp-Schalter. `tests/unit/rea-audit.test.ts`: Auswertung der REA-Prüfung eigener Programme.

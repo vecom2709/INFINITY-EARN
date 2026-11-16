@@ -17,6 +17,8 @@ import { buildWinManual } from '../../../products/win-lager/manual.ts';
 import { autopilotStatus } from '../../ai-orchestrator/src/director.ts';
 import { getCapability } from '../../product-factory/src/registry.ts';
 import { buildBrief, validateTextSpec } from '../../../products/ai-texte/texte.ts';
+import { createRebuildRequest, decideRebuildRequest, rebuildByToken } from './rebuild-requests.ts';
+import { renderRebuildForm, renderRebuildReceived, renderRebuildStatus } from '../../../apps/customer-portal/src/rebuild-pages.ts';
 import { claimBuild, failBuild, latestProbe, pendingBuilds, requestProbe, submitBuild } from '../../product-factory/src/external-build.ts';
 import { SHOTS_JPEG_BASE64 } from '../../../products/mini-ww/generated/shots.ts';
 import { CSP as WW_CSP, htmlFromBundle } from '../../../products/mini-ww/html.ts';
@@ -65,7 +67,7 @@ import type { AppContext } from './context.ts';
 import { createSupportTicket, customerByKey, exportPersonalData } from './customers.ts';
 import { WorkflowError } from './errors.ts';
 import { findOrder } from './orders.ts';
-import { effectivePolicy, setStop } from './policy-store.ts';
+import { activeStops, effectivePolicy, setStop } from './policy-store.ts';
 import { asMiniWwInput, MINI_WW_FILES, miniWw } from '../../product-factory/src/capabilities/mini-ww.ts';
 import { readZip } from '../../../packages/shared/src/zip.ts';
 import { acceptQuote, autoProcessOpportunity, getQuote, verifyQuoteToken } from './workflow.ts';
@@ -127,7 +129,7 @@ export function crossSitePost(req: { method: string; headers: Record<string, str
  */
 export const PUBLIC_POST_WINDOW_MS = 10 * 60_000;
 export const PUBLIC_POST_LIMITS: [RegExp, string, number][] = [
-  [/^\/(anfrage|api\/leads|berater)$/, 'anfrage', 12],
+  [/^\/(anfrage|api\/leads|berater|programm-nach-vorlage)$/, 'anfrage', 12],
   [/^\/(angebot\/|portal\/|checkout\/|loesungen\/)/, 'kunde', 40],
 ];
 const postCounters = new WeakMap<object, Map<string, { count: number; resetAt: number }>>();
@@ -348,7 +350,7 @@ export function createHandler(ctx: AppContext): (r: HttpRequest) => Promise<Res>
   });
 
   route('GET', '/sitemap.xml', () => {
-    const paths = ['/', '/it', '/en', '/berater', '/anfrage', '/vertrauen', WW_SLUG, ...offeredFormats().map((id) => `/hilfe/${id}`),
+    const paths = ['/', '/it', '/en', '/berater', '/anfrage', '/programm-nach-vorlage', '/vertrauen', WW_SLUG, ...offeredFormats().map((id) => `/hilfe/${id}`),
       ...landingStatus(ctx).filter((l) => l.status === 'PUBLISHED').map((l) => `/loesungen/${l.slug}`),
       ...contentStatus(ctx).filter((c) => c.status === 'PUBLISHED' && c.lang === 'de').map((c) => `/ratgeber/${c.slug}`)];
     return { status: 200, headers: { 'content-type': 'application/xml; charset=utf-8' }, body: `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${paths.map((p) => `<url><loc>${origin()}${p}</loc></url>`).join('')}</urlset>\n` };
@@ -358,6 +360,24 @@ export function createHandler(ctx: AppContext): (r: HttpRequest) => Promise<Res>
   const offeredFormats = (): string[] => effectivePolicy(ctx)?.allowedCapabilities.filter((id) => !RELEASE_REQUIRED.has(id) && isSellable(ctx, id)) ?? [];
   route('GET', '/anfrage', (req) => html(renderInquiryForm([], { src: cleanToken(req.query.get('src')) ?? undefined, cmp: cleanToken(req.query.get('cmp')) ?? undefined, ref: cleanToken(req.query.get('ref'), 24) ?? undefined }, offeredFormats(), undefined, L(req))));
   // Produktberater: Wunsch in eigenen Worten → vorausgefüllte Anfrage (nichts wird gesendet, bevor der Kunde abschickt).
+  /** Auftragsart „Programm nach Vorlage“: nur mit Rechte-Erklärung, jede Anfrage wartet auf den Eigentümer. */
+  route('GET', '/programm-nach-vorlage', (req) => html(renderRebuildForm([], {}, L(req))));
+  route('POST', '/programm-nach-vorlage', (req) => {
+    const f = form(req);
+    const values = Object.fromEntries(['company', 'email', 'program_name', 'program_kind', 'description', 'rights_basis', 'rights_detail'].map((k) => [k, (f.get(k) ?? '').slice(0, 5000)]));
+    if (activeStops(ctx).has('PAUSE_ACQUISITION') || activeStops(ctx).has('STOP_ALL_JOBS')) return html(renderInquiryResult('Vorübergehend pausiert', 'Neue Anfragen werden derzeit nicht angenommen.', undefined, L(req)), 503);
+    const r = createRebuildRequest(ctx, {
+      company: f.get('company'), email: f.get('email'), programName: f.get('program_name'), programKind: f.get('program_kind'), description: f.get('description'),
+      rightsBasis: f.get('rights_basis'), rightsDetail: f.get('rights_detail'), rightsConfirmed: f.get('rights_confirmed') === '1', privacyAccepted: f.get('privacy') === '1',
+    });
+    if (!r.ok) return html(renderRebuildForm(r.errors, values, L(req)), 400);
+    return html(renderRebuildReceived(`/programm-nach-vorlage/stand/${r.statusToken}`, L(req)), 200, { 'cache-control': 'no-store', 'referrer-policy': 'no-referrer' });
+  });
+  route('GET', '/programm-nach-vorlage/stand/:token', (req) => {
+    const row = rebuildByToken(ctx, req.params.token ?? '');
+    if (!row) return html(renderInquiryResult('Nicht gefunden', 'Zu diesem Link ist keine Anfrage bekannt.', { href: '/programm-nach-vorlage', label: 'Neue Anfrage' }, L(req)), 404);
+    return html(renderRebuildStatus(row, L(req)), 200, { 'cache-control': 'no-store', 'referrer-policy': 'no-referrer', 'x-robots-tag': 'noindex, nofollow' });
+  });
   route('GET', '/berater', (req) => html(renderAdvisor(undefined, undefined, L(req))));
   route('POST', '/berater', (req) => {
     const text = (form(req).get('wunsch') ?? '').slice(0, 5000);
@@ -840,6 +860,13 @@ export function createHandler(ctx: AppContext): (r: HttpRequest) => Promise<Res>
     return { status: 200, headers: { 'content-type': 'application/zip', 'content-disposition': 'attachment; filename="probebau-win-lager.zip"' }, body: bytes };
   }));
   /** Muster der Excel-Kalkulation für den Eigentümer – zum Öffnen in Excel vor der Freigabe. */
+  route('POST', '/admin/programm-nach-vorlage/:id/entscheiden', ownerGuard((req) => {
+    const f = form(req);
+    const decision = f.get('entscheidung') === 'annehmen' ? 'ACCEPTED' : 'DECLINED';
+    const r = decideRebuildRequest(ctx, req.params.id ?? '', decision, f.get('notiz') ?? '');
+    if (!r.ok) return back(req, r.reason === 'NOTE_REQUIRED' ? 'Bitte bei einer Ablehnung kurz den Grund angeben – der Kunde sieht ihn.' : r.reason === 'ALREADY_DECIDED' ? 'Diese Anfrage ist bereits entschieden.' : 'Anfrage nicht gefunden.');
+    return back(req, decision === 'ACCEPTED' ? 'Angenommen. Der Kunde sieht „Angebot folgt“. Preis, Termin und Übergabe der Vorlage klärst du jetzt direkt mit ihm – hergestellt wird noch nichts.' : 'Abgelehnt. Der Kunde sieht deinen Hinweis.');
+  }, { csrf: true }));
   route('GET', '/admin/muster/b2b-calc-xlsx/muster.xlsx', ownerGuard(() => {
     const cap = getCapability('b2b-calc-xlsx');
     if (!cap) return json({ error: 'NOT_FOUND' }, 404);

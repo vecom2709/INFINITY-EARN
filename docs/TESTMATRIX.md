@@ -1,6 +1,6 @@
 # Abnahmematrix IE-001 … IE-100
 
-Automatisch erzeugt von `npm run test:matrix` am 2026-11-15.
+Automatisch erzeugt von `npm run test:matrix` am 2026-11-16.
 
 **98 von 100** Abnahmefällen sind als ausführbare Tests abgebildet; die übrigen sind mit Begründung und Ziel-Meilenstein als offen markiert.
 

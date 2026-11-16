@@ -243,7 +243,8 @@ ${formats.length > 1 ? `<fieldset><legend><strong>${t('Lieferformat')}</strong><
 <label for="message">${t('Nachricht')}</label><textarea id="message" name="message" required maxlength="5000">${val('message')}</textarea>
 <label><input type="checkbox" name="privacy" value="1" required> ${t('Ich habe den Datenschutzhinweis gelesen (Entwurf, Testmodus).')}</label>
 <label><input type="checkbox" name="marketing" value="1"${v.marketing === '1' ? ' checked' : ''}> ${t('Ich möchte Neuigkeiten per E-Mail erhalten (freiwillig, jederzeit widerrufbar).')}</label>
-<p><button>${t('Anfrage senden')}</button></p><p class="muted">${t('Kostenlos und unverbindlich. Wir schreiben Ihnen nur zu Ihrer Anfrage.')}</p></form>`,
+<p><button>${t('Anfrage senden')}</button></p><p class="muted">${t('Kostenlos und unverbindlich. Wir schreiben Ihnen nur zu Ihrer Anfrage.')}</p></form>
+<div class="card"><h2>Vorhandenes Programm neu bauen lassen?</h2><p>Wenn Sie ein eigenes, älteres Programm ablösen möchten, prüfen wir das persönlich – nur mit Ihrer Berechtigung am Programm.</p><p><a class="btn secondary" href="/programm-nach-vorlage">Programm nach Vorlage anfragen</a></p></div>`,
     { testMode: true, ...frame(lang, 'anfrage') },
   );
 }

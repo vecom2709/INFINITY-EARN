@@ -21,6 +21,7 @@
     "staging:deploy": "node scripts/staging-deploy.ts",
     "staging:smoke": "node --disable-warning=ExperimentalWarning scripts/smoke-http.ts",
     "backup:restore-test": "node --disable-warning=ExperimentalWarning scripts/restore-backup.ts",
+    "rea:audit": "node --disable-warning=ExperimentalWarning scripts/rea-audit.ts",
     "backup:pull": "node --disable-warning=ExperimentalWarning scripts/staging-backup-pull.ts",
     "dryrun":"node --disable-warning=ExperimentalWarning scripts/dry-run.ts",
     "test": "node --disable-warning=ExperimentalWarning --test --test-reporter=spec \"tests/unit/**/*.test.ts\" \"tests/integration/**/*.test.ts\" \"tests/security/**/*.test.ts\" \"tests/products/**/*.test.ts\"",

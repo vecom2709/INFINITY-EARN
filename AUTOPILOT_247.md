@@ -79,3 +79,7 @@ Zugesagt wird nur, was `assess()` als machbar meldet. Gestoppte Produktion → k
 - Kundengewinnung mit Versand: Versandkanal und Plattformregeln je Kanal (bisher: Postausgang ohne Versand, kein Spam).
 - Administrativer MFA-Schutz: noch nicht umgesetzt (Passwort + Sitzung) – nächster Sicherheitsschritt.
 - Italienische Windows-Fassung: FatturaPA-Annahme im SdI (dein Portalzugang).
+
+## Nicht Teil des 24/7-Autopiloten: Programm nach Vorlage (REA)
+
+Anfragen dieser Art werden rund um die Uhr angenommen und gespeichert, aber nie automatisch zugesagt oder hergestellt. Die Untersuchung mit REA läuft nur in einer Claude-Sitzung auf dem PC des Eigentümers, nachdem er die Anfrage angenommen hat. Kundendateien werden nicht auf GitHub verarbeitet (öffentliches Repository).
