@@ -94,23 +94,45 @@ namespace InfinityEarn.WinLagerSetup
             string previous = null;
             using (var k = Registry.CurrentUser.OpenSubKey(KeyPath)) if (k != null) previous = k.GetValue("DisplayVersion") as string;
 
-            Directory.CreateDirectory(dir);
             string exe = Path.Combine(dir, SetupData.ExeName);
             string tmp = exe + ".new";
-            File.WriteAllBytes(tmp, app);
-            try
-            {
-                if (File.Exists(exe)) File.Replace(tmp, exe, null); else File.Move(tmp, exe);
-            }
-            catch (IOException)
-            {
-                File.Delete(tmp);
-                return Done(4, Running);
-            }
             string self = Assembly.GetExecutingAssembly().Location;
             string uninst = Path.Combine(dir, "uninstall.exe");
-            if (!string.Equals(Path.GetFullPath(self), Path.GetFullPath(uninst), StringComparison.OrdinalIgnoreCase)) File.Copy(self, uninst, true);
-            File.WriteAllText(Path.Combine(dir, "install.json"), "{\"product\":\"" + SetupData.ProductId + "\",\"version\":\"" + SetupData.Version + "\",\"files\":[\"" + SetupData.ExeName + "\",\"uninstall.exe\",\"install.json\"],\"signed\":false}", new UTF8Encoding(false));
+            // Direkt nach einer Deinstallation räumt deren Helfer den Ordner noch auf (bis zu etwa einer Sekunde).
+            // Verschwindet der Ordner währenddessen, wird das Schreiben kurz wiederholt statt abzubrechen.
+            for (int attempt = 1; ; attempt++)
+            {
+                try
+                {
+                    Directory.CreateDirectory(dir);
+                    File.WriteAllBytes(tmp, app);
+                    try
+                    {
+                        if (File.Exists(exe)) File.Replace(tmp, exe, null); else File.Move(tmp, exe);
+                    }
+                    catch (DirectoryNotFoundException) { throw; }
+                    catch (IOException)
+                    {
+                        File.Delete(tmp);
+                        return Done(4, Running);
+                    }
+                    if (!string.Equals(Path.GetFullPath(self), Path.GetFullPath(uninst), StringComparison.OrdinalIgnoreCase)) File.Copy(self, uninst, true);
+                    File.WriteAllText(Path.Combine(dir, "install.json"), "{\"product\":\"" + SetupData.ProductId + "\",\"version\":\"" + SetupData.Version + "\",\"files\":[\"" + SetupData.ExeName + "\",\"uninstall.exe\",\"install.json\"],\"signed\":false}", new UTF8Encoding(false));
+                    break;
+                }
+                catch (DirectoryNotFoundException)
+                {
+                    if (attempt >= 8) throw;
+                    Log("Ordner verschwand während der Installation – Versuch " + (attempt + 1));
+                    System.Threading.Thread.Sleep(400);
+                }
+                catch (UnauthorizedAccessException)
+                {
+                    if (attempt >= 8) throw;
+                    Log("Ordner vorübergehend gesperrt – Versuch " + (attempt + 1));
+                    System.Threading.Thread.Sleep(400);
+                }
+            }
 
             CreateShortcut(exe, dir);
             using (var k = Registry.CurrentUser.CreateSubKey(KeyPath))

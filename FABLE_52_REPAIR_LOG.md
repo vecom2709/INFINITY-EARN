@@ -64,3 +64,10 @@ Jede Zeile: Ursache → Nachweis des Fehlers → Änderung → Regressionstest �
 ## Nachtrag 16.11.2026 – Open Graph und JSON-LD
 - **Änderung:** Öffentliche Seiten mit fester Adresse (Startseite, Lösungs- und Ratgeberseiten) liefern Open-Graph-Angaben und einen JSON-LD-Datenblock (`apps/shared/layout.ts`, `shareMeta`). Nur Titel, Beschreibung, Adresse, Sprache – keine Bewertungen, Preise oder Firmendaten.
 - **Test:** `tests/unit/share-meta.test.ts`. Im Testbetrieb bleiben die Seiten für Suchmaschinen gesperrt (noindex), die Wirkung zeigt sich erst im Echtbetrieb.
+
+## Nachtrag 16.11.2026 – Windows-Installation direkt nach einer Deinstallation schlug sporadisch fehl
+- **Fehler:** Im CI-Lauf zu Commit f1f4733 endete die Neuinstallation unmittelbar nach einer Deinstallation mit Fehler 5. Derselbe Test war in allen früheren Läufen bestanden.
+- **Ursache:** Der Aufräum-Helfer der Deinstallation löscht den Programmordner mit kurzer Verzögerung. Lief die Neuinstallation in genau diesem Moment, verschwand der Ordner während des Schreibens.
+- **Änderung:** Das Installationsprogramm wiederholt das Schreiben bis zu achtmal im Abstand von 0,4 Sekunden, wenn der Ordner verschwindet oder kurz gesperrt ist (`products/win-lager/setup/Setup.cs`).
+- **Test:** `tests/products/win-lager/install.test.ts` lokal dreimal hintereinander bestanden; maßgeblich ist der nächste CI-Lauf auf dem Windows-Server.
+- **Einordnung:** Für Kunden nur relevant, wenn sie innerhalb etwa einer Sekunde nach dem Entfernen neu installieren. Mit der heutigen Tiefenprüfung hatte der Fehler nichts zu tun.
