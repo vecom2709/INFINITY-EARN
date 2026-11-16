@@ -30,7 +30,9 @@ test('Startseite DE/IT/EN: richtige Sprache, hreflang-Alternativen, Sprachwechse
     for (const [l, p] of [['de', '/'], ['it', '/it'], ['en', '/en'], ['x-default', '/']]) assert.ok(h.includes(`hreflang="${l}" href="${o}${p}"`), `hreflang ${l}`);
     for (let i = 1; i <= 8; i++) assert.match(h, new RegExp(`id="k${i}"`));
     assert.match(h, /174,00 €/, 'gleiche nachgerechnete Beispielsumme in jeder Sprache');
-    assert.doesNotMatch(h, /<script/i);
+    // Kein ausführbares JavaScript. Erlaubt ist allein der JSON-LD-Datenblock für Suchmaschinen (wird nicht ausgeführt).
+    assert.equal((h.match(/<script type="application\/ld\+json">/g) ?? []).length, 1, 'genau ein JSON-LD-Datenblock');
+    assert.doesNotMatch(h.replace(/<script type="application\/ld\+json">.*?<\/script>/s, ''), /<script/i);
   }
   assert.match(pages.it, /href="\/it" hreflang="it" lang="it" aria-current="true"/);
   assert.match(pages.de, /<link rel="canonical" href="https:\/\/beispiel\.invalid\/">/);

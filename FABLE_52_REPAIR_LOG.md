@@ -43,7 +43,7 @@ Jede Zeile: Ursache → Nachweis des Fehlers → Änderung → Regressionstest �
 - **Lehre:** Tests laufen lokal mit einem anderen Speicheradapter als Staging; weitere Unterschiede sind möglich (Architektur-Review, Punkt 3).
 
 ## Nicht repariert (bewusst)
-- JSON-LD/Open Graph, individuelle Web-App-Produktion – siehe `FABLE_52_PRODUCTION_READINESS.md`.
+- Individuelle Web-App-Produktion – siehe `FABLE_52_PRODUCTION_READINESS.md`.
 
 ## Nachtrag 16.11.2026 – Excel-Kalkulation mit Formeln (Szenario A)
 - **Lücke:** Geliefert wurde nur CSV/PDF, keine Arbeitsmappe mit Formeln.
@@ -52,3 +52,15 @@ Jede Zeile: Ursache → Nachweis des Fehlers → Änderung → Regressionstest �
 - **Einmalige Fremdprüfung:** Dieselbe Musterdatei wurde am 16.11.2026 einmal in Microsoft Excel 16 geöffnet (ohne Reparaturhinweis; Gesamt 954,09, nach Menge 10→20: 1482,84). Diese Werte stehen als feste Vergleichswerte im Test. Excel ist kein Teil des Ablaufs; das Hilfsskript wurde wieder entfernt.
 - **Nicht geprüft:** LibreOffice, Excel für Mac/Web, Numbers. Keine Diagramme.
 - **Offen (Eigentümer):** Produktart freigeben und Preis festlegen – bis dahin nicht bestellbar.
+
+## Nachtrag 16.11.2026 – Alle Formulare im echten Browser abgewiesen (selbst verursacht, P1)
+- **Fehler:** Der im Audit 17.0 eingebaute Schutz gegen fremdgesteuerte Formulare wies jede Formular-Einsendung aus einem echten Browser mit 403 ab – Anfrage, Berater, Portal, Admin. Betroffen war Staging von Commit c9edd43 bis zur Reparatur.
+- **Ursache:** Die Seite sendete `Referrer-Policy: no-referrer`. Browser schicken dann bei Formularen `Origin: null`, auch von der eigenen Seite. Der Schutz wertete `null` als fremd.
+- **Warum unbemerkt:** Die Prüfungen liefen mit curl und dem Test-Client; beide senden die Herkunft so, wie man sie angibt. Ein echter Browser wurde nach dem Einbau nicht verwendet. Die damalige Aussage „Schutz live geprüft“ galt nur für die Abweisung fremder Seiten.
+- **Änderung:** Maßgeblich ist jetzt `Sec-Fetch-Site` (vom Browser gesetzt, von Webseiten nicht fälschbar); `Referrer-Policy` ist `same-origin`. Seiten mit geheimem Link behalten `no-referrer`.
+- **Test:** `tests/security/tenant-isolation.test.ts` (Browser-Fall mit `Origin: null`), zusätzlich zwei Formulare lokal im Browser abgeschickt.
+- **Lehre:** Schutzmaßnahmen an Formularen immer auch in einem echten Browser prüfen.
+
+## Nachtrag 16.11.2026 – Open Graph und JSON-LD
+- **Änderung:** Öffentliche Seiten mit fester Adresse (Startseite, Lösungs- und Ratgeberseiten) liefern Open-Graph-Angaben und einen JSON-LD-Datenblock (`apps/shared/layout.ts`, `shareMeta`). Nur Titel, Beschreibung, Adresse, Sprache – keine Bewertungen, Preise oder Firmendaten.
+- **Test:** `tests/unit/share-meta.test.ts`. Im Testbetrieb bleiben die Seiten für Suchmaschinen gesperrt (noindex), die Wirkung zeigt sich erst im Echtbetrieb.

@@ -123,6 +123,27 @@ const UI_DE: NonNullable<PageOptions['ui']> = {
   trust: 'Vertrauen &amp; Fakten', verify: 'Echtheit prüfen', admin: 'Admin', skip: 'Zum Inhalt springen', home: '/',
 };
 
+/**
+ * Angaben für Vorschauen beim Teilen (Open Graph) und für Suchmaschinen (JSON-LD) – nur auf öffentlichen Seiten mit
+ * fester Adresse (canonical). Enthält ausschließlich, was die Seite selbst zeigt: Titel, Beschreibung, Adresse, Sprache.
+ * Keine Bewertungen, Preise oder Firmendaten, die nicht belegt sind. Der JSON-LD-Block ist ein reiner Datenblock
+ * (kein ausführbares Skript) und damit CSP-konform.
+ */
+export function shareMeta(title: string, opts: Pick<PageOptions, 'canonical' | 'description' | 'lang'>): string {
+  if (!opts.canonical) return '';
+  const lang = opts.lang ?? 'de';
+  const locale = { de: 'de_DE', it: 'it_IT', en: 'en_GB' }[lang];
+  const og: [string, string][] = [['og:type', 'website'], ['og:site_name', 'INFINITY EARN'], ['og:title', title], ['og:url', opts.canonical], ['og:locale', locale]];
+  if (opts.description) og.push(['og:description', opts.description]);
+  const ld = {
+    '@context': 'https://schema.org', '@type': 'WebPage', name: title, url: opts.canonical, inLanguage: lang,
+    ...(opts.description ? { description: opts.description } : {}),
+    publisher: { '@type': 'Organization', name: 'INFINITY EARN', url: new URL('/', opts.canonical).href },
+  };
+  const json = JSON.stringify(ld).replace(/</g, '\\u003c').replace(/>/g, '\\u003e').replace(/&/g, '\\u0026');
+  return `${og.map(([p, c]) => `<meta property="${p}" content="${escapeHtml(c)}">`).join('')}<meta name="twitter:card" content="summary"><script type="application/ld+json">${json}</script>`;
+}
+
 export function page(title: string, body: string, opts: PageOptions = { testMode: true }): string {
   const ui = opts.ui ?? UI_DE;
   const nav = [['start', ui.home, ui.nav.start], ['anfrage', '/anfrage', ui.nav.inquiry], ['portal', '/portal', ui.nav.portal]] as const;
@@ -141,7 +162,7 @@ export function page(title: string, body: string, opts: PageOptions = { testMode
   const header = `<header class="site${dark ? ' dark' : ''}"><div class="site-in">${brand}
 <nav aria-label="Hauptnavigation">${navHtml}${sw}${opts.testMode ? `<span class="mode"><span class="dot" aria-hidden="true"></span>${ui.nav.test}</span>` : ''}</nav></div></header>`;
   return `<!doctype html><html lang="${opts.lang ?? 'de'}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="${dark ? '#03161B' : '#F7FAF9'}"><title>${escapeHtml(title)}</title>${opts.description ? `<meta name="description" content="${escapeHtml(opts.description)}">` : ''}${opts.canonical ? `<link rel="canonical" href="${escapeHtml(opts.canonical)}">` : ''}${alt}<style>${CSS}${dark ? DARK_CSS : ''}${opts.extraCss ?? ''}</style></head><body><a class="skip" href="#inhalt">${ui.skip}</a>
+<meta name="theme-color" content="${dark ? '#03161B' : '#F7FAF9'}"><title>${escapeHtml(title)}</title>${opts.description ? `<meta name="description" content="${escapeHtml(opts.description)}">` : ''}${opts.canonical ? `<link rel="canonical" href="${escapeHtml(opts.canonical)}">` : ''}${alt}${shareMeta(title, opts)}<style>${CSS}${dark ? DARK_CSS : ''}${opts.extraCss ?? ''}</style></head><body><a class="skip" href="#inhalt">${ui.skip}</a>
 ${dark ? `<div class="darkzone">${banner}${header}</div>` : `${header}\n${banner}`}<main id="inhalt"${opts.wide ? ' class="wide"' : ''}>${body}</main>
 <footer class="site"><div>INFINITY EARN · ${ui.footer} ${opts.navItems ? `· <a href="/portal">${ui.nav.portal}</a> ` : ''}· <a href="/vertrauen">${ui.trust}</a> · <a href="/pruefen">${ui.verify}</a> · <a href="/admin">${ui.admin}</a></div></footer></body></html>`;
 }

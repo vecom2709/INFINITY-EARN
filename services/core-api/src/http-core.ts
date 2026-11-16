@@ -113,6 +113,11 @@ type Handler = (req: Req) => Res | Promise<Res>;
  */
 export function crossSitePost(req: { method: string; headers: Record<string, string | undefined> }): boolean {
   if (req.method !== 'POST') return false;
+  // Browser melden selbst, woher eine Anfrage stammt (Sec-Fetch-Site) – von Webseiten nicht fälschbar. Das ist die
+  // verlässlichste Angabe: Bei strenger Referrer-Policy senden Browser als Origin nur „null“, auch von der eigenen Seite.
+  const site = req.headers['sec-fetch-site'];
+  if (site === 'same-origin' || site === 'none') return false;
+  if (site === 'cross-site' || site === 'same-site') return true;
   const origin = req.headers.origin;
   if (!origin) return false;
   if (origin === 'null') return true;
@@ -173,7 +178,8 @@ export const SECURITY_HEADERS: Record<string, string> = {
   'content-security-policy': "default-src 'none'; style-src 'unsafe-inline'; img-src 'self'; form-action 'self'; frame-ancestors 'none'; base-uri 'none'",
   'x-content-type-options': 'nosniff',
   'x-frame-options': 'DENY',
-  'referrer-policy': 'no-referrer',
+  // same-origin: fremde Seiten erfahren nichts; die eigene Seite erhält bei Formularen die echte Herkunft statt „null“.
+  'referrer-policy': 'same-origin',
   'cache-control': 'no-store',
 };
 

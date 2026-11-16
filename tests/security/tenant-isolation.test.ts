@@ -114,6 +114,12 @@ test('Kunden-Cookie öffnet keine Verwaltung; fremdgesteuerte Formulare (anderer
   assert.equal(crossSitePost({ method: 'POST', headers: { origin: 'null', host } }), true);
   assert.equal(crossSitePost({ method: 'POST', headers: { origin: base, host } }), false, 'eigene Seite erlaubt');
   assert.equal(crossSitePost({ method: 'POST', headers: { host } }), false, 'Server-zu-Server ohne Origin (Webhook, Agent)');
+  // Regression 16.11.2026: Echte Browser senden bei strenger Referrer-Policy „Origin: null“ auch von der eigenen Seite.
+  // Damit wurden alle Formulare im Browser abgewiesen (curl-Prüfungen bemerkten es nicht). Maßgeblich ist Sec-Fetch-Site.
+  assert.equal(crossSitePost({ method: 'POST', headers: { origin: 'null', host, 'sec-fetch-site': 'same-origin' } }), false, 'eigenes Formular im Browser');
+  assert.equal(crossSitePost({ method: 'POST', headers: { origin: base, host, 'sec-fetch-site': 'cross-site' } }), true, 'Browser meldet fremde Seite');
+  assert.equal(crossSitePost({ method: 'POST', headers: { origin: 'null', host, 'sec-fetch-site': 'same-site' } }), true, 'Nachbar-Subdomain ist fremd');
+  assert.equal(crossSitePost({ method: 'POST', headers: { host, 'sec-fetch-site': 'none' } }), false, 'vom Nutzer selbst ausgelöst');
   const evil = await a.req('POST', '/portal/support', new URLSearchParams({ order_id: A.orderId, kind: 'withdrawal', message: 'fremdgesteuert' }).toString(), { 'content-type': 'application/x-www-form-urlencoded', origin: 'https://boese.example' });
   assert.equal(evil.status, 403);
   assert.equal(count(ctx, 'SELECT COUNT(*) AS n FROM refund_requests WHERE order_id = ?', A.orderId), 0, 'kein fremdgesteuerter Widerruf');

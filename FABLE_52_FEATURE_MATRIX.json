@@ -1,6 +1,6 @@
 {
  "meta": {
-  "generated_at": "2026-11-15T23:53:30.705Z",
+  "generated_at": "2026-11-16T00:36:17.058Z",
   "node": "v24.19.0",
   "platform": "win32",
   "features": 157,
@@ -11,8 +11,8 @@
    "BLOCKED": 3
   },
   "evidence_files": 41,
-  "evidence_tests_passed": 305,
-  "evidence_tests_failed": 0,
+  "evidence_tests_passed": 304,
+  "evidence_tests_failed": 1,
   "evidence_tests_skipped": 0,
   "rejected": [
    {
@@ -965,13 +965,15 @@
    ],
    "tests": {
     "files": 2,
-    "passed": 11,
-    "failed": 0,
+    "passed": 10,
+    "failed": 1,
     "skipped": 0
    },
    "test_command": "node --test tests/integration/m3-readiness.test.ts tests/integration/landing.test.ts",
    "previous_status": "TESTED (partial)",
-   "problems": [],
+   "problems": [
+    "Test schlägt fehl: tests/integration/landing.test.ts"
+   ],
    "remaining": "Übersetzung von Anfrage, Angebot und Portal; Länderspezifika.",
    "status": "IMPLEMENTED"
   },
@@ -4185,13 +4187,15 @@
    ],
    "tests": {
     "files": 2,
-    "passed": 10,
-    "failed": 0,
+    "passed": 9,
+    "failed": 1,
     "skipped": 0
    },
    "test_command": "node --test tests/integration/landing.test.ts tests/integration/gesamtprompt.test.ts",
    "previous_status": "TESTED (partial)",
-   "problems": [],
+   "problems": [
+    "Test schlägt fehl: tests/integration/landing.test.ts"
+   ],
    "remaining": "Eigene Domain und Search Console (Eigentümerverifikation), technischer Prüfbericht im Admin.",
    "status": "IMPLEMENTED"
   },
@@ -4303,13 +4307,15 @@
    ],
    "tests": {
     "files": 2,
-    "passed": 9,
-    "failed": 0,
+    "passed": 8,
+    "failed": 1,
     "skipped": 0
    },
    "test_command": "node --test tests/integration/landing.test.ts tests/integration/trust-recovery.test.ts",
    "previous_status": "TESTED (partial)",
-   "problems": [],
+   "problems": [
+    "Test schlägt fehl: tests/integration/landing.test.ts"
+   ],
    "remaining": "JSON-LD (Organization/Service) nach Validierung, Open Graph.",
    "status": "IMPLEMENTED"
   },
