@@ -174,6 +174,22 @@ const CUSTOMER_COOKIE = 'ie_customer';
 /** Nur die gewählte Sprache (de/it/en) – kein Tracking, keine personenbezogenen Daten. */
 const LANG_COOKIE = 'ie_lang';
 
+/** Verständliche Meldungen, wenn ein Angebot nicht angenommen werden kann – statt interner Kürzel. */
+export const ACCEPT_ERRORS: Record<string, string> = {
+  BUYER_TYPE_INVALID: 'Bitte geben Sie an, ob Sie als Unternehmen oder als Verbraucher kaufen.',
+  BUYER_DATA_INVALID: 'Bitte Rechnungsname, Rechnungsadresse und das Land als zweistelligen Code (zum Beispiel DE oder IT) angeben.',
+  MARKET_NOT_ALLOWED: 'Wir liefern derzeit nur an Kunden mit Sitz in der Europäischen Union.',
+  CONSUMER_WAIVER_MISSING: 'Als Verbraucher müssen Sie der sofortigen Ausführung zustimmen und bestätigen, dass Ihr Widerrufsrecht damit erlischt.',
+  NO_ACCEPTANCE_PROOF: 'Bitte bestätigen Sie die Bedingungen. Falls Sie das schon getan haben, öffnen Sie das Angebot bitte erneut über Ihren persönlichen Link.',
+  VAT_ID_INVALID: 'Die Umsatzsteuer-Identifikationsnummer hat kein gültiges Format (zum Beispiel DE123456789). Lassen Sie das Feld leer, wenn Sie keine haben.',
+  QUOTE_EXPIRED: 'Dieses Angebot ist abgelaufen. Bitte stellen Sie eine neue Anfrage.',
+  QUOTE_NOT_OPEN: 'Dieses Angebot kann nicht mehr angenommen werden.',
+  QUOTE_NOT_FOUND: 'Der Link zu diesem Angebot ist ungültig oder unvollständig.',
+  OTHER: 'Die Annahme ist gerade nicht möglich. Bitte versuchen Sie es später erneut oder schreiben Sie uns.',
+};
+
+export const acceptError = (code: string): string => ACCEPT_ERRORS[code] ?? 'Die Annahme ist gerade nicht möglich. Bitte versuchen Sie es später erneut oder schreiben Sie uns.';
+
 export const SECURITY_HEADERS: Record<string, string> = {
   'content-security-policy': "default-src 'none'; style-src 'unsafe-inline'; img-src 'self'; form-action 'self'; frame-ancestors 'none'; base-uri 'none'",
   'x-content-type-options': 'nosniff',
@@ -475,7 +491,11 @@ export function createHandler(ctx: AppContext): (r: HttpRequest) => Promise<Res>
 
   route('POST', '/angebot/:id/annehmen', async (req) => {
     const f = form(req);
-    const buyerType = f.get('buyer_type') === 'B2C' ? 'B2C' : 'B2B';
+    const rawType = f.get('buyer_type');
+    const offerLink = { href: `/angebot/${encodeURIComponent(req.params.id ?? '')}?t=${encodeURIComponent(f.get('t') ?? '')}`, label: 'Zurück zum Angebot' };
+    // Ein fehlender oder unbekannter Käufertyp darf nie stillschweigend als „Unternehmen“ gelten – sonst entfiele der Verbraucherschutz.
+    if (rawType !== 'B2B' && rawType !== 'B2C') return html(renderInquiryResult('Annahme nicht möglich', acceptError('BUYER_TYPE_INVALID'), offerLink, L(req)), 400);
+    const buyerType = rawType;
     try {
       const r = acceptQuote(ctx, req.params.id ?? '', f.get('t'), {
         termsAccepted: f.get('terms') === '1',
@@ -497,7 +517,7 @@ export function createHandler(ctx: AppContext): (r: HttpRequest) => Promise<Res>
       }
       return redirect('/portal', headers);
     } catch (e) {
-      if (e instanceof WorkflowError) return html(renderInquiryResult('Annahme nicht möglich', e.message, undefined, L(req)), 400);
+      if (e instanceof WorkflowError) return html(renderInquiryResult('Annahme nicht möglich', acceptError(e.code), e.code === 'QUOTE_NOT_FOUND' ? undefined : offerLink, L(req)), 400);
       throw e;
     }
   });

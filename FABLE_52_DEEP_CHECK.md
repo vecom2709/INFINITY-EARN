@@ -11,9 +11,9 @@ Funktionsmatrix ändert sich nur, wenn der offene Rest einer Funktion wegfällt.
 | Bereich | Funktionen | Stand |
 |---|---|---|
 | M1 Kunde, Auftrag, Abrechnung | 18 | **Durchgang 1 erledigt (16.11.2026)** – 7 im Browser begangen, 11 nur über automatische Tests |
-| M0 Grundlagen | 2 | offen |
+| M0 Grundlagen | 2 | **Durchgang 3 erledigt (16.11.2026)** – 1 im Browser begangen, 1 nur über automatische Tests |
 | M2 Produktherstellung | 9 | **Durchgang 2 erledigt (16.11.2026)** – 3 an echten Dateien geprüft, 6 nur über automatische Tests |
-| M3 Recht und Freigaben | 6 | offen |
+| M3 Recht und Freigaben | 6 | **Durchgang 3 erledigt (16.11.2026)** – 5 mit Grenzfällen und im Browser geprüft, 1 nur über automatische Tests |
 | M4 Steuerung, Markt, Marketing | 19 | offen |
 | M5 | 9 | offen |
 | M6 | 23 | offen |
@@ -87,3 +87,38 @@ PDF und Paket tragen wegen der geänderten Ausgabe die Version 2. Regressionstes
 - Dateien in den echten Programmen geöffnet (Excel, Adobe Reader, LibreOffice) – das PDF wurde nur als Bild angesehen.
 - Warenwirtschaft, Windows-Programm und KI-Texte (eigene Produktarten mit eigenen Prüfungen).
 - Erstattung, Dispute und Stripe-Sandbox im Browser.
+
+## Durchgang 3 – M3 Recht und Freigaben, M0 Grundlagen (16.11.2026)
+
+**Methode:** Annahme eines Angebots mit 17 Grenzfällen angegriffen (Länder außerhalb der EU, falsche Ländercodes,
+Verbraucher ohne Zustimmungen, unbekannter Käufertyp, fehlende Angaben, falscher Link, unsinnige USt-ID, doppelte
+Annahme). Im Browser: Annahme als Verbraucher ohne Zustimmung, Rückweg zum Angebot, Demo der Warenwirtschaft,
+Live-Freigabe ohne Nachweis in der Verwaltung.
+
+| Nr. | Funktion | Geprüft | Ergebnis |
+|---|---|---|---|
+| 17 | Rechtliche Absicherung | Verbraucherverzicht, Käufertyp, Live-Freigaben | bestanden nach Reparatur (Käufertyp) |
+| 30 | Verkauf in mehreren Ländern | US, CH, GB abgelehnt; DE, IT angenommen; Kleinschreibung und Leerzeichen toleriert | bestanden |
+| 42 | Vertragsabschluss | Annahme nur mit Link und Zustimmung; doppelte Annahme erzeugt keinen zweiten Auftrag | bestanden; Vertrags-PDF nicht geöffnet |
+| 100 | Meilensteine | Freigabe LA-07 ohne Nachweis im Browser versucht: abgelehnt, weiter 0 von 12 | bestanden |
+| 152 | Produkt ausprobieren | Demo der Warenwirtschaft im Browser geladen, keine Skriptfehler | geladen; Funktionen der Demo nicht einzeln bedient |
+| 85 | Ehrliche Werbeaussagen | Ansicht „Echte Daten“ in Durchgang 1 ohne Testzahlen | bestanden |
+| 69, 96 | Steuer- und Länderprüfung, Barrierefreiheit | nein | nur durch automatische Tests belegt |
+
+### Funde und Reparaturen
+
+| Fund | Schwere | Stand |
+|---|---|---|
+| Ein fehlender oder unbekannter Käufertyp galt stillschweigend als „Unternehmen“ – der Verbraucherverzicht wurde dann nicht verlangt | P2 | behoben – solche Annahmen werden abgelehnt |
+| USt-ID wurde ungeprüft gespeichert (auch „<script>“) und wäre so auf Vertragsbestätigung und Beleg gelandet | P3 | behoben – Formatprüfung; die Gültigkeit bei der Behörde wird weiterhin nicht geprüft |
+| Abgelehnte Annahme zeigte dem Kunden interne Kürzel („BUYER_DATA_INVALID“, „MARKET_NOT_ALLOWED“) ohne Rückweg | P3 | behoben – verständliche Meldungen in DE/IT/EN mit Link zurück zum Angebot |
+| Verwaltung zeigt bei Fehlern das Kürzel vor der Meldung („EVIDENCE_REQUIRED: …“) | P4 | **offen** – nur für den Eigentümer sichtbar |
+| Wer als Verbraucher „Unternehmen“ auswählt, umgeht den Verzicht | – | **kein Softwarefehler** – nur rechtlich zu lösen (Bedingungen, LA-07) |
+
+Regressionstests: `tests/integration/deepcheck-legal.test.ts`.
+
+### Nicht geprüft in diesem Durchgang
+
+- Steuervorschläge für den Sitz Italien und die FatturaPA im Browser.
+- Barrierefreiheit mit Tastatur und Screenreader.
+- Die Bedienung der Warenwirtschafts-Demo im Einzelnen.

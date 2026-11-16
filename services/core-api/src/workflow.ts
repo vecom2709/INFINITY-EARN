@@ -213,6 +213,8 @@ export function acceptQuote(ctx: AppContext, quoteId: string, token: string | un
   }
   const b = ev.buyer;
   if (!b.name || !b.address || !/^[A-Z]{2}$/.test(b.country)) throw new WorkflowError('BUYER_DATA_INVALID');
+  // USt-ID nur auf ihr Format geprüft (Ländercode + 2–12 Zeichen); die Gültigkeit bei der Behörde prüft dieses System nicht.
+  if (b.vatId !== null && !/^[A-Z]{2}[A-Z0-9]{2,12}$/.test(b.vatId.replace(/[ .-]/g, '').toUpperCase())) throw new WorkflowError('VAT_ID_INVALID');
   const market = marketAllows(ctx, b.country, b.type);
   if (!market.ok) {
     ctx.audit.record({ type: 'quote.acceptance_rejected', actor: 'customer', subjectType: 'quote', subjectId: quoteId, data: { reason: market.reason }, testMode: ctx.config.testMode });
