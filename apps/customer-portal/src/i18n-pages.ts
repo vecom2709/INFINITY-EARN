@@ -304,10 +304,15 @@ export function productTitle(description: string, lang: Lang): string {
 }
 
 /** Seitenrahmen (Navigation, Hinweis, Fußzeile) für die Sprache; Sprachwahl per ?lang= auf derselben Seite. */
-export function frame(lang: Lang, active?: PageOptions['active']): Pick<PageOptions, 'lang' | 'ui' | 'langSwitch' | 'active'> {
+export function frame(lang: Lang, active?: PageOptions['active']): Pick<PageOptions, 'lang' | 'ui' | 'langSwitch' | 'active' | 'navItems' | 'tagline'> {
   const T = HOME[lang];
+  const home = lang === 'de' ? '/' : `/${lang}`;
   return {
-    lang, active,
+    lang, active, tagline: T.v.tagline,
+    navItems: [
+      { href: home, label: T.nav.start }, { href: `${home}#k4`, label: T.v.nav.products }, { href: `${home}#k2`, label: T.v.nav.business },
+      { href: `${home}#k3`, label: T.v.nav.solutions }, { href: '/vertrauen', label: T.v.nav.about }, { href: '/anfrage', label: T.v.nav.contact, current: active === 'anfrage' },
+    ],
     ui: { nav: T.nav, banner: T.banner, footer: T.footer, trust: T.trust, verify: T.verify, admin: T.admin, skip: tr(lang, 'Zum Inhalt springen'), home: lang === 'de' ? '/' : `/${lang}` },
     langSwitch: (['de', 'it', 'en'] as const).map((l) => ({ lang: l, href: `?lang=${l}`, label: l.toUpperCase(), current: l === lang })),
   };
