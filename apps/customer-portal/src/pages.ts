@@ -9,7 +9,7 @@ import { asCalcInput, computeTotals, type CalcInput } from '../../../services/pr
 import type { ProvenancePassport } from '../../../services/product-factory/src/provenance.ts';
 import { HERO_IMAGES } from './hero-images.generated.ts';
 import { HOME, LANG_PATH, LANGS, type Lang } from './home-i18n.ts';
-import { frame, productTitle, tr } from './i18n-pages.ts';
+import { criterionLabel, frame, productTitle, tr } from './i18n-pages.ts';
 import { acceptanceChecks, listStandards } from '../../../services/product-factory/src/quality-standard.ts';
 import type { TrustFacts } from '../../../services/core-api/src/trust.ts';
 import { getDeliveryByOrder, issueDownloadToken } from '../../../services/product-factory/src/delivery.ts';
@@ -296,8 +296,8 @@ export function renderQuote(q: QuoteRow, token: string, lang: Lang = 'de'): stri
     `${progress(q.status === 'ACCEPTED' ? 2 : 1, lang)}<h1>${t('Ihr Angebot')}</h1><p class="lead">${e(lang === 'de' ? friendlyTitle(q.description) : productTitle(q.description, lang))} · ${e(scope?.title ?? '')}</p>
 <div class="grid">
 <div class="card"><div class="muted">${t('Preis')}</div><div class="price">${e(money(q.gross_total_minor, q.currency))}</div><p class="muted">${t('Steuer wird noch nicht berechnet (Steuerangaben im Testbetrieb nicht hinterlegt).')}</p>
-<p><span class="tag ${q.status === 'ISSUED' ? 'ok' : 'neutral'}">${e(t(statusText[q.status] ?? q.status))}</span> <span class="muted">${t('gültig bis')} ${e(q.valid_until.slice(0, 10))}</span></p></div>
-<div class="card"><h3>${t('Lieferumfang')}</h3><ul>${scopeLines}<li>${t('Lieferkriterien:')} ${e((terms.delivery_criteria as string[] | undefined)?.join(', ') ?? '')}</li><li>${t('Lieferung')} ${e(String(terms.delivery_deadline_days))} ${t('Tage nach Zahlungseingang')}</li></ul></div></div>
+<p><span class="tag ${q.status === 'ISSUED' ? 'ok' : 'neutral'}">${e(t(statusText[q.status] ?? q.status))}</span> <span class="muted">${q.status === 'ISSUED' ? t('bis') : t('gültig bis')} ${e(q.valid_until.slice(0, 10))}</span></p></div>
+<div class="card"><h3>${t('Lieferumfang')}</h3><ul>${scopeLines}<li>${t('Lieferkriterien:')} ${e(((terms.delivery_criteria as string[] | undefined) ?? []).map((c) => criterionLabel(c, lang)).join(' · '))}</li><li>${t('Lieferung')} ${e(String(terms.delivery_deadline_days))} ${t('Tage nach Zahlungseingang')}</li></ul></div></div>
 ${quotePreview(q, lang)}
 <div class="card"><h3>${t('Bedingungen')}</h3>${lang === 'de' ? '' : `<p class="muted">${t('Die Bedingungen liegen derzeit nur auf Deutsch vor (Entwurf, rechtliche Prüfung vor dem Echtbetrieb). Maßgeblich ist die deutsche Fassung.')}</p>`}<ul lang="de"><li>Nutzungsrechte: ${e(terms.rights)}</li><li>Rückerstattung: ${e(terms.refund_criteria)}</li><li>${e(terms.withdrawal_notice)}</li><li>${e(terms.privacy_notice)}</li></ul>
 <p class="err" lang="de">${e(terms.notice ?? '')}</p></div>
@@ -496,7 +496,7 @@ export function renderPortal(ctx: AppContext, customer: CustomerRow | undefined,
     }
     if (d && !d.revoked_at && o.payment_state === 'CONFIRMED') {
       const art = ctx.db.get<{ m: string; sha: string }>('SELECT media_type AS m, sha256 AS sha FROM artifacts WHERE artifact_id = ?', d.artifact_id);
-      docs.push(`<a href="/download/${e(issueDownloadToken(ctx, d.delivery_id, customer.customer_id))}">${icon('download', 'sm')}${t('Download: Ihre Kalkulation')} (${art?.m === 'application/pdf' ? 'PDF' : art?.m === 'application/zip' ? t('ZIP: Tabelle + PDF') : 'CSV'})</a>`);
+      docs.push(`<a href="/download/${e(issueDownloadToken(ctx, d.delivery_id, customer.customer_id))}">${icon('download', 'sm')}${t('Download: Ihre Kalkulation')} (${art?.m === 'application/pdf' ? 'PDF' : art?.m === 'application/zip' ? t('ZIP: Tabelle + PDF') : art?.m === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ? 'Excel (XLSX)' : 'CSV'})</a>`);
       if (art) docs.push(`<a href="/pruefen/${e(art.sha)}">${icon('shield', 'sm')}${t('Echtheit der Datei prüfen')}</a>`);
       const product = ctx.db.get<{ c: string }>('SELECT capability_id AS c FROM opportunities WHERE opportunity_id = ?', o.opportunity_id)?.c ?? '';
       if (HELP[product]) docs.push(`<a href="/hilfe/${e(product)}">${icon('info', 'sm')}${t('Anleitung: So nutzen Sie die Datei')}</a>`);

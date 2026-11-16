@@ -1,3 +1,4 @@
+import { criterionLabel } from '../../../apps/customer-portal/src/i18n-pages.ts';
 import { formatMinor } from '../../../packages/contracts/src/money.ts';
 import { createTextPdf, type PdfLine } from '../../../packages/shared/src/pdf.ts';
 import { newId, sha256Hex } from '../../../packages/shared/src/crypto.ts';
@@ -71,7 +72,7 @@ export function buildConfirmationLines(ctx: AppContext, orderId: string): { line
   p(`${cap ? 'Erstellung einer B2B-Kalkulationstabelle (CSV) aus den übermittelten Positionsdaten' : quote.description} – „${scope?.title ?? ''}“`);
   for (const it of scope?.items ?? []) p(`• ${it.name}: ${it.quantity} × ${money(it.unit_cost_minor)}`);
   if (scope?.margin_bps !== undefined) p(`Gewünschter Aufschlag in der Tabelle: ${(scope.margin_bps / 100).toFixed(2).replace('.', ',')} %`);
-  p(`Lieferkriterien (automatisch geprüft): ${((terms.delivery_criteria as string[] | undefined) ?? []).join(', ')}`);
+  p(`Lieferkriterien (automatisch geprüft): ${((terms.delivery_criteria as string[] | undefined) ?? []).map((c) => criterionLabel(c)).join('; ')}`);
   p(`Bereitstellung: Download im Kundenportal, in der Regel innerhalb von ${String(terms.delivery_deadline_days ?? 2)} Tagen nach Zahlungseingang.`);
 
   h('Preis und Zahlung');

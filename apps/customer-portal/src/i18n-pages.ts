@@ -86,6 +86,7 @@ export const DICT: Record<string, { it: string; en: string }> = {
   'Abgelaufen': { it: 'Scaduta', en: 'Expired' },
   'Zurückgezogen': { it: 'Ritirata', en: 'Withdrawn' },
   'gültig bis': { it: 'valida fino al', en: 'valid until' },
+  'bis': { it: 'fino al', en: 'until' },
   'Lieferumfang': { it: 'Contenuto della consegna', en: 'Scope of delivery' },
   'Positionen, Aufschlag und Summen': { it: 'voci, ricarico e totali', en: 'items, markup and totals' },
   'Lieferkriterien:': { it: 'Criteri di consegna:', en: 'Delivery criteria:' },
@@ -309,3 +310,42 @@ export function pickLang(query: string | null, cookie: string | undefined, accep
   const first = (acceptLanguage ?? '').toLowerCase().match(/^\s*([a-z]{2})/)?.[1];
   return first === 'it' || first === 'en' ? first : 'de';
 }
+
+/**
+ * Verständliche Namen der Abnahmeprüfungen für Kunden (Angebot, Vertragsbestätigung). Intern heißen die Prüfungen
+ * z. B. „xlsx_formulas“ – das soll kein Kunde lesen müssen. Unbekannte Kennungen werden unverändert gezeigt.
+ */
+export const CRITERIA_LABELS: Record<string, { de: string; it: string; en: string }> = {
+  encoding: { de: 'Zeichensatz korrekt', it: 'Codifica corretta', en: 'Correct character encoding' },
+  format: { de: 'Aufbau und Inhalte wie bestellt', it: 'Struttura e contenuti come ordinato', en: 'Structure and content as ordered' },
+  totals: { de: 'Summen nachgerechnet', it: 'Totali ricalcolati', en: 'Totals recalculated' },
+  formula_injection: { de: 'Keine versteckten Formeln oder Makros', it: 'Nessuna formula o macro nascosta', en: 'No hidden formulas or macros' },
+  checksum: { de: 'Datei unverändert (Prüfsumme)', it: 'File invariato (checksum)', en: 'File unchanged (checksum)' },
+  xlsx_structure: { de: 'Gültige Excel-Arbeitsmappe', it: 'Cartella Excel valida', en: 'Valid Excel workbook' },
+  xlsx_formulas: { de: 'Formeln vorhanden und richtig', it: 'Formule presenti e corrette', en: 'Formulas present and correct' },
+  pdf_structure: { de: 'Gültiges PDF', it: 'PDF valido', en: 'Valid PDF' },
+  pages: { de: 'Seitenzahl stimmt', it: 'Numero di pagine corretto', en: 'Page count correct' },
+  items_complete: { de: 'Alle Positionen enthalten', it: 'Tutte le voci presenti', en: 'All items included' },
+  layout: { de: 'Sauberes Seitenbild', it: 'Impaginazione pulita', en: 'Clean page layout' },
+  zip_structure: { de: 'Paket vollständig und sicher gepackt', it: 'Pacchetto completo e sicuro', en: 'Package complete and safely packed' },
+  csv_qa: { de: 'Tabelle im Paket geprüft', it: 'Tabella nel pacchetto verificata', en: 'Spreadsheet in package checked' },
+  pdf_qa: { de: 'PDF im Paket geprüft', it: 'PDF nel pacchetto verificato', en: 'PDF in package checked' },
+  program_integrity: { de: 'Programm vollständig', it: 'Programma completo', en: 'Program complete' },
+  branding: { de: 'Ihre Firmenangaben eingesetzt', it: 'Dati aziendali inseriti', en: 'Your company details applied' },
+  no_network: { de: 'Keine Verbindung ins Internet', it: 'Nessuna connessione a Internet', en: 'No internet connection' },
+  domain_selftest: { de: 'Rechenwege im Selbsttest bestanden', it: 'Calcoli superati nel test automatico', en: 'Calculations passed self-test' },
+  ui_actions: { de: 'Alle Schaltflächen funktionieren', it: 'Tutti i pulsanti funzionano', en: 'All buttons work' },
+  manual_pdf: { de: 'Anleitung als PDF enthalten', it: 'Manuale PDF incluso', en: 'PDF manual included' },
+  readme: { de: 'Kurzanleitung enthalten', it: 'Guida rapida inclusa', en: 'Quick guide included' },
+  build_manifest: { de: 'Bau-Nachweis vorhanden', it: 'Prova di compilazione presente', en: 'Build record present' },
+  unit_tests: { de: 'Programmtests bestanden', it: 'Test del programma superati', en: 'Program tests passed' },
+  installer: { de: 'Installationsprogramm geprüft', it: 'Programma di installazione verificato', en: 'Installer checked' },
+  text_structure: { de: 'Alle bestellten Texte vorhanden', it: 'Tutti i testi ordinati presenti', en: 'All ordered texts present' },
+  text_length: { de: 'Textlängen eingehalten', it: 'Lunghezze rispettate', en: 'Text lengths met' },
+  text_language: { de: 'Richtige Sprache', it: 'Lingua corretta', en: 'Correct language' },
+  text_brief: { de: 'Ihre Vorgaben berücksichtigt', it: 'Indicazioni rispettate', en: 'Your brief followed' },
+  text_claims: { de: 'Keine unbelegten Versprechen', it: 'Nessuna promessa non provata', en: 'No unsupported claims' },
+  text_safety: { de: 'Keine unzulässigen Inhalte', it: 'Nessun contenuto non ammesso', en: 'No inadmissible content' },
+  text_render: { de: 'Dateien lesbar aufbereitet', it: 'File leggibili', en: 'Files readable' },
+};
+export const criterionLabel = (id: string, lang: Lang = 'de'): string => CRITERIA_LABELS[id]?.[lang] ?? id;
